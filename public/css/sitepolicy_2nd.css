@@ -1,0 +1,215 @@
+@charset "utf-8";
+/* CSS Document */
+.TitleSitepolicy h3 {
+	background: url(../img/sitepolicy_title.gif);
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	width: 771px;
+	height: 0px;
+	padding-top: 34px;
+	margin-top: 0px;
+	margin-bottom: 30px;
+	overflow: hidden;
+}
+.subMenuSitepolicy1{
+		background:url(../sitepolicy/img/sub1.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy2{
+		background:url(../sitepolicy/img/sub2.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy3{
+		background:url(../sitepolicy/img/sub3.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy4{
+		background:url(../sitepolicy/img/sub4.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy5{
+		background:url(../sitepolicy/img/sub5.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy6{
+		background:url(../sitepolicy/img/sub6.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy7{
+		background:url(../sitepolicy/img/sub7.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy8{
+		background:url(../sitepolicy/img/sub8.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy9{
+		background:url(../sitepolicy/img/sub9.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy10{
+		background:url(../sitepolicy/img/sub10.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy11{
+		background:url(../sitepolicy/img/sub11.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy12{
+		background:url(../sitepolicy/img/sub12.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy13{
+		background:url(../sitepolicy/img/sub13.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy14{
+		background:url(../sitepolicy/img/sub14.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy15{
+		background:url(../sitepolicy/img/sub15.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.subMenuSitepolicy16{
+		background:url(../sitepolicy/img/sub16.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:193px;
+		height:0px;
+		padding-top: 21px;
+		margin:10px 0px 10px 55px;
+		overflow: hidden;
+}
+.TextSubSite{
+	line-height:180%;
+	width:600px;
+	margin:0px auto 0px 50px;
+	color:#797979;
+	padding:5px 5px 5px 5px;
+}
+
+
+
+.TextSitepolicy{
+	line-height:180%;
+	border-bottom:dotted 1px #6e6d6d;
+	border: #b3b3b3 1px solid;
+	width:650px;
+	margin:auto;
+	color:#797979;
+	padding:5px 5px 5px 5px;
+}
+.TextSitepolicy2{
+	line-height:180%;
+	border-bottom:dotted 1px #6e6d6d;
+	border: #b3b3b3 1px solid;
+	width:580px;
+	margin:0px auto 0px 95px;
+	color:#797979;
+	padding:5px 5px 5px 5px;
+}
+
+
+
+@media screen and ( max-width: 768px ) {
+	.TitleSitepolicy h3 {
+		width: 100%;
+		background-size: 100% 100%;
+	}
+	.subMenuSitepolicy1, .subMenuSitepolicy2, .subMenuSitepolicy3, .subMenuSitepolicy4, .subMenuSitepolicy5, .subMenuSitepolicy6, .subMenuSitepolicy7, .subMenuSitepolicy8, .subMenuSitepolicy9, .subMenuSitepolicy10, .subMenuSitepolicy11, .subMenuSitepolicy12, .subMenuSitepolicy13, .subMenuSitepolicy14, .subMenuSitepolicy15, .subMenuSitepolicy16 {
+		max-width: 100%;
+		background-size: 100% 100%;
+		margin:10px 0px 10px 0px;
+	}
+	.TextSubSite, .TextSitepolicy, .TextSitepolicy2 {
+		width: auto;
+		margin:0;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+

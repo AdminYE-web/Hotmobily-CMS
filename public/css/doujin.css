@@ -1,0 +1,32 @@
+@charset "utf-8";
+/* CSS Document */
+
+
+.SubTextDoujin1{
+	line-height:180%;
+	width:640px;
+	margin:10px auto 10px 45px;
+	color: #000000;
+	font-weight:bold;
+	padding:5px 5px 5px 5px;
+}
+.SubTextDoujin2{
+	line-height:100%;
+	width:650px;
+	margin:2px 5px 2px 55px;
+	color: #000000;
+	padding:2px 5px 5px 2px;
+}
+.TextDoujin{
+	line-height:150%;
+	width:750px;
+	margin:0px auto 0px 80px;
+	color:#797979;
+	padding:0px 5px 2px 5px;
+}
+
+@media screen and ( max-width: 768px ) {
+	.SubTextDoujin1, .SubTextDoujin2, .TextDoujin {
+		width: 100%;
+	}
+}

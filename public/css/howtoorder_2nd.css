@@ -1,0 +1,83 @@
+@charset "utf-8";
+/* CSS Document */
+.TitleHowtoorder{
+	background: url(../img/howtoorder_title.gif);
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	width:771px;
+	height: 0px;
+	padding-top: 34px;
+	overflow: hidden;
+	margin-top: 0px;
+	margin-bottom: 15px;
+}
+.subMenuHowtoorder{
+		margin:10px 0px 10px 100px;
+		color: #000000;
+		font-weight:bold;
+		line-height:180%;
+	}
+
+.TextHowtoorder{
+	line-height:180%;
+	border-bottom:dotted 1px #6e6d6d;
+	border: #b3b3b3 1px solid;
+}
+.TableAllHowtoorder{
+	width:650px;
+	margin:auto;
+	color:#797979;
+}
+.TableLeft{
+	font-size:30px;
+	width: 50px;
+    background-color:#ffcf00;
+    color:#FFFFFF;
+	text-align:center;
+
+}
+.TableLeft2{
+	font-size:30px;
+	width: 50px;
+    background-color:#959595;
+    color:#FFFFFF;
+	text-align:center;
+
+}
+.TableRight{
+background-color:#FFFFFF;
+    font-weight:normal;
+    padding-left:15px;
+	border-bottom:dotted 1px #6e6d6d;
+}
+.flameTop{
+	background: url(../howtoorder/img/ttop4.jpg);
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	width:771px;
+	height: 52px;
+}
+.flameMiddle{
+	background: url(../howtoorder/img/tcenter4.png);
+	background-repeat: repeat-y;
+	width:771px;
+}
+.flameBottom{
+	background: url(../howtoorder/img/tbottom4.png);
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	width:771px;
+	height: 52px;
+}
+
+
+@media screen and ( max-width: 768px ) {
+	.flameMiddle{
+		background: url(../howtoorder/img/tcenter5.png);
+		background-repeat: repeat-y;
+		width:100%;
+	}
+	.flameTop, .flameMiddle, .flameBottom {
+		width: 100%;
+	}
+}

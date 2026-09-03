@@ -1,0 +1,229 @@
+@charset "utf-8";
+/* CSS Document */
+.titleMeeting{
+	background: url(../img/btn_meetingdate_2-01.webp) no-repeat;
+	background-size:100% 100%;
+	width:771px;
+	height:145px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 0px;
+	overflow: hidden;
+	text-indent:-9999px;
+}
+.SubtitleMeeting{
+	background: url(../img/meeting_date02_btmtext.png) no-repeat;
+	background-size:100% 100%;
+	width:771px;
+	height:50px;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+	text-indent:-9999px;
+}
+.textMeetingDate01{
+	background: url(../meeting_date/img/meeting_date_nav_01.png) no-repeat;
+	width:700px;
+	height:72px;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+}
+.textMeetingDate02{
+	background: url(../meeting_date/img/meeting_date_nav_02.png) no-repeat;
+	width:700px;
+	height:72px;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+}
+.textMeetingDate03{
+	background: url(../meeting_date/img/meeting_date_nav_03.png) no-repeat;
+	width:700px;
+	height:72px;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+}
+.subMenu1{
+	background:url(../meeting_date/img/sub1.png) no-repeat;
+	width:690px;
+	height: 25px;
+	overflow: hidden;
+	margin-top: 15px;
+	margin-left: auto;
+	color:#8c8c8c;
+}
+.subMenu2{
+	background:url(../meeting_date/img/sub2.png) no-repeat;
+	width:690px;
+	height: 10px;
+	padding-top: 10px;
+	overflow: hidden;
+	margin-top: 15px;
+	margin-left: auto;
+}
+.tableAllContact{width:771px;}
+.tableContact{
+	width:450px;
+	border: #b3b3b3 1px solid;
+	margin:0px 0px 10px 0px;
+	
+	
+	
+}
+	.tableContact1{
+		width:40px;
+		text-align:center;
+		background-color:#dedede;
+		color:#797979;
+	
+	}
+	.tableContact1-1{
+		width:40px;
+		text-align:center;
+		color:#797979;
+		border:#b3b3b3 1px solid;
+	
+	}
+	
+	.tableContact2{
+		width:100px;
+		text-align:center;
+		background-color:#dedede;
+		color:#797979;
+	}
+
+dl {
+                width:700px;
+                border: #b3b3b3 1px solid;
+                margin:10px 0px 10px 0px;
+
+        }
+
+        dt {
+                width: 180px;
+                font-weight: bold;
+                background-color:#8c8c8c;
+                color:#FFFFFF;
+                font-weight:normal;
+                padding-left:10px;
+                height:30px;
+        }
+
+        dd {
+                width: 490px;
+                padding: 0px 3px 0px 10px;
+                margin:-30px 0px 0px 195px;
+                text-align:left;
+			
+        }
+    
+.TableAllL{
+ 				width:771px;
+                border: #b3b3b3 1px solid;
+                margin:10px 0px 10px 0px;
+}
+.TableLeft{
+				width: 180px;
+                background-color:#8c8c8c;
+                color:#FFFFFF;
+                font-weight:normal;
+                padding-left:10px;
+				line-height:200%;
+
+}
+.TableRightGray{
+				width: 490px;
+                text-align:left;
+				border-bottom:dotted 1px #6e6d6d;
+				padding-left:10px;
+				color:#8c8c8c;
+}  
+
+.lineContact{
+	border-bottom:dotted 1px #6e6d6d;
+}
+.heightContact{
+	height:30px;
+}
+.textContact{
+	line-height:170%;
+	color:#8c8c8c;
+}
+	.textContactCenter{
+	text-align:center;
+	color:#8c8c8c;
+	vertical-align: top;
+	}
+	
+.symbolRed{
+	color:#FF0000;
+}
+.form-table {
+  display: grid;
+  grid-template-columns: [first] 180px [line2] calc(100% - 180px);
+  padding: 5px;
+  border: 1px solid grey;
+  margin-top: 10px;
+}
+.form-left {
+  background: #8c8c8c;
+  color: #fff;
+  line-height: 200%;
+  padding-left: 6px;
+  border-bottom: 1px double;
+}
+.form-right {
+  /* line-height: 200%; */
+  /* align-self: center; */
+  padding: 3px 0 3px 10px;
+  padding-left: 10px;
+	border-bottom: 1px dotted grey;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  align-content: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+.TableRightGray{vertical-align: middle;}
+.form-right#fullw input, .form-right#fullw select {width: -webkit-fill-available;}
+
+@media screen and ( max-width: 768px ) {
+	.titleMeeting, .SubtitleMeeting, .textMeetingDate01, .textMeetingDate02, .textMeetingDate03, .tableAllContact, .tableContact, dl, .TableAllL {
+		width: 100%;
+	}
+	.subMenu1, .subMenu2 {
+		max-width:100%;
+	}
+	.textMeetingDate01, .textMeetingDate02, .textMeetingDate03 {
+		background-size: 100% 100%;
+	}
+	dt, .TableLeft {
+		width: 20%;
+	}
+	dd, .TableRightGray {
+		width: 80%;
+	}
+	input[type="text"], textarea {
+		max-width: 100% !important;
+	}
+	.subMenu1{font-size: 12px;}
+	.subMenu1 p{float: right;}
+}
+
+@media (max-width: 425px){
+	.form-table{grid-template-columns: [first] 30% [line2] 70%; padding: 3px;}
+	.form-left{padding: 3px;}
+	.form-right{padding: 3px 3px 3px 6px; font-size: 10px;}
+	.titleMeeting{height: 72px;}
+	.textMeetingDate01{height: 45px;}
+	.textMeetingDate02{height: 45px;}
+	.SubtitleMeeting{height: 33px;}
+	.subMenu1{font-size: 10px;}
+	.subMenu1 p{padding-right: 5px;}
+}
+@media (max-width: 375px){
+	.subMenu1{font-size: 8px; padding-top: 5px;}
+}

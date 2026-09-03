@@ -1,0 +1,11 @@
+.tab-content > .tab-pane {
+  display: none;
+}
+.tab-content > .active {
+  display: block;
+}
+.navigation {float: left; margin: 0; padding: 0; list-style: none; border-bottom: 1px solid #428BCA; border-top: 1px solid #428BCA;}
+.navigation li {float: left; margin: 0; padding: 0;}
+.navigation li a {padding: 20px 30px; float: left;}
+.navigation li.active a {background: #428BCA; color: #fff;}
+.tab-content > div {float: left; width: 100%;}

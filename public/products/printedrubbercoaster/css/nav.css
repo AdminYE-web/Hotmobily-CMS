@@ -1,0 +1,126 @@
+@charset "utf-8";
+
+
+/************************************************************
+	共通設定
+*************************************************************/
+a { -webkit-tap-highlight-color:rgba(0, 0, 0, 0)!important; } 
+
+/*.mm-menu {
+    -webkit-overflow-scrolling: auto;
+}*/
+
+/************************************************************
+	display設定
+*************************************************************/
+
+	@media all and (min-width: 769px){
+
+		/* mmenu 開閉 非表示 */
+		#mmenu{
+			display: none;
+		}
+		nav.bottom {
+			display: block !important;
+		}
+		.slidemenu-close {
+			display: none;
+		}
+	}
+	@media screen and (max-width: 768px){
+		nav.bottom {
+			display: block !important;
+		}
+	}
+
+
+/********************************************************
+	ヘッダー
+*********************************************************/
+
+	/********************************************************
+		jQuery.mmenu CSS // Mobile
+	*********************************************************/
+	@media only screen and (max-width: 768px){
+		/* 基本設計
+		------------------------------------------------------------*/
+		/* jquery.mmenu.all.css */	
+
+		/* 開閉メニュー
+		------------------------------------------------------------*/
+		#mmenu {
+			display: block;
+			position: fixed;
+			background: #FF8000;
+			top:0;
+			width:25%;
+			right: 0;
+			z-index: 12;
+		}
+		#mmenu a {
+			display: block;
+			width: 100%;
+			color: #FFF;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 18px 13px 16px;
+			background: url(../img/allow_03.png) center left no-repeat;
+		}
+		/*bew*/
+		#mmenu_mb {
+			display: block;
+			position: relative;
+			background: #FF8000;
+			top:0;
+			width:25%;
+			right: 0;
+			z-index: 12;
+		}
+		#mmenu_mb a {
+			display: block;
+			width: 100%;
+			color: #FFF;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 18px 13px 16px;
+		}
+		/*========>*/
+
+		/* 閉じるボタン */
+		li.slidemenu-close a:before {
+			margin-right: 0.4em;
+			font-family: FontAwesome;
+			font-style: normal;
+			font-weight: normal;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			content: "\f057";
+		}
+
+		/* 背景色 */
+		.mm-ismenu {
+			background: none repeat scroll 0 0 #FFF !important;
+			color: rgba(255,255,255,1) !important;
+		}
+		/* 区切り線色 */
+		.mm-menu .mm-list > li:after {
+			
+		}
+		/* 区切り線（last） */
+		.mm-menu.mm-vertical .mm-list .mm-panel li:last-child::after {
+			border-bottom: none !important;
+		}
+		/* リンク色 */
+		.mm-list > li > a, .mm-list > li > span {
+			color: rgba(255,103,0,1) !important;
+		}
+		/* タイトル色 */
+		.mm-header .mm-title {
+			color: rgba(255,103,0,1) !important;
+			font-size: 1.5em;
+			font-weight: bold;
+		}
+	}
+
+

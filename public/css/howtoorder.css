@@ -1,0 +1,65 @@
+@charset "utf-8";
+/* CSS Document */
+.TitleHowtoorder{
+	background: url(../img/howtoorder_title.gif);
+	background-repeat:no-repeat;
+	width:695px;
+	height: 0px;
+	padding-top: 34px;
+	overflow: hidden;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+.subMenuHowtoorder{
+		margin:10px 0px 10px 100px;
+		color: #000000;
+		font-weight:bold;
+		line-height:180%;
+	}
+
+.TextHowtoorder{
+	line-height:180%;
+	border-bottom:dotted 1px #6e6d6d;
+	border: #b3b3b3 1px solid;
+}
+.TableAllHowtoorder{
+	width:650px;
+	margin:auto;
+	color:#797979;
+	
+}
+.TableLeft{
+	font-size:30px;
+	width: 50px;
+    background-color:#ffcf00;
+    color:#FFFFFF;
+	text-align:center;
+
+}
+.TableLeft2{
+	font-size:30px;
+	width: 50px;
+    background-color:#959595;
+    color:#FFFFFF;
+	text-align:center;
+
+}
+.TableRight{
+background-color:#FFFFFF;
+    font-weight:normal;
+    padding-left:15px;
+	border-bottom:dotted 1px #6e6d6d;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,210 @@
+/*
+ * Color swatches used by the sales-order flight-tag and wappen forms.
+ * The inputs stay in the document so the existing calculation and submit
+ * logic keeps working; only their presentation is replaced with cards.
+ */
+.color-selection-container {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid #dfe5ec;
+  border-radius: 10px;
+  background: #f7f9fc;
+  box-shadow: 0 2px 7px rgba(37, 55, 74, 0.08);
+}
+
+.color-selection-container .preview-sub,
+.color-selection-container .normal_c,
+.create-order-color-picker {
+  width: 100%;
+  margin: 0;
+}
+
+.color-selection-container .preview-sub {
+  display: block;
+}
+
+.color-selection-container .show_c {
+  box-sizing: border-box;
+  min-height: 0;
+  margin: 0 0 10px;
+  padding: 7px 10px;
+  border: 1px solid #e4e9ef;
+  border-radius: 8px;
+  background: #fff;
+  color: #4e5b68;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.color-selection-container .show_c br {
+  display: none;
+}
+
+.color-selection-container .show_c img {
+  width: auto !important;
+  max-width: 100%;
+  height: auto;
+  max-height: 32px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.color-selection-container .show_c span {
+  vertical-align: middle;
+}
+
+.create-order-color-picker table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: unset !important;
+  table-layout: fixed;
+}
+
+.create-order-color-picker tbody {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.create-order-color-picker tr {
+  display: contents;
+}
+
+.create-order-color-picker td {
+  position: relative;
+  display: block;
+  width: auto !important;
+  height: auto;
+  padding: 0 !important;
+  border: 0 !important;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.create-order-color-picker td > input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.create-order-color-picker td > label {
+  box-sizing: border-box;
+  position: relative;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 70px;
+  padding: 7px;
+  overflow: visible;
+  border: 2px solid transparent;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(37, 55, 74, 0.12);
+  cursor: pointer;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.create-order-color-picker td > label:hover {
+  border-color: #ffbd66;
+  box-shadow: 0 3px 8px rgba(37, 55, 74, 0.16);
+  transform: translateY(-1px);
+}
+
+.create-order-color-picker td > input[type="radio"]:checked + label {
+  border-color: #f28c00;
+  background: #fff8ed;
+  box-shadow: 0 0 0 3px rgba(242, 140, 0, 0.18), 0 3px 8px rgba(37, 55, 74, 0.14);
+}
+
+.create-order-color-picker td > input[type="radio"]:focus-visible + label {
+  outline: 3px solid rgba(30, 144, 255, 0.4);
+  outline-offset: 2px;
+}
+
+.create-order-color-picker td > input[type="radio"]:checked + label::after {
+  content: "✓";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #f28c00;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(37, 55, 74, 0.25);
+}
+
+.create-order-color-picker td > label img {
+  display: block;
+  width: 100% !important;
+  max-width: 180px;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.create-order-color-picker td > input[value="PANTONE/DIC指定"] + label {
+  min-height: 70px;
+  padding: 8px 10px;
+  border-style: dashed;
+  color: #4e5b68;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .color-selection-container {
+    padding: 10px;
+  }
+
+  .create-order-color-picker tbody {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .create-order-color-picker td > label {
+    min-height: 62px;
+    padding: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .color-selection-container {
+    padding: 8px;
+  }
+
+  .create-order-color-picker tbody {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .create-order-color-picker td > label,
+  .create-order-color-picker td > input[value="PANTONE/DIC指定"] + label {
+    min-height: 58px;
+  }
+}

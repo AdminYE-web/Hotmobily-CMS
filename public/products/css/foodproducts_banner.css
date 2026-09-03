@@ -1,0 +1,2 @@
+a.img-hover img{transition: all 0.3s ease-in-out;}
+a.img-hover:hover img {opacity: 0.8; box-shadow: 1px 1px 6px grey;}

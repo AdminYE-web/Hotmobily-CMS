@@ -1,0 +1,115 @@
+@charset "utf-8";
+
+/*----------------------------------------------------
+	/item/xxx.html （商品ページ共通）
+----------------------------------------------------*/
+.itemTabMenu					{position:relative;margin:20px 0 0;cursor: pointer;}
+.itemTabMenu:after				{position:absolute;content:"";width:100%;bottom:0;left:0;border-bottom:1px solid #AAA;z-index:1;}
+.itemTabMenu:before				{z-index:1;}
+.itemTabMenu div					{position:relative;border:1px solid #AAA;background:#ECECEC;display:inline-block;}
+.itemTabMenu div:hover			{}/**/
+.itemTabMenu div a				{display:block;padding:7px 15px;text-decoration:none;color:#333;border-top:5px #ccc solid;}
+.itemTabMenu div a:hover			{position:relative;bottom:0px;background:white;border-top:5px orange solid;}
+.itemTabMenu div.selected 		{background:#FFF;font-weight:bold;z-index:2;border-bottom-color:#FFF;}
+.itemTabMenu div.selected a		{border-top:5px #F58904 solid;}
+.itemTabMenu div.selected a:hover{bottom:0px;cursor:default;background:white;}
+.itemTabMenu div a				{-webkit-transition:0.2s linear;-moz-transition:0.2s linear;-o-transition:0.2s linear;}
+
+.itemTabMenuContents			{border:1px solid #AAA;border-top:none;padding:15px 15px 40px;}
+
+.itemTabMenuBottom						{position:relative;margin:-1px 0 20px;cursor: pointer;}
+.itemTabMenuBottom:after				{position:absolute;content:"";width:100%;top:0;left:0;z-index:1;}
+.itemTabMenuBottom:before				{z-index:1;}
+.itemTabMenuBottom div					{position:relative;border:1px solid #AAA;background:#ECECEC;display:inline-block;}
+.itemTabMenuBottom div:hover				{}/**/
+.itemTabMenuBottom div a					{display:block;padding:7px 15px;text-decoration:none;color:#333;border-bottom:5px #ccc solid;}
+.itemTabMenuBottom div a:hover			{position:relative;bottom:0px;background:white;border-bottom:5px orange solid;}
+.itemTabMenuBottom div.selected 			{background:#FFF;font-weight:bold;z-index:2;border-top-color:#FFF;}
+.itemTabMenuBottom div.selected a		{border-bottom:5px #F58904 solid;}
+.itemTabMenuBottom div.selected a:hover	{bottom:0px;cursor:default;background:white;}
+.itemTabMenuBottom div a					{-webkit-transition:0.2s linear;-moz-transition:0.2s linear;-o-transition:0.2s linear;}
+
+#itemMainSet			{border:solid 0px black;}
+#itemMainSet img		{float:left;}
+#itemMainSet div		{width:175px;height:310px;line-height:135%;float:right;border:solid 0px #ddd;}
+#itemMainSet dl			{font-size:12px;height:290px;background-color:#ecf0f1;padding:10px 10px 10px 15px;margin:0 0 5px;line-height:15px;}
+#itemMainSet dl dt		{font-size:11px;margin:5px 0 0 0;font-weight:bold;}
+
+#bxGalleryWrap					{height:484px;position:relative;overflow:hidden;border:solid 1px #ddd;padding:9px;margin:0 0 5px;}
+#bxGalleryWrap #bxGallery		{list-style:none;}
+#bxGalleryWrap #bxGallery div	{border:solid 0px blue;}
+#bxGalleryWrap #bxGallery img	{box-shadow:gainsboro 0px 0px 5px;-webkit-box-shadow:gainsboro 0px 0px 5px;-moz-box-shadow:gainsboro 0px 0px 5px;}
+
+#bxGalleryWrap .thumbs			{position:absolute;top:453px;width:645px;}/*border-top:dotted 1px silver;background:white;*/
+#bxGalleryWrap .thumbs div		{margin-right:4px;margin-bottom:7px;border:solid 1px silver;padding:1px;}/* js側でfloat:left;cursor:pointer;height:40px;opacity:1; */
+#bxGalleryWrap .thumbs div img	{background:white;}/* widthはjsで固定 */
+
+#bxGalleryWrap .caption			{position:absolute;top:0;left:0;padding:5px;font-size:0.9em;color:#666;}
+#bxGalleryWrap .dlList			{padding:20px 0;}
+#bxGalleryWrap .dlList dt		{padding:5px 0 2px 9px;font-weight:bold;font-size:100%;}
+#bxGalleryWrap .dlList dd		{padding-bottom:5px;}
+
+.post-container {
+    margin: 20px 20px 0 0;
+    overflow: hidden;
+}
+.post-thumb {
+    float: left
+}
+.post-thumb img {
+    display: block
+}
+.post-content {
+    margin-left: 21%
+}
+
+@media only screen and (max-width: 768px){
+  /*----------------------------------------------------
+  	/item/xxx.html （商品ページ共通）
+  ----------------------------------------------------*/
+  .itemTabMenu					{position:relative;margin:20px 0 0;}
+  .itemTabMenu:after				{position:absolute;content:"";width:100%;bottom:0;left:0;border-bottom:1px solid #AAA;z-index:1;}
+  .itemTabMenu:before				{z-index:1;}
+  .itemTabMenu div					{position:relative;border:1px solid #AAA;background:#ECECEC;display:inline-block;width: 86px}
+  .itemTabMenu div:hover			{}/**/
+  .itemTabMenu div a				{display:block;padding:7px 15px;text-decoration:none;color:#333;border-top:5px #ccc solid;}
+  .itemTabMenu div a:hover			{position:relative;bottom:0px;background:white;border-top:5px orange solid;}
+  .itemTabMenu div.selected 		{background:#FFF;font-weight:bold;z-index:2;border-bottom-color:#FFF;}
+  .itemTabMenu div.selected a		{border-top:5px #F58904 solid;}
+  .itemTabMenu div.selected a:hover{bottom:0px;cursor:default;background:white;}
+  .itemTabMenu div a				{-webkit-transition:0.2s linear;-moz-transition:0.2s linear;-o-transition:0.2s linear;}
+
+  .itemTabMenuContents			{border:1px solid #AAA;border-top:none;padding:15px 15px 40px;}
+
+  .itemTabMenuBottom						{position:relative;margin:-1px 0 20px;}
+  .itemTabMenuBottom:after				{position:absolute;content:"";width:100%;top:0;left:0;z-index:1;}
+  .itemTabMenuBottom:before				{z-index:1;}
+  .itemTabMenuBottom div					{position:relative;border:1px solid #AAA;background:#ECECEC;display:inline-block;width: 86px}
+  .itemTabMenuBottom div:hover				{}/**/
+  .itemTabMenuBottom div a					{display:block;padding:7px 15px;text-decoration:none;color:#333;border-bottom:5px #ccc solid;}
+  .itemTabMenuBottom div a:hover			{position:relative;bottom:0px;background:white;border-bottom:5px orange solid;}
+  .itemTabMenuBottom div.selected 			{background:#FFF;font-weight:bold;z-index:2;border-top-color:#FFF;}
+  .itemTabMenuBottom div.selected a		{border-bottom:5px #F58904 solid;}
+  .itemTabMenuBottom div.selected a:hover	{bottom:0px;cursor:default;background:white;}
+  .itemTabMenuBottom div a					{-webkit-transition:0.2s linear;-moz-transition:0.2s linear;-o-transition:0.2s linear;}
+
+  #itemMainSet			{border:solid 0px black;}
+  #itemMainSet img		{float:left;}
+  #itemMainSet div		{width:175px;height:310px;line-height:135%;float:right;border:solid 0px #ddd;}
+  #itemMainSet dl			{font-size:12px;height:290px;background-color:#ecf0f1;padding:10px 10px 10px 15px;margin:0 0 5px;line-height:15px;}
+  #itemMainSet dl dt		{font-size:11px;margin:5px 0 0 0;font-weight:bold;}
+
+  #bxGalleryWrap					{height:484px;position:relative;overflow:hidden;border:solid 1px #ddd;padding:9px;margin:0 0 5px;}
+  #bxGalleryWrap #bxGallery		{list-style:none;}
+  #bxGalleryWrap #bxGallery div	{border:solid 0px blue;}
+  #bxGalleryWrap #bxGallery img	{box-shadow:gainsboro 0px 0px 5px;-webkit-box-shadow:gainsboro 0px 0px 5px;-moz-box-shadow:gainsboro 0px 0px 5px;}
+
+  #bxGalleryWrap .thumbs			{position:absolute;top:453px;width:645px;}/*border-top:dotted 1px silver;background:white;*/
+  #bxGalleryWrap .thumbs div		{margin-right:4px;margin-bottom:7px;border:solid 1px silver;padding:1px;}/* js側でfloat:left;cursor:pointer;height:40px;opacity:1; */
+  #bxGalleryWrap .thumbs div img	{background:white;}/* widthはjsで固定 */
+
+  #bxGalleryWrap .caption			{position:absolute;top:0;left:0;padding:5px;font-size:0.9em;color:#666;}
+  #bxGalleryWrap .dlList			{padding:20px 0;}
+  #bxGalleryWrap .dlList dt		{padding:5px 0 2px 9px;font-weight:bold;font-size:100%;}
+  #bxGalleryWrap .dlList dd		{padding-bottom:5px;}
+}

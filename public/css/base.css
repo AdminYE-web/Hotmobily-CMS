@@ -1,0 +1,36 @@
+@charset "UTF-8";
+/* CSS Document */
+
+* {	margin: 0px auto; padding: 0px; }
+html, body { height: 100%; }
+
+body { background: url(../img/body_bg.gif) repeat-y center;}
+img { border:none; }
+a { border:none; }
+
+/*** id:wrapper ***/
+#wrapper { width: 900px; min-height: 100%; margin-bottom: 50px; }
+
+	/*** id:header ***/
+	#header { height: 241px; background:url(../img/header_bg02.png) repeat-x bottom; }
+
+		/* logo :: header */
+		#logo { float:left; margin-left: 50px; margin-top: 0px; margin-bottom: 3px;  width: 252px; height: 112px; }
+
+	/*** id:content_wrapper ***/
+	#content_wrapper { width: 771px; }
+
+		/* content_left :: content_wrapper */
+		#content_left { width: 510px; margin-left: 10px; margin-top: 30px; float: left; background: right url(../img/dot_line_v.gif) repeat-y; }
+
+		/* content_right :: content_wrapper */
+		#content_right { float: right; width: 230px; margin-left: 0px; margin-top: 10px; }
+
+		#cntent_wrap { width: 800px; margin-top: 15px; }
+
+	#content_estimate { width: 695px; text-align:left; }
+	#content_MeetingDate { width: 800px; text-align:left; }
+
+/*** id:footer ***/
+#footer { width: 900px; margin-top: -50px; clear:both; background: url(../img/header_bg.gif) repeat-x bottom; height: 80px; position: relative; }
+

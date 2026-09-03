@@ -1,0 +1,77 @@
+@charset "utf-8";
+/* CSS Document */
+
+.staff_all{
+	width:771px;
+	margin-top:20px;
+
+}
+.staff_picKadota{
+	background-image:url(../staff/img/kadota.png);
+	background-repeat:no-repeat;
+	width:209px;
+	height:209px;
+	float:left;
+}
+.staff_picTakemura{
+	background-image:url(../staff/img/staff_takemura.jpg);
+	width:209px;
+	height:250px;
+	float:left;
+}
+.staff_picDao{
+	background-image:url(../staff/img/staff_dao.jpg);
+	width:209px;
+	height:250px;
+	float:left;
+}
+.staff_picNat{
+	background-image:url(../staff/img/staff_nat.jpg);
+	width:209px;
+	height:250px;
+	float:left;
+}
+.staff_picKojo{
+	background-image:url(../staff/img/staff_kojo.jpg);
+	width:209px;
+	height:250px;
+	float:left;
+}
+.staff_right{
+	float:right;
+	margin-left:10px;
+	margin-top:5px;
+	width:500px;
+	
+}
+.staff_text_L{
+	float:left;
+	margin-right:20px;
+	width:150px;
+	line-height:20px;
+	color:#666666;
+
+}
+.staff_text_R{
+	float:right;
+	margin-righ:10px;
+	width:300px;
+	line-height:20px;
+	color:#666666;
+}
+.staff_text{
+	float:right;
+	margin-righ:10px;
+	width:500px;
+	line-height:20px;
+	color:#666666;
+}
+
+.staff_topic{
+text-align:center;
+color:#666666;
+font-size:18px;
+
+
+
+}

@@ -1,0 +1,709 @@
+.FuAll{
+	width:771px;
+	margin:0 auto;
+	padding:0px 0px 0px 0px;
+}
+.FuT01{
+	width: 771px;
+	height: 160px;
+	
+}
+.FuT02{
+	background-image:url(../fujiyamagic/img/t02.jpg);
+	background-repeat:no-repeat;
+	width:771px;
+	height:116px;
+	margin:10px 0px 70px 0px;
+	
+}
+.FuT03{
+	width: 771px;
+	margin: 0px 0px 30px 0px;
+	
+}
+.FuT04{
+	width: 600px;
+	margin: 10px 0px 30px 75px;
+	
+}
+.FuBgAll{
+	width:535px;
+	margin:10px 0px 50px 75px;
+	background-image:url(../fujiyamagic/img/bg01-1.jpg);
+	background-repeat:repeat-y;
+
+}
+.FuBgAll2{
+	width:535px;
+	margin:10px 0px 20px 75px;
+	background-image:url(../fujiyamagic/img/bg02.jpg);
+	background-repeat:repeat-y;
+
+}
+.FuBgAll3{
+	width:535px;
+	margin:10px 0px 50px 75px;
+	background-image:url(../fujiyamagic/img/bg03.jpg);
+	background-repeat:repeat-y;
+
+}
+.FuBgAll4{
+	width:535px;
+	margin:10px 0px 10px 75px;
+	background-image:url(../fujiyamagic/img/bg04.jpg);
+	background-repeat:repeat-y;
+
+}
+.FuBg01{
+	background-image:url(../fujiyamagic/img/bg01.jpg);
+	background-repeat:no-repeat;
+	height:150px;
+	width:13px;
+	float:left;
+}
+.Fu_fR{
+	float:right;
+	width:485px;
+}
+
+.FuLine{
+	background-image:url(../fujiyamagic/img/line.jpg);
+	background-repeat:no-repeat;
+	width:484px;
+	height:18px;
+	margin:0px 0px 10px 0px;
+}
+.FuFT01{
+	background-image:url(../fujiyamagic/img/tf01.jpg);
+	background-repeat:no-repeat;
+	/*width:143px;
+	height:17px;
+	margin:10px 0px 0px 0px;*/
+	width:137px;
+	height:24px;
+	float:left;
+}
+.FuFT02{
+	background-image:url(../fujiyamagic/img/tf02.jpg);
+	background-repeat:no-repeat;
+	width:210px;
+	height:20px;
+	margin:0px 0px 0px 0px;
+	
+}
+.FuSpace01{
+	/*background-image:url(../fujiyamagic/img/space01.jpg);
+	background-repeat:no-repeat;*/
+	width:442px;
+	height:116px;
+	margin:0px 0px 30px 0px;
+}
+        .FuSpace01 textarea{
+                width:105%;
+        }
+.FuFT03{
+	background-image:url(../fujiyamagic/img/tf03.jpg);
+	background-repeat:no-repeat;
+	width:241px;
+	height:19px;
+	margin:0px 0px 0px 0px;
+	
+}
+.FuBtAll{
+
+	margin:0px 0px 0px 20px;
+	width:400px;
+	
+}
+.FuBt01{
+	background-image:url(../fujiyamagic/img/bt01.jpg);
+	background-repeat:no-repeat;
+	width:99px;
+	height:23px;
+	float:left;
+	
+	
+}
+
+.FuFT04{
+	background-image:url(../fujiyamagic/img/tf04.jpg);
+	background-repeat:no-repeat;
+	width:104px;
+	height:23px;
+	margin:0px 0px 0px 0px;
+	float:right;
+	
+}
+.FuFT05{
+	background-image:url(../fujiyamagic/img/tf05.jpg);
+	background-repeat:no-repeat;
+	width:72px;
+	height:17px;
+	margin:0px 0px 0px 0px;
+	
+}
+.Fu_S01{
+	width:420px;
+	margin:10px 0px 10px 33px;
+}
+.Fu_S02{
+	width:460px;
+	margin:0px 0px 10px 0px;
+}
+.FuFT06{
+	background-image:url(../fujiyamagic/img/tf06.jpg);
+	background-repeat:no-repeat;
+	width:241px;
+	height:19px;
+	float:left;
+	
+}
+.FuSpace02{
+
+        /*margin:0 100px 0 0;
+        width:50px;   */
+        text-align:right;
+
+        
+	width:107px;
+	height:21px;
+	margin:0px 0px 0px 0px;
+	float:right;
+}
+        .FuSpace02 input{
+                width:70%;
+                text-align:right;
+        }
+
+.FuFT07{
+	background-image:url(../fujiyamagic/img/tf07.jpg);
+	background-repeat:no-repeat;
+	width:77px;
+	height:20px;
+	float:left;
+	
+}
+.FuFT08{
+	background-image:url(../fujiyamagic/img/tf08.jpg);
+	background-repeat:no-repeat;
+	width:62px;
+	height:19px;
+	float:left;
+	
+}
+
+.FuT05{
+	background-image:url(../fujiyamagic/img/t05.jpg);
+	background-repeat:no-repeat;
+	width:506px;
+	height:23px;
+	margin:10px 0px 30px 75px;
+	
+}
+.FuFT10{
+	background-image:url(../fujiyamagic/img/tf10.jpg);
+	background-repeat:no-repeat;
+	width:65px;
+	height:17px;
+	float:left;
+	
+}
+
+.FuSpace03{
+	/*background-image:url(../fujiyamagic/img/space03.jpg);
+	background-repeat:no-repeat;*/
+	width:267px;
+	/*height:24px;*/
+	margin:0px 0px 0px 0px;
+	float:right;
+}
+        .FuSpace03 input{
+                width: 100%;
+        }
+        .FuSpace03 input.radio{
+                width:auto;
+        }
+.FuFT11{
+	background-image:url(../fujiyamagic/img/tf11.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:21px;
+	float:right;
+	
+}
+.FuFT12{
+	background-image:url(../fujiyamagic/img/tf12.jpg);
+	background-repeat:no-repeat;
+	width:439px;
+	height:36px;
+
+	
+}
+.FuBt02{
+	/*background-image:url(../fujiyamagic/img/bt02.jpg);
+	background-repeat:no-repeat;*/
+	text-align:right;
+	width:540px;
+	height:22px;
+	margin:0px 0px 30px 75px;
+	
+	
+}
+.FuBt03{
+	background-image:url(../fujiyamagic/img/bt03.jpg);
+	background-repeat:no-repeat;
+	background-position:right;
+	width:540px;
+	height:25px;
+	margin:0px 0px 30px 75px;
+	
+	
+}
+.FuT06{
+	background-image:url(../fujiyamagic/img/t06.jpg);
+	background-repeat:no-repeat;
+	width:93px;
+	height:22px;
+	margin:10px 0px 10px 75px;
+	
+}
+.FuFT13{
+	background-image:url(../fujiyamagic/img/tf13.jpg);
+	background-repeat:no-repeat;
+	width:423px;
+	height:20px;
+	margin:0px 0px 30px 150px;
+	
+	
+}
+/*----*/
+.FuFT14{
+	background-image:url(../fujiyamagic/img/tf14.jpg);
+	background-repeat:no-repeat;
+	width:74px;
+	height:20px;
+	float:left;
+	
+}
+.FuFT15{
+	background-image:url(../fujiyamagic/img/tf15.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:18px;
+	float:right;
+	
+}
+/*----*/
+.FuFT16{
+	background-image:url(../fujiyamagic/img/tf16.jpg);
+	background-repeat:no-repeat;
+	width:73px;
+	height:29px;
+	float:left;
+	
+}
+.FuFT17{
+	background-image:url(../fujiyamagic/img/tf17.jpg);
+	background-repeat:no-repeat;
+	width:72px;
+	height:18px;
+	float:left;
+	
+}
+.FuFT18{
+	background-image:url(../fujiyamagic/img/tf18.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:20px;
+	float:right;
+	
+}
+/*----*/
+.FuFT19{
+	background-image:url(../fujiyamagic/img/tf19.jpg);
+	background-repeat:no-repeat;
+	width:100px;
+	height:20px;
+	float:left;
+	
+}
+
+/*----*/
+.FuFT20{
+	background-image:url(../fujiyamagic/img/tf20.jpg);
+	background-repeat:no-repeat;
+	width:115px;
+	height:20px;
+	float:left;
+	
+}
+.FuFT21{
+	background-image:url(../fujiyamagic/img/tf21.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:21px;
+	float:right;
+	
+}
+/*----*/
+.FuFT22{
+	background-image:url(../fujiyamagic/img/tf22.jpg);
+	background-repeat:no-repeat;
+	width:114px;
+	height:18px;
+	float:left;
+	
+}
+.FuFT23{
+	background-image:url(../fujiyamagic/img/tf23.jpg);
+	background-repeat:no-repeat;
+	width:72px;
+	height:21px;
+	float:left;
+	
+}
+.FuFT24{
+	background-image:url(../fujiyamagic/img/tf24.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:18px;
+	float:right;
+	
+}
+/*----*/
+.FuFT25{
+	background-image:url(../fujiyamagic/img/tf25.jpg);
+	background-repeat:no-repeat;
+	width:46px;
+	height:21px;
+	float:left;
+	
+}
+.FuFT26{
+	background-image:url(../fujiyamagic/img/tf26.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:20px;
+	float:right;
+	
+}
+/*----*/
+.FuFT27{
+	background-image:url(../fujiyamagic/img/tf27.jpg);
+	background-repeat:no-repeat;
+	width:137px;
+	height:24px;
+	float:left;
+	
+}
+.FuFT28{
+	background-image:url(../fujiyamagic/img/tf28.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:22px;
+	float:right;
+	
+}
+/*----*/
+.FuFT29{
+	background-image:url(../fujiyamagic/img/tf29.jpg);
+	background-repeat:no-repeat;
+	width:165px;
+	height:20px;
+	float:left;
+	
+}
+/*----*/
+.FuFT30{
+	background-image:url(../fujiyamagic/img/tf30.jpg);
+	background-repeat:no-repeat;
+	width:86px;
+	height:19px;
+	float:left;
+	
+}
+.FuFT31{
+	background-image:url(../fujiyamagic/img/tf31.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:19px;
+	float:right;
+	
+}
+/*----*/
+.FuFT32{
+	background-image:url(../fujiyamagic/img/tf32.jpg);
+	background-repeat:no-repeat;
+	width:101px;
+	height:21px;
+	float:left;
+	
+}
+.FuFT33{
+	background-image:url(../fujiyamagic/img/tf33.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:21px;
+	float:right;
+	
+}
+/*----*/
+
+.FuT07{
+	background-image:url(../fujiyamagic/img/t07.jpg);
+	background-repeat:no-repeat;
+	width:54px;
+	height:20px;
+	margin:10px 0px 10px 75px;
+	
+}
+/*----*/
+.FuFT34{
+	background-image:url(../fujiyamagic/img/tf34.jpg);
+	background-repeat:no-repeat;
+	width:87px;
+	height:21px;
+	float:left;
+	
+}
+.FuFT35{
+	background-image:url(../fujiyamagic/img/tf35.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:17px;
+	float:right;
+	
+}
+/*----*/
+.FuFT36{
+	background-image:url(../fujiyamagic/img/tf36.jpg);
+	background-repeat:no-repeat;
+	width:87px;
+	height:22px;
+	float:left;
+	
+}
+.FuFT37{
+	background-image:url(../fujiyamagic/img/tf37.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:19px;
+	float:right;
+	
+}
+/*----*/
+.FuFT38{
+	background-image:url(../fujiyamagic/img/tf38.jpg);
+	background-repeat:no-repeat;
+	width:173px;
+	height:19px;
+	float:left;
+	
+}
+.FuFT39{
+	background-image:url(../fujiyamagic/img/tf39.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:17px;
+	float:right;
+	
+}
+/*----*/
+.FuFT40{
+	background-image:url(../fujiyamagic/img/tf40.jpg);
+	background-repeat:no-repeat;
+	width:177px;
+	height:19px;
+	float:left;
+	
+}
+.FuFT41{
+	background-image:url(../fujiyamagic/img/tf41.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:18px;
+	float:right;
+	
+}
+/*----*/
+.FuFT42{
+	background-image:url(../fujiyamagic/img/tf42.jpg);
+	background-repeat:no-repeat;
+	width:101px;
+	height:23px;
+	float:left;
+	
+}
+.FuFT43{
+	background-image:url(../fujiyamagic/img/tf43.jpg);
+	background-repeat:no-repeat;
+	width:267px;
+	height:18px;
+	float:right;
+	
+}
+/*----*/
+.FuFT44{
+	background-image:url(../fujiyamagic/img/tf44.jpg);
+	background-repeat:no-repeat;
+	width:104px;
+	height:22px;
+	float:left;
+	
+}
+/*-------------------------confirm---------------------------------*/
+.ConT01{
+	background-image:url(../fujiyamagic/img/con_t01.jpg);
+	background-repeat:no-repeat;
+	width:700px;
+	height:132px;
+	
+}
+.ConT02{
+	background-image:url(../fujiyamagic/img/con_t02.jpg);
+	background-repeat:no-repeat;
+	width:128px;
+	height:26px;
+	margin:10px 0px 30px 75px;
+	
+}
+.Con_space{
+	width:480px;
+	font-size:12px;
+	margin:10px 0px 10px 0px;
+}
+
+.Con_space2{
+
+
+	width:330px;
+	font-size:12px;
+	float:right;
+	
+}
+
+
+.ConFuFT14{
+	background-image:url(../fujiyamagic/img/con_tf14.jpg);
+	background-repeat:no-repeat;
+	width:46px;
+	height:20px;
+	margin:0px 0px 10px 0px;
+
+	
+}
+
+
+.ConFuFT19{
+	background-image:url(../fujiyamagic/img/con_tf19.jpg);
+	background-repeat:no-repeat;
+	width:72px;
+	height:20px;
+	margin:0px 0px 10px 0px;
+	
+	
+}
+.ConFuFT20{
+	background-image:url(../fujiyamagic/img/con_tf20.jpg);
+	background-repeat:no-repeat;
+	width:87px;
+	height:20px;
+	margin:0px 0px 10px 0px;
+
+	
+}
+.ConFuFT29{
+	background-image:url(../fujiyamagic/img/con_tf29.jpg);
+	background-repeat:no-repeat;
+	width:137px;
+	height:20px;
+	margin:0px 0px 10px 0px;
+
+	
+}
+
+.ConFuFT30{
+	background-image:url(../fujiyamagic/img/con_tf30.jpg);
+	background-repeat:no-repeat;
+	width:59px;
+	height:19px;
+	margin:0px 0px 10px 0px;
+
+	
+}
+
+
+.ConFuFT34{
+	background-image:url(../fujiyamagic/img/con_tf34.jpg);
+	background-repeat:no-repeat;
+	width:59px;
+	height:21px;
+	margin:0px 0px 10px 0px;
+
+	
+}
+
+
+.ConFuFT36{
+	background-image:url(../fujiyamagic/img/con_tf36.jpg);
+	background-repeat:no-repeat;
+	width:59px;
+	height:22px;
+	margin:0px 0px 10px 0px;
+
+	
+}
+.ConFuFT38{
+	background-image:url(../fujiyamagic/img/con_tf38.jpg);
+	background-repeat:no-repeat;
+	width:146px;
+	height:19px;
+	margin:0px 0px 10px 0px;
+
+	
+}
+.ConBt{
+
+	width:540px;
+	height:25px;
+	text-align:right;
+	margin:0px 0px 30px 75px;
+	
+	
+}
+/*-------------------------complete---------------------------------*/
+.ComPT01{
+	background-image:url(../fujiyamagic/img/conplete_t01.jpg);
+	background-repeat:no-repeat;
+	width:241px;
+	height:25px;
+	margin:10px 0px 30px 75px;
+}
+.ComPT02{
+	background-image:url(../fujiyamagic/img/conplete_t02.jpg);
+	background-repeat:no-repeat;
+	width:364px;
+	height:82px;
+	margin:10px 0px 30px 0px;
+}
+.ComPT03{
+	background-image:url(../fujiyamagic/img/conplete_t03.jpg);
+	background-repeat:no-repeat;
+	width:134px;
+	height:18px;
+	margin:10px 0px 10px 0px;
+}
+.ComPT04{
+	background-image:url(../fujiyamagic/img/conplete_t04.jpg);
+	background-repeat:no-repeat;
+	width:205px;
+	height:21px;
+	margin:10px 0px 30px 0px;
+}
+.ComPT05{
+	background-image:url(../fujiyamagic/img/conplete_t05.jpg);
+	background-repeat:no-repeat;
+	width:449px;
+	height:26px;
+	margin:10px 0px 10px 0px;
+}

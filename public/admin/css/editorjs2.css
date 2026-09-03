@@ -1,0 +1,395 @@
+/**
+ * Editor.js Custom Styles
+ * Styles for image alignment, sizing, and paragraph alignment
+ */
+
+/* Editor Container */
+.editorjs-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+    background: #fff;
+    min-height: 300px;
+}
+
+.ce-popover__container{
+    width: 15% !important;
+}
+
+/* ================================
+   Paragraph Alignment Styles
+   ================================ */
+.ce-paragraph[data-alignment="left"],
+p[style*="text-align: left"] {
+    text-align: left;
+}
+
+.ce-paragraph[data-alignment="center"],
+p[style*="text-align: center"] {
+    text-align: center;
+}
+
+.ce-paragraph[data-alignment="right"],
+p[style*="text-align: right"] {
+    text-align: right;
+}
+
+/* ================================
+   Image Block Styles
+   ================================ */
+.image-block {
+    margin: 1.5em 0;
+    padding: 0;
+}
+
+.image-block img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+}
+
+.image-block figcaption {
+    margin-top: 8px;
+    font-size: 0.9em;
+    color: #666;
+    text-align: center;
+}
+
+/* Image Alignment Classes */
+.image-block.align-left {
+    text-align: left;
+}
+
+.image-block.align-left img {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.image-block.align-center {
+    text-align: center;
+}
+
+.image-block.align-center img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.image-block.align-right {
+    text-align: right;
+}
+
+.image-block.align-right img {
+    margin-left: auto;
+    margin-right: 0;
+}
+
+/* Image Size Classes */
+.image-block.size-small img {
+    width: 25% !important;
+}
+
+.image-block.size-medium img {
+    width: 50% !important;
+}
+
+.image-block.size-large img {
+    width: 75% !important;
+}
+
+.image-block.size-full img {
+    width: 100% !important;
+}
+
+/* Image with Border */
+.image-block.with-border img {
+    border: 2px solid #e0e0e0;
+}
+
+/* Image Stretched */
+.image-block.stretched img {
+    width: 100% !important;
+}
+
+/* Image with Background */
+.image-block.with-background {
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* ================================
+   Editor.js Tune Buttons
+   ================================ */
+.image-alignment-tune,
+.image-size-tune {
+    display: flex;
+    gap: 4px;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.image-alignment-tune .cdx-settings-button,
+.image-size-tune .cdx-settings-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.image-size-tune .cdx-settings-button {
+    width: auto;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.image-alignment-tune .cdx-settings-button:hover,
+.image-size-tune .cdx-settings-button:hover {
+    background: #eff2f5;
+}
+
+.image-alignment-tune .cdx-settings-button--active,
+.image-size-tune .cdx-settings-button--active {
+    background: #388ae5 !important;
+    color: #fff;
+}
+
+.image-alignment-tune .cdx-settings-button--active svg path,
+.image-size-tune .cdx-settings-button--active svg path {
+    fill: #fff;
+}
+
+/* ================================
+   Editor Block Data Attributes
+   ================================ */
+.ce-block[data-alignment="left"] .ce-paragraph,
+.ce-block[data-alignment="left"] .image-tool__image {
+    text-align: left;
+}
+
+.ce-block[data-alignment="center"] .ce-paragraph,
+.ce-block[data-alignment="center"] .image-tool__image {
+    text-align: center;
+}
+
+.ce-block[data-alignment="right"] .ce-paragraph,
+.ce-block[data-alignment="right"] .image-tool__image {
+    text-align: right;
+}
+
+/* Image Block Size Attributes */
+.ce-block[data-size="small"] .image-tool__image img {
+    width: 25%;
+}
+
+.ce-block[data-size="medium"] .image-tool__image img {
+    width: 50%;
+}
+
+.ce-block[data-size="large"] .image-tool__image img {
+    width: 75%;
+}
+
+.ce-block[data-size="full"] .image-tool__image img {
+    width: 100%;
+}
+
+/* Image alignment within editor */
+.ce-block[data-alignment="left"] .image-tool__image {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.ce-block[data-alignment="center"] .image-tool__image {
+    display: flex;
+    justify-content: center;
+}
+
+.ce-block[data-alignment="right"] .image-tool__image {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ================================
+   Simple Box (Highlight Box) Styles
+   ================================ */
+   .simple-box {
+    padding: 0.5em 1em;
+    margin: 1em 0;
+    background: #FFF;
+    border: solid 3px orange;
+    border-radius: 10px;
+    font-family: sans-serif;
+}
+
+.simple-box__title-wrapper {
+    padding-bottom: 0.5em;
+}
+
+.simple-box__title {
+    font-weight: bold;
+    color: orange;
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 1em;
+    font-family: inherit;
+    outline: none;
+}
+
+.simple-box__title::placeholder {
+    color: #aaa;
+    font-weight: normal;
+}
+
+.simple-box__content {
+    color: #000;
+    font-weight: normal;
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 1em;
+    font-family: inherit;
+    outline: none;
+    resize: none;
+    overflow: hidden;
+    min-height: 60px;
+}
+
+.simple-box__content::placeholder {
+    color: #aaa;
+}
+
+/* ================================
+   Responsive Styles
+   ================================ */
+@media (max-width: 768px) {
+    .image-block.size-small img {
+        width: 50% !important;
+    }
+    
+    .image-block.size-medium img {
+        width: 75% !important;
+    }
+    
+    .image-block.size-large img,
+    .image-block.size-full img {
+        width: 100% !important;
+    }
+}
+
+/* ================================
+   Other Block Styles
+   ================================ */
+.delimiter {
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 8px;
+    color: #999;
+    padding: 20px 0;
+}
+
+.warning-block {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px 20px;
+    margin: 1em 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.warning-block .warning-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.warning-block .warning-message {
+    color: #856404;
+}
+
+.embed-block {
+    margin: 1.5em 0;
+    text-align: center;
+}
+
+.embed-block iframe {
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+.checklist {
+    list-style: none;
+    padding-left: 0;
+}
+
+.checklist li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+}
+
+.checklist .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.checklist .checkbox.checked {
+    background: #388ae5;
+    border-color: #388ae5;
+    position: relative;
+}
+
+.checklist .checkbox.checked::after {
+    content: '✓';
+    color: #fff;
+    position: absolute;
+    left: 2px;
+    top: -2px;
+    font-size: 14px;
+}
+
+/* ================================
+   Paragraph Alignment Tune
+   ================================ */
+   .paragraph-alignment-tune {
+    display: flex;
+    gap: 4px;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.paragraph-alignment-tune .cdx-settings-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.paragraph-alignment-tune .cdx-settings-button:hover {
+    background: #eff2f5;
+}
+
+.paragraph-alignment-tune .cdx-settings-button--active {
+    background: #388ae5 !important;
+    color: #fff;
+}
+
+.paragraph-alignment-tune .cdx-settings-button--active svg path {
+    fill: #fff;
+}

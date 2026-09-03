@@ -1,0 +1,13 @@
+DirectoryIndex index.php index.html
+
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^www.hotstrapthai\.com
+RewriteRule ^(.*)$ https://hotstrapthai.com/$1 [R=301,L]
+
+RewriteEngine on
+RewriteCond %{THE_REQUEST} ^.*/index.php
+RewriteRule ^(.*)index.php$ https://hotstrapthai.com/$1 [R=301,L]
+
+RewriteEngine on
+RewriteCond %{THE_REQUEST} ^.*/index.html
+RewriteRule ^(.*)index.html$ https://hotstrapthai.com/$1 [R=301,L]

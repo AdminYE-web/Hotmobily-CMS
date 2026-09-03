@@ -1,0 +1,134 @@
+@charset "utf-8";
+/* CSS Document */
+.TitleFaq{
+	background-image: url(../img/faq_title.gif);
+	background-repeat:no-repeat;
+	width: 695px;
+	height: 0px;
+	padding-top: 34px;
+	overflow: hidden;
+}
+.subMenuFaq1{
+		background:url(../faq/img/sub1.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:219px;
+		height:0px;
+		padding-top: 19px;
+		overflow: hidden;
+		margin-left: 0px;
+		margin-top: 15px;
+	}
+.subMenuFaq2{
+		background:url(../faq/img/sub2.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:273px;
+		height:0px;
+		padding-top: 21px;
+		margin-left: 0px;
+		margin-top: 15px;
+		overflow: hidden;
+	}
+.subMenuFaq3{
+		background:url(../faq/img/sub3.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:182px;
+		height:0px;
+		padding-top: 21px;
+		margin-left: 0px;
+		margin-top: 15px;
+		overflow: hidden;
+	}
+.subMenuFaq4{
+		background:url(../faq/img/sub4.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:254px;
+		height:0px;
+		padding-top: 20px;
+		margin-left: 0px;
+		margin-top: 15px;
+		overflow: hidden;
+	}
+.subMenuFaq5{
+		background:url(../faq/img/sub5.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:165px;
+		height:0px;
+		padding-top: 21px;
+		margin-left: 0px;
+		margin-top: 15px;
+		overflow: hidden;
+	}
+.subMenuFaq6{
+		background:url(../faq/img/sub6.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:200px;
+		height:0px;
+		padding-top: 21px;
+		margin-left: 0px;
+		margin-top: 15px;
+		overflow: hidden;
+	}
+
+.TextFaq{
+	line-height:180%;
+	border-bottom:dotted 1px #6e6d6d;
+	border: #b3b3b3 1px solid;
+}
+.TableAllFaq{
+	width:650px;
+	color:#797979;
+	
+}
+.TableLeft{
+	width: 50px;
+    background-color:#8c8c8c;
+    color:#FFFFFF;
+    font-weight:bold;
+	text-align:center;
+
+}
+.TableRight{
+    font-weight:normal;
+    padding-left:15px;
+	border-bottom:dotted 1px #6e6d6d;
+}
+.TableRight2{
+    font-weight:normal;
+    padding-left:15px;
+	line-height:180%;
+	
+}
+.TableRight2-1{
+    font-weight:normal;
+    padding-left:45px;
+	line-height:180%;
+	
+}
+.TableRight3{
+    font-weight:normal;
+    padding-left:30px;
+	line-height:180%;
+	
+}
+.TableRight3-1{
+    font-weight:normal;
+    padding-left:60px;
+	line-height:180%;
+	
+}
+.FaqR{
+	background-color: #CCCCCC;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

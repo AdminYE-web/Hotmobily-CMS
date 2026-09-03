@@ -1,0 +1,293 @@
+@charset "UTF-8";
+/* CSS Document */
+
+* {
+	margin: 0px;
+	padding: 0px;
+}
+body { background: #FFF; margin-top:14px;}
+img {
+	border: none;
+	vertical-align: middle;
+}
+a { border:none; }
+a:hover, a:active, a:focus { 
+	text-decoration: none;
+	outline: 0;
+}
+
+/*** id:wrapper ***/
+#wrapper {
+	width: 1017px;
+	margin:0 auto;
+	overflow:hidden;
+	padding-bottom:30px;
+	clear:both;
+}
+
+.clear{
+	clear:both;
+}
+
+/*** id:content_wrapper ***/
+#content_wrapper {
+	width: 771px;
+	margin-top: 25px;
+	float:right;
+}
+	
+/* content_left :: content_wrapper */
+#content_left { width: 483px; margin-left: 10px; margin-top: 50px; float: left;}
+		
+		
+/* ****************imai design****************** */
+	
+	    /* item_top :: content_left :: content_wrapper */
+		#item_top_content_left { width: 200px; margin-left: 0px; margin-top: 0px; float: left}
+		#content_left_item_menu { width: 172px; border: 1px solid #CCC; }
+		#content_left_item_sabmenu { list-style-type:none; }
+		#content_left_item_sabmenu li{ background-image: url(../img/yazirushi_c.gif); background-repeat: no-repeat; margin-top: 30px; margin-bottom: 30px; margin-left: 20px; padding-left: 20px; }
+        #supplementary { margin-top: 40px; }
+		
+		/* item_top :: content_right :: content_wrapper */
+	    #supplementary_more_1 { margin-top: 50px; margin-left:50px; margin-bottom: 20px; }
+	    #supplementary_more_1 .supplementary_more_title {background-image: url(../img/item_yazirushi.gif); background-repeat:no-repeat; height:30px; padding-top: 7px; padding-left:35px;}
+	    #supplementary_more_1 dd {
+	margin-top: 10px;
+	margin-bottom: 80px;
+	line-height: 25px;
+	padding-left:30px;
+}
+
+		
+		#supplementary_more_2 { margin-top: 50px; margin-left:50px; margin-bottom: 20px; }
+	    #supplementary_more_2 .supplementary_more_title {background-image: url(../img/item_yazirushi.gif); background-repeat:no-repeat; height:30px; padding-top: 7px; padding-left:35px;}
+	    #supplementary_more_2 dd {margin-top: 10px; margin-bottom: 20px;line-height: 25px; padding-left:30px; }
+		
+		#supplementary_more_3 { margin-top: 50px; margin-left:50px; margin-bottom: 20px; }
+	    #supplementary_more_3 .supplementary_more_title {background-image: url(../img/item_yazirushi.gif); background-repeat:no-repeat; height:30px; padding-top: 7px; padding-left:35px;}
+	    #supplementary_more_3 dd {margin-top: 10px; margin-bottom: 20px;line-height: 25px; padding-left:30px; }
+		
+		#supplementary_more_4 { margin-top: 50px; margin-left:50px; margin-bottom: 20px; }
+	    #supplementary_more_4 .supplementary_more_title {background-image: url(../img/item_yazirushi.gif); background-repeat:no-repeat; height:30px; padding-top: 7px; padding-left:35px;}
+	    #supplementary_more_4 dd {margin-top: 10px; margin-bottom: 20px;line-height: 25px; padding-left:30px; }
+		
+		#supplementary_more_5 {
+	margin-top: 10px;
+	margin-left:50px;
+	margin-bottom: 20px;
+}
+	    #supplementary_more_5 .supplementary_more_title {background-image: url(../img/item_yazirushi.gif); background-repeat:no-repeat; height:30px; padding-top: 7px; padding-left:35px;}
+	    #supplementary_more_5 dd {
+	margin-top: 10px;
+	margin-bottom: 30px;
+	line-height: 25px;
+	padding-left:30px;
+}
+		
+	#content_right {
+	width: 770px;
+	margin: 0px;
+	padding: 0px;
+	margin-bottom: 150px;
+	float: right;
+}
+		
+		
+		/* item_creaner :: content_right :: content_wrapper */
+		#orizinal_creaner {
+			margin-top: 30px;
+			clear: both;
+					}
+		
+		#orizinal_creaner dd {
+			width: 510px;
+			margin-top: 20px;
+		}
+		
+		#orizinal_creaner_tokucyou_top {
+			margin-top: 20px;
+		}
+		
+		#creaner_main_image {
+			text-align: center;
+			margin-top:50px;
+			margin-bottom: 30px;
+		}
+		
+		#sample { float: left;
+		margin-left: 40px;
+		}
+		
+		#price { margin-top: 47px;
+		}
+		
+		
+		#creaner_point01 {margin-top: 0px; margin-left:50px; }
+		#creaner_point01 dd p { margin-top: 20px; margin-bottom: 20px; clear: both; line-height: 25px; padding-left:5px;margin-left:25px;}
+		
+		#creaner_point02 {margin-top: 30px; margin-left:50px; }
+		#creaner_point03 {margin-top: 30px; margin-left:50px; }
+		
+		#creaner_point03 dd img { margin-top: 20px; margin-left: 30px; margin-bottom: 30px;}
+		#creaner_point03 dd p { margin-top: 10px; margin-bottom: 20px;line-height: 25px; padding-left:30px;}
+		
+		#creaner_point04 {margin-top: 0px; margin-left:50px; }
+		#creaner_point04 dd p { margin-top: 20px; margin-bottom: 20px; clear: both; line-height: 25px; padding-left:5px;margin-left:25px;}
+		
+
+		/* item_keyholder :: content_right :: content_wrapper */
+		
+		#orizinal_keyholder {
+			margin-top: 30px;
+			clear: both;
+		}
+		
+		#orizinal_keyholder dd {
+			width: 510px;
+			margin-top: 20px;
+		}
+		
+		#orizinal_keyholder_tokucyou_top {
+			margin-top: 20px;
+		}
+		
+		#keyholder_main_image {
+			text-align: center;
+			margin-top:50px;
+			margin-bottom: 30px;
+		}
+	
+		
+		
+		#keyholder_point01 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		#keyholder_point01 dd p { margin-top: 20px; margin-bottom: 20px; clear: both; line-height: 25px; padding-left:5px;margin-left:25px;}
+		
+		#keyholder_point02 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		
+		#keyholder_point03 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		#keyholder_point03 dd img { margin-top: 20px; margin-left: 30px; margin-bottom: 30px;}
+		#keyholder_point03 dd p { width: 270px; float: right; margin-top: 20px; margin-bottom: 20px; line-height: 25px; }
+		
+		#keyholder_point04 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		#keyholder_point04 dd img { margin-top: 20px; margin-bottom: 10px; margin-left: -50px;}
+		
+		
+		/* item_mobilestrap :: content_right :: content_wrapper */
+		
+		
+		#orizinal_strap {
+	margin-top: 20px;
+	clear: both;
+		}
+		
+		#orizinal_strap dd {
+			width: 510px;
+			margin-top: 20px;
+		}
+		
+		#orizinal_strap_tokucyou_top {
+			margin-top: 20px;
+		}
+		
+		
+		#strap_main_image {
+			text-align: center;
+			margin-top:50px;
+			margin-bottom: 30px;
+		}
+	
+		
+		
+		#strap_point01 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		#strap_point01 dd p {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	clear: both;
+	line-height: normal;
+	padding-left:5px;
+	margin-left:25px;
+}
+		#strap_point01 dd p { margin-top: 20px; margin-bottom: 20px; clear: both; line-height: 25px; padding-left:5px;margin-left:25px;}
+		
+		#strap_point02 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		
+		#strap_point03 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		
+		#strap_point03_type01 {width: 450px; height:160px; margin-bottom: 20px; }
+		
+		#strap_point03_type01 dt { float: left; margin-bottom: }
+		
+		#strap_point03_type01 dd { width: 220px;float: left; margin-left: 20px; line-height: 15px;  }
+		
+		#strap_point03_type02 {width: 450px; height:160px; }
+		
+		#strap_point03_type02 dt {float: left; margin-bottom: }
+		
+		#strap_point03_type02 dd { width: 220px; float: left; margin-left: 20px; line-height: 15px; }
+		
+		/* item_corstar :: content_right :: content_wrapper */ 
+		
+		#orizinal_corstar {
+			margin-top: 30px;
+			clear: both;
+		}
+		
+		#orizinal_corstar dd {
+			width: 510px;
+			margin-top: 20px;
+		}
+		
+		#orizinal_corstar_tokucyou_top {
+			margin-top: 20px;
+		}
+		
+		#corstar_main_image {
+			text-align: center;
+			margin-top:50px;
+			margin-bottom: 30px;
+		}
+	
+		
+		
+		#corstar_point01 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		#corstar_point01 dd p { margin-top: 20px; margin-bottom: 20px; clear: both; line-height: 25px; padding-left:5px;margin-left:25px;}
+		
+		#corstar_point02 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		
+		#corstar_point03 {margin-top: 30px; margin-left:50px; margin-bottom: 50px; }
+		#corstar_point03 dd dl dd {width: 400px; padding-left: 100px;}
+		
+		/* goto top */
+		
+		#gototop { background-image:url(../img/yazirushi_s_gototop.gif); background-repeat: no-repeat;
+		 padding-left: 15px; padding-top: -5px;  margin-left: 500px;}
+
+.attention {
+	color: red;
+	border: 1px solid #f70000;
+	padding: 8px;
+	margin: 15px 0 20px;
+}
+
+@media screen and ( max-width: 768px ) {
+	#wrapper {
+		width: 96%;
+	}
+	#wrapper img{
+		max-width: 100%;
+		height: auto;
+	}
+	#content_wrapper, #content_left, #content_right, #content_wrapper_Cd {
+		width: auto;
+		float:none;
+		margin-top: 0px;
+	}
+	#content_wrapper h1, #content_left h1, #content_right h1, #content_wrapper_Cd h1 {
+		margin-top: 20px;
+	}
+	#content_wrapper table, #content_left table, #content_right table, #content_wrapper_Cd table {
+		width: 100%;
+	}
+	label img {width:auto !important;}
+}

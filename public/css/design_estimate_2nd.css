@@ -1,0 +1,129 @@
+@charset "utf-8";
+/* CSS Document */
+h2.titleEstimate{
+	background: url(../estimate/img/estimate_title_bar.gif) no-repeat ;
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	width:771px;
+	height:40px;
+	margin:0px 0px 20px 0px;
+	text-indent:-9999px;
+}
+	.subMenu1{
+		background:url(../estimate/img/sub1.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:178px;
+		height:18px;
+		text-indent:-9999px;
+	}
+.tableAllEstimate{
+	width:771px;
+
+
+	
+}
+.tableEstimate{
+	width:450px;
+	border: #b3b3b3 1px solid;
+	margin:0px 0px 10px 0px;
+}
+	.tableEstimate1{
+		width:40px;
+		text-align:center;
+		background-color:#dedede;
+		color:#797979;
+	
+	}
+	.tableEstimate1-1{
+		width:40px;
+		text-align:center;
+		color:#797979;
+		border:#b3b3b3 1px solid;
+		line-height:150%;
+	
+	}
+	
+	.tableEstimate2{
+		width:100px;
+		text-align:center;
+		background-color:#dedede;
+		color:#797979;
+		line-height:150%;
+	}
+
+
+        
+.lineEstimate{
+	border-bottom:dotted 1px #6e6d6d;
+}
+.heightEstimate{
+	height:30px;
+}
+.TableAllL{
+color:#8c8c8c;
+ 				width:771px;
+                border: #b3b3b3 1px solid;
+                margin:10px 0px 10px 0px;
+}
+.TableLeft{
+				width: 180px;
+                background-color:#8c8c8c;
+                color:#FFFFFF;
+                font-weight:normal;
+                padding-left:10px;
+				line-height:200%;
+
+}
+
+.TableRight{
+				width: 490px;
+                text-align:left;
+				border-bottom:dotted 1px #6e6d6d;
+				padding-left:10px;
+}  
+.TableRightGray{
+				width: 490px;
+                text-align:left;
+				border-bottom:dotted 1px #6e6d6d;
+				padding-left:10px;
+				color:#8c8c8c;
+}  
+
+.TableRight input.right{
+                        text-align:right;
+        }
+.TableRightGray input.right{
+                        text-align:right;
+        }
+.TableRight3{
+				width: 490px;
+                text-align:left;
+				padding-left:10px;
+} 
+.TableRightGray3{
+				width: 490px;
+                text-align:left;
+				padding-left:10px;
+				color:#8c8c8c;
+} 
+.TableRight2{
+				width: 290px;
+                text-align:left;
+				border-bottom:dotted 1px #6e6d6d;
+				margin-left:10px;
+}
+.TableRightGray2{
+				width: 290px;
+                text-align:left;
+				border-bottom:dotted 1px #6e6d6d;
+				margin-left:10px;
+				color:#8c8c8c;
+}
+.hide {
+  display: none;
+  }
+  
+.textestimate{
+	line-height:170%;
+	color:#8c8c8c;
+}

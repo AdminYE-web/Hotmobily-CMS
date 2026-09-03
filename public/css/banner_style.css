@@ -1,0 +1,102 @@
+.tbl_index div{
+	width: 99.8%;
+	height: auto;
+}
+.banner_box_flex{
+	display: flex;
+}
+.tbl_index div p{
+	padding-left: 15px;
+    width: 58%;
+    overflow: hidden;
+    margin: auto;
+}
+.tbl_index div .img_box{
+	width: 20%;
+	margin: auto;
+}
+.tbl_index .topic{
+	font-size: 23px;
+    color: red;
+    font-weight: bold;
+    margin: 5px 0;
+    display: block;
+}
+.tbl_index a{
+	color: black;
+}
+.tbl_index .detail{
+	font-size: calc(16px + 6 * ((15vw - 320px) / 680));
+    line-height: 26px;
+}
+.text-box{width: 25% !important;}
+.tbl_index .text-box span{
+	color: white;
+    font-weight: bold;
+    background: #f40f0f;
+    font-size: 15.5px;
+    line-height: 18px;
+    display: block;
+    margin: 2px 0;
+    padding: 2.4px 15px;
+}
+
+.tbl_index a:hover{
+	text-decoration: none !important;
+}
+.yellow{
+	color: #ffe300 !important;
+}
+.amazonmenu > ul li a{
+	height: auto !important;
+}
+.side_link{
+	padding-left: 5px;
+    font-size: 14px;
+    margin: auto;
+    line-height: 1.5;
+    display: inline-block;
+    vertical-align: middle;
+    color: black;
+    width: 80%;
+}
+.amazonmenu ul li a:hover, .amazonmenu ul li.hassub.selected > a{ /* style of hover and selected menu item links */
+	background: #ececec !important;
+}
+.amazonmenu > ul li.hassub > a::after{
+	top: 40% !important;
+}
+
+@media screen and (max-width: 768px) {
+	.tbl_index div p{
+		margin: auto;
+		padding-left: 5px;
+	}
+	.tbl_index div .img_box{
+		width: 21%;
+		margin: auto;
+	}
+	.tbl_index .topic{
+		font-size: 3.6vw;
+		margin: 0 0 5px 0;
+		line-height: 4.8vw;
+	}
+	.tbl_index .detail{
+		font-size: 2.2vw;
+		line-height: 3vw;
+		font-weight: 100;
+	}
+	.text-box{width: 24% !important;}
+	.tbl_index .text-box span{
+		font-size: 2.5vw;
+		line-height: 3vw;
+		font-weight: 100;
+		padding: 1px 5px;
+	}
+	.side_link{
+		width: 70%;
+	    white-space: nowrap;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	}
+}

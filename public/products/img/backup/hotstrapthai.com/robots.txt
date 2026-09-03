@@ -1,0 +1,3 @@
+User-Agent : *
+Disallow : https://hotstrapthai.com/products/index.php
+Sitemap : https://hotstrapthai.com/sitemap.xml

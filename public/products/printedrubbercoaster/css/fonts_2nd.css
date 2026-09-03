@@ -1,0 +1,52 @@
+@charset "UTF-8";
+/* CSS Document */
+
+h1 {
+	font-family: "ＭＳ ゴシック", "MS Gothic", "Osaka－等幅", Osaka-mono, monospace;
+	font-size: 18px;
+	font-weight: bold;
+	border-left-style: solid;
+	border-top-color: #F66;
+	border-right-color: #F66;
+	border-bottom-color: #F66;
+	border-left-color: #F66;
+	border-left-width: 5px;
+	padding-left: 6px;
+}
+h2 {
+	font-family: "ＭＳ ゴシック", "MS Gothic", "Osaka－等幅", Osaka-mono, monospace;
+	font-size: 16px;
+	font-weight: bold;
+	border-left-style: solid;
+	border-top-color: #F66;
+	border-right-color: #F66;
+	border-bottom-color: #F66;
+	border-left-color: #F66;
+	border-left-width: 5px;
+	padding-left: 6px;
+}
+h3 {
+	font-family: "ＭＳ ゴシック", "MS Gothic", "Osaka－等幅", Osaka-mono, monospace;
+	font-size: 14px;
+	font-weight: bold;
+	border-left-style: solid;
+	border-top-color: #F66;
+	border-right-color: #F66;
+	border-bottom-color: #F66;
+	border-left-color: #F66;
+	border-left-width: 1px;
+	color: #F66;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	padding: 5px;
+	margin-right: 28px;
+	margin-left: 28px;
+}
+
+body { color: #666 ;}.product_spec_table {
+	padding: 4px;
+}

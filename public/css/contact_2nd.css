@@ -1,0 +1,347 @@
+@charset "utf-8";
+/* CSS Document */
+.titleContact{
+	background:url(../contact/img/contact_title.gif) no-repeat;
+	background-size:100% 100%;
+	width:771px;
+	height:0px;
+	padding-top: 34px;
+	margin-left: 0px;
+	margin-top: 0px;
+	text-indent:-9999px;
+}
+	.subMenu1{
+		background:url(../contact/img/sub1.png) no-repeat;
+		width:609px;
+		height: 0px;
+		padding-top: 18px;
+		overflow: hidden;
+		margin-top: 15px;
+		margin-left: 0px;
+	}
+	.subMenu2{
+		background-image:url(../contact/img/sub2.jpg);
+		background-repeat:no-repeat;
+		width:175px;
+		height: 0px;
+		padding-top: 19px;
+		overflow: hidden;
+		margin-top: 15px;
+		margin-left: 0px;
+	}
+	.subMenu3{
+		background-image:url(../contact/img/sub3.jpg);
+		background-repeat:no-repeat;
+		width:247px;
+		height: 0px;
+		padding-top: 19px;
+		overflow: hidden;
+		margin-top: 15px;
+		margin-left: 0px;
+	}
+.tableAllContact{
+	width:771px;
+
+	
+}
+.tableContact{
+	width:450px;
+	border: #b3b3b3 1px solid;
+	margin:0px 0px 10px 0px;
+	
+	
+	
+}
+	.tableContact1{
+		width:40px;
+		text-align:center;
+		background-color:#dedede;
+		color:#797979;
+	
+	}
+	.tableContact1-1{
+		width:40px;
+		text-align:center;
+		color:#797979;
+		border:#b3b3b3 1px solid;
+	
+	}
+	
+	.tableContact2{
+		width:100px;
+		text-align:center;
+		background-color:#dedede;
+		color:#797979;
+	}
+
+dl {
+                width:700px;
+                border: #b3b3b3 1px solid;
+                margin:10px 0px 10px 0px;
+
+        }
+
+        dt {
+                width: 180px;
+                font-weight: bold;
+                background-color:#8c8c8c;
+                color:#FFFFFF;
+                font-weight:normal;
+                padding-left:10px;
+                height:30px;
+        }
+
+        dd {
+                width: 490px;
+                padding: 0px 3px 0px 10px;
+                margin:-30px 0px 0px 195px;
+                text-align:left;
+			
+        }
+    
+.TableAllL{
+ 				width:771px;
+                border: #b3b3b3 1px solid;
+                margin:10px 0px 10px 0px;
+}
+.TableLeft{
+				width: 180px;
+                background-color:#8c8c8c;
+                color:#FFFFFF;
+                font-weight:normal;
+                padding-left:10px;
+				line-height:200%;
+
+}
+.TableRight{
+                width: 440px;
+                text-align:left;
+                border-bottom:dotted 1px #6e6d6d;
+				padding-left:10px;
+             
+				
+}
+.TableRight2{
+                width: 440px;
+                text-align:left;
+				padding-left:10px;
+             
+				
+}
+.TableRight3{
+				width: 440px;
+                text-align:left;
+				padding-left:10px;
+} 
+
+.lineContact{
+	border-bottom:dotted 1px #6e6d6d;
+}
+.heightContact{
+	height:30px;
+}
+.textContact{
+	line-height:170%;
+	color:#8c8c8c;
+}
+	.textContactCenter{
+		text-align:center;
+	color:#8c8c8c;
+	}
+	
+.symbolRed{
+	color:#FF0000;
+}
+
+@media screen and ( max-width: 768px ) {
+	.titleContact {
+		width: 100%;
+	}
+	.subMenu1, .subMenu2, .subMenu3 {
+		max-width: 100%;
+		background-size:100% 100%;
+	}
+	.tableAllContact, .tableContact, dl, .TableAllL {
+		width: 100%;
+	}
+	.tableContact1, .tableContact1-1, .tableContact2 {
+		width: 20%;
+	}
+	dt, .TableLeft {
+		width: 20%;
+	}
+	dd, .TableRight, .TableRight2, .TableRight3 {
+		width: 80%;
+	}
+	.TableRightPrice1{
+		width: 10%;
+	}
+	.TableRightPrice2{
+		width: 80%;
+	}
+	input[type="text"] {
+		max-width: 100%;
+	}
+	.myButton {
+	  -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	  -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	  box-shadow:inset 0px 1px 0px 0px #ffffff;
+	  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #ffffff));
+	  background:-moz-linear-gradient(top, #f9f9f9 5%, #ffffff 100%);
+	  background:-webkit-linear-gradient(top, #f9f9f9 5%, #ffffff 100%);
+	  background:-o-linear-gradient(top, #f9f9f9 5%, #ffffff 100%);
+	  background:-ms-linear-gradient(top, #f9f9f9 5%, #ffffff 100%);
+	  background:linear-gradient(to bottom, #f9f9f9 5%, #ffffff 100%);
+	  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#ffffff',GradientType=0);
+	  background-color:#f9f9f9;
+	  -moz-border-radius:6px;
+	  -webkit-border-radius:6px;
+	  border-radius:6px;
+	  border:1px solid #dcdcdc;
+	  display:inline-block;
+	  cursor:pointer;
+	  color:#666666;
+	  font-family:Arial;
+	  font-size:16px;
+	  font-weight:bold;
+	  padding:5px 10px;
+	  text-decoration:none;
+	  text-shadow:0px 1px 0px #ffffff;
+	}
+	.myButton:hover {
+	  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f9f9f9));
+	  background:-moz-linear-gradient(top, #ffffff 5%, #f9f9f9 100%);
+	  background:-webkit-linear-gradient(top, #ffffff 5%, #f9f9f9 100%);
+	  background:-o-linear-gradient(top, #ffffff 5%, #f9f9f9 100%);
+	  background:-ms-linear-gradient(top, #ffffff 5%, #f9f9f9 100%);
+	  background:linear-gradient(to bottom, #ffffff 5%, #f9f9f9 100%);
+	  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f9f9f9',GradientType=0);
+	  background-color:#ffffff;
+	}
+	.myButton:active {
+	  position:relative;
+	  top:1px;
+	}
+	  .control {
+	  font-size: 16px;
+	  position: relative;
+	  display: block;
+	  margin-bottom: 15px;
+	  padding-left: 30px;
+	  cursor: pointer;
+	}
+	.control2 {
+	  font-size: 16px;
+	  display: inline;
+	  position: relative;
+	  margin-bottom: 15px;
+	  padding-left: 30px;
+	  cursor: pointer;
+	}
+	.control2 input {
+	  position: absolute;
+	  z-index: -1;
+	  opacity: 0;
+	}
+	.control input {
+	  position: absolute;
+	  z-index: -1;
+	  opacity: 0;
+	}
+	.control__indicator {
+	  position: absolute;
+	  left: 0;
+	  width: 20px;
+	  height: 20px;
+	  background: #e6e6e6;
+	}
+
+	.control--radio .control__indicator {
+	  border-radius: 50%;
+	}
+	/* Hover and focus states */
+	.control:hover input ~ .control__indicator,
+	.control input:focus ~ .control__indicator {
+	  background: #ccc;
+	}
+	.control2:hover input ~ .control__indicator,
+	.control2 input:focus ~ .control__indicator {
+	  background: #ccc;
+	}
+
+	/* Checked state */
+	.control input:checked ~ .control__indicator {
+	  background: #ff8000;
+	}
+	.control2 input:checked ~ .control__indicator {
+	  background: #ff8000;
+	}
+
+	/* Hover state whilst checked */
+	.control:hover input:not([disabled]):checked ~ .control__indicator,
+	.control input:checked:focus ~ .control__indicator {
+	  background: #ff8000;
+	}
+	.control2:hover input:not([disabled]):checked ~ .control__indicator,
+	.control2 input:checked:focus ~ .control__indicator {
+	  background: #ff8000;
+	}
+
+	/* Disabled state */
+	.control input:disabled ~ .control__indicator {
+	  pointer-events: none;
+	  opacity: .6;
+	  background: #e6e6e6;
+	}
+	.control2 input:disabled ~ .control__indicator {
+	  pointer-events: none;
+	  opacity: .6;
+	  background: #e6e6e6;
+	}
+
+	/* Check mark */
+	.control__indicator:after {
+	  position: absolute;
+	  display: none;
+	  content: '';
+	}
+
+	/* Show check mark */
+	.control input:checked ~ .control__indicator:after {
+	  display: block;
+	}
+	.control2 input:checked ~ .control__indicator:after {
+	  display: block;
+	}
+
+	/* Checkbox tick */
+	.control--checkbox .control__indicator:after {
+	  top: 4px;
+	  left: 8px;
+	  width: 3px;
+	  height: 8px;
+	  transform: rotate(45deg);
+	  border: solid #fff;
+	  border-width: 0 2px 2px 0;
+	}
+
+	/* Disabled tick colour */
+	.control--checkbox input:disabled ~ .control__indicator:after {
+	  border-color: #7b7b7b;
+	}
+
+	/* Radio button inner circle */
+	.control--radio .control__indicator:after {
+	  top: 7px;
+	  left: 7px;
+	  width: 6px;
+	  height: 6px;
+	  border-radius: 50%;
+	  background: #fff;
+	}
+
+	/* Disabled circle colour */
+	.control--radio input:disabled ~ .control__indicator:after {
+	  background: #7b7b7b;
+	}
+}

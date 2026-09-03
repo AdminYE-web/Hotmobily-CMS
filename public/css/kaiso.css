@@ -1,0 +1,81 @@
+@charset "utf-8";
+/* CSS Document */
+.kai_all{
+	width:820px;
+	margin-left:40px;
+	margin-top:20px;
+}
+
+.kai_pic_l{
+	float:left;
+	width:232px;
+	height:209px;
+}
+.kai_pic_l2{
+	float:left;
+	width:462px;
+	height:210px;
+}
+.kai_pic_r{
+	float: right;
+	width:232px;
+	height:209px;
+}
+.kai_pic_r2{
+	float: right;
+	width:320px;
+	height:111px;
+}
+.kai_pic_c{
+	float:left;
+	width:232px;
+	margin-left:65px;
+}
+.kai_text_l{
+	float:left;
+	width:232px;
+	color:#666666;
+	line-height:20px;
+	
+}
+
+.kai_text_l2{
+	float:left;
+	width:300px;
+	color:#666666;
+	line-height:20px;
+	
+}
+
+.kai_text_r{
+	float: right;
+	width:232px;
+	color:#666666;
+	line-height:20px;
+	
+}
+.kai_text_r2{
+	float: right;
+	width:318px;
+	color:#666666;
+	line-height:20px;
+	
+}
+.kai_text_c{
+	float:left;
+	width:232px;
+	margin-left:65px;
+	color:#666666;
+	line-height:20px;
+}
+.kai_text_all{
+	color:#666666;
+	line-height:20px;
+	width:820px;
+	margin-left:40px;
+	margin-top:20px;
+}
+.kai_text_3{
+	color:#666666;
+	line-height:20px;
+}

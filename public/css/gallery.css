@@ -1,0 +1,67 @@
+h4 { display: none; }
+
+
+.gallery { width: 700px; }
+
+.gallery ul{
+	margin:10px auto;
+	padding:0px;
+	list-style:none;
+}
+
+.gallery li{
+	float:left;
+	margin:auto 3px;
+}
+
+.TitleGallery h3 {
+	background: url(../img/gallery_title.gif) no-repeat;
+	display: block;
+	width:695px;
+	height: 0px;
+	padding-top: 34px;
+	overflow: hidden;
+	margin: 25px auto;
+}
+.SubGallery{
+	background-image: url(../gallery/img/submenu1.jpg);
+	background-repeat:no-repeat;
+	height:42px;
+	margin:10px 0px 20px 0px;
+}
+.btGallery{
+	width:700px;
+	margin:20px 0px 20px 0px;
+}
+	.btPrev1{
+		float:left;
+	}
+	.btNext1{
+		float:right;
+	}
+.ContentGallery{
+	width:700px;
+	margin:20px auto 50px auto;
+}
+.PicGallery{
+	margin-bottom:20px;
+}
+	.ContentGalleryLeft{
+		float:left;
+		width:453px;
+		height:286px;
+	}
+	.ContentGalleryRight{
+		float:right;
+		width:239px;
+		height:286px;
+	}
+	.textGallery{
+		line-height:170%;
+		color:#8c8c8c;
+		margin-bottom:10px;
+	}
+.Pagetop{
+	text-align:right;
+}
+	

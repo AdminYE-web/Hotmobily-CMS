@@ -1,0 +1,166 @@
+@charset "utf-8";
+/* CSS Document */
+.TitlePrivacy{
+	background-image: url(../img/privacy_title.gif);
+	background-repeat:no-repeat;
+	background-size: 100% 100%;
+	width: 771px;
+	height: 0px;
+	padding-top: 34px;
+	overflow: hidden;
+	margin-top: 0px;
+	margin-bottom: 30px;
+}
+.subMenuPrivacy1{
+		background:url(../privacy/img/sub1.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:264px;
+		height: 0px;
+		padding-top: 21px;
+		overflow: hidden;
+		margin:10px 0px 10px 55px;
+	}
+	.subMenuPrivacy2{
+		background:url(../privacy/img/sub2.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:265px;
+		height: 0px;
+		padding-top: 21px;
+		overflow: hidden;
+		margin:10px 0px 10px 55px;
+	}
+	.subMenuPrivacy3{
+		background:url(../privacy/img/sub3.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:159px;
+		height: 0px;
+		padding-top: 21px;
+		overflow: hidden;
+		margin:10px 0px 10px 55px;
+	}
+	.subMenuPrivacy4{
+		background:url(../privacy/img/sub4.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:301px;
+		height: 0px;
+		padding-top: 20px;
+		overflow: hidden;
+		margin:10px 0px 10px 55px;
+	}
+	.subMenuPrivacy5{
+		background:url(../privacy/img/sub5.jpg) no-repeat;
+		background-repeat:no-repeat;
+		width:480px;
+		height: 0px;
+		padding-top: 20px;
+		overflow: hidden;
+		margin:10px 0px 10px 55px;
+	}
+.SubTextPri1{
+	line-height:180%;
+	width:640px;
+	margin:10px auto 10px 45px;
+	color: #0000FF;
+	font-weight:bold;
+	padding:5px 5px 5px 5px;
+}
+.SubTextPri2{
+	line-height:180%;
+	width:650px;
+	margin:10px auto 10px 55px;
+	color: #FFCC00;
+	font-weight:bold;
+	padding:5px 5px 5px 5px;
+}
+.SubTextPri3{
+	line-height:180%;
+	width:600px;
+	margin:10px auto 10px 75px;
+	color: #FFCC00;
+	font-weight:bold;
+	padding:5px 5px 5px 5px;
+}
+
+
+.TextPrivacy{
+	line-height:180%;
+	border-bottom:dotted 1px #6e6d6d;
+	border: #b3b3b3 1px solid;
+	width:650px;
+	margin:auto;
+	color:#797979;
+	padding:5px 5px 5px 5px;
+}
+.TextPrivacy2{
+	line-height:180%;
+	border-bottom:dotted 1px #6e6d6d;
+	border: #b3b3b3 1px solid;
+	width:585px;
+	margin:0px auto 0px 95px;
+	color:#797979;
+	padding:5px 5px 5px 5px;
+}
+
+.TableLeft{
+	font-size:36px;
+	width: 50px;
+    background-color:#8c8c8c;
+    color:#FFFFFF;
+	text-align:center;
+
+}
+.TableRight{
+    font-weight:normal;
+    padding-left:15px;
+	border-bottom:dotted 1px #6e6d6d;
+}
+.TableRight2{
+    font-weight:normal;
+    padding-left:15px;
+	line-height:180%;
+	
+}
+.TableRight3{
+    font-weight:normal;
+    padding-left:30px;
+	line-height:180%;
+	
+}
+
+@media screen and ( max-width: 768px ) {
+	.TitlePrivacy {
+		width: 100%;
+	}
+	.subMenuPrivacy1, .subMenuPrivacy2, .subMenuPrivacy3, .subMenuPrivacy4, .subMenuPrivacy5 {
+		max-width: auto;
+		background-size: 100% 100%;
+		margin:10px 0px 10px 10px;
+	}
+	.SubTextPri1, .SubTextPri2, .SubTextPri3{
+		width: auto;
+		margin:10px 0 10px 0 !important;
+	}
+	.TextPrivacy, .TextPrivacy2 {
+		width: auto;
+		margin:0;
+	}
+	.TableLeft {
+		width:0;
+	}
+	.TableRight, .TableRight2, .TableRight3{
+		padding-left:0;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

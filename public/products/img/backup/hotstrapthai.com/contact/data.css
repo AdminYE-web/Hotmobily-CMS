@@ -1,0 +1,114 @@
+body{
+  margin:0;
+  padding: 0px;
+}
+table ,th {
+    background-color: #99bcdd;
+    color: white;
+    border: 1px solid gray;
+}
+table ,td{
+  text-align: center;
+  border: 1px solid gray;
+  background-color: white;
+  color: black;
+}
+table{
+  border-collapse: collapse;
+  border: 1px solid gray;
+  table-layout: fixed;
+;
+  line-height:1.5;
+  margin: auto;
+  box-shadow: 5px 5px 3px grey;
+}
+.button4 {
+  background-color: white;
+  color: black;
+  border: 1px solid #8B8989;
+}
+.button4:hover {
+  background-color: #8B8989;
+}
+.showdata{
+
+  margin-left: 50px;
+  margin-right: 50px;
+}
+.first{
+  background-color: #EEE5DE;
+  width: 400px;
+  height: 500px;
+  margin: auto;
+  padding-top: 80px;
+  box-shadow: 5px 5px 10px grey;
+  text-align: center;
+}
+.boxlogin{
+  margin-top: 40px; 
+  margin-left: 110px;
+  margin-right: 100px; 
+  
+}
+.textHeader{
+  font-size: 100px;
+  text-align: center;
+}
+.container{
+  max-width: 100%;
+  margin-right: 200px;
+  margin-left: 200px;
+}
+.side-menu{
+    float: left;
+    width: 18%;
+    background-color: #f3fafa;
+    height:600px;
+    margin-left: 200px; 
+    border: 1px solid #bbadb0;
+}
+.content{
+    float: right;
+    width: 60%;
+    height: 600px;
+    margin-right: 200px;
+    min-width: 850px;
+    min-height: 600px;
+    background-color: #f3fafa;
+    border: 1px solid #bbadb0;
+}
+.footer{
+  height: 150px;
+  margin-right: 200px;
+  margin-left: 200px;
+  background-color: #f3fafa;
+  border: 1px solid #bbadb0;
+}
+p.clear{
+  clear: both;
+}
+
+.top-box{
+  text-align: center;
+      padding: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    border-bottom: 1px solid #CCCCCC;
+    background: #2d4e76;
+    color: white;
+}
+.table_php{
+  margin: 10px;
+  padding: 10px;
+}
+input type{
+width: 100%;
+  margin-left: 10px;
+}
+h2{
+  color: #8B8989;
+}
+ul {
+  list-style-type: none;
+ 
+}

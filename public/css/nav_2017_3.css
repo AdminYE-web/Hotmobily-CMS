@@ -1,0 +1,225 @@
+@charset "utf-8";
+
+
+/************************************************************
+	共通設定
+*************************************************************/
+a { -webkit-tap-highlight-color:rgba(0, 0, 0, 0)!important; } 
+
+/*.mm-menu {
+    -webkit-overflow-scrolling: auto;
+}*/
+
+/************************************************************
+	display設定
+*************************************************************/
+
+	@media all and (min-width: 769px){
+
+		/* mmenu 開閉 非表示 */
+		#mmenu{
+			display: none;
+		}
+		nav.bottom {
+			display: block !important;
+		}
+		.slidemenu-close {
+			display: none;
+		}
+	}
+	@media screen and (max-width: 768px){
+		nav.bottom {
+			display: block !important;
+		}
+	}
+
+
+/********************************************************
+	ヘッダー
+*********************************************************/
+
+	/********************************************************
+		jQuery.mmenu CSS // Mobile
+	*********************************************************/
+	@media only screen and (max-width: 768px){
+		/* 基本設計
+		------------------------------------------------------------*/
+		/* jquery.mmenu.all.css */	
+
+		/* 開閉メニュー
+		------------------------------------------------------------*/
+		#mmenu {
+			display: block;
+			position: fixed;
+			background: #FF8000;
+			top:0;
+			width:25%;
+			right: 0;
+			z-index: 12;
+		}
+		#mmenu a {
+			display: block;
+			width: 100%;
+			color: #FFF;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 18px 13px 16px;
+			background: url(../img/allow_03.png) center left no-repeat;
+		}
+		/*product list*/
+		#product_menu {
+			    display: block;
+			    position: absolute;
+			    background: #FF8000;
+			    top: 52px;
+			    width: 20%;
+			    right: 0;
+			    z-index: 12;
+		}
+		#product_menu a {
+			display: block;
+			width: 20%;
+			color: #FFF;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 18px 13px 16px;
+		}
+		/*call*/
+		#click_to_call {
+			display: block;
+		    position: absolute;
+		    background: #FF8000;
+		    top: 52px;
+		    width: 20%;
+		    left: 40%;
+		    z-index: 12;
+		}
+		#click_to_call a {
+			display: block;
+			width: 20%;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 50% 13px 16px;
+			background: url(../img/icon_Phone_E-mail-03_2.png) center no-repeat ;
+		}
+		/* menu */
+		#toggle_b{
+		    display: block;
+		    position: absolute;
+		    background: #FF8000;
+		    top: 52px;
+		    left: 20%;
+		    width: 20%;
+		    z-index: 11;
+		}
+		#toggle_b a{
+			display: block;
+			width: 20%;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 50% 13px 16px;
+			background: url(../img/icon_Phone_E-mail-02_2.png) center no-repeat;
+		}
+		/*contact*/
+		#contact {
+			display: block;
+		    position: absolute;
+		    background: #FF8000;
+		    top: 52px;
+		    width: 20%;
+		    left: 60%;
+		    z-index: 12;
+		}
+		#contact a {
+			display: block;
+			width: 20%;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 50% 13px 16px;
+			background: url(../img/icon_Phone_E-mail-04_2.png) center no-repeat;
+		}
+		/*home*/
+		#home {
+			    display: block;
+			    position: absolute;
+			    background: #FF8000;
+			    top: 52px;
+			    width: 20%;
+			    left: 0;
+			    z-index: 12;
+		}
+		#home a {
+			display: block;
+			width: 20%;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 50% 13px 16px;
+			background: url(../img/icon_Phone_E-mail-01_2.png) center no-repeat;
+		}
+		/*menu toggle*/
+		#product_menu:before{
+			display: block;
+			/*content: "";*/
+			position: absolute;
+			top: 50%;
+			left: 35%;
+			width: 20px;
+			height: 20px;
+			margin-top: -10px;
+			background: #fff;
+		}
+		#product_menu a{
+			display: block;
+			width: 20%;
+			text-decoration: none;
+			font-size: 1.2em;
+			padding: 16px 50% 13px 16px;
+			background: url(../img/icon_Phone_E-mail-05_2.png) center no-repeat;
+		}
+		#product_menu a:before{
+			margin-top: -6px;
+		}
+		#product_menu a:after{
+			margin-top: 2px;
+		}
+
+		/*========>*/
+
+		/* 閉じるボタン */
+		li.slidemenu-close a:before {
+			margin-right: 0.4em;
+			font-family: FontAwesome;
+			font-style: normal;
+			font-weight: normal;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			content: "\f057";
+		}
+
+		/* 背景色 */
+		.mm-ismenu {
+			background: none repeat scroll 0 0 #FFF !important;
+			color: rgba(255,255,255,1) !important;
+		}
+		/* 区切り線色 */
+		.mm-menu .mm-list > li:after {
+			
+		}
+		/* 区切り線（last） */
+		.mm-menu.mm-vertical .mm-list .mm-panel li:last-child::after {
+			border-bottom: none !important;
+		}
+		/* リンク色 */
+		.mm-list > li > a, .mm-list > li > span {
+			color: rgba(255,103,0,1) !important;
+		}
+		/* タイトル色 */
+		.mm-header .mm-title {
+			color: rgba(255,103,0,1) !important;
+			font-size: 1.3em;
+			font-weight: bold;
+		}
+	}
+
+

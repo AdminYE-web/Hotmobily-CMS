@@ -1,0 +1,10 @@
+@charset "UTF-8";
+/* CSS Document */
+
+h1 { font-family:Osaka, "ＭＳ ゴシック", Verdana; font-size: 12px; }
+h2 { font-family:Osaka, "ＭＳ ゴシック", Verdana; font-size: 12px; }
+h3 { font-family:Osaka, "ＭＳ ゴシック", Verdana; font-size: 12px; }
+
+body { color: #666 ;}.product_spec_table {
+	padding: 4px;
+}

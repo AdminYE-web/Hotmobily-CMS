@@ -1,0 +1,123 @@
+.slide_show{
+    width: 45%;
+    margin: auto;
+}
+#box-show,#box-show2{text-align: center;}
+#box-show label{
+    display: inline-block;
+    vertical-align: text-top;    
+    width: 30%;
+}
+#box-show2 label{
+    display: inline-block;
+    vertical-align: text-top;    
+    width: 45%;
+}
+
+.img-show,.sub-show{
+    width: 100%;
+    border: 5px solid #ececec;
+    display: flex;
+}
+.img-show{
+    min-height: 268px;
+}
+.i1,.i2,.i3{width: 33%;}
+.sub-show img{width: 100%;height: auto;}
+.i1,.i2{
+    padding-right: 5px;
+}
+.sub-show,.sub-show2{border-top: none;background: #ececec;text-align: center;}
+.subg-box{
+    width: 18%;
+    display: inline-block;
+    padding: 5px 5px;
+}
+.txt-show{
+    float: right;
+    width: 40%;
+}
+.txt-show span{
+    font-size: 28px;
+    margin-bottom: 15px;
+    display: block;
+    color: #6d6d6d;
+    font-weight: bold;
+}
+.field_show, .field_show2{
+  display: flex;
+}
+.field_show .slide_show{
+    width: 98%
+}
+.field_show h3, .field_show2 h3{
+  border-bottom: dotted 1px #333;
+  padding: 10px 0 5px;
+  font-weight: bold;
+  color: #804F1B;
+}
+.left{
+  width: 47%;
+  float: left;
+  margin: auto;
+  text-align: center;
+}
+.right{
+  width: 48%;
+  float: right;
+  padding: 10px;
+}
+.right table{
+  border: 1px solid #ccc;
+  width: 100%;
+  margin: 10px 0px;
+}
+.right td:nth-child(1) {
+    color: #308ac1;
+    font-weight: bold;
+}
+.right td {
+    border: solid 1px #ccc;
+}
+.dot_line{
+  border-bottom: dotted 1px #333;    margin: 10px 0 10px;
+}
+.left img{width: 100%;}
+
+.field_show2 .left, .field_show2 .right{
+    width: 46%;
+    text-align: left;
+    padding: 0 !important;
+}
+.field_show2 .left table{
+  border: 1px solid #ccc;
+  width: 100%;
+  margin: 10px 0px;
+}
+.field_show2 .left td:nth-child(1) {
+    color: #308ac1;
+    font-weight: bold;
+}
+.field_show2 .left td {
+    border: solid 1px #ccc;
+}
+#botm_txt{
+    font-size: 12px;
+    line-height: 30px;
+    display: none;
+}
+
+@media screen and ( max-width: 768px ) {
+    .img-show{
+        min-height: unset;
+    }
+    .img-show img{
+        align-self: center;
+    }
+    #botm_txt{
+      display: block;
+    }
+    .botm_txt{
+      display: block !important;
+    }
+}

@@ -1,0 +1,36 @@
+  #product_menu{
+    width: 100%;
+    left: 0;
+  }
+  #product_menu a{
+    width: 90%;
+    padding: 0;
+    height: 45px;
+    background: unset;
+  }
+  .text_menu {
+    font-size: 22px;
+    font-weight: bold;
+    padding-top: 10px;
+    display: inline-block;
+    padding-right: 15px;
+  }
+
+  .menu_icon {
+    float: left;
+    padding-top: 6px;
+  }
+  .menumb li a{
+    padding: 0;
+    opacity: 0.9;
+  }
+  .menumb{
+    height: 90%;
+    overflow: scroll;
+  }
+
+  @media screen and (min-width: 768px){
+    #sidemenu, #content_wrapper, #content_right{
+      margin-top: 10px;
+    }
+  }
