@@ -505,7 +505,87 @@
 
     text-decoration: underline;
 
-    pointer-events: none;
+    cursor: pointer;
+}
+
+.text-link-preview a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+
+/* ============================================================
+   Link URL Input with Block Picker & Jump
+============================================================ */
+
+.link-url-group {
+    position: relative;
+}
+
+
+.link-url-group .form-text {
+    margin-top: 4px;
+
+    font-size: 11px;
+    color: #6c757d;
+}
+
+
+.link-url-block-picker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 6px;
+}
+
+
+.link-url-block-picker select {
+    flex: 1;
+
+    font-size: 12px;
+
+    padding: 4px 8px;
+
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+
+    background: #fff;
+
+    color: #495057;
+
+    min-width: 0;
+}
+
+
+.link-url-block-picker .btn-sm {
+    font-size: 11px;
+    padding: 4px 10px;
+    white-space: nowrap;
+}
+
+
+@keyframes blockHighlightPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+        outline: 2px solid #007bff;
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0.25);
+        outline: 2px solid #007bff;
+        background-color: #f0f7ff;
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+        outline: 2px solid transparent;
+        background-color: transparent;
+    }
+}
+
+
+.content-block-highlighted {
+    animation: blockHighlightPulse 1.2s ease-in-out 2 !important;
+    border-color: #007bff !important;
 }
 
 
@@ -1382,6 +1462,8 @@ document.addEventListener(
 
             bindTextLinkEditors();
 
+            bindLinkUrlPickers();
+
             bindFlexibleTableEditors();
 
             bindShippingDays();
@@ -1623,7 +1705,7 @@ document.addEventListener(
                         )}
 
 
-                        ${textInput(
+                        ${linkUrlInput(
                             block.id,
                             'url',
                             'Button URL',
@@ -1697,7 +1779,7 @@ document.addEventListener(
                         )}
 
 
-                        ${textInput(
+                        ${linkUrlInput(
                             block.id,
                             'link_url',
                             'Link URL',
@@ -1970,7 +2052,7 @@ document.addEventListener(
                     )}
 
 
-                    ${textInput(
+                    ${linkUrlInput(
                         block.id,
                         'url',
                         'Link URL',
@@ -2091,6 +2173,33 @@ document.addEventListener(
                                     input.value
                                     ||
                                     'Text Link Example';
+
+                            }
+                        );
+
+
+                        preview.addEventListener(
+                            'click',
+                            function (event) {
+
+                                event.preventDefault();
+
+                                const urlInput =
+                                    editor.querySelector(
+                                        `[data-block-id="${blockId}"][data-field="url"]`
+                                    );
+
+                                if (
+                                    urlInput
+                                    &&
+                                    urlInput.value
+                                ) {
+
+                                    scrollToBlock(
+                                        urlInput.value
+                                    );
+
+                                }
 
                             }
                         );
@@ -10215,20 +10324,526 @@ document.addEventListener(
             block
         )
         {
-            return (
-
+            const customId =
                 String(
                     block.settings
                         ?.custom_id
                     ?? ''
                 )
-                .trim()
+                .trim();
 
-                ||
+            const effectiveId =
+                customId !== ''
+                    ? customId
+                    : block.id;
 
-                block.id
+            return String(effectiveId)
+                .replace(
+                    /[^A-Za-z0-9\-_:.]/g,
+                    '-'
+                );
+        }
 
+
+        function getAllBlockIds()
+        {
+            const ids = [];
+
+
+            function collectBlocks(
+                blocks
+            )
+            {
+                (
+                    blocks
+                    ?? []
+                )
+                .forEach(
+                    function (block) {
+
+                        const blockContent =
+                            contents[block.id]
+                            ?? {};
+
+                        let label = '';
+
+                        if (blockContent.title) {
+                            label = blockContent.title;
+                        } else if (blockContent.text) {
+                            label = blockContent.text;
+                        } else if (blockContent.heading) {
+                            label = blockContent.heading;
+                        } else if (block.settings?.title) {
+                            label = block.settings.title;
+                        }
+
+                        if (label && label.length > 25) {
+                            label = label.substring(0, 25) + '...';
+                        }
+
+                        ids.push({
+
+                            id:
+                                getEffectiveBlockId(
+                                    block
+                                ),
+
+                            rawId:
+                                block.id,
+
+                            type:
+                                getBlockName(
+                                    block.type
+                                ),
+
+                            label:
+                                label,
+
+                        });
+
+
+                        if (
+                            block.children
+                        ) {
+
+                            collectBlocks(
+                                block.children
+                            );
+
+                        }
+
+                    }
+                );
+            }
+
+
+            (
+                layout?.rows
+                ?? []
+            )
+            .forEach(
+                function (row) {
+
+                    (
+                        row.columns
+                        ?? []
+                    )
+                    .forEach(
+                        function (column) {
+
+                            collectBlocks(
+                                column.blocks
+                            );
+
+                        }
+                    );
+
+                }
             );
+
+
+            return ids;
+        }
+
+
+        function linkUrlInput(
+            blockId,
+            field,
+            label,
+            value
+        )
+        {
+            const allBlocks =
+                getAllBlockIds();
+
+            const currentValue =
+                String(value ?? '').trim();
+
+
+            const options =
+                allBlocks
+                    .map(
+                        function (b) {
+
+                            const optVal =
+                                '#' + b.id;
+
+                            const isSelected =
+                                currentValue === optVal
+                                ||
+                                currentValue === b.id;
+
+                            const labelText =
+                                b.label
+                                ? ` ("${escapeHtml(b.label)}")`
+                                : '';
+
+                            return `
+                                <option
+                                    value="${escapeHtml(optVal)}"
+                                    data-raw-id="${escapeHtml(b.rawId)}"
+                                    ${isSelected ? 'selected' : ''}
+                                >
+                                    ${escapeHtml(optVal)} — ${escapeHtml(b.type)}${labelText}
+                                </option>
+                            `;
+
+                        }
+                    )
+                    .join('');
+
+
+            return `
+
+                <div class="form-group link-url-group">
+
+                    <label>
+                        ${escapeHtml(
+                            label
+                        )}
+                    </label>
+
+                    <div class="input-group">
+
+                        <input
+                            type="text"
+                            class="
+                                form-control
+                                product-field
+                            "
+                            data-block-id="${blockId}"
+                            data-field="${field}"
+                            value="${escapeHtml(
+                                value ?? ''
+                            )}"
+                            placeholder="https://... or #block-id"
+                        >
+
+                        <div class="input-group-append">
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-info"
+                                data-link-jump-for="${blockId}"
+                                data-link-jump-field="${field}"
+                                title="Jump to this block in editor or test link"
+                            >
+                                <i class="fas fa-external-link-alt"></i> Go to Block
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="link-url-block-picker">
+
+                        <select
+                            data-link-picker-for="${blockId}"
+                            data-link-picker-field="${field}"
+                        >
+
+                            <option value="">
+                                — Select Block ID —
+                            </option>
+
+                            ${options}
+
+                        </select>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm"
+                            data-link-picker-apply="${blockId}"
+                            data-link-picker-apply-field="${field}"
+                            title="Insert selected block ID into URL field"
+                        >
+                            Select
+                        </button>
+
+                    </div>
+
+                    <small class="form-text">
+                        Enter a URL (e.g. <code>https://...</code>) or select a Block ID (e.g. <code>#block-id</code>) to link to a section.
+                    </small>
+
+                </div>
+
+            `;
+        }
+
+
+        function scrollToBlock(
+            targetIdOrUrl
+        )
+        {
+            if (
+                !targetIdOrUrl
+            ) {
+
+                alert(
+                    'Please enter or select a URL or Block ID.'
+                );
+
+                return;
+
+            }
+
+            const str =
+                String(targetIdOrUrl).trim();
+
+            if (
+                str.startsWith('http://')
+                ||
+                str.startsWith('https://')
+            ) {
+
+                window.open(str, '_blank');
+
+                return;
+
+            }
+
+            const cleanId =
+                str.replace(/^#/, '').trim();
+
+            if (
+                !cleanId
+            ) {
+
+                return;
+
+            }
+
+            // Look for block element in canvas
+            let targetEl =
+                document.querySelector(
+                    `.content-block[data-block-id="${CSS.escape(cleanId)}"]`
+                );
+
+            if (
+                !targetEl
+            ) {
+
+                const allBlocks =
+                    getAllBlockIds();
+
+                const found =
+                    allBlocks.find(
+                        function (b) {
+
+                            return b.id === cleanId
+                                || b.rawId === cleanId;
+
+                        }
+                    );
+
+                if (
+                    found
+                ) {
+
+                    targetEl =
+                        document.querySelector(
+                            `.content-block[data-block-id="${CSS.escape(found.rawId)}"]`
+                        );
+
+                }
+
+            }
+
+            if (
+                targetEl
+            ) {
+
+                targetEl.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
+
+                targetEl.classList.remove(
+                    'content-block-highlighted'
+                );
+
+                void targetEl.offsetWidth;
+
+                targetEl.classList.add(
+                    'content-block-highlighted'
+                );
+
+                setTimeout(
+                    function () {
+
+                        targetEl.classList.remove(
+                            'content-block-highlighted'
+                        );
+
+                    },
+                    2500
+                );
+
+            } else {
+
+                alert(
+                    `Block "#${cleanId}" was not found on this page.`
+                );
+
+            }
+        }
+
+
+        function bindLinkUrlPickers()
+        {
+            // Apply button click
+            document
+                .querySelectorAll(
+                    '[data-link-picker-apply]'
+                )
+                .forEach(
+                    function (btn) {
+
+                        btn.addEventListener(
+                            'click',
+                            function () {
+
+                                const blockId =
+                                    this.dataset
+                                        .linkPickerApply;
+
+                                const field =
+                                    this.dataset
+                                        .linkPickerApplyField;
+
+                                const select =
+                                    document.querySelector(
+                                        `[data-link-picker-for="${blockId}"][data-link-picker-field="${field}"]`
+                                    );
+
+                                const input =
+                                    document.querySelector(
+                                        `[data-block-id="${blockId}"][data-field="${field}"]`
+                                    );
+
+                                if (
+                                    !select
+                                    ||
+                                    !input
+                                    ||
+                                    !select.value
+                                ) {
+
+                                    return;
+
+                                }
+
+                                input.value =
+                                    select.value;
+
+                                input.dispatchEvent(
+                                    new Event(
+                                        'input',
+                                        {
+                                            bubbles: true,
+                                        }
+                                    )
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+            // Select change auto-apply
+            document
+                .querySelectorAll(
+                    '[data-link-picker-for]'
+                )
+                .forEach(
+                    function (select) {
+
+                        select.addEventListener(
+                            'change',
+                            function () {
+
+                                const blockId =
+                                    this.dataset
+                                        .linkPickerFor;
+
+                                const field =
+                                    this.dataset
+                                        .linkPickerField;
+
+                                const input =
+                                    document.querySelector(
+                                        `[data-block-id="${blockId}"][data-field="${field}"]`
+                                    );
+
+                                if (
+                                    !input
+                                    ||
+                                    !this.value
+                                ) {
+
+                                    return;
+
+                                }
+
+                                input.value =
+                                    this.value;
+
+                                input.dispatchEvent(
+                                    new Event(
+                                        'input',
+                                        {
+                                            bubbles: true,
+                                        }
+                                    )
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+            // Go to block / Jump button click
+            document
+                .querySelectorAll(
+                    '[data-link-jump-for]'
+                )
+                .forEach(
+                    function (btn) {
+
+                        btn.addEventListener(
+                            'click',
+                            function () {
+
+                                const blockId =
+                                    this.dataset
+                                        .linkJumpFor;
+
+                                const field =
+                                    this.dataset
+                                        .linkJumpField;
+
+                                const input =
+                                    document.querySelector(
+                                        `[data-block-id="${blockId}"][data-field="${field}"]`
+                                    );
+
+                                const val =
+                                    input
+                                    ? input.value
+                                    : '';
+
+                                scrollToBlock(
+                                    val
+                                );
+
+                            }
+                        );
+
+                    }
+                );
         }
 
 

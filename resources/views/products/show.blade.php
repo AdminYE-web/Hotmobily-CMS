@@ -2,1055 +2,1116 @@
 
 
 @section('head')
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{{ $product->name }}</title>
 
-<title>{{ $product->name }}</title>
+    <meta name="robots" content="index,follow">
 
-<meta
-    name="robots"
-    content="index,follow"
->
-
-<link
-    rel="canonical"
-    href="{{ url('/products/' . $product->slug) }}"
->
+    <link rel="canonical" href="{{ url('/products/' . $product->slug) }}">
 
 
-{{--
+    {{--
     The storefront shell (header, navigation, sidebar and footer) is the
     legacy product shell. Load its base assets before the CMS block styles so
     the dynamic page has the same dimensions and responsive behaviour as the
     migrated product pages.
 --}}
-@include('partials.legacy-head-products')
+    @include('partials.legacy-head-products')
 
 
-@if(
-    $product->slug
-    ===
-    'rubberstrap'
-)
+    @if ($product->slug === 'rubberstrap')
+        <link rel="preload" type="text/css" href="/css/homepage_hotstrap.css" as="style"
+            onload="this.onload=null;this.rel='stylesheet'">
 
-    <link
-        rel="preload"
-        type="text/css"
-        href="/css/homepage_hotstrap.css"
-        as="style"
-        onload="this.onload=null;this.rel='stylesheet'"
-    >
+        <link rel="stylesheet" href="/products/css/product_group.css?v=1.14" type="text/css">
 
-    <link
-        rel="stylesheet"
-        href="/products/css/product_group.css?v=1.14"
-        type="text/css"
-    >
+        <link rel="stylesheet" href="/products/acrylic/css/renew_products.css?v=1.163" type="text/css">
 
-    <link
-        rel="stylesheet"
-        href="/products/acrylic/css/renew_products.css?v=1.163"
-        type="text/css"
-    >
+        <link rel="stylesheet" href="/products/css/scroll.css" type="text/css">
 
-    <link
-        rel="stylesheet"
-        href="/products/css/scroll.css"
-        type="text/css"
-    >
+        <link rel="stylesheet" href="/css/rubber.css?v=1.06" type="text/css">
+    @endif
 
-    <link
-        rel="stylesheet"
-        href="/css/rubber.css?v=1.06"
-        type="text/css"
-    >
 
-@endif
+    <style>
+        /* ============================================================
+           Product CMS
+        ============================================================ */
+        .store-gallery {
+            margin-bottom: 15px;
+        }
 
+        .product-cms-page {
+            width: 100%;
 
-<style>
+            color: #281600;
 
-/* ============================================================
-   Product CMS
-============================================================ */
-.store-gallery{
-    margin-bottom: 15px;
-}
-.product-cms-page {
-    width: 100%;
+            font-size: 13.6px;
+            letter-spacing: .05em;
+        }
 
-    color: #281600;
 
-    font-size: 13.6px;
-    letter-spacing: .05em;
-}
+        .product-layout-container {
+            width: 100%;
+            max-width: 1200px;
 
+            margin: 0 auto;
+        }
 
-.product-layout-container {
-    width: 100%;
-    max-width: 1200px;
 
-    margin: 0 auto;
-}
+        .product-layout-row {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: flex-start;
 
+            width: calc(100% + 16px);
 
-.product-layout-row {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: flex-start;
+            /* margin: 0 -8px 15px; */
+        }
 
-    width: calc(100% + 16px);
 
-    /* margin: 0 -8px 15px; */
-}
+        .product-layout-row:last-child {
+            margin-bottom: 0;
+        }
 
 
-.product-layout-row:last-child {
-    margin-bottom: 0;
-}
+        .product-layout-column {
+            box-sizing: border-box !important;
 
+            flex:
+                0 0 var(--product-column-width) !important;
 
-.product-layout-column {
-    box-sizing: border-box !important;
+            width:
+                var(--product-column-width) !important;
 
-    flex:
-        0
-        0
-        var(--product-column-width)
-        !important;
+            max-width:
+                var(--product-column-width) !important;
 
-    width:
-        var(--product-column-width)
-        !important;
+            min-width: 0;
 
-    max-width:
-        var(--product-column-width)
-        !important;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
 
-    min-width: 0;
 
-    padding-left: 8px;
-    padding-right: 8px;
-}
+        .product-layout-column-inner {
+            box-sizing: border-box;
 
+            width: 100%;
+            min-width: 0;
+        }
 
-.product-layout-column-inner {
-    box-sizing: border-box;
 
-    width: 100%;
-    min-width: 0;
-}
+        .product-layout-column-inner>* {
+            max-width: 100%;
+        }
 
 
-.product-layout-column-inner > * {
-    max-width: 100%;
-}
+        /* ============================================================
+           Block
+        ============================================================ */
 
+        html {
+            scroll-behavior: smooth;
+        }
 
-/* ============================================================
-   Block
-============================================================ */
 
-.store-product-block {
-    width: 100%;
-}
+        .store-product-block {
+            width: 100%;
+            scroll-margin-top: 80px;
+        }
 
 
-/* .store-product-block + .store-product-block {
-    margin-top: 15px;
-} */
+        /* .store-product-block + .store-product-block {
+            margin-top: 15px;
+        } */
 
 
-.store-product-position {
-    display: flex;
+        .store-product-position {
+            display: flex;
 
-    width: 100%;
-}
+            width: 100%;
+        }
 
 
-.store-product-inner {
-    max-width: 100%;
-}
+        .store-product-inner {
+            max-width: 100%;
+        }
 
 
-/* ============================================================
-   Product Header
-============================================================ */
+        /* ============================================================
+           Product Header
+        ============================================================ */
 
-.store-product-header {
-    margin-bottom: 15px;
-}
+        .store-product-header {
+            margin-bottom: 15px;
+        }
 
 
-.store-product-title {
-    margin:
-        0
-        0
-        6px;
+        .store-product-title {
+            margin:
+                0 0 6px;
 
-    color: #000;
+            color: #000;
 
-    font-size: 22px;
-    line-height: 1.4;
+            font-size: 22px;
+            line-height: 1.4;
 
-    text-align: left;
-}
+            text-align: left;
+        }
 
 
-.store-product-meta {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: flex-end;
+        .store-product-meta {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            justify-content: flex-end;
 
-    gap: 5px;
+            gap: 5px;
 
-    margin-top: 10px;
-    margin-bottom: 20px;
+            margin-top: 10px;
+            margin-bottom: 20px;
 
-    font-size: 13px;
-}
+            font-size: 13px;
+        }
 
 
-.store-product-meta p {
-    margin: 0;
-}
+        .store-product-meta p {
+            margin: 0;
+        }
 
 
-.store-product-meta a,
-.store-product-meta img {
-    display: block;
-}
+        .store-product-meta a,
+        .store-product-meta img {
+            display: block;
+        }
 
 
-.store-product-meta img {
-    width: 20px;
-    height: 20px;
-}
+        .store-product-meta img {
+            width: 20px;
+            height: 20px;
+        }
 
 
-/* ============================================================
-   Product Gallery
-============================================================ */
+        /* ============================================================
+           Product Gallery
+        ============================================================ */
 
-.store-gallery {
-    width: 100%;
-}
+        .store-gallery {
+            width: 100%;
+        }
 
 
-.store-gallery-main {
-    position: relative;
+        .store-gallery-main {
+            position: relative;
 
-    width: 100%;
+            width: 100%;
 
-    overflow: hidden;
+            overflow: hidden;
 
-    background: #fafafa;
+            background: #fafafa;
 
-    border-radius: 8px;
+            border-radius: 8px;
 
-    cursor: zoom-in;
-}
+            cursor: zoom-in;
+        }
 
 
-.store-gallery-main img {
-    display: block;
+        .store-gallery-main img {
+            display: block;
 
-    width: 100%;
-    height: auto;
+            width: 100%;
+            height: auto;
 
-    object-fit: contain;
-}
+            object-fit: contain;
+        }
 
 
-.store-gallery-thumbnails {
-    display: grid;
+        .store-gallery-thumbnails {
+            display: grid;
 
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
+            grid-template-columns:
+                repeat(2,
+                    minmax(0, 1fr));
 
-    gap: 8px;
+            gap: 8px;
 
-    margin-top: 10px;
-}
+            margin-top: 10px;
+        }
 
 
-.store-gallery-thumb {
-    width: 100%;
+        .store-gallery-thumb {
+            width: 100%;
 
-    padding: 0;
+            padding: 0;
 
-    overflow: hidden;
+            overflow: hidden;
 
-    background: #fff;
+            background: #fff;
 
-    border: 2px solid #eee;
-    border-radius: 6px;
+            border: 2px solid #eee;
+            border-radius: 6px;
 
-    cursor: pointer;
+            cursor: pointer;
 
-    opacity: .65;
+            opacity: .65;
 
-    transition: .2s;
-}
+            transition: .2s;
+        }
 
 
-.store-gallery-thumb img {
-    display: block;
+        .store-gallery-thumb img {
+            display: block;
 
-    width: 100%;
+            width: 100%;
 
-    aspect-ratio: 1 / 1;
+            aspect-ratio: 1 / 1;
 
-    object-fit: cover;
-}
+            object-fit: cover;
+        }
 
 
-.store-gallery-thumb.is-active {
-    border-color: #e67e22;
+        .store-gallery-thumb.is-active {
+            border-color: #e67e22;
 
-    opacity: 1;
-}
+            opacity: 1;
+        }
 
 
-/* ============================================================
-   Gallery Modal
-============================================================ */
+        /* ============================================================
+           Gallery Modal
+        ============================================================ */
 
-.store-gallery-modal {
-    position: fixed;
+        .store-gallery-modal {
+            position: fixed;
 
-    inset: 0;
+            inset: 0;
 
-    z-index: 99999;
+            z-index: 99999;
 
-    display: none;
-    justify-content: center;
-    align-items: center;
+            display: none;
+            justify-content: center;
+            align-items: center;
 
-    padding: 30px;
+            padding: 30px;
 
-    background:
-        rgba(
-            0,
-            0,
-            0,
-            .88
-        );
-}
-
-
-.store-gallery-modal.is-open {
-    display: flex;
-}
-
-
-.store-gallery-modal img {
-    display: block;
-
-    max-width: 90vw;
-    max-height: 90vh;
-
-    object-fit: contain;
-}
-
-
-.store-gallery-modal-close {
-    position: absolute;
-
-    top: 15px;
-    right: 20px;
-
-    color: #fff;
-
-    font-size: 40px;
-    line-height: 1;
-
-    cursor: pointer;
-}
-
-
-/* ============================================================
-   Product Details
-============================================================ */
-
-.store-product-details {
-    width: 100%;
-}
-
-
-.store-price-box {
-    margin-bottom: 3px;
-
-    padding: 5px;
-
-    background: #efefef;
-}
-
-
-.store-price-box p {
-    margin: 0;
-
-    font-size: 20px;
-}
-
-
-.store-price-label {
-    font-weight: 700;
-}
-
-
-.store-product-note {
-    margin-top: 8px;
-
-    font-size: 12px;
-    line-height: 1.6;
-}
-
-
-.store-highlight-title {
-    margin:
-        18px
-        0
-        15px;
-
-    color: #f59420;
-
-    font-size: 19px;
-    line-height: 1.5;
-}
-
-
-/* ============================================================
-   Heading / Text
-============================================================ */
-
-.store-heading {
-    margin:
-        15px
-        0
-        10px;
-
-    color: #eb8018;
-
-    font-size: 19px;
-}
-
-
-.store-rich-text {
-    font-size: 16px;
-    line-height: 1.7;
-
-    white-space: normal;
-}
-
-
-/* ============================================================
-   Image
-============================================================ */
-
-.store-image {
-    width: 100%;
-}
-
-
-.store-image img {
-    display: block;
-
-    max-width: 100%;
-    height: auto;
-}
-
-
-/* ============================================================
-   Button
-============================================================ */
-
-.store-button {
-    box-sizing: border-box;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-
-    width: 100%;
-    min-height: 55px;
-
-    padding: 0 24px;
-
-    background: #ff9900;
-
-    color: #fff !important;
-
-    border-radius: 4px;
-
-    font-size: 16px;
-    font-weight: 700;
-
-    text-decoration: none !important;
-}
-
-
-.store-button-icon {
-    flex: 0 0 auto;
-
-    width: 24px;
-    height: 24px;
-
-    fill: currentColor;
-}
-
-
-/* ============================================================
-   Text Link
-============================================================ */
-
-.store-text-link {
-    color: #111 !important;
-
-    text-decoration: underline !important;
-}
-
-
-/* ============================================================
-   Info Card
-============================================================ */
-
-.store-info-card {
-    margin-bottom: 15px;
-}
-
-
-.store-info-card-title {
-    margin:
-        0
-        0
-        10px;
-
-    padding-left: 10px;
-
-    font-size: 16px;
-}
-
-
-.store-info-card-image {
-    display: block;
-
-    margin-bottom: 10px;
-}
-
-
-.store-info-card-image img {
-    display: block;
-
-    width: 100%;
-    height: auto;
-
-    border-radius: 4px;
-}
-
-
-.store-info-card-description {
-    margin-bottom: 8px;
-
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-
-.store-info-card-link {
-    text-align: right;
-}
-
-
-.store-info-card-link a {
-    color: #000 !important;
-
-    text-decoration: underline !important;
-}
-
-
-/* ============================================================
-   Accordion
-============================================================ */
-
-.store-accordion {
-    width: 100%;
-
-    margin-bottom: 15px;
-
-    background: #fff;
-
-    border-bottom: 1px solid #e5e5e5;
-}
-
-
-.store-accordion-input {
-    display: none;
-}
-
-
-.store-accordion-summary {
-    position: relative;
-
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    padding: 15px;
-
-    cursor: pointer;
-
-    font-size: 19px;
-    font-weight: 700;
-}
-
-
-.store-accordion-arrow {
-    position: absolute;
-    right: 20px;
-
-    flex-shrink: 0;
-
-    width: 10px;
-    height: 10px;
-
-    border-right: 2px solid #333;
-    border-bottom: 2px solid #333;
-
-    transform:
-        rotate(
-            45deg
-        );
-
-    transition:
-        transform
-        .3s;
-}
-
-
-.store-accordion-input:checked
-~
-.store-accordion-summary
-.store-accordion-arrow {
-    transform:
-        rotate(
-            -135deg
-        );
-}
-
-
-.store-accordion-content {
-    max-height: 0;
-
-    overflow: hidden;
-
-    padding:
-        0
-        10px
-        0;
-
-    transition:
-        max-height
-        .5s
-        cubic-bezier(
-            0,
-            1,
-            0,
-            1
-        ),
-        padding
-        .3s;
-}
-
-
-.store-accordion-input:checked
-~
-.store-accordion-content {
-    max-height: 2000px;
-
-    padding:
-        20px
-        10px
-        10px;
-}
-
-
-/* ============================================================
-   Custom Table
-============================================================ */
-
-.store-table-scroll {
-    width: 100%;
-
-    overflow-x: auto;
-
-    -webkit-overflow-scrolling: touch;
-}
-
-
-.store-custom-table {
-    width: 100%;
-
-    border-collapse: collapse;
-
-    table-layout: fixed;
-}
-
-
-.store-custom-table td {
-    padding: 10px;
-
-    border: 1px solid #ccc;
-
-    vertical-align: middle;
-
-    white-space: pre-line;
-}
-
-
-/* ============================================================
-   Shipping Schedule
-============================================================ */
-
-.store-shipping-schedule {
-    width: 100%;
-}
-
-
-.store-shipping-title {
-    margin-bottom: 10px;
-}
-
-
-.store-shipping-intro {
-    margin-bottom: 12px;
-
-    line-height: 1.6;
-}
-
-
-.store-shipping-heading {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
-    gap: 8px;
-
-    margin:
-        12px
-        0
-        8px;
-}
-
-
-.store-shipping-badge {
-    display: inline-block;
-
-    padding: 6px 12px;
-
-    border-radius: 5px;
-
-    font-weight: 700;
-}
-
-
-.store-theme-blue {
-    background: #b9e5fa;
-
-    color: #0875d1;
-}
-
-
-.store-theme-pink {
-    background: #ff93ff;
-
-    color: #9e009f;
-}
-
-
-.store-theme-cyan {
-    background: #66fffe;
-
-    color: #004140;
-}
-
-
-.store-theme-orange {
-    background: #ffd3a3;
-
-    color: #a85000;
-}
-
-
-.store-theme-gray {
-    background: #e5e5e5;
-
-    color: #444;
-}
-
-
-.store-shipping-table {
-    width: 100%;
-
-    margin-bottom: 15px;
-
-    border-collapse: collapse;
-}
-
-
-.store-shipping-table td,
-.store-shipping-table th {
-    padding: 10px;
-
-    border: 1px solid #ccc;
-
-    text-align: center;
-}
-
-
-.store-shipping-table th {
-    background: #d1e3f0;
-}
-
-
-.store-shipping-footer {
-    margin-top: 10px;
-
-    font-size: 12px;
-    line-height: 1.6;
-
-    white-space: pre-line;
-}
-
-
-.store-shipping-group-badges {
-    display: flex;
-    flex-wrap: wrap;
-
-    gap: 8px;
-
-    margin-bottom: 10px;
-}
-
-
-/* ============================================================
-   Template Button
-============================================================ */
-
-.store-template-button {
-    display: block;
-
-    width: 80%;
-
-    margin:
-        15px
-        auto;
-
-    padding: 10px 20px;
-
-    background: #f79647;
-
-    color: #000 !important;
-
-    border-radius: 6px;
-
-    font-weight: 700;
-
-    text-align: center;
-
-    text-decoration: underline !important;
-}
-
-
-/* ============================================================
-   Divider / Spacer
-============================================================ */
-
-.store-divider {
-    margin:
-        20px
-        0;
-
-    border: 0;
-    border-top: 1px solid #ddd;
-}
-
-
-/* ============================================================
-   Mobile
-============================================================ */
-
-@media
-(
-    max-width: 768px
-) {
-
-    .product-layout-row {
-        flex-wrap: wrap !important;
-    }
-
-
-    .product-layout-column {
-        flex:
-            0
-            0
-            100%
-            !important;
-
-        max-width:
-            100%
-            !important;
-    }
-
-
-    .store-product-inner {
-        width:
-            100%
-            !important;
-    }
-
-
-    .store-gallery-thumbnails {
-        grid-template-columns:
-            repeat(
-                2,
-                minmax(
+            background:
+                rgba(0,
                     0,
-                    1fr
-                )
-            );
-    }
+                    0,
+                    .88);
+        }
 
 
-    .store-product-title {
-        font-size: 19px;
-    }
+        .store-gallery-modal.is-open {
+            display: flex;
+        }
 
 
-    .product-cms-page {
-        font-size: 3.47vw;
-        line-height: 1.53;
-    }
+        .store-gallery-modal img {
+            display: block;
+
+            max-width: 90vw;
+            max-height: 90vh;
+
+            object-fit: contain;
+        }
 
 
-    .store-template-button {
-        width: 100%;
-    }
+        .store-gallery-modal-close {
+            position: absolute;
 
-}
+            top: 15px;
+            right: 20px;
 
-</style>
+            color: #fff;
 
+            font-size: 40px;
+            line-height: 1;
+
+            cursor: pointer;
+        }
+
+
+        /* ============================================================
+           Product Details
+        ============================================================ */
+
+        .store-product-details {
+            width: 100%;
+        }
+
+
+        .store-price-box {
+            margin-bottom: 3px;
+
+            padding: 5px;
+
+            background: #efefef;
+        }
+
+
+        .store-price-box p {
+            margin: 0;
+
+            font-size: 20px;
+        }
+
+
+        .store-price-label {
+            font-weight: 700;
+        }
+
+
+        .store-product-note {
+            margin-top: 8px;
+
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+
+        .store-highlight-title {
+            margin:
+                18px 0 15px;
+
+            color: #f59420;
+
+            font-size: 19px;
+            line-height: 1.5;
+        }
+
+
+        /* ============================================================
+           Heading / Text
+        ============================================================ */
+
+        .store-heading {
+            margin:
+                15px 0 10px;
+
+            color: #eb8018;
+
+            font-size: 19px;
+        }
+
+
+        .store-rich-text {
+            font-size: 16px;
+            line-height: 1.7;
+
+            white-space: normal;
+        }
+
+
+        /* ============================================================
+           Image
+        ============================================================ */
+
+        .store-image {
+            width: 100%;
+        }
+
+
+        .store-image img {
+            display: block;
+
+            max-width: 100%;
+            height: auto;
+        }
+
+
+        /* ============================================================
+           Button
+        ============================================================ */
+
+        .store-button {
+            box-sizing: border-box;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            width: 100%;
+            min-height: 55px;
+
+            padding: 0 24px;
+
+            background: #ff9900;
+
+            color: #fff !important;
+
+            border-radius: 4px;
+
+            font-size: 16px;
+            font-weight: 700;
+
+            text-decoration: none !important;
+        }
+
+
+        .store-button-icon {
+            flex: 0 0 auto;
+
+            width: 24px;
+            height: 24px;
+
+            fill: currentColor;
+        }
+
+
+        /* ============================================================
+           Text Link
+        ============================================================ */
+
+        .store-text-link {
+            color: #111 !important;
+
+            text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
+           Info Card
+        ============================================================ */
+
+        .store-info-card {
+            margin-bottom: 15px;
+        }
+
+
+        .store-info-card-title {
+            margin:
+                0 0 10px;
+
+            padding-left: 10px;
+
+            font-size: 16px;
+        }
+
+
+        .store-info-card-image {
+            display: block;
+
+            margin-bottom: 10px;
+        }
+
+
+        .store-info-card-image img {
+            display: block;
+
+            width: 100%;
+            height: auto;
+
+            border-radius: 4px;
+        }
+
+
+        .store-info-card-description {
+            margin-bottom: 8px;
+
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+
+        .store-info-card-link {
+            text-align: right;
+        }
+
+
+        .store-info-card-link a {
+            color: #000 !important;
+
+            text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
+           Accordion
+        ============================================================ */
+
+        .store-accordion {
+            width: 100%;
+
+            margin-bottom: 15px;
+
+            background: #fff;
+
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+
+        .store-accordion-input {
+            display: none;
+        }
+
+
+        .store-accordion-summary {
+            position: relative;
+
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+
+            padding: 15px;
+
+            cursor: pointer;
+
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+
+        .store-accordion-arrow {
+            position: absolute;
+            right: 20px;
+
+            flex-shrink: 0;
+
+            width: 10px;
+            height: 10px;
+
+            border-right: 2px solid #333;
+            border-bottom: 2px solid #333;
+
+            transform:
+                rotate(45deg);
+
+            transition:
+                transform .3s;
+        }
+
+
+        .store-accordion-input:checked~.store-accordion-summary .store-accordion-arrow {
+            transform:
+                rotate(-135deg);
+        }
+
+
+        .store-accordion-content {
+            max-height: 0;
+
+            overflow: hidden;
+
+            padding:
+                0 10px 0;
+
+            transition:
+                max-height .5s cubic-bezier(0,
+                    1,
+                    0,
+                    1),
+                padding .3s;
+        }
+
+
+        .store-accordion-input:checked~.store-accordion-content {
+            max-height: 2000px;
+
+            padding:
+                20px 10px 10px;
+        }
+
+
+        /* ============================================================
+           Custom Table
+        ============================================================ */
+
+        .store-table-scroll {
+            width: 100%;
+
+            overflow-x: auto;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        .store-custom-table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            table-layout: fixed;
+        }
+
+
+        .store-custom-table td {
+            padding: 10px;
+
+            border: 1px solid #ccc;
+
+            vertical-align: middle;
+
+            white-space: pre-line;
+        }
+
+
+        /* ============================================================
+           Shipping Schedule
+        ============================================================ */
+
+        .store-shipping-schedule {
+            width: 100%;
+        }
+
+
+        .store-shipping-title {
+            margin-bottom: 10px;
+        }
+
+
+        .store-shipping-intro {
+            margin-bottom: 12px;
+
+            line-height: 1.6;
+        }
+
+
+        .store-shipping-heading {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin:
+                12px 0 8px;
+        }
+
+
+        .store-shipping-badge {
+            display: inline-block;
+
+            padding: 6px 12px;
+
+            border-radius: 5px;
+
+            font-weight: 700;
+        }
+
+
+        .store-theme-blue {
+            background: #b9e5fa;
+
+            color: #0875d1;
+        }
+
+
+        .store-theme-pink {
+            background: #ff93ff;
+
+            color: #9e009f;
+        }
+
+
+        .store-theme-cyan {
+            background: #66fffe;
+
+            color: #004140;
+        }
+
+
+        .store-theme-orange {
+            background: #ffd3a3;
+
+            color: #a85000;
+        }
+
+
+        .store-theme-gray {
+            background: #e5e5e5;
+
+            color: #444;
+        }
+
+
+        .store-shipping-table {
+            width: 100%;
+
+            margin-bottom: 15px;
+
+            border-collapse: collapse;
+        }
+
+
+        .store-shipping-table td,
+        .store-shipping-table th {
+            padding: 10px;
+
+            border: 1px solid #ccc;
+
+            text-align: center;
+        }
+
+
+        .store-shipping-table th {
+            background: #d1e3f0;
+        }
+
+
+        .store-shipping-footer {
+            margin-top: 10px;
+
+            font-size: 12px;
+            line-height: 1.6;
+
+            white-space: pre-line;
+        }
+
+
+        .store-shipping-group-badges {
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-bottom: 10px;
+        }
+
+
+        /* ============================================================
+           Template Button
+        ============================================================ */
+
+        .store-template-button {
+            display: block;
+
+            width: 80%;
+
+            margin:
+                15px auto;
+
+            padding: 10px 20px;
+
+            background: #f79647;
+
+            color: #000 !important;
+
+            border-radius: 6px;
+
+            font-weight: 700;
+
+            text-align: center;
+
+            text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
+           Divider / Spacer
+        ============================================================ */
+
+        .store-divider {
+            margin:
+                20px 0;
+
+            border: 0;
+            border-top: 1px solid #ddd;
+        }
+
+
+        /* ============================================================
+           Mobile
+        ============================================================ */
+
+        @media (max-width: 768px) {
+
+            .product-layout-row {
+                flex-wrap: wrap !important;
+            }
+
+
+            .product-layout-column {
+                flex:
+                    0 0 100% !important;
+
+                max-width:
+                    100% !important;
+            }
+
+
+            .store-product-inner {
+                width:
+                    100% !important;
+            }
+
+
+            .store-gallery-thumbnails {
+                grid-template-columns:
+                    repeat(2,
+                        minmax(0,
+                            1fr));
+            }
+
+
+            .store-product-title {
+                font-size: 19px;
+            }
+
+
+            .product-cms-page {
+                font-size: 3.47vw;
+                line-height: 1.53;
+            }
+
+
+            .store-template-button {
+                width: 100%;
+            }
+
+            @media (max-width: 768px) {
+                .store-template-button {
+                    width: 85%;
+                }
+            }
+
+        }
+    </style>
 @endsection
 
 
 @section('content')
+    <div class="product-cms-page" data-product-slug="{{ $product->slug }}">
 
-<div
-    class="product-cms-page"
-    data-product-slug="{{ $product->slug }}"
->
+        <div class="product-layout-container">
 
-    <div class="product-layout-container">
+            @foreach ($layout['rows'] ?? [] as $row)
+                <div class="product-layout-row">
 
-        @foreach(
-            $layout['rows'] ?? []
-            as $row
-        )
+                    @foreach ($row['columns'] ?? [] as $column)
+                        @php
 
-            <div class="product-layout-row">
+                            $columnWidth = (int) ($column['width'] ?? 12);
 
-                @foreach(
-                    $row['columns'] ?? []
-                    as $column
-                )
+                            $columnWidth = max(1, min(12, $columnWidth));
 
-                    @php
-
-                        $columnWidth =
-                            (int)
-                            (
-                                $column['width']
-                                ??
-                                12
-                            );
+                            $columnPercent = ($columnWidth / 12) * 100;
+                        @endphp
 
 
-                        $columnWidth =
-                            max(
-                                1,
-                                min(
-                                    12,
-                                    $columnWidth
-                                )
-                            );
-
-
-                        $columnPercent =
-                            (
-                                $columnWidth
-                                /
-                                12
-                            )
-                            *
-                            100;
-
-                    @endphp
-
-
-                    <div
-                        class="product-layout-column"
-                        style="
+                        <div class="product-layout-column"
+                            style="
                             --product-column-width:
                             {{ $columnPercent }}%;
-                        "
-                    >
+                        ">
 
-                        <div class="product-layout-column-inner">
+                            <div class="product-layout-column-inner">
 
-                            @foreach(
-                                $column['blocks'] ?? []
-                                as $block
-                            )
+                                @foreach ($column['blocks'] ?? [] as $block)
+                                    @include('products.partials.block', [
+                                        'block' => $block,
+                                    
+                                        'contents' => $contents,
+                                    
+                                        'product' => $product,
+                                    
+                                        'publishedAt' => $publishedAt,
+                                    ])
+                                @endforeach
 
-                                @include(
-                                    'products.partials.block',
-                                    [
-                                        'block' =>
-                                            $block,
-
-                                        'contents' =>
-                                            $contents,
-
-                                        'product' =>
-                                            $product,
-
-                                        'publishedAt' =>
-                                            $publishedAt,
-                                    ]
-                                )
-
-                            @endforeach
+                            </div>
 
                         </div>
+                    @endforeach
 
+                </div>
+            @endforeach
+            <div class="tab-container">
+                <div class="tab-menu">
+                    <button class="tab-link active" onclick="openTab(event, 'tab1')">アタッチメント</button>
+                    <button class="tab-link" onclick="openTab(event, 'tab2')">加工方法</button>
+                    <button class="tab-link" onclick="openTab(event, 'tab3')">オプション</button>
+                </div>
+
+                <div id="tab1" class="tab-content active">
+                    <div class="grid-layout">
+                        <div class="itemz">
+                            <div class="row">
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part1.webp" data-lightbox="img-part-set-1"
+                                        data-title="<strong>【通常松葉+カニカン】</strong>製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"><img
+                                            class="picpro lazy" data-src="/products/images/HM_part1.webp" width="160"
+                                            height="160" loading="lazy" /></a><br />
+                                    <div>+0円</div>
+                                    <a href="/products/images/HM_part1.webp" data-lightbox="img-part-set-1-1"
+                                        data-title="<strong>【通常松葉+カニカン】</strong>製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part2.webp" data-lightbox="img-part-set-2"
+                                        data-title="<strong>【ゴム松葉+カニカン】</strong>松葉紐が伸縮します。製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"><img
+                                            class="picpro lazy" data-src="/products/images/HM_part2.webp" width="160"
+                                            height="160" loading="lazy" /></a><br />
+                                    <div>+0円</div>
+                                    <a href="/products/images/HM_part2.webp" data-lightbox="img-part-set-2-1"
+                                        data-title="<strong>【ゴム松葉+カニカン】</strong>松葉紐が伸縮します。製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part14.webp" data-lightbox="img-part-set-14"
+                                        data-title="<strong>【ボールチェーンシルバー】</strong>銀色のボールチェーンです。追加料金なく手配できるボールチェーンです。"><img
+                                            class="picpro lazy" data-src="/products/images/HM_part14.webp" width="160"
+                                            height="160" loading="lazy" /></a><br />
+                                    <div>+0円</div>
+                                    <a href="/products/images/HM_part14.webp" data-lightbox="img-part-set-14-1"
+                                        data-title="<strong>【ボールチェーンシルバー】</strong>銀色のボールチェーンです。追加料金なく手配できるボールチェーンです。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part3.webp" data-lightbox="img-part-set-3"
+                                        data-title="<strong>【通常松葉+カニカン+スマホプラグ】</strong>通常松葉+カニカンの紐の先端にスマホプラグがついています。イヤホンジャックに挿入して使用できます。また、製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"><img
+                                            class="picpro lazy" data-src="/products/images/HM_part3.webp" width="160"
+                                            height="160" loading="lazy" /></a><br />
+                                    <div>+11円</div>
+                                    <a href="/products/images/HM_part3.webp" data-lightbox="img-part-set-3-1"
+                                        data-title="<strong>【通常松葉+カニカン+スマホプラグ】</strong>通常松葉+カニカンの紐の先端にスマホプラグがついています。イヤホンジャックに挿入して使用できます。また、製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part9.webp" data-lightbox="img-part-set-9"
+                                        data-title="<strong>【ボールチェーン黄色】</strong>黄色のボールチェーンです。"><img class="picpro lazy"
+                                            data-src="/products/images/HM_part9.webp" width="160" height="160"
+                                            loading="lazy" /></a><br />
+                                    <div>+11円</div>
+                                    <a href="/products/images/HM_part9.webp" data-lightbox="img-part-set-9-1"
+                                        data-title="<strong>【ボールチェーン黄色】</strong>黄色のボールチェーンです。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part10.webp" data-lightbox="img-part-set-10"
+                                        data-title="<strong>【ボールチェーン赤色】</strong>赤色のボールチェーンです。"><img class="picpro lazy"
+                                            data-src="/products/images/HM_part10.webp" width="160" height="160"
+                                            loading="lazy" /></a><br />
+                                    <div>+11円</div>
+                                    <a href="/products/images/HM_part10.webp" data-lightbox="img-part-set-10-1"
+                                        data-title="<strong>【ボールチェーン赤色】</strong>赤色のボールチェーンです。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part11.webp" data-lightbox="img-part-set-11"
+                                        data-title="<strong>【ボールチェーン青色】</strong>青色のボールチェーンです。"><img class="picpro lazy"
+                                            data-src="/products/images/HM_part11.webp" width="160" height="160"
+                                            loading="lazy" /></a><br />
+                                    <div>+11円</div>
+                                    <a href="/products/images/HM_part11.webp" data-lightbox="img-part-set-11-1"
+                                        data-title="<strong>【ボールチェーン青色】</strong>青色のボールチェーンです。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part12.webp" data-lightbox="img-part-set-12"
+                                        data-title="<strong>【ボールチェーンピンク色】</strong>ピンク色のボールチェーンです。"><img
+                                            class="picpro lazy" data-src="/products/images/HM_part12.webp" width="160"
+                                            height="160" loading="lazy" /></a><br />
+                                    <div>+11円</div>
+                                    <a href="/products/images/HM_part12.webp" data-lightbox="img-part-set-12-1"
+                                        data-title="<strong>【ボールチェーンピンク色】</strong>ピンク色のボールチェーンです。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="mt-10-part-4">
+                                    <a href="/products/images/HM_part13.webp" data-lightbox="img-part-set-13"
+                                        data-title="<strong>【ボールチェーン緑色】</strong>緑色のボールチェーンです。"><img class="picpro lazy"
+                                            data-src="/products/images/HM_part13.webp" width="160" height="160"
+                                            loading="lazy" /></a><br />
+                                    <div>+11円</div>
+                                    <a href="/products/images/HM_part13.webp" data-lightbox="img-part-set-13-1"
+                                        data-title="<strong>【ボールチェーン緑色】</strong>緑色のボールチェーンです。"
+                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
+                                </div>
+                                <div class="part_link">
+                                    <a href="/products/rubberkeyholder/#part_keyholder"><img
+                                            data-src="/products/images/accessories.webp" class="lazy" width="570"
+                                            height="192" loading="lazy" /></a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="itemz">
+                                                <img src="path_to_image2.jpg" alt="Double side" />
+                                                <h3>両面印刷の仕様</h3>
+                                                <p>両面印刷は透けにくい印刷方法を採用しています...</p>
+                                            </div>
+                                            <div class="itemz">
+                                                <img src="path_to_image3.jpg" alt="Connected" />
+                                                <h3>連結仕様もOK！</h3>
+                                                <p>別商品の「アクリルチャーム」を繋げて楽しい！</p>
+                                            </div> -->
                     </div>
+                </div>
 
-                @endforeach
+                <div id="tab2" class="tab-content">
+                    <div class="grid-layout">
+                        <div class="itemz">
+                            <img src="/products/images/rubberstrap/v2/rubber_guide02.webp" alt="" loading="lazy">
+                            <p class="new-text">
+                                あなたのデザインを最高のラバーキーホルダーに！キャラクターに最適な「ぷっくり凹凸タイプ」や、ドット絵・ロゴ向きの「フラットタイプ」が選べます。
+                            </p><br>
+                            <div>
+                                <a href="/lp/rubber-guide-structure.php" class="new-text"
+                                    style="color: black;">詳細はこちら</a>
+                            </div>
+                        </div>
+                        <div class="itemz">
+                            <img src="/products/images/rubberstrap/v2/rubber_guide07.webp" alt="" loading="lazy">
+                            <p class="new-text">
+                                曲面加工や貼り合わせ半立体、貫通穴（中抜き）加工などの特殊加工もご用意！デザインをより活かす特別なラバーストラップを製作できます。
+                            </p><br>
+                            <div>
+                                <a href="/lp/rubber-guide-structure.php?sec=special_processing" class="new-text"
+                                    style="color: black;">詳細はこちら</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div id="tab3" class="tab-content">
+                    <div class="grid-layout">
+                        <div class="itemz">
+                            <img src="/products/images/rubberstrap/v2/rubber_strap_protect.webp" alt=""
+                                loading="lazy">
+                            <p class="new-text">業界唯一の汚れ防止加工オプションをご用意！あなたの大切なラバーストラップをキレイに保ちます。</p>
+                            <br>
+                            <div>
+                                <a href="https://hotmobily.jp/faq/details/rubberstrap/q4" class="new-text"
+                                    style="color: black;">詳細はこちら</a>
+                            </div>
+                        </div>
+                        <div class="itemz">
+                            <img src="/products/images/rubberstrap/v2/rubberstrap_special.webp" alt=""
+                                loading="lazy">
+                            <p class="new-text">金銀、蓄光、ラメ、蛍光、半透明素材の5種の特殊素材をご用意！</p><br>
+                            <div>
+                                <a href="/lp/rubber-guide-special.php" class="new-text" style="color: black;">詳細はこちら</a>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="grid-layout">
+                        <div class="itemz">
+                            <img src="/products/images/rubberstrap/v2/rubber_guide11.webp" alt="" loading="lazy">
+                            <p class="new-text">入稿データをご自身で作成するのが難しい方は、データ作成代行サービスをぜひご利用ください。</p><br>
+                            <div>
+                                <a href="/lp/rubber-guide-data.php" class="new-text" style="color: black;">詳細はこちら</a>
+                            </div>
+                        </div>
+                        <div class="itemz">
+                            <img src="/products/images/rubberstrap/v2/daishi_rubberstrap.webp" alt=""
+                                loading="lazy">
+                            <p class="new-text">
+                                台紙封入サービスをご用意しております。当店のテンプレートデザイン、またはお客様のオリジナルデザインの台紙を封入します。</p><br>
+                            <div>
+                                <a href="https://hotmobily.jp/products/daishi.html" class="new-text"
+                                    style="color: black;">詳細はこちら</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-        @endforeach
-
-    </div>
+        </div>
 
 
-    {{--
+        {{--
     |--------------------------------------------------------------------------
     | Order Form
     |--------------------------------------------------------------------------
@@ -1063,158 +1124,175 @@
     |
     --}}
 
-</div>
-
+    </div>
 @endsection
 
 
 @push('scripts')
+    <script>
+        document.addEventListener(
+            'DOMContentLoaded',
+            function() {
 
-<script>
+                /*
+                |--------------------------------------------------------------------------
+                | Product Gallery
+                |--------------------------------------------------------------------------
+                */
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
+                document
+                    .querySelectorAll(
+                        '[data-store-gallery]'
+                    )
+                    .forEach(
+                        function(gallery) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Product Gallery
-        |--------------------------------------------------------------------------
-        */
-
-        document
-            .querySelectorAll(
-                '[data-store-gallery]'
-            )
-            .forEach(
-                function (gallery) {
-
-                    const main =
-                        gallery.querySelector(
-                            '[data-gallery-main]'
-                        );
+                            const main =
+                                gallery.querySelector(
+                                    '[data-gallery-main]'
+                                );
 
 
-                    const modal =
-                        gallery.querySelector(
-                            '[data-gallery-modal]'
-                        );
+                            const modal =
+                                gallery.querySelector(
+                                    '[data-gallery-modal]'
+                                );
 
 
-                    const modalImage =
-                        gallery.querySelector(
-                            '[data-gallery-modal-image]'
-                        );
+                            const modalImage =
+                                gallery.querySelector(
+                                    '[data-gallery-modal-image]'
+                                );
 
 
-                    const close =
-                        gallery.querySelector(
-                            '[data-gallery-modal-close]'
-                        );
+                            const close =
+                                gallery.querySelector(
+                                    '[data-gallery-modal-close]'
+                                );
 
 
-                    const thumbs =
-                        Array.from(
-                            gallery.querySelectorAll(
-                                '[data-gallery-thumb]'
-                            )
-                        );
+                            const thumbs =
+                                Array.from(
+                                    gallery.querySelectorAll(
+                                        '[data-gallery-thumb]'
+                                    )
+                                );
 
 
-                    let currentIndex = 0;
-                    let autoTimer = null;
+                            let currentIndex = 0;
+                            let autoTimer = null;
 
 
-                    function activateThumb(index) {
+                            function activateThumb(index) {
 
-                        if (!thumbs.length || !main) return;
+                                if (!thumbs.length || !main) return;
 
-                        currentIndex = index;
+                                currentIndex = index;
 
-                        const src = thumbs[index].dataset.gallerySrc;
+                                const src = thumbs[index].dataset.gallerySrc;
 
-                        if (src) main.src = src;
+                                if (src) main.src = src;
 
-                        thumbs.forEach(function (item) {
-                            item.classList.remove('is-active');
-                        });
+                                thumbs.forEach(function(item) {
+                                    item.classList.remove('is-active');
+                                });
 
-                        thumbs[index].classList.add('is-active');
+                                thumbs[index].classList.add('is-active');
 
-                    }
-
-
-                    function startAutoSlide() {
-
-                        if (thumbs.length <= 1) return;
-
-                        autoTimer = setInterval(function () {
-
-                            activateThumb(
-                                (currentIndex + 1) % thumbs.length
-                            );
-
-                        }, 4000);
-
-                    }
+                            }
 
 
-                    function stopAutoSlide() {
+                            function startAutoSlide() {
 
-                        clearInterval(autoTimer);
-                        autoTimer = null;
+                                if (thumbs.length <= 1) return;
 
-                    }
+                                autoTimer = setInterval(function() {
 
+                                    activateThumb(
+                                        (currentIndex + 1) % thumbs.length
+                                    );
 
-                    function restartAutoSlide() {
+                                }, 4000);
 
-                        stopAutoSlide();
-                        startAutoSlide();
-
-                    }
-
-
-                    thumbs.forEach(
-                        function (thumb, index) {
-
-                            thumb.addEventListener(
-                                'click',
-                                function () {
-
-                                    activateThumb(index);
-                                    restartAutoSlide();
-
-                                }
-                            );
-
-                        }
-                    );
+                            }
 
 
-                    main
-                        ?.addEventListener(
-                            'click',
-                            function () {
+                            function stopAutoSlide() {
 
-                                if (
-                                    !modal
-                                    ||
-                                    !modalImage
-                                ) {
+                                clearInterval(autoTimer);
+                                autoTimer = null;
 
-                                    return;
+                            }
+
+
+                            function restartAutoSlide() {
+
+                                stopAutoSlide();
+                                startAutoSlide();
+
+                            }
+
+
+                            thumbs.forEach(
+                                function(thumb, index) {
+
+                                    thumb.addEventListener(
+                                        'click',
+                                        function() {
+
+                                            activateThumb(index);
+                                            restartAutoSlide();
+
+                                        }
+                                    );
 
                                 }
+                            );
 
 
-                                modalImage.src =
-                                    main.src;
+                            main
+                                ?.addEventListener(
+                                    'click',
+                                    function() {
+
+                                        if (
+                                            !modal ||
+                                            !modalImage
+                                        ) {
+
+                                            return;
+
+                                        }
 
 
+                                        modalImage.src =
+                                            main.src;
+
+
+                                        modal
+                                            .classList
+                                            .add(
+                                                'is-open'
+                                            );
+
+
+                                        document
+                                            .body
+                                            .style
+                                            .overflow =
+                                            'hidden';
+
+
+                                        stopAutoSlide();
+
+                                    }
+                                );
+
+
+                            function closeModal() {
                                 modal
-                                    .classList
-                                    .add(
+                                    ?.classList
+                                    .remove(
                                         'is-open'
                                     );
 
@@ -1223,158 +1301,132 @@ document.addEventListener(
                                     .body
                                     .style
                                     .overflow =
-                                        'hidden';
+                                    '';
 
 
-                                stopAutoSlide();
-
+                                restartAutoSlide();
                             }
-                        );
 
 
-                    function closeModal()
-                    {
-                        modal
-                            ?.classList
-                            .remove(
-                                'is-open'
-                            );
+                            close
+                                ?.addEventListener(
+                                    'click',
+                                    closeModal
+                                );
 
 
-                        document
-                            .body
-                            .style
-                            .overflow =
-                                '';
+                            modal
+                                ?.addEventListener(
+                                    'click',
+                                    function(event) {
+
+                                        if (
+                                            event.target ===
+                                            modal
+                                        ) {
+
+                                            closeModal();
+
+                                        }
+
+                                    }
+                                );
 
 
-                        restartAutoSlide();
-                    }
+                            // Start auto-slideshow
+                            startAutoSlide();
 
-
-                    close
-                        ?.addEventListener(
-                            'click',
-                            closeModal
-                        );
-
-
-                    modal
-                        ?.addEventListener(
-                            'click',
-                            function (event) {
-
-                                if (
-                                    event.target
-                                    ===
-                                    modal
-                                ) {
-
-                                    closeModal();
-
-                                }
-
-                            }
-                        );
-
-
-                    // Start auto-slideshow
-                    startAutoSlide();
-
-                }
-            );
-
-
-        document
-            .addEventListener(
-                'keydown',
-                function (event) {
-
-                    if (
-                        event.key
-                        !==
-                        'Escape'
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    document
-                        .querySelectorAll(
-                            '.store-gallery-modal.is-open'
-                        )
-                        .forEach(
-                            function (modal) {
-
-                                modal
-                                    .classList
-                                    .remove(
-                                        'is-open'
-                                    );
-
-                            }
-                        );
-
-
-                    document
-                        .body
-                        .style
-                        .overflow =
-                            '';
-
-                }
-            );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Shipping Calendar
-        |--------------------------------------------------------------------------
-        */
-
-        const shippingTargets =
-            document.querySelectorAll(
-                '[data-shipping-date-days]'
-            );
-
-
-        const shippingStartTargets =
-            document.querySelectorAll(
-                '[data-shipping-start-time]'
-            );
-
-
-        if (
-            shippingTargets.length
-            ||
-            shippingStartTargets.length
-        ) {
-
-            loadShippingCalendar();
-
-        }
-
-
-        async function loadShippingCalendar()
-        {
-            try {
-
-                const today =
-                    getTokyoDateKey();
-
-
-                const to =
-                    addDays(
-                        today,
-                        550
+                        }
                     );
 
 
-                const response =
-                    await fetch(
-                        `/api/v1/holidays?from=${
+                document
+                    .addEventListener(
+                        'keydown',
+                        function(event) {
+
+                            if (
+                                event.key !==
+                                'Escape'
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            document
+                                .querySelectorAll(
+                                    '.store-gallery-modal.is-open'
+                                )
+                                .forEach(
+                                    function(modal) {
+
+                                        modal
+                                            .classList
+                                            .remove(
+                                                'is-open'
+                                            );
+
+                                    }
+                                );
+
+
+                            document
+                                .body
+                                .style
+                                .overflow =
+                                '';
+
+                        }
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Shipping Calendar
+                |--------------------------------------------------------------------------
+                */
+
+                const shippingTargets =
+                    document.querySelectorAll(
+                        '[data-shipping-date-days]'
+                    );
+
+
+                const shippingStartTargets =
+                    document.querySelectorAll(
+                        '[data-shipping-start-time]'
+                    );
+
+
+                if (
+                    shippingTargets.length ||
+                    shippingStartTargets.length
+                ) {
+
+                    loadShippingCalendar();
+
+                }
+
+
+                async function loadShippingCalendar() {
+                    try {
+
+                        const today =
+                            getTokyoDateKey();
+
+
+                        const to =
+                            addDays(
+                                today,
+                                550
+                            );
+
+
+                        const response =
+                            await fetch(
+                                `/api/v1/holidays?from=${
                             encodeURIComponent(
                                 today
                             )
@@ -1382,495 +1434,547 @@ document.addEventListener(
                             encodeURIComponent(
                                 to
                             )
-                        }&calendar_type=normal`,
-                        {
-                            headers: {
-                                'Accept':
-                                    'application/json',
-                            },
-                        }
-                    );
-
-
-                const result =
-                    await response.json();
-
-
-                if (
-                    !response.ok
-                ) {
-
-                    throw result;
-
-                }
-
-
-                const holidays =
-                    extractHolidays(
-                        result
-                    );
-
-
-                const holidayMap =
-                    new Set();
-
-
-                holidays.forEach(
-                    function (holiday) {
-
-                        const type =
-                            String(
-                                holiday.holiday_type
-                                ??
-                                holiday.type
-                                ??
-                                ''
+                        }&calendar_type=normal`, {
+                                    headers: {
+                                        'Accept': 'application/json',
+                                    },
+                                }
                             );
 
 
-                        const date =
-                            String(
-                                holiday.holiday_date
-                                ??
-                                holiday.date
-                                ??
-                                ''
+                        const result =
+                            await response.json();
+
+
+                        if (
+                            !response.ok
+                        ) {
+
+                            throw result;
+
+                        }
+
+
+                        const holidays =
+                            extractHolidays(
+                                result
+                            );
+
+
+                        const holidayMap =
+                            new Set();
+
+
+                        holidays.forEach(
+                            function(holiday) {
+
+                                const type =
+                                    String(
+                                        holiday.holiday_type ??
+                                        holiday.type ??
+                                        ''
+                                    );
+
+
+                                const date =
+                                    String(
+                                        holiday.holiday_date ??
+                                        holiday.date ??
+                                        ''
+                                    )
+                                    .slice(
+                                        0,
+                                        10
+                                    );
+
+
+                                if (
+                                    date && [
+                                        'type1',
+                                        'type2',
+                                        'type3',
+                                    ]
+                                    .includes(
+                                        type
+                                    )
+                                ) {
+
+                                    holidayMap.add(
+                                        date
+                                    );
+
+                                }
+
+                            }
+                        );
+
+
+                        shippingTargets
+                            .forEach(
+                                function(element) {
+
+                                    const days =
+                                        Number(
+                                            element.dataset
+                                            .shippingDateDays ??
+                                            0
+                                        );
+
+
+                                    const date =
+                                        calculateShippingDate(
+
+                                            today,
+
+                                            days,
+
+                                            holidayMap
+
+                                        );
+
+
+                                    element.textContent =
+                                        formatJapaneseDate(
+                                            date
+                                        );
+
+                                }
+                            );
+
+
+                        const nowText =
+                            new Intl
+                            .DateTimeFormat(
+                                'ja-JP', {
+                                    timeZone: 'Asia/Tokyo',
+
+                                    month: '2-digit',
+
+                                    day: '2-digit',
+
+                                    weekday: 'short',
+
+                                    hour: '2-digit',
+
+                                    minute: '2-digit',
+
+                                    hour12: false,
+                                }
                             )
-                            .slice(
-                                0,
-                                10
+                            .format(
+                                new Date()
+                            );
+
+
+                        shippingStartTargets
+                            .forEach(
+                                function(element) {
+
+                                    element.textContent =
+                                        nowText;
+
+                                }
+                            );
+
+                    } catch (error) {
+
+                        console.error(
+                            'Shipping calendar error:',
+                            error
+                        );
+
+
+                        shippingTargets
+                            .forEach(
+                                function(element) {
+
+                                    element.textContent =
+                                        '-';
+
+                                }
+                            );
+
+                    }
+                }
+
+
+                function extractHolidays(
+                    result
+                ) {
+                    if (
+                        Array.isArray(
+                            result
+                        )
+                    ) {
+
+                        return result;
+
+                    }
+
+
+                    if (
+                        Array.isArray(
+                            result?.data
+                        )
+                    ) {
+
+                        return result.data;
+
+                    }
+
+
+                    if (
+                        Array.isArray(
+                            result
+                            ?.data
+                            ?.holidays
+                        )
+                    ) {
+
+                        return result
+                            .data
+                            .holidays;
+
+                    }
+
+
+                    if (
+                        Array.isArray(
+                            result
+                            ?.holidays
+                        )
+                    ) {
+
+                        return result.holidays;
+
+                    }
+
+
+                    return [];
+                }
+
+
+                function calculateShippingDate(
+                    startDate,
+                    days,
+                    holidayMap
+                ) {
+                    let date =
+                        startDate;
+
+
+                    let count =
+                        0;
+
+
+                    days =
+                        Math.max(
+                            0,
+                            Math.floor(
+                                Number(
+                                    days
+                                ) ||
+                                0
+                            )
+                        );
+
+
+                    while (
+                        count <
+                        days
+                    ) {
+
+                        date =
+                            addDays(
+                                date,
+                                1
                             );
 
 
                         if (
-                            date
-                            &&
-                            [
-                                'type1',
-                                'type2',
-                                'type3',
-                            ]
-                            .includes(
-                                type
+                            holidayMap.has(
+                                date
                             )
                         ) {
 
-                            holidayMap.add(
-                                date
-                            );
+                            continue;
 
                         }
+
+
+                        count++;
 
                     }
-                );
 
 
-                shippingTargets
-                    .forEach(
-                        function (element) {
-
-                            const days =
-                                Number(
-                                    element.dataset
-                                        .shippingDateDays
-                                    ??
-                                    0
-                                );
+                    return date;
+                }
 
 
-                            const date =
-                                calculateShippingDate(
-
-                                    today,
-
-                                    days,
-
-                                    holidayMap
-
-                                );
-
-
-                            element.textContent =
-                                formatJapaneseDate(
-                                    date
-                                );
-
-                        }
-                    );
-
-
-                const nowText =
-                    new Intl
+                function getTokyoDateKey() {
+                    const parts =
+                        new Intl
                         .DateTimeFormat(
-                            'ja-JP',
-                            {
-                                timeZone:
-                                    'Asia/Tokyo',
+                            'en-CA', {
+                                timeZone: 'Asia/Tokyo',
 
-                                month:
-                                    '2-digit',
+                                year: 'numeric',
 
-                                day:
-                                    '2-digit',
+                                month: '2-digit',
 
-                                weekday:
-                                    'short',
-
-                                hour:
-                                    '2-digit',
-
-                                minute:
-                                    '2-digit',
-
-                                hour12:
-                                    false,
+                                day: '2-digit',
                             }
                         )
-                        .format(
+                        .formatToParts(
                             new Date()
                         );
 
 
-                shippingStartTargets
-                    .forEach(
-                        function (element) {
-
-                            element.textContent =
-                                nowText;
-
-                        }
-                    );
-
-            } catch (error) {
-
-                console.error(
-                    'Shipping calendar error:',
-                    error
-                );
+                    const values = {};
 
 
-                shippingTargets
-                    .forEach(
-                        function (element) {
+                    parts.forEach(
+                        function(part) {
 
-                            element.textContent =
-                                '-';
+                            values[
+                                    part.type
+                                ] =
+                                part.value;
 
                         }
                     );
 
-            }
-        }
 
+                    return (
 
-        function extractHolidays(
-            result
-        )
-        {
-            if (
-                Array.isArray(
-                    result
-                )
-            ) {
+                        values.year
 
-                return result;
+                        +
 
-            }
+                        '-'
 
+                        +
 
-            if (
-                Array.isArray(
-                    result?.data
-                )
-            ) {
+                        values.month
 
-                return result.data;
+                        +
 
-            }
+                        '-'
 
+                        +
 
-            if (
-                Array.isArray(
-                    result
-                        ?.data
-                        ?.holidays
-                )
-            ) {
+                        values.day
 
-                return result
-                    .data
-                    .holidays;
-
-            }
-
-
-            if (
-                Array.isArray(
-                    result
-                        ?.holidays
-                )
-            ) {
-
-                return result.holidays;
-
-            }
-
-
-            return [];
-        }
-
-
-        function calculateShippingDate(
-            startDate,
-            days,
-            holidayMap
-        )
-        {
-            let date =
-                startDate;
-
-
-            let count =
-                0;
-
-
-            days =
-                Math.max(
-                    0,
-                    Math.floor(
-                        Number(
-                            days
-                        )
-                        ||
-                        0
-                    )
-                );
-
-
-            while (
-                count
-                <
-                days
-            ) {
-
-                date =
-                    addDays(
-                        date,
-                        1
                     );
-
-
-                if (
-                    holidayMap.has(
-                        date
-                    )
-                ) {
-
-                    continue;
-
                 }
 
 
-                count++;
-
-            }
-
-
-            return date;
-        }
-
-
-        function getTokyoDateKey()
-        {
-            const parts =
-                new Intl
-                    .DateTimeFormat(
-                        'en-CA',
-                        {
-                            timeZone:
-                                'Asia/Tokyo',
-
-                            year:
-                                'numeric',
-
-                            month:
-                                '2-digit',
-
-                            day:
-                                '2-digit',
-                        }
-                    )
-                    .formatToParts(
-                        new Date()
-                    );
-
-
-            const values =
-                {};
-
-
-            parts.forEach(
-                function (part) {
-
-                    values[
-                        part.type
-                    ] =
-                        part.value;
-
-                }
-            );
-
-
-            return (
-
-                values.year
-
-                +
-
-                '-'
-
-                +
-
-                values.month
-
-                +
-
-                '-'
-
-                +
-
-                values.day
-
-            );
-        }
-
-
-        function addDays(
-            dateKey,
-            amount
-        )
-        {
-            const [
-                year,
-                month,
-                day
-            ] =
-                dateKey
-                    .split('-')
-                    .map(
-                        Number
-                    );
-
-
-            const date =
-                new Date(
-                    Date.UTC(
-                        year,
-                        month - 1,
-                        day
-                    )
-                );
-
-
-            date.setUTCDate(
-                date.getUTCDate()
-                +
-                Number(
+                function addDays(
+                    dateKey,
                     amount
-                )
-            );
+                ) {
+                    const [
+                        year,
+                        month,
+                        day
+                    ] =
+                    dateKey
+                        .split('-')
+                        .map(
+                            Number
+                        );
 
 
-            return (
-
-                date.getUTCFullYear()
-
-                +
-
-                '-'
-
-                +
-
-                String(
-                    date.getUTCMonth()
-                    +
-                    1
-                )
-                .padStart(
-                    2,
-                    '0'
-                )
-
-                +
-
-                '-'
-
-                +
-
-                String(
-                    date.getUTCDate()
-                )
-                .padStart(
-                    2,
-                    '0'
-                )
-
-            );
-        }
+                    const date =
+                        new Date(
+                            Date.UTC(
+                                year,
+                                month - 1,
+                                day
+                            )
+                        );
 
 
-        function formatJapaneseDate(
-            dateKey
-        )
-        {
-            const [
-                year,
-                month,
-                day
-            ] =
-                dateKey
-                    .split('-')
-                    .map(
-                        Number
+                    date.setUTCDate(
+                        date.getUTCDate() +
+                        Number(
+                            amount
+                        )
                     );
 
 
-            const date =
-                new Date(
-                    Date.UTC(
+                    return (
+
+                        date.getUTCFullYear()
+
+                        +
+
+                        '-'
+
+                        +
+
+                        String(
+                            date.getUTCMonth() +
+                            1
+                        )
+                        .padStart(
+                            2,
+                            '0'
+                        )
+
+                        +
+
+                        '-'
+
+                        +
+
+                        String(
+                            date.getUTCDate()
+                        )
+                        .padStart(
+                            2,
+                            '0'
+                        )
+
+                    );
+                }
+
+
+                function formatJapaneseDate(
+                    dateKey
+                ) {
+                    const [
                         year,
-                        month - 1,
-                        day,
-                        12
-                    )
-                );
+                        month,
+                        day
+                    ] =
+                    dateKey
+                        .split('-')
+                        .map(
+                            Number
+                        );
 
 
-            return new Intl
-                .DateTimeFormat(
-                    'ja-JP',
-                    {
-                        timeZone:
-                            'Asia/Tokyo',
+                    const date =
+                        new Date(
+                            Date.UTC(
+                                year,
+                                month - 1,
+                                day,
+                                12
+                            )
+                        );
 
-                        month:
-                            '2-digit',
 
-                        day:
-                            '2-digit',
+                    return new Intl
+                        .DateTimeFormat(
+                            'ja-JP', {
+                                timeZone: 'Asia/Tokyo',
 
-                        weekday:
-                            'short',
+                                month: '2-digit',
+
+                                day: '2-digit',
+
+                                weekday: 'short',
+                            }
+                        )
+                        .format(
+                            date
+                        );
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Smooth Scroll to Block & Accordion Auto-Open
+                |--------------------------------------------------------------------------
+                */
+
+                function navigateToBlock(targetId) {
+                    if (!targetId) return;
+
+                    const cleanId =
+                        targetId.replace(/^#/, '').trim();
+
+                    const targetEl =
+                        document.getElementById(cleanId);
+
+                    if (!targetEl) return;
+
+                    // If target or ancestor is an accordion, ensure it is open
+                    const accordion =
+                        targetEl.closest('.store-accordion') ||
+                        targetEl.querySelector('.store-accordion');
+
+                    if (accordion) {
+                        const input =
+                            accordion.querySelector('.store-accordion-input');
+                        if (input) {
+                            input.checked = true;
+                        }
                     }
-                )
-                .format(
-                    date
-                );
-        }
 
-    }
-);
+                    const headerOffset = 80;
+                    const elementPosition =
+                        targetEl.getBoundingClientRect().top;
+                    const offsetPosition =
+                        elementPosition + window.pageYOffset - headerOffset;
 
-</script>
+                    window.scrollTo({
+                        top: Math.max(0, offsetPosition),
+                        behavior: 'smooth'
+                    });
+                }
 
+                document.addEventListener('click', function(event) {
+                    const link =
+                        event.target.closest('a[href*="#"]');
+
+                    if (!link) return;
+
+                    const href =
+                        link.getAttribute('href');
+
+                    if (!href) return;
+
+                    const hashIndex =
+                        href.indexOf('#');
+
+                    if (hashIndex === -1) return;
+
+                    const path =
+                        href.substring(0, hashIndex);
+                    const hash =
+                        href.substring(hashIndex + 1);
+
+                    if (!hash) return;
+
+                    // Check if current page
+                    if (
+                        path === '' ||
+                        path === window.location.pathname ||
+                        href.startsWith(window.location.origin + window.location.pathname + '#')
+                    ) {
+                        const targetEl =
+                            document.getElementById(hash);
+
+                        if (targetEl) {
+                            event.preventDefault();
+                            navigateToBlock(hash);
+                            try {
+                                history.pushState(null, '', '#' + hash);
+                            } catch (e) {}
+                        }
+                    }
+                });
+
+                if (window.location.hash) {
+                    setTimeout(function() {
+                        navigateToBlock(window.location.hash);
+                    }, 350);
+                }
+
+            }
+        );
+    </script>
 @endpush
