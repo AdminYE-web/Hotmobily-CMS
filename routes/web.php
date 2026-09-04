@@ -10,6 +10,8 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\LegacyMockController;
 use App\Http\Controllers\Web\ProductController;
 
+use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
+
 use App\Models\Product;
 use App\Models\ProductLayout;
 
@@ -47,30 +49,54 @@ Route::prefix('admin')
             ->group(function () {
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | Login
+                |--------------------------------------------------------------------------
+                */
+
                 Route::get(
                     '/login',
-                    [AuthController::class, 'showLogin']
+                    [
+                        AuthController::class,
+                        'showLogin'
+                    ]
                 )
                 ->name('login');
 
 
                 Route::post(
                     '/login',
-                    [AuthController::class, 'login']
+                    [
+                        AuthController::class,
+                        'login'
+                    ]
                 )
                 ->name('login.submit');
 
 
+                /*
+                |--------------------------------------------------------------------------
+                | OTP
+                |--------------------------------------------------------------------------
+                */
+
                 Route::get(
                     '/login/verify',
-                    [OtpController::class, 'show']
+                    [
+                        OtpController::class,
+                        'show'
+                    ]
                 )
                 ->name('otp');
 
 
                 Route::post(
                     '/login/verify',
-                    [OtpController::class, 'verify']
+                    [
+                        OtpController::class,
+                        'verify'
+                    ]
                 )
                 ->name('otp.verify');
 
@@ -96,7 +122,10 @@ Route::prefix('admin')
 
                 Route::get(
                     '/dashboard',
-                    [DashboardController::class, 'index']
+                    [
+                        DashboardController::class,
+                        'index'
+                    ]
                 )
                 ->name('dashboard');
 
@@ -166,10 +195,14 @@ Route::prefix('admin')
 
 
                 /*
-                 * Legacy / old Product Builder
-                 *
-                 * ถ้ายังใช้อยู่เก็บไว้ได้
-                 */
+                |--------------------------------------------------------------------------
+                | Legacy / Old Product Builder
+                |--------------------------------------------------------------------------
+                |
+                | ถ้ายังใช้อยู่เก็บไว้ก่อน
+                |
+                */
+
                 Route::get(
                     '/products/{product}/builder',
                     function (
@@ -193,7 +226,7 @@ Route::prefix('admin')
                 | Product Content Editor
                 |--------------------------------------------------------------------------
                 |
-                | URL:
+                | Example:
                 |
                 | /admin/products/3/content
                 |
@@ -235,7 +268,7 @@ Route::prefix('admin')
                 | Product Layout Builder
                 |--------------------------------------------------------------------------
                 |
-                | URL:
+                | Example:
                 |
                 | /admin/product-layouts/1/builder
                 |
@@ -267,7 +300,10 @@ Route::prefix('admin')
 
                 Route::post(
                     '/logout',
-                    [AuthController::class, 'logout']
+                    [
+                        AuthController::class,
+                        'logout'
+                    ]
                 )
                 ->name('logout');
 
@@ -280,50 +316,116 @@ Route::prefix('admin')
 
 /*
 |--------------------------------------------------------------------------
-| Products: Rubber Strap
+| Legacy Product Endpoints
+|--------------------------------------------------------------------------
+|
+| Endpoint พวกนี้ยังเก็บไว้ก่อน
+|
+| เพราะอาจจะยังถูกใช้งานโดย:
+|
+| - Shipping Schedule
+| - Holiday
+| - Sample Date
+| - Paper Preview
+| - Order Form
+|
+| แต่ Route:
+|
+| /products/rubberstrap
+|
+| ตัวเก่าจะไม่ใช้อีกแล้ว
+|
+*/
+
+
+/*
+|--------------------------------------------------------------------------
+| Rubber Strap Delivery Schedule
 |--------------------------------------------------------------------------
 */
 
 Route::get(
-    '/products/rubberstrap',
-    [ProductController::class, 'rubberstrap']
-)
-->name('products.rubberstrap');
-
-
-Route::get(
     '/products/getdate_disp2023-rubber',
-    [ProductController::class, 'deliveryScheduleRubber']
+    [
+        ProductController::class,
+        'deliveryScheduleRubber'
+    ]
 )
 ->name('products.rubberstrap.schedule');
 
 
+/*
+|--------------------------------------------------------------------------
+| Holiday
+|--------------------------------------------------------------------------
+*/
+
 Route::match(
-    ['get', 'post'],
+    [
+        'get',
+        'post'
+    ],
     '/products/check_holiday.php',
-    [ProductController::class, 'checkHoliday']
+    [
+        ProductController::class,
+        'checkHoliday'
+    ]
 )
 ->name('products.holiday');
 
 
+/*
+|--------------------------------------------------------------------------
+| Sample Date
+|--------------------------------------------------------------------------
+*/
+
 Route::match(
-    ['get', 'post'],
+    [
+        'get',
+        'post'
+    ],
     '/products/get_sample_date.php',
-    [ProductController::class, 'getSampleDate']
+    [
+        ProductController::class,
+        'getSampleDate'
+    ]
 )
 ->name('products.sample-date');
 
 
+/*
+|--------------------------------------------------------------------------
+| Paper Preview
+|--------------------------------------------------------------------------
+*/
+
 Route::get(
     '/products/paper_preview.php',
-    [ProductController::class, 'paperPreview']
+    [
+        ProductController::class,
+        'paperPreview'
+    ]
 )
 ->name('products.paper-preview');
 
 
+/*
+|--------------------------------------------------------------------------
+| Rubber Strap Part
+|--------------------------------------------------------------------------
+|
+| ตอนทำ Order Form ค่อยกลับมาดูว่าตัวนี้
+| ยังจำเป็นต้องใช้หรือสามารถย้ายเข้า Laravel ใหม่ได้
+|
+*/
+
 Route::get(
     '/products/rubberstrap/part.php',
-    [ProductController::class, 'rubberstrapPart']
+    [
+        ProductController::class,
+        'rubberstrapPart'
+    ]
 )
 ->name('products.rubberstrap.part');
 
@@ -336,20 +438,62 @@ Route::get(
 
 Route::get(
     '/info/index.php',
-    [LegacyMockController::class, 'info']
+    [
+        LegacyMockController::class,
+        'info'
+    ]
 )
 ->name('legacy-mock.info');
 
 
 Route::get(
     '/get_review.php',
-    [LegacyMockController::class, 'reviews']
+    [
+        LegacyMockController::class,
+        'reviews'
+    ]
 )
 ->name('legacy-mock.reviews');
 
 
 Route::get(
     '/getLang',
-    [LegacyMockController::class, 'language']
+    [
+        LegacyMockController::class,
+        'language'
+    ]
 )
 ->name('legacy-mock.language');
+
+
+/*
+|--------------------------------------------------------------------------
+| Storefront Products
+|--------------------------------------------------------------------------
+|
+| Dynamic Product Page
+|
+| ใช้ Product.slug
+|
+| Examples:
+|
+| /products/rubberstrap
+| /products/acrylickeyholder
+| /products/candy-seal
+| /products/xxxxx
+|
+| สำคัญ:
+|
+| Route นี้ต้องอยู่หลัง Specific Product Routes
+| เพราะเป็น Dynamic Route
+|
+*/
+
+Route::get(
+    '/products/{product:slug}',
+    [
+        StorefrontProductController::class,
+        'show'
+    ]
+)
+->name('products.show');
