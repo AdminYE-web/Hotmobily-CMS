@@ -405,8 +405,27 @@ class ProductPageController extends Controller
     */
 
     public function show(
-        Product $product
-    ) {
+    string $productPath
+) {
+
+    $productPath =
+        trim(
+            $productPath,
+            '/'
+        );
+
+
+    $product = Product::query()
+        ->where(
+            'slug',
+            $productPath
+        )
+        ->where(
+            'status',
+            'active'
+        )
+        ->firstOrFail();
+
         if (
             $product->status
             !== 'active'

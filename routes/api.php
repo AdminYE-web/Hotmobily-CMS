@@ -51,13 +51,17 @@ Route::prefix('v1')->group(function () {
     |
     */
 
-    Route::get(
-        '/products/{product:slug}',
-        [
-            ProductController::class,
-            'show'
-        ]
-    );
+   Route::get(
+    '/products/{productPath}',
+    [
+        ProductController::class,
+        'show'
+    ]
+)
+->where(
+    'productPath',
+    '.+'
+);
 
 
     /*

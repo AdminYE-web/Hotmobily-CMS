@@ -1113,65 +1113,83 @@ document.addEventListener(
                         );
 
 
-                    gallery
-                        .querySelectorAll(
-                            '[data-gallery-thumb]'
-                        )
-                        .forEach(
-                            function (thumb) {
-
-                                thumb.addEventListener(
-                                    'click',
-                                    function () {
-
-                                        const src =
-                                            this.dataset
-                                                .gallerySrc;
-
-
-                                        if (
-                                            !src
-                                            ||
-                                            !main
-                                        ) {
-
-                                            return;
-
-                                        }
-
-
-                                        main.src =
-                                            src;
-
-
-                                        gallery
-                                            .querySelectorAll(
-                                                '[data-gallery-thumb]'
-                                            )
-                                            .forEach(
-                                                function (item) {
-
-                                                    item
-                                                        .classList
-                                                        .remove(
-                                                            'is-active'
-                                                        );
-
-                                                }
-                                            );
-
-
-                                        this
-                                            .classList
-                                            .add(
-                                                'is-active'
-                                            );
-
-                                    }
-                                );
-
-                            }
+                    const thumbs =
+                        Array.from(
+                            gallery.querySelectorAll(
+                                '[data-gallery-thumb]'
+                            )
                         );
+
+
+                    let currentIndex = 0;
+                    let autoTimer = null;
+
+
+                    function activateThumb(index) {
+
+                        if (!thumbs.length || !main) return;
+
+                        currentIndex = index;
+
+                        const src = thumbs[index].dataset.gallerySrc;
+
+                        if (src) main.src = src;
+
+                        thumbs.forEach(function (item) {
+                            item.classList.remove('is-active');
+                        });
+
+                        thumbs[index].classList.add('is-active');
+
+                    }
+
+
+                    function startAutoSlide() {
+
+                        if (thumbs.length <= 1) return;
+
+                        autoTimer = setInterval(function () {
+
+                            activateThumb(
+                                (currentIndex + 1) % thumbs.length
+                            );
+
+                        }, 4000);
+
+                    }
+
+
+                    function stopAutoSlide() {
+
+                        clearInterval(autoTimer);
+                        autoTimer = null;
+
+                    }
+
+
+                    function restartAutoSlide() {
+
+                        stopAutoSlide();
+                        startAutoSlide();
+
+                    }
+
+
+                    thumbs.forEach(
+                        function (thumb, index) {
+
+                            thumb.addEventListener(
+                                'click',
+                                function () {
+
+                                    activateThumb(index);
+                                    restartAutoSlide();
+
+                                }
+                            );
+
+                        }
+                    );
 
 
                     main
@@ -1207,6 +1225,9 @@ document.addEventListener(
                                     .overflow =
                                         'hidden';
 
+
+                                stopAutoSlide();
+
                             }
                         );
 
@@ -1225,6 +1246,9 @@ document.addEventListener(
                             .style
                             .overflow =
                                 '';
+
+
+                        restartAutoSlide();
                     }
 
 
@@ -1252,6 +1276,10 @@ document.addEventListener(
 
                             }
                         );
+
+
+                    // Start auto-slideshow
+                    startAutoSlide();
 
                 }
             );

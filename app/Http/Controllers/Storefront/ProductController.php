@@ -12,39 +12,49 @@ class ProductController extends Controller
     | Product Page
     |--------------------------------------------------------------------------
     |
-    | Example:
+    | Examples:
     |
     | /products/rubberstrap
     |
-    | ใช้เฉพาะ:
+    | /products/acrylic/figure
     |
-    | - Active Product
-    | - Published Layout
-    | - Published Content
-    |
-    | Draft จะไม่ถูกนำมาแสดงหน้าบ้าน
+    | /products/acrylic/keyholder
     |
     */
 
     public function show(
-        Product $product
+        string $productPath
     ) {
 
         /*
         |--------------------------------------------------------------------------
-        | Product Status
+        | Normalize Product Path
         |--------------------------------------------------------------------------
         */
 
-        if (
-            $product->status
-            !==
-            'active'
-        ) {
+        $productPath =
+            trim(
+                $productPath,
+                '/'
+            );
 
-            abort(404);
 
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | Find Product
+        |--------------------------------------------------------------------------
+        */
+
+        $product = Product::query()
+            ->where(
+                'slug',
+                $productPath
+            )
+            ->where(
+                'status',
+                'active'
+            )
+            ->firstOrFail();
 
 
         /*
@@ -134,6 +144,7 @@ class ProductController extends Controller
         return view(
             'products.show',
             [
+
                 'product' =>
                     $product,
 
@@ -147,6 +158,7 @@ class ProductController extends Controller
                     $product
                         ->page
                         ->published_at,
+
             ]
         );
     }

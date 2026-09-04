@@ -50,10 +50,34 @@ class ProductController extends Controller
                 'max:255',
             ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Slug / Product Path
+            |--------------------------------------------------------------------------
+            |
+            | รองรับ:
+            |
+            | rubberstrap
+            | acrylic/figure
+            | acrylic/keyholder
+            | printed/rubber/strap
+            |
+            | ไม่รองรับ:
+            |
+            | /acrylic/figure
+            | acrylic//figure
+            | acrylic/figure/
+            | https://...
+            |
+            */
+
             'slug' => [
                 'required',
-                'alpha_dash',
+                'string',
                 'max:255',
+
+                'regex:/^[a-zA-Z0-9][a-zA-Z0-9_-]*(\/[a-zA-Z0-9][a-zA-Z0-9_-]*)*$/',
+
                 'unique:products,slug',
             ],
 
@@ -71,6 +95,7 @@ class ProductController extends Controller
 
             'status' => [
                 'required',
+
                 Rule::in([
                     'draft',
                     'active',
@@ -79,6 +104,18 @@ class ProductController extends Controller
             ],
 
         ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Normalize Slug
+        |--------------------------------------------------------------------------
+        */
+
+        $data['slug'] =
+            $this->normalizeProductSlug(
+                $data['slug']
+            );
 
 
         $product = Product::create(
@@ -153,8 +190,10 @@ class ProductController extends Controller
             'slug' => [
 
                 'required',
-                'alpha_dash',
+                'string',
                 'max:255',
+
+                'regex:/^[a-zA-Z0-9][a-zA-Z0-9_-]*(\/[a-zA-Z0-9][a-zA-Z0-9_-]*)*$/',
 
                 Rule::unique(
                     'products',
@@ -188,6 +227,18 @@ class ProductController extends Controller
             ],
 
         ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Normalize Slug
+        |--------------------------------------------------------------------------
+        */
+
+        $data['slug'] =
+            $this->normalizeProductSlug(
+                $data['slug']
+            );
 
 
         $product->update(
@@ -244,15 +295,35 @@ class ProductController extends Controller
     |--------------------------------------------------------------------------
     | Public Product
     |--------------------------------------------------------------------------
+    |
+    | ตัวนี้ใช้ Product Path แทน Route Model Binding
+    |
+    | Example:
+    |
+    | /api/v1/products/rubberstrap
+    | /api/v1/products/acrylic/figure
+    |
     */
 
-    public function show(Product $product)
-    {
-        if (
-            $product->status !== 'active'
-        ) {
-            abort(404);
-        }
+    public function show(
+        string $productPath
+    ) {
+        $productPath =
+            $this->normalizeProductSlug(
+                $productPath
+            );
+
+
+        $product = Product::query()
+            ->where(
+                'slug',
+                $productPath
+            )
+            ->where(
+                'status',
+                'active'
+            )
+            ->firstOrFail();
 
 
         return response()->json([
@@ -270,11 +341,77 @@ class ProductController extends Controller
                 'slug' =>
                     $product->slug,
 
+                'url' =>
+                    url(
+                        '/products/'
+                        .
+                        $product->slug
+                    ),
+
                 'product_code' =>
                     $product->product_code,
 
             ],
 
         ]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Normalize Product Slug
+    |--------------------------------------------------------------------------
+    */
+
+    private function normalizeProductSlug(
+        string $slug
+    ): string {
+
+        $slug =
+            trim(
+                $slug
+            );
+
+
+        /*
+         * เผื่อ Admin กรอก:
+         *
+         * /products/acrylic/figure
+         * products/acrylic/figure
+         *
+         * จะเก็บจริงเป็น:
+         *
+         * acrylic/figure
+         */
+
+        $slug =
+            trim(
+                $slug,
+                '/'
+            );
+
+
+        if (
+            str_starts_with(
+                $slug,
+                'products/'
+            )
+        ) {
+
+            $slug =
+                substr(
+                    $slug,
+                    strlen(
+                        'products/'
+                    )
+                );
+
+        }
+
+
+        return trim(
+            $slug,
+            '/'
+        );
     }
 }

@@ -290,18 +290,33 @@
                             </label>
 
 
-                            <input
-                                type="text"
-                                id="product-slug"
-                                class="form-control"
-                                maxlength="255"
-                                placeholder="rubber-strap"
-                            >
+                           <input
+    type="text"
+    id="product-slug"
+    class="form-control"
+    maxlength="255"
+    placeholder="acrylic/figure"
+>
 
+<small class="form-text text-muted">
 
-                            <small class="form-text text-muted">
-                                Example: rubber-strap
-                            </small>
+    Product URL path after /products/
+
+    <br>
+
+    Example:
+    <code>rubberstrap</code>
+    →
+    <code>/products/rubberstrap</code>
+
+    <br>
+
+    Example:
+    <code>acrylic/figure</code>
+    →
+    <code>/products/acrylic/figure</code>
+
+</small>
 
                         </div>
 
@@ -1103,9 +1118,9 @@ document.addEventListener(
 
                             <div class="product-slug">
 
-                                /${escapeHtml(
-                                    product.slug
-                                )}
+                               /products/${escapeHtml(
+    product.slug
+)}
 
                             </div>
 
@@ -1169,7 +1184,7 @@ document.addEventListener(
 
 
                                 <a
-                                    href="/api/v1/products/${encodeURIComponent(product.slug)}/page"
+                                    href="/api/v1/products/${encodeProductPath(product.slug)}/page"
                                     target="_blank"
                                     class="
                                         btn
@@ -1213,7 +1228,22 @@ document.addEventListener(
         }
 
 
-
+function encodeProductPath(
+    slug
+) {
+    return String(
+        slug
+        ?? ''
+    )
+        .split('/')
+        .map(
+            segment =>
+                encodeURIComponent(
+                    segment
+                )
+        )
+        .join('/');
+}
         /*
         |--------------------------------------------------------------------------
         | Layout Display

@@ -489,11 +489,33 @@ Route::get(
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Dynamic Storefront Product
+|--------------------------------------------------------------------------
+|
+| รองรับ:
+|
+| /products/rubberstrap
+| /products/acrylic/figure
+| /products/acrylic/keyholder
+| /products/category/subcategory/product
+|
+| ต้องอยู่ท้าย Product Routes
+|
+*/
+
 Route::get(
-    '/products/{product:slug}',
+    '/products/{productPath}',
     [
         StorefrontProductController::class,
         'show'
     ]
 )
-->name('products.show');
+->where(
+    'productPath',
+    '.+'
+)
+->name(
+    'products.show'
+);
