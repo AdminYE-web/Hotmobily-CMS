@@ -3754,10 +3754,26 @@ document.addEventListener(
                             'click',
                             function (event) {
 
-                                if (
+                                const clickedBlock =
                                     event.target.closest(
                                         '.builder-block'
-                                    )
+                                    );
+
+
+                                /*
+                                 * The accordion list is itself rendered
+                                 * inside the accordion's .builder-block.
+                                 * Allow clicks on that owning block/list,
+                                 * but ignore clicks on nested components.
+                                 */
+                                if (
+                                    clickedBlock
+                                    &&
+                                    clickedBlock.dataset
+                                        .blockId
+                                    !==
+                                    this.dataset
+                                        .accordionId
                                 ) {
 
                                     return;

@@ -405,6 +405,12 @@
         }
 
 
+        .store-rich-text-small {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+
         /* ============================================================
            Image
         ============================================================ */
@@ -697,44 +703,76 @@
         .store-shipping-heading {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            width: 100%;
+            margin: 0;
+        }
 
-            gap: 8px;
 
-            margin:
-                12px 0 8px;
+        .store-shipping-delivery {
+            display: inline-block;
+            width: auto;
+            min-width: 0;
+            padding: 0 5px 5px 0;
+            text-align: left;
+            font-size: 22px;
+        }
+
+
+        .store-shipping-delivery:first-child {
+            flex: 0 0 220px;
+            box-sizing: border-box;
+        }
+
+
+        .store-shipping-delivery:last-child {
+            flex: 1 1 auto;
+            text-align: left;
         }
 
 
         .store-shipping-badge {
             display: inline-block;
-
-            padding: 6px 12px;
-
-            border-radius: 5px;
-
+            padding: 5px;
+            border-radius: 7px;
             font-weight: 700;
+            text-align: center;
+        }
+
+
+        .store-shipping-delivery .store-shipping-badge {
+            display: grid;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px 10px;
+            font-size: 18px;
+            line-height: 1.25;
+        }
+
+
+        .store-shipping-days {
+            display: block;
+            padding: 2px 5px;
+            font-size: 22px;
+            line-height: 1.3;
+            text-align: left;
         }
 
 
         .store-theme-blue {
-            background: #b9e5fa;
-
-            color: #0875d1;
+            background: #a9e2f6;
+            color: #000;
         }
 
 
         .store-theme-pink {
             background: #ff93ff;
-
-            color: #9e009f;
+            color: #a428a5;
         }
 
 
         .store-theme-cyan {
             background: #66fffe;
-
-            color: #004140;
+            color: #000;
         }
 
 
@@ -754,18 +792,19 @@
 
         .store-shipping-table {
             width: 100%;
-
-            margin-bottom: 15px;
-
+            margin-top: 10px;
+            margin-bottom: 0;
             border-collapse: collapse;
+            border: 1px solid #333;
+            font-weight: 700;
         }
 
 
         .store-shipping-table td,
         .store-shipping-table th {
-            padding: 10px;
+            padding: 2px 5px;
 
-            border: 1px solid #ccc;
+            border: 1px solid #333;
 
             text-align: center;
         }
@@ -776,12 +815,79 @@
         }
 
 
+        .store-shipping-message-row td {
+            background: #fff;
+        }
+
+
+        .store-shipping-label-row th,
+        .store-shipping-date-row td {
+            width: 50%;
+            border-top: 1px solid #333;
+            border-right: 0;
+            border-bottom: 1px solid #333;
+            border-left: 0;
+        }
+
+
+        .store-shipping-label-row th:first-child,
+        .store-shipping-date-row td:first-child {
+            border-right: 1px dotted #333;
+        }
+
+
+        .store-shipping-label-row th:first-child,
+        .store-shipping-date-row td:first-child {
+            background: #b5deff;
+            color: #000;
+        }
+
+
+        .store-shipping-label-row th:nth-child(2),
+        .store-shipping-date-row td:nth-child(2) {
+            background: #ffcccc;
+            color: #000;
+        }
+
+
+        .store-shipping-date-row td {
+            padding-top: 4px;
+            padding-bottom: 4px;
+            font-size: 22px;
+            letter-spacing: -1px;
+        }
+
+
+        .store-shipping-item-pink .store-shipping-days {
+            color: #e60012;
+        }
+
+
+        .store-shipping-item-blue .store-shipping-days {
+            color: #006ab1;
+        }
+
+
+        .store-shipping-item-cyan .store-shipping-days {
+            color: #004140;
+        }
+
+
+        .store-shipping-item-orange .store-shipping-days {
+            color: #a85000;
+        }
+
+
+        .store-shipping-item + .store-shipping-item {
+            margin-top: 13px;
+        }
+
+
         .store-shipping-footer {
             margin-top: 10px;
-
             font-size: 12px;
             line-height: 1.6;
-
+            text-align: right;
             white-space: pre-line;
         }
 
@@ -789,10 +895,47 @@
         .store-shipping-group-badges {
             display: flex;
             flex-wrap: wrap;
-
             gap: 8px;
-
             margin-bottom: 10px;
+        }
+
+
+        @media (max-width: 576px) {
+            .store-shipping-delivery {
+                width: 50%;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+
+            .store-shipping-delivery:first-child,
+            .store-shipping-delivery:last-child {
+                flex: 0 0 50%;
+            }
+
+
+            .store-shipping-delivery .store-shipping-badge {
+                padding: 4px 10px 1px;
+                font-size: 5vw;
+            }
+
+
+            .store-shipping-days {
+                font-size: 5vw;
+            }
+
+
+            .store-shipping-table td,
+            .store-shipping-table th {
+                padding: 2px 5px;
+            }
+
+
+            .store-shipping-date-row td {
+                padding-top: 4px;
+                padding-bottom: 4px;
+                font-size: 5vw;
+            }
         }
 
 
@@ -1557,28 +1700,8 @@
                             );
 
 
-                        const nowText =
-                            new Intl
-                            .DateTimeFormat(
-                                'ja-JP', {
-                                    timeZone: 'Asia/Tokyo',
-
-                                    month: '2-digit',
-
-                                    day: '2-digit',
-
-                                    weekday: 'short',
-
-                                    hour: '2-digit',
-
-                                    minute: '2-digit',
-
-                                    hour12: false,
-                                }
-                            )
-                            .format(
-                                new Date()
-                            );
+                        const startDateText =
+                            formatJapaneseDateTime();
 
 
                         shippingStartTargets
@@ -1586,7 +1709,7 @@
                                 function(element) {
 
                                     element.textContent =
-                                        nowText;
+                                        startDateText;
 
                                 }
                             );
@@ -1881,7 +2004,8 @@
                         );
 
 
-                    return new Intl
+                    const parts =
+                        new Intl
                         .DateTimeFormat(
                             'ja-JP', {
                                 timeZone: 'Asia/Tokyo',
@@ -1893,9 +2017,63 @@
                                 weekday: 'short',
                             }
                         )
-                        .format(
+                        .formatToParts(
                             date
                         );
+
+
+                    const values = {};
+
+
+                    parts.forEach(
+                        function(part) {
+
+                            values[
+                                part.type
+                            ] = part.value;
+
+                        }
+                    );
+
+
+                    return `${values.month}月${values.day}日(${values.weekday})`;
+                }
+
+
+                function formatJapaneseDateTime() {
+                    const parts =
+                        new Intl
+                        .DateTimeFormat(
+                            'ja-JP', {
+                                timeZone: 'Asia/Tokyo',
+                                month: '2-digit',
+                                day: '2-digit',
+                                weekday: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                            }
+                        )
+                        .formatToParts(
+                            new Date()
+                        );
+
+
+                    const values = {};
+
+
+                    parts.forEach(
+                        function(part) {
+
+                            values[
+                                part.type
+                            ] = part.value;
+
+                        }
+                    );
+
+
+                    return `${values.month}月${values.day}日(${values.weekday}) ${values.hour}:${values.minute}`;
                 }
 
 

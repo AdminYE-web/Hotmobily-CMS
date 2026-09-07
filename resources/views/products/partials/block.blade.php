@@ -728,15 +728,62 @@
                 'rich_text'
             )
 
-                <div class="store-rich-text new-text">
+                @php
 
-                    {!! nl2br(
-                        e(
+                    $textSize =
+                        (
+                            $content['text_size']
+                            ??
+                            'normal'
+                        )
+                        ===
+                        'small'
+                            ? 'small'
+                            : 'normal';
+
+
+                    $textClass =
+                        'store-rich-text new-text';
+
+
+                    if (
+                        $textSize === 'small'
+                    ) {
+
+                        $textClass .=
+                            ' store-rich-text-small';
+
+                    }
+
+                @endphp
+
+                <div class="{{ $textClass }}">
+
+                    @if(
+                        (
+                            $content['content_format']
+                            ?? 'plain'
+                        )
+                        === 'html'
+                    )
+
+                        {!!
                             $content['content']
                             ??
                             ''
-                        )
-                    ) !!}
+                        !!}
+
+                    @else
+
+                        {!! nl2br(
+                            e(
+                                $content['content']
+                                ??
+                                ''
+                            )
+                        ) !!}
+
+                    @endif
 
                 </div>
 
@@ -862,6 +909,31 @@
                             false
                         );
 
+
+                    $textColor =
+                        strtolower(
+                            trim(
+                                (string)
+                                (
+                                    $content['text_color']
+                                    ??
+                                    ''
+                                )
+                            )
+                        );
+
+
+                    if (
+                        !preg_match(
+                            '/^#[0-9a-f]{6}$/',
+                            $textColor
+                        )
+                    ) {
+
+                        $textColor = '#111111';
+
+                    }
+
                 @endphp
 
 
@@ -872,6 +944,7 @@
                     <a
                         href="{{ $linkUrl }}"
                         class="store-text-link"
+                        style="color: {{ $textColor }} !important;"
 
                         @if(
                             $newTab
@@ -1666,6 +1739,10 @@
 
 
                     @if(
+                        $displayType
+                        ===
+                        'grouped'
+                        &&
                         !empty(
                             $content[
                                 'intro_text'
@@ -1892,30 +1969,73 @@
 
                                 }
 
-                            @endphp
 
-
-                            <div class="store-shipping-heading">
-
-                                <span
-                                    class="
-                                        store-shipping-badge
-                                        store-theme-{{ $theme }}
-                                    "
-                                >
-
-                                    {{
-                                        $schedule[
-                                            'label'
+                                $tableMessage =
+                                    $schedule[
+                                        'message'
+                                    ]
+                                    ??
+                                    (
+                                        $content[
+                                            'intro_text'
                                         ]
                                         ??
                                         ''
-                                    }}
-
-                                </span>
+                                    );
 
 
-                                <strong>
+                                if (
+                                    $theme === 'cyan'
+                                    &&
+                                    empty(
+                                        $schedule[
+                                            'message'
+                                        ]
+                                    )
+                                ) {
+
+                                    $tableMessage =
+                                        '今、この製品をご注文頂いた場合の出荷予定日を表示中';
+
+                                }
+
+                            @endphp
+
+
+                            <div
+                                class="
+                                    store-shipping-item
+                                    store-shipping-item-{{ $theme }}
+                                "
+                            >
+
+                            <div class="store-shipping-heading">
+
+                                <div class="store-shipping-delivery">
+
+                                    <span
+                                        class="
+                                            store-shipping-badge
+                                            store-theme-{{ $theme }}
+                                        "
+                                    >
+
+                                        {{
+                                            $schedule[
+                                                'label'
+                                            ]
+                                            ??
+                                            ''
+                                        }}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="store-shipping-delivery">
+
+                                <strong class="store-shipping-days">
 
                                     {{
                                         (int)
@@ -1930,14 +2050,36 @@
 
                                 </strong>
 
+                                </div>
+
                             </div>
 
 
                             <table class="store-shipping-table">
 
-                                <thead>
+                                <tbody>
 
-                                    <tr>
+                                    @if(
+                                        !empty($tableMessage)
+                                    )
+
+                                        <tr class="store-shipping-message-row">
+
+                                            <td colspan="2">
+
+                                                {!! nl2br(
+                                                    e(
+                                                        $tableMessage
+                                                    )
+                                                ) !!}
+
+                                            </td>
+
+                                        </tr>
+
+                                    @endif
+
+                                    <tr class="store-shipping-label-row">
 
                                         <th>
 
@@ -1953,12 +2095,7 @@
 
                                     </tr>
 
-                                </thead>
-
-
-                                <tbody>
-
-                                    <tr>
+                                    <tr class="store-shipping-date-row">
 
                                         <td>
 
@@ -1997,6 +2134,8 @@
                                 </tbody>
 
                             </table>
+
+                            </div>
 
                         @endforeach
 

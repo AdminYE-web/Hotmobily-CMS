@@ -253,6 +253,104 @@
 
 
 /* ============================================================
+   Rich Text Editor
+============================================================ */
+
+.rich-text-editor {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+
+    overflow: hidden;
+}
+
+
+.rich-text-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    padding: 7px;
+
+    background: #f5f6f8;
+
+    border-bottom: 1px solid #ced4da;
+}
+
+
+.rich-text-display-size-control {
+    padding: 8px;
+
+    background: #f5f6f8;
+
+    border-bottom: 1px solid #ced4da;
+}
+
+
+.rich-text-display-size-control label {
+    display: block;
+
+    margin-bottom: 4px;
+}
+
+
+.rich-text-display-size-control select {
+    max-width: 240px;
+}
+
+
+.rich-text-toolbar .btn {
+    min-width: 32px;
+
+    padding: 3px 8px;
+}
+
+
+.rich-text-toolbar select {
+    width: 135px;
+    height: 31px;
+
+    padding: 2px 6px;
+}
+
+
+.rich-text-toolbar input[type="color"] {
+    width: 38px;
+    height: 31px;
+
+    padding: 2px;
+}
+
+
+.rich-text-surface {
+    min-height: 170px;
+    max-height: 420px;
+
+    overflow-y: auto;
+
+    padding: 12px;
+
+    background: #fff;
+
+    line-height: 1.7;
+
+    outline: 0;
+}
+
+
+.rich-text-surface:focus {
+    box-shadow: inset 0 0 0 2px rgba(0, 123, 255, .15);
+}
+
+
+.rich-text-surface-small {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+/* ============================================================
    System
 ============================================================ */
 
@@ -1797,6 +1895,8 @@ document.addEventListener(
 
             bindSingleImageUploaders();
 
+            bindRichTextEditors();
+
             bindContentBlockAccordions();
         }
 
@@ -1991,13 +2091,14 @@ document.addEventListener(
                 case 'rich_text':
 
                     fields =
-                        textareaInput(
+                        richTextEditor(
                             block.id,
-                            'content',
-                            'Content',
                             blockContent.content
                             ?? '',
-                            6
+                            blockContent.content_format
+                            ?? 'plain',
+                            blockContent.text_size
+                            ?? 'normal'
                         );
 
                     break;
@@ -3529,6 +3630,13 @@ document.addEventListener(
                     : '_self';
 
 
+            const textColor =
+                normalizeHexColor(
+                    content.text_color,
+                    '#111111'
+                );
+
+
             return `
 
                 <div
@@ -3552,6 +3660,36 @@ document.addEventListener(
                         content.url
                         ?? ''
                     )}
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Text Color
+                        </label>
+
+
+                        <div class="flex-table-color-control">
+
+                            <input
+                                type="color"
+                                class="
+                                    form-control
+                                    product-field
+                                    text-link-color-input
+                                "
+                                data-block-id="${block.id}"
+                                data-field="text_color"
+                                value="${textColor}"
+                            >
+
+                            <code class="text-link-color-value">
+                                ${textColor}
+                            </code>
+
+                        </div>
+
+                    </div>
 
 
                     <div class="form-group mb-0">
@@ -3647,6 +3785,18 @@ document.addEventListener(
                             );
 
 
+                        const colorInput =
+                            editor.querySelector(
+                                `[data-block-id="${blockId}"][data-field="text_color"]`
+                            );
+
+
+                        const colorValue =
+                            editor.querySelector(
+                                '.text-link-color-value'
+                            );
+
+
                         if (
                             !input
                             ||
@@ -3669,6 +3819,48 @@ document.addEventListener(
 
                             }
                         );
+
+
+                        const applyTextColor =
+                            function () {
+
+                                const color =
+                                    normalizeHexColor(
+                                        colorInput
+                                            ?.value,
+                                        '#111111'
+                                    );
+
+
+                                preview.style.color =
+                                    color;
+
+
+                                if (
+                                    colorValue
+                                ) {
+
+                                    colorValue.textContent =
+                                        color;
+
+                                }
+
+                            };
+
+
+                        applyTextColor();
+
+
+                        if (
+                            colorInput
+                        ) {
+
+                            colorInput.addEventListener(
+                                'input',
+                                applyTextColor
+                            );
+
+                        }
 
 
                         preview.addEventListener(
@@ -12260,6 +12452,720 @@ document.addEventListener(
                 </div>
 
             `;
+        }
+
+
+        function richTextEditor(
+            blockId,
+            value,
+            contentFormat = 'plain',
+            textSize = 'normal'
+        )
+        {
+            const normalizedTextSize =
+                [
+                    'normal',
+                    'small',
+                ].includes(
+                    textSize
+                )
+                    ? textSize
+                    : 'normal';
+
+
+            return `
+
+                <div class="form-group rich-text-editor-group">
+
+                    <label>
+                        Content
+                    </label>
+
+
+                    <div
+                        class="rich-text-editor"
+                        data-rich-text-editor="${escapeHtml(
+                            blockId
+                        )}"
+                        data-content-format="${
+                            contentFormat === 'html'
+                                ? 'html'
+                                : 'plain'
+                        }"
+                    >
+
+                        <div class="rich-text-display-size-control">
+
+                            <label>
+                                Text Size
+                            </label>
+
+
+                            <select
+                                class="
+                                    form-control
+                                    product-field
+                                    rich-text-display-size
+                                "
+                                data-block-id="${escapeHtml(
+                                    blockId
+                                )}"
+                                data-field="text_size"
+                            >
+
+                                <option
+                                    value="normal"
+                                    ${
+                                        normalizedTextSize
+                                        ===
+                                        'normal'
+                                            ? 'selected'
+                                            : ''
+                                    }
+                                >
+                                    Normal (Default)
+                                </option>
+
+
+                                <option
+                                    value="small"
+                                    ${
+                                        normalizedTextSize
+                                        ===
+                                        'small'
+                                            ? 'selected'
+                                            : ''
+                                    }
+                                >
+                                    Small
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="rich-text-toolbar">
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-light rich-text-command"
+                                data-command="bold"
+                                title="Bold"
+                            >
+                                <strong>B</strong>
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-light rich-text-command"
+                                data-command="italic"
+                                title="Italic"
+                            >
+                                <em>I</em>
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-light rich-text-command"
+                                data-command="underline"
+                                title="Underline"
+                            >
+                                <u>U</u>
+                            </button>
+
+
+                            <select
+                                class="form-control form-control-sm rich-text-font"
+                                title="Font"
+                            >
+                                <option value="">
+                                    Font
+                                </option>
+                                <option value="Arial">
+                                    Arial
+                                </option>
+                                <option value="Noto Sans JP">
+                                    Noto Sans JP
+                                </option>
+                                <option value="serif">
+                                    Serif
+                                </option>
+                                <option value="sans-serif">
+                                    Sans Serif
+                                </option>
+                            </select>
+
+
+                            <select
+                                class="form-control form-control-sm rich-text-size"
+                                title="Font size"
+                            >
+                                <option value="">
+                                    Size
+                                </option>
+                                <option value="1">10px</option>
+                                <option value="2">13px</option>
+                                <option value="3">16px</option>
+                                <option value="4">18px</option>
+                                <option value="5">24px</option>
+                                <option value="6">32px</option>
+                                <option value="7">48px</option>
+                            </select>
+
+
+                            <label class="mb-0 small" title="Text color">
+                                Color
+
+                                <input
+                                    type="color"
+                                    class="rich-text-color"
+                                    value="#000000"
+                                >
+                            </label>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-secondary rich-text-command"
+                                data-command="removeFormat"
+                                title="Clear formatting"
+                            >
+                                Clear
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="rich-text-surface ${
+                                normalizedTextSize
+                                ===
+                                'small'
+                                    ? 'rich-text-surface-small'
+                                    : ''
+                            }"
+                            contenteditable="true"
+                            role="textbox"
+                            aria-multiline="true"
+                            spellcheck="true"
+                        ></div>
+
+
+                        <textarea
+                            hidden
+                            class="product-field rich-text-value"
+                            data-block-id="${escapeHtml(
+                                blockId
+                            )}"
+                            data-field="content"
+                        >${escapeHtml(
+                            value
+                        )}</textarea>
+
+
+                        <input
+                            type="hidden"
+                            class="product-field"
+                            data-block-id="${escapeHtml(
+                                blockId
+                            )}"
+                            data-field="content_format"
+                            value="html"
+                        >
+
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+
+        function sanitizeRichTextEditorHtml(
+            html
+        )
+        {
+            const template =
+                document.createElement(
+                    'template'
+                );
+
+
+            template.innerHTML =
+                String(
+                    html
+                    ?? ''
+                );
+
+
+            const allowedTags =
+                new Set([
+                    'B',
+                    'STRONG',
+                    'I',
+                    'EM',
+                    'U',
+                    'BR',
+                    'P',
+                    'DIV',
+                    'UL',
+                    'OL',
+                    'LI',
+                    'FONT',
+                ]);
+
+
+            Array
+                .from(
+                    template.content
+                        .querySelectorAll('*')
+                )
+                .forEach(
+                    function (element) {
+
+                        if (
+                            [
+                                'SCRIPT',
+                                'STYLE',
+                                'IFRAME',
+                                'OBJECT',
+                            ]
+                            .includes(
+                                element.tagName
+                            )
+                        ) {
+
+                            element.remove();
+
+                            return;
+
+                        }
+
+
+                        if (
+                            !allowedTags.has(
+                                element.tagName
+                            )
+                        ) {
+
+                            element.replaceWith(
+                                ...element.childNodes
+                            );
+
+                            return;
+
+                        }
+
+
+                        const fontColor =
+                            element.tagName === 'FONT'
+                                ? element.getAttribute('color')
+                                : null;
+
+
+                        const fontSize =
+                            element.tagName === 'FONT'
+                                ? element.getAttribute('size')
+                                : null;
+
+
+                        const fontFace =
+                            element.tagName === 'FONT'
+                                ? element.getAttribute('face')
+                                : null;
+
+
+                        Array
+                            .from(
+                                element.attributes
+                            )
+                            .forEach(
+                                attribute =>
+                                    element.removeAttribute(
+                                        attribute.name
+                                    )
+                            );
+
+
+                        if (
+                            fontColor
+                            &&
+                            /^#[0-9a-fA-F]{6}$/.test(
+                                fontColor
+                            )
+                        ) {
+
+                            element.setAttribute(
+                                'color',
+                                fontColor.toLowerCase()
+                            );
+
+                        }
+
+
+                        if (
+                            fontSize
+                            &&
+                            /^[1-7]$/.test(
+                                fontSize
+                            )
+                        ) {
+
+                            element.setAttribute(
+                                'size',
+                                fontSize
+                            );
+
+                        }
+
+
+                        if (
+                            [
+                                'Arial',
+                                'Noto Sans JP',
+                                'serif',
+                                'sans-serif',
+                            ]
+                            .includes(
+                                fontFace
+                            )
+                        ) {
+
+                            element.setAttribute(
+                                'face',
+                                fontFace
+                            );
+
+                        }
+
+                    }
+                );
+
+
+            return template.innerHTML;
+        }
+
+
+        function bindRichTextEditors()
+        {
+            document
+                .querySelectorAll(
+                    '[data-rich-text-editor]'
+                )
+                .forEach(
+                    function (wrapper) {
+
+                        const editor =
+                            wrapper.querySelector(
+                                '.rich-text-surface'
+                            );
+
+
+                        const valueField =
+                            wrapper.querySelector(
+                                '.rich-text-value'
+                            );
+
+
+                        if (
+                            !editor
+                            ||
+                            !valueField
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const initialValue =
+                            valueField.value;
+
+
+                        editor.innerHTML =
+                            wrapper.dataset
+                                .contentFormat
+                            === 'html'
+                                ? sanitizeRichTextEditorHtml(
+                                    initialValue
+                                )
+                                : escapeHtml(
+                                    initialValue
+                                )
+                                .replace(
+                                    /\r?\n/g,
+                                    '<br>'
+                                );
+
+
+                        const displaySize =
+                            wrapper.querySelector(
+                                '.rich-text-display-size'
+                            );
+
+
+                        const applyDisplaySize =
+                            function () {
+
+                                editor.classList.toggle(
+                                    'rich-text-surface-small',
+                                    displaySize
+                                        ?.value
+                                    ===
+                                    'small'
+                                );
+
+                            };
+
+
+                        applyDisplaySize();
+
+
+                        displaySize?.addEventListener(
+                            'change',
+                            applyDisplaySize
+                        );
+
+
+                        const sync =
+                            function () {
+
+                                valueField.value =
+                                    sanitizeRichTextEditorHtml(
+                                        editor.innerHTML
+                                    );
+
+                            };
+
+
+                        let savedRange =
+                            null;
+
+
+                        const saveSelection =
+                            function () {
+
+                                const selection =
+                                    window.getSelection();
+
+
+                                if (
+                                    selection
+                                    &&
+                                    selection.rangeCount > 0
+                                    &&
+                                    editor.contains(
+                                        selection.anchorNode
+                                    )
+                                ) {
+
+                                    savedRange =
+                                        selection
+                                            .getRangeAt(0)
+                                            .cloneRange();
+
+                                }
+
+                            };
+
+
+                        const restoreSelection =
+                            function () {
+
+                                if (
+                                    !savedRange
+                                ) {
+
+                                    return;
+
+                                }
+
+
+                                const selection =
+                                    window.getSelection();
+
+
+                                selection.removeAllRanges();
+                                selection.addRange(
+                                    savedRange
+                                );
+
+                            };
+
+
+                        const runCommand =
+                            function (
+                                command,
+                                commandValue = null
+                            ) {
+
+                                restoreSelection();
+                                editor.focus();
+
+
+                                document.execCommand(
+                                    command,
+                                    false,
+                                    commandValue
+                                );
+
+
+                                saveSelection();
+                                sync();
+
+                            };
+
+
+                        editor.addEventListener(
+                            'input',
+                            sync
+                        );
+
+
+                        editor.addEventListener(
+                            'mouseup',
+                            saveSelection
+                        );
+
+
+                        editor.addEventListener(
+                            'keyup',
+                            saveSelection
+                        );
+
+
+                        wrapper
+                            .querySelectorAll(
+                                '.rich-text-command'
+                            )
+                            .forEach(
+                                function (button) {
+
+                                    button.addEventListener(
+                                        'mousedown',
+                                        function (event) {
+                                            event.preventDefault();
+                                        }
+                                    );
+
+
+                                    button.addEventListener(
+                                        'click',
+                                        function () {
+
+                                            runCommand(
+                                                this.dataset
+                                                    .command
+                                            );
+
+                                        }
+                                    );
+
+                                }
+                            );
+
+
+                        const font =
+                            wrapper.querySelector(
+                                '.rich-text-font'
+                            );
+
+
+                        font?.addEventListener(
+                            'mousedown',
+                            saveSelection
+                        );
+
+
+                        font?.addEventListener(
+                            'change',
+                            function () {
+
+                                if (
+                                    this.value
+                                ) {
+
+                                    runCommand(
+                                        'fontName',
+                                        this.value
+                                    );
+
+                                }
+
+
+                                this.value =
+                                    '';
+
+                            }
+                        );
+
+
+                        const size =
+                            wrapper.querySelector(
+                                '.rich-text-size'
+                            );
+
+
+                        size?.addEventListener(
+                            'mousedown',
+                            saveSelection
+                        );
+
+
+                        size?.addEventListener(
+                            'change',
+                            function () {
+
+                                if (
+                                    this.value
+                                ) {
+
+                                    runCommand(
+                                        'fontSize',
+                                        this.value
+                                    );
+
+                                }
+
+
+                                this.value =
+                                    '';
+
+                            }
+                        );
+
+
+                        const color =
+                            wrapper.querySelector(
+                                '.rich-text-color'
+                            );
+
+
+                        color?.addEventListener(
+                            'mousedown',
+                            saveSelection
+                        );
+
+
+                        color?.addEventListener(
+                            'input',
+                            function () {
+
+                                runCommand(
+                                    'foreColor',
+                                    this.value
+                                );
+
+                            }
+                        );
+
+
+                        sync();
+
+                    }
+                );
         }
 
 

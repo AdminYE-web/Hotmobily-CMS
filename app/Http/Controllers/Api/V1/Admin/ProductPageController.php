@@ -749,10 +749,40 @@ class ProductPageController extends Controller
             'rich_text' => [
 
                 'content' =>
-                    $this->stringValue(
-                        $content['content']
+                    (
+                        $content['content_format']
+                        ?? 'plain'
+                    ) === 'html'
+                        ? $this->sanitizeRichTextHtml(
+                            $content['content']
+                            ?? null
+                        )
+                        : $this->stringValue(
+                            $content['content']
+                            ?? null,
+                            20000
+                        ),
+
+                'content_format' =>
+                    $this->enumValue(
+                        $content['content_format']
                         ?? null,
-                        20000
+                        [
+                            'plain',
+                            'html',
+                        ],
+                        'plain'
+                    ),
+
+                'text_size' =>
+                    $this->enumValue(
+                        $content['text_size']
+                        ?? null,
+                        [
+                            'normal',
+                            'small',
+                        ],
+                        'normal'
                     ),
 
             ],
@@ -863,6 +893,13 @@ class ProductPageController extends Controller
 
                         '_self'
 
+                    ),
+
+                'text_color' =>
+                    $this->hexColorValue(
+                        $content['text_color']
+                        ?? null,
+                        '#111111'
                     ),
 
             ],
@@ -2169,6 +2206,330 @@ class ProductPageController extends Controller
         === 1
             ? $color
             : $default;
+    }
+
+
+    private function sanitizeRichTextHtml(
+        mixed $value
+    ): ?string {
+        if (
+            $value === null
+        ) {
+
+            return null;
+
+        }
+
+
+        $html =
+            mb_substr(
+                trim(
+                    (string)
+                    $value
+                ),
+                0,
+                20000
+            );
+
+
+        if (
+            $html === ''
+        ) {
+
+            return '';
+
+        }
+
+
+        if (
+            !class_exists(
+                \DOMDocument::class
+            )
+        ) {
+
+            return htmlspecialchars(
+                strip_tags(
+                    $html
+                ),
+                ENT_QUOTES
+                |
+                ENT_SUBSTITUTE,
+                'UTF-8'
+            );
+
+        }
+
+
+        $document =
+            new \DOMDocument(
+                '1.0',
+                'UTF-8'
+            );
+
+
+        $previousErrors =
+            libxml_use_internal_errors(
+                true
+            );
+
+
+        $document->loadHTML(
+            '<?xml encoding="UTF-8"><div id="rich-text-root">'
+            . $html
+            . '</div>',
+            LIBXML_HTML_NOIMPLIED
+            |
+            LIBXML_HTML_NODEFDTD
+        );
+
+
+        libxml_clear_errors();
+        libxml_use_internal_errors(
+            $previousErrors
+        );
+
+
+        $root =
+            $document->getElementById(
+                'rich-text-root'
+            );
+
+
+        if (
+            !$root
+        ) {
+
+            return '';
+
+        }
+
+
+        $this->sanitizeRichTextChildren(
+            $root
+        );
+
+
+        $result =
+            '';
+
+
+        foreach (
+            $root->childNodes
+            as $child
+        ) {
+
+            $result .=
+                $document->saveHTML(
+                    $child
+                );
+
+        }
+
+
+        return $result;
+    }
+
+
+    private function sanitizeRichTextChildren(
+        \DOMNode $parent
+    ): void {
+        $allowedTags = [
+            'b',
+            'strong',
+            'i',
+            'em',
+            'u',
+            'br',
+            'p',
+            'div',
+            'ul',
+            'ol',
+            'li',
+            'font',
+        ];
+
+
+        $dangerousTags = [
+            'script',
+            'style',
+            'iframe',
+            'object',
+            'embed',
+        ];
+
+
+        $children =
+            iterator_to_array(
+                $parent->childNodes
+            );
+
+
+        foreach (
+            $children
+            as $child
+        ) {
+
+            if (
+                !$child
+                instanceof \DOMElement
+            ) {
+
+                continue;
+
+            }
+
+
+            $tag =
+                strtolower(
+                    $child->tagName
+                );
+
+
+            if (
+                in_array(
+                    $tag,
+                    $dangerousTags,
+                    true
+                )
+            ) {
+
+                $parent->removeChild(
+                    $child
+                );
+
+                continue;
+
+            }
+
+
+            if (
+                !in_array(
+                    $tag,
+                    $allowedTags,
+                    true
+                )
+            ) {
+
+                $this->sanitizeRichTextChildren(
+                    $child
+                );
+
+
+                while (
+                    $child->firstChild
+                ) {
+
+                    $parent->insertBefore(
+                        $child->firstChild,
+                        $child
+                    );
+
+                }
+
+
+                $parent->removeChild(
+                    $child
+                );
+
+                continue;
+
+            }
+
+
+            $color =
+                $tag === 'font'
+                    ? strtolower(
+                        $child->getAttribute(
+                            'color'
+                        )
+                    )
+                    : '';
+
+
+            $size =
+                $tag === 'font'
+                    ? $child->getAttribute(
+                        'size'
+                    )
+                    : '';
+
+
+            $face =
+                $tag === 'font'
+                    ? $child->getAttribute(
+                        'face'
+                    )
+                    : '';
+
+
+            while (
+                $child->attributes->length
+                > 0
+            ) {
+
+                $child->removeAttributeNode(
+                    $child->attributes->item(0)
+                );
+
+            }
+
+
+            if (
+                preg_match(
+                    '/^#[0-9a-f]{6}$/',
+                    $color
+                ) === 1
+            ) {
+
+                $child->setAttribute(
+                    'color',
+                    $color
+                );
+
+            }
+
+
+            if (
+                preg_match(
+                    '/^[1-7]$/',
+                    $size
+                ) === 1
+            ) {
+
+                $child->setAttribute(
+                    'size',
+                    $size
+                );
+
+            }
+
+
+            if (
+                in_array(
+                    $face,
+                    [
+                        'Arial',
+                        'Noto Sans JP',
+                        'serif',
+                        'sans-serif',
+                    ],
+                    true
+                )
+            ) {
+
+                $child->setAttribute(
+                    'face',
+                    $face
+                );
+
+            }
+
+
+            $this->sanitizeRichTextChildren(
+                $child
+            );
+
+        }
     }
 
 
