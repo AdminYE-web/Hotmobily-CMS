@@ -45,7 +45,11 @@
             ? $contents[
                 $blockId
             ]
-            : [];
+            : (
+                is_array($block['content'] ?? null)
+                    ? $block['content']
+                    : []
+            );
 
 
     /*
@@ -1143,6 +1147,11 @@
 
                 @php
 
+                    /*
+                     * Custom Table V2 is saved directly in the block content:
+                     * { title: ..., rows: [...] }.
+                     * Keep accepting the old nested `table` payload as well.
+                     */
                     $table =
                         is_array(
                             $content['table']
@@ -1150,7 +1159,18 @@
                             null
                         )
                             ? $content['table']
-                            : [];
+                            : $content;
+
+
+                    $tableTitle =
+                        trim(
+                            (string)
+                            (
+                                $table['title']
+                                ??
+                                ''
+                            )
+                        );
 
 
                     $rows =
@@ -1173,7 +1193,26 @@
 
                     <div class="store-table-scroll">
 
+                        @if(
+                            $tableTitle
+                            !==
+                            ''
+                        )
+
+                            <h3 class="store-custom-table-title">
+                                {{ $tableTitle }}
+                            </h3>
+
+                        @endif
+
                         <table class="store-custom-table">
+
+                            <colgroup>
+                                <col
+                                    span="200"
+                                    style="width: 0.5%;"
+                                >
+                            </colgroup>
 
                             <tbody>
 
@@ -1193,10 +1232,55 @@
                                                 ? $row['cells']
                                                 : [];
 
+
+                                        $rowHeight =
+                                            max(
+                                                0,
+                                                min(
+                                                    1000,
+                                                    (int)
+                                                    (
+                                                        $row['height']
+                                                        ??
+                                                        0
+                                                    )
+                                                )
+                                            );
+
+
+                                        $rowBackground =
+                                            trim(
+                                                (string)
+                                                (
+                                                    $row[
+                                                        'background_color'
+                                                    ]
+                                                    ??
+                                                    ''
+                                                )
+                                            );
+
+
+                                        if (
+                                            !preg_match(
+                                                '/^#[0-9a-fA-F]{6}$/',
+                                                $rowBackground
+                                            )
+                                        ) {
+
+                                            $rowBackground =
+                                                '';
+
+                                        }
+
                                     @endphp
 
 
-                                    <tr>
+                                    <tr
+                                        @if($rowHeight > 0)
+                                            style="height: {{ $rowHeight }}px;"
+                                        @endif
+                                    >
 
                                         @foreach(
                                             $cells
@@ -1224,23 +1308,6 @@
                                                     );
 
 
-                                                $colspan =
-                                                    max(
-                                                        1,
-                                                        min(
-                                                            20,
-                                                            (int)
-                                                            (
-                                                                $cell[
-                                                                    'colspan'
-                                                                ]
-                                                                ??
-                                                                1
-                                                            )
-                                                        )
-                                                    );
-
-
                                                 $rowspan =
                                                     max(
                                                         1,
@@ -1259,11 +1326,21 @@
 
 
                                                 $background =
-                                                    $cell[
-                                                        'background'
-                                                    ]
-                                                    ??
-                                                    '#ffffff';
+                                                    $rowBackground
+                                                    !==
+                                                    ''
+                                                        ? $rowBackground
+                                                        : (
+                                                            $cell[
+                                                                'background_color'
+                                                            ]
+                                                            ??
+                                                            $cell[
+                                                                'background'
+                                                            ]
+                                                            ??
+                                                            '#ffffff'
+                                                        );
 
 
                                                 if (
@@ -1280,6 +1357,10 @@
 
 
                                                 $color =
+                                                    $cell[
+                                                        'text_color'
+                                                    ]
+                                                    ??
                                                     $cell[
                                                         'color'
                                                     ]
@@ -1333,6 +1414,77 @@
                                                         ]
                                                     );
 
+
+                                                $colspan =
+                                                    $width > 0
+                                                        ? max(
+                                                            1,
+                                                            min(
+                                                                200,
+                                                                (int)
+                                                                round(
+                                                                    $width
+                                                                    * 2
+                                                                )
+                                                            )
+                                                        )
+                                                        : max(
+                                                            1,
+                                                            min(
+                                                                200,
+                                                                (int)
+                                                                (
+                                                                    $cell[
+                                                                        'colspan'
+                                                                    ]
+                                                                    ?? 1
+                                                                )
+                                                            )
+                                                        );
+
+
+                                                $verticalAlign =
+                                                    $cell[
+                                                        'vertical_align'
+                                                    ]
+                                                    ??
+                                                    'middle';
+
+
+                                                if (
+                                                    !in_array(
+                                                        $verticalAlign,
+                                                        [
+                                                            'top',
+                                                            'middle',
+                                                            'bottom',
+                                                        ],
+                                                        true
+                                                    )
+                                                ) {
+
+                                                    $verticalAlign =
+                                                        'middle';
+
+                                                }
+
+
+                                                $padding =
+                                                    max(
+                                                        0,
+                                                        min(
+                                                            50,
+                                                            (int)
+                                                            (
+                                                                $cell[
+                                                                    'padding'
+                                                                ]
+                                                                ??
+                                                                8
+                                                            )
+                                                        )
+                                                    );
+
                                             @endphp
 
 
@@ -1340,12 +1492,6 @@
                                                 colspan="{{ $colspan }}"
                                                 rowspan="{{ $rowspan }}"
                                                 style="
-                                                    {{
-                                                        $width > 0
-                                                        ? 'width:' . $width . '%;'
-                                                        : ''
-                                                    }}
-
                                                     background:
                                                     {{ $background }};
 
@@ -1354,6 +1500,12 @@
 
                                                     text-align:
                                                     {{ $cellAlign }};
+
+                                                    vertical-align:
+                                                    {{ $verticalAlign }};
+
+                                                    padding:
+                                                    {{ $padding }}px;
 
                                                     font-weight:
                                                     {{
@@ -1366,6 +1518,8 @@
 
                                                 {!! nl2br(
                                                     e(
+                                                        $cell['content']
+                                                        ??
                                                         $cell['text']
                                                         ??
                                                         ''
@@ -1867,6 +2021,447 @@
 
                         </div>
 
+                    @endif
+
+                </div>
+
+
+            {{-- ============================================================
+                OptionCardGrid
+            ============================================================ --}}
+
+            @elseif(
+                $type
+                ===
+                'option_card_grid'
+            )
+
+                @php
+                    $title =
+                        $content['title']
+                        ??
+                        (
+                            $settings['title']
+                            ??
+                            ''
+                        );
+
+                    $intro =
+                        $content['intro']
+                        ??
+                        '当店ラバーストラップのアタッチメント・加工・オプションのご紹介です。';
+
+                    $cleanBlockId =
+                        preg_replace(
+                            '/[^A-Za-z0-9\-_]/',
+                            '_',
+                            $blockId
+                        );
+
+                    $tabs =
+                        $content['tabs']
+                        ?? null;
+
+                    $hasCustomTabs =
+                        is_array($tabs) && count($tabs) > 0;
+
+                    $tab1Id =
+                        'tab1_' . $cleanBlockId;
+
+                    $tab2Id =
+                        'tab2_' . $cleanBlockId;
+
+                    $tab3Id =
+                        'tab3_' . $cleanBlockId;
+                @endphp
+
+                <div class="store-option-card-grid plan-section">
+
+                    @if(!empty($title))
+                        <h3 class="product-d_feature_title">
+                            {{ $title }}
+                        </h3>
+                    @endif
+
+                    @if(!empty($intro))
+                        <p class="new-text">
+                            {{ $intro }}
+                        </p>
+                        <br>
+                    @endif
+
+                    @if($hasCustomTabs)
+                        <div class="tab-container">
+                            <div class="tab-menu">
+                                @foreach($tabs as $tabIdx => $tab)
+                                    @php
+                                        $tabKey = !empty($tab['id']) ? $tab['id'] : ('tab_' . $tabIdx);
+                                        $tabTargetId = 'opt_tab_' . $cleanBlockId . '_' . preg_replace('/[^A-Za-z0-9\-_]/', '_', $tabKey);
+                                    @endphp
+                                    <button
+                                        type="button"
+                                        class="tab-link {{ $loop->first ? 'active' : '' }}"
+                                        data-tab-target="{{ $tabTargetId }}"
+                                    >
+                                        {{ $tab['title'] ?? ('タブ ' . ($tabIdx + 1)) }}
+                                    </button>
+                                @endforeach
+                            </div>
+
+                            @foreach($tabs as $tabIdx => $tab)
+                                @php
+                                    $tabKey = !empty($tab['id']) ? $tab['id'] : ('tab_' . $tabIdx);
+                                    $tabTargetId = 'opt_tab_' . $cleanBlockId . '_' . preg_replace('/[^A-Za-z0-9\-_]/', '_', $tabKey);
+                                    $tabType = $tab['type'] ?? 'cards';
+                                    $items = is_array($tab['items'] ?? null) ? $tab['items'] : [];
+                                @endphp
+
+                                <div
+                                    id="{{ $tabTargetId }}"
+                                    class="tab-content {{ $loop->first ? 'active' : '' }}"
+                                    style="{{ $loop->first ? 'display: block;' : 'display: none;' }}"
+                                >
+                                    @if($tabType === 'parts')
+                                        <div class="grid-layout">
+                                            <div class="itemz" style="flex: 1 1 100%;">
+                                                <div class="row option-parts-row">
+                                                    @foreach($items as $item)
+                                                        @php
+                                                            $itemImg = $item['image_url'] ?? '';
+                                                            $itemTitle = $item['title'] ?? '';
+                                                            $itemPrice = $item['price'] ?? '';
+                                                            $itemZoom = !empty($item['zoom_url']) ? $item['zoom_url'] : $itemImg;
+                                                        @endphp
+                                                        <div class="mt-10-part-4">
+                                                            @if(!empty($itemZoom))
+                                                                <a href="{{ $itemZoom }}" target="_blank" rel="noopener">
+                                                                    <img class="picpro" src="{{ $itemImg }}" alt="{{ $itemTitle }}" width="160" height="160" loading="lazy">
+                                                                </a>
+                                                            @else
+                                                                <img class="picpro" src="{{ $itemImg }}" alt="{{ $itemTitle }}" width="160" height="160" loading="lazy">
+                                                            @endif
+                                                            <br>
+                                                            @if($itemPrice !== '')
+                                                                <div class="part-price">{{ $itemPrice }}</div>
+                                                            @endif
+                                                            @if(!empty($itemZoom))
+                                                                <a href="{{ $itemZoom }}" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                                    📷クリックすると拡大します
+                                                                </a>
+                                                            @endif
+                                                        </div>
+                                                    @endforeach
+
+                                                    @if(!empty($tab['banner_image_url']))
+                                                        <div class="part_link">
+                                                            @if(!empty($tab['banner_link_url']))
+                                                                <a href="{{ $tab['banner_link_url'] }}">
+                                                                    <img src="{{ $tab['banner_image_url'] }}" alt="{{ $tab['title'] ?? '' }}" width="570" height="192" loading="lazy">
+                                                                </a>
+                                                            @else
+                                                                <img src="{{ $tab['banner_image_url'] }}" alt="{{ $tab['title'] ?? '' }}" width="570" height="192" loading="lazy">
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        @php
+                                            $chunks = array_chunk($items, 2);
+                                        @endphp
+                                        @foreach($chunks as $cIdx => $chunk)
+                                            @if($cIdx > 0)
+                                                <br>
+                                            @endif
+                                            <div class="grid-layout">
+                                                @foreach($chunk as $card)
+                                                    @php
+                                                        $cardImg = $card['image_url'] ?? '';
+                                                        $cardTitle = $card['title'] ?? '';
+                                                        $cardDesc = $card['description'] ?? '';
+                                                        $cardLinkText = $card['link_text'] ?? '詳細はこちら';
+                                                        $cardLinkUrl = $card['link_url'] ?? '';
+                                                        $isExternal = str_starts_with($cardLinkUrl, 'http://') || str_starts_with($cardLinkUrl, 'https://');
+                                                    @endphp
+                                                    <div class="itemz">
+                                                        @if(!empty($cardImg))
+                                                            <img src="{{ $cardImg }}" alt="{{ $cardTitle }}" loading="lazy">
+                                                        @endif
+                                                        @if(!empty($cardTitle))
+                                                            <p class="new-text" style="font-weight: bold; margin-top: 5px;">{{ $cardTitle }}</p>
+                                                        @endif
+                                                        @if(!empty($cardDesc))
+                                                            <p class="new-text">
+                                                                {!! nl2br(e($cardDesc)) !!}
+                                                            </p>
+                                                        @endif
+                                                        @if(!empty($cardLinkUrl))
+                                                            <br>
+                                                            <div>
+                                                                <a href="{{ $cardLinkUrl }}"
+                                                                   @if($isExternal) target="_blank" rel="noopener" @endif
+                                                                   class="new-text option-more-link" style="color: black;">
+                                                                    {{ $cardLinkText }}
+                                                                </a>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        {{-- Fallback default 3 tabs (Rubberstrap) --}}
+                        <div class="tab-container">
+
+                        <div class="tab-menu">
+                            <button
+                                type="button"
+                                class="tab-link active"
+                                data-tab-target="{{ $tab1Id }}"
+                            >
+                                アタッチメント
+                            </button>
+
+                            <button
+                                type="button"
+                                class="tab-link"
+                                data-tab-target="{{ $tab2Id }}"
+                            >
+                                加工方法
+                            </button>
+
+                            <button
+                                type="button"
+                                class="tab-link"
+                                data-tab-target="{{ $tab3Id }}"
+                            >
+                                オプション
+                            </button>
+                        </div>
+
+                        {{-- Tab 1: アタッチメント --}}
+                        <div
+                            id="{{ $tab1Id }}"
+                            class="tab-content active"
+                        >
+                            <div class="grid-layout">
+                                <div class="itemz" style="flex: 1 1 100%;">
+                                    <div class="row option-parts-row">
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part1.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part1.webp" alt="通常松葉+カニカン" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+0円</div>
+                                            <a href="/products/images/HM_part1.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part2.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part2.webp" alt="ゴム松葉+カニカン" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+0円</div>
+                                            <a href="/products/images/HM_part2.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part14.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part14.webp" alt="ボールチェーンシルバー" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+0円</div>
+                                            <a href="/products/images/HM_part14.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part3.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part3.webp" alt="通常松葉+カニカン+スマホプラグ" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+11円</div>
+                                            <a href="/products/images/HM_part3.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part9.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part9.webp" alt="ボールチェーン黄色" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+11円</div>
+                                            <a href="/products/images/HM_part9.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part10.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part10.webp" alt="ボールチェーン赤色" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+11円</div>
+                                            <a href="/products/images/HM_part10.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part11.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part11.webp" alt="ボールチェーン青色" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+11円</div>
+                                            <a href="/products/images/HM_part11.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part12.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part12.webp" alt="ボールチェーンピンク色" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+11円</div>
+                                            <a href="/products/images/HM_part12.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="mt-10-part-4">
+                                            <a href="/products/images/HM_part13.webp" target="_blank" rel="noopener">
+                                                <img class="picpro" src="/products/images/HM_part13.webp" alt="ボールチェーン緑色" width="160" height="160" loading="lazy">
+                                            </a>
+                                            <br>
+                                            <div class="part-price">+11円</div>
+                                            <a href="/products/images/HM_part13.webp" target="_blank" rel="noopener" class="part-zoom" style="font-size: 10px; color: black !important;">
+                                                📷クリックすると拡大します
+                                            </a>
+                                        </div>
+
+                                        <div class="part_link">
+                                            <a href="/products/rubberkeyholder/#part_keyholder">
+                                                <img src="/products/images/accessories.webp" alt="アタッチメント一覧" width="570" height="192" loading="lazy">
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Tab 2: 加工方法 --}}
+                        <div
+                            id="{{ $tab2Id }}"
+                            class="tab-content"
+                        >
+                            <div class="grid-layout">
+                                <div class="itemz">
+                                    <img src="/products/images/rubberstrap/v2/rubber_guide02.webp" alt="ぷっくり凹凸タイプ・フラットタイプ" loading="lazy">
+                                    <p class="new-text">
+                                        あなたのデザインを最高のラバーキーホルダーに！キャラクターに最適な「ぷっくり凹凸タイプ」や、ドット絵・ロゴ向きの「フラットタイプ」が選べます。
+                                    </p>
+                                    <br>
+                                    <div>
+                                        <a href="/lp/rubber-guide-structure.php" class="new-text option-more-link" style="color: black;">
+                                            詳細はこちら
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="itemz">
+                                    <img src="/products/images/rubberstrap/v2/rubber_guide07.webp" alt="特殊加工" loading="lazy">
+                                    <p class="new-text">
+                                        曲面加工や貼り合わせ半立体、貫通穴（中抜き）加工などの特殊加工もご用意！デザインをより活かす特別なラバーストラップを製作できます。
+                                    </p>
+                                    <br>
+                                    <div>
+                                        <a href="/lp/rubber-guide-structure.php?sec=special_processing" class="new-text option-more-link" style="color: black;">
+                                            詳細はこちら
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Tab 3: オプション --}}
+                        <div
+                            id="{{ $tab3Id }}"
+                            class="tab-content"
+                        >
+                            <div class="grid-layout">
+                                <div class="itemz">
+                                    <img src="/products/images/rubberstrap/v2/rubber_strap_protect.webp" alt="汚れ防止加工オプション" loading="lazy">
+                                    <p class="new-text">
+                                        業界唯一の汚れ防止加工オプションをご用意！あなたの大切なラバーストラップをキレイに保ちます。
+                                    </p>
+                                    <br>
+                                    <div>
+                                        <a href="https://hotmobily.jp/faq/details/rubberstrap/q4" target="_blank" rel="noopener" class="new-text option-more-link" style="color: black;">
+                                            詳細はこちら
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="itemz">
+                                    <img src="/products/images/rubberstrap/v2/rubberstrap_special.webp" alt="特殊素材" loading="lazy">
+                                    <p class="new-text">
+                                        金銀、蓄光、ラメ、蛍光、半透明素材の5種の特殊素材をご用意！
+                                    </p>
+                                    <br>
+                                    <div>
+                                        <a href="/lp/rubber-guide-special.php" class="new-text option-more-link" style="color: black;">
+                                            詳細はこちら
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br>
+
+                            <div class="grid-layout">
+                                <div class="itemz">
+                                    <img src="/products/images/rubberstrap/v2/rubber_guide11.webp" alt="データ作成代行サービス" loading="lazy">
+                                    <p class="new-text">
+                                        入稿データをご自身で作成するのが難しい方は、データ作成代行サービスをぜひご利用ください。
+                                    </p>
+                                    <br>
+                                    <div>
+                                        <a href="/lp/rubber-guide-data.php" class="new-text option-more-link" style="color: black;">
+                                            詳細はこちら
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="itemz">
+                                    <img src="/products/images/rubberstrap/v2/daishi_rubberstrap.webp" alt="台紙封入サービス" loading="lazy">
+                                    <p class="new-text">
+                                        台紙封入サービスをご用意しております。当店のテンプレートデザイン、またはお客様のオリジナルデザインの台紙を封入します。
+                                    </p>
+                                    <br>
+                                    <div>
+                                        <a href="https://hotmobily.jp/products/daishi.html" target="_blank" rel="noopener" class="new-text option-more-link" style="color: black;">
+                                            詳細はこちら
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                     @endif
 
                 </div>

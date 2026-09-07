@@ -188,6 +188,70 @@
 }
 
 
+.content-block-toggle {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    min-width: 0;
+
+    padding: 0;
+
+    background: transparent;
+    color: inherit;
+
+    border: 0;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.content-block-toggle:focus {
+    outline: 2px solid rgba(0, 123, 255, .35);
+    outline-offset: 3px;
+}
+
+
+.content-block-toggle-icon {
+    display: inline-block;
+
+    width: 9px;
+    height: 9px;
+
+    flex: 0 0 auto;
+
+    border-right: 2px solid #59636e;
+    border-bottom: 2px solid #59636e;
+
+    transform: rotate(45deg);
+
+    transition: transform .2s ease;
+}
+
+
+.content-block.is-collapsed > .content-block-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+
+    border-bottom-color: transparent;
+}
+
+
+.content-block.is-collapsed
+> .content-block-header
+.content-block-toggle-icon {
+    transform: rotate(-45deg);
+}
+
+
+.content-block.is-collapsed > .content-block-body {
+    display: none;
+}
+
+
 /* ============================================================
    System
 ============================================================ */
@@ -614,6 +678,42 @@
 }
 
 
+.flex-table-topbar-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+}
+
+
+.flex-table-row-count-control {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+}
+
+
+.flex-table-row-count-control label {
+    margin: 0;
+
+    color: #555;
+
+    font-size: 11px;
+}
+
+
+.flex-table-row-count-input {
+    width: 68px;
+    height: 31px;
+
+    padding: 3px 7px;
+
+    font-size: 12px;
+}
+
+
 .flex-table-row-editor {
     margin-bottom: 15px;
 
@@ -652,6 +752,35 @@
     padding: 2px 7px;
 
     font-size: 11px;
+}
+
+
+.flex-table-cell-count-control {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-right: 3px;
+}
+
+
+.flex-table-cell-count-control label {
+    margin: 0;
+
+    color: #555;
+
+    font-size: 11px;
+}
+
+
+.flex-table-cell-count-input {
+    width: 62px;
+    height: 27px;
+
+    padding: 2px 6px;
+
+    font-size: 12px;
 }
 
 
@@ -724,6 +853,61 @@
     color: #777;
 
     font-size: 10px;
+}
+
+
+.flex-table-row-height {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    margin-top: 7px;
+}
+
+
+.flex-table-row-height label {
+    margin: 0;
+
+    color: #555;
+
+    font-size: 11px;
+}
+
+
+.flex-table-row-height input {
+    width: 90px;
+    height: 30px;
+
+    padding: 3px 7px;
+}
+
+
+.flex-table-row-background {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-top: 7px;
+}
+
+
+.flex-table-row-background label {
+    margin: 0;
+
+    color: #555;
+
+    font-size: 11px;
+}
+
+
+.flex-table-row-background input[type="color"] {
+    width: 50px;
+    height: 30px;
+
+    padding: 2px;
 }
 
 
@@ -804,11 +988,7 @@
             minmax(0, 1fr)
         );
 
-    grid-auto-rows:
-        minmax(
-            48px,
-            auto
-        );
+    grid-auto-rows: auto;
 
     width: 100%;
     min-width: 650px;
@@ -1128,6 +1308,56 @@
 
 }
 
+
+/* ============================================================
+   OptionCardGrid Dynamic Editor
+============================================================ */
+
+.option-card-grid-container {
+    width: 100%;
+}
+
+.option-grid-nav-wrapper {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.option-grid-tab-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.btn-xs {
+    padding: 0.15rem 0.45rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border-radius: 0.2rem;
+}
+
+.bg-warning-light {
+    background-color: #fffdf5;
+    border-bottom: 1px solid #ffeeba;
+}
+
+.option-part-item-card {
+    transition: all 0.2s ease;
+}
+
+.option-part-item-card:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
+.option-card-item-card {
+    transition: all 0.2s ease;
+}
+
+.option-card-item-card:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+
 </style>
 
 @endpush
@@ -1177,6 +1407,10 @@ document.addEventListener(
 
         let contents =
             {};
+
+
+        const collapsedContentBlockIds =
+            new Set();
 
 
         let shippingHolidays =
@@ -1238,6 +1472,11 @@ document.addEventListener(
                         .content
                         ?.blocks
                     ?? {};
+
+
+                collapseAllContentBlocks(
+                    layout
+                );
 
 
                 const info =
@@ -1354,6 +1593,90 @@ document.addEventListener(
         |--------------------------------------------------------------------------
         */
 
+        function collapseAllContentBlocks(
+            layoutData
+        )
+        {
+            collapsedContentBlockIds.clear();
+
+
+            const addBlocks =
+                function (blocks) {
+
+                    (
+                        Array.isArray(
+                            blocks
+                        )
+                            ? blocks
+                            : []
+                    )
+                    .forEach(
+                        function (block) {
+
+                            if (
+                                !block
+                                ||
+                                typeof block
+                                !== 'object'
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            if (
+                                block.id
+                                !== undefined
+                                &&
+                                block.id
+                                !== null
+                            ) {
+
+                                collapsedContentBlockIds.add(
+                                    String(
+                                        block.id
+                                    )
+                                );
+
+                            }
+
+
+                            addBlocks(
+                                block.children
+                            );
+
+                        }
+                    );
+
+                };
+
+
+            (
+                layoutData?.rows
+                ?? []
+            )
+            .forEach(
+                function (row) {
+
+                    (
+                        row?.columns
+                        ?? []
+                    )
+                    .forEach(
+                        function (column) {
+
+                            addBlocks(
+                                column?.blocks
+                            );
+
+                        }
+                    );
+
+                }
+            );
+        }
+
         function renderLayout()
         {
             const canvas =
@@ -1469,6 +1792,12 @@ document.addEventListener(
             bindShippingDays();
 
             bindShippingScheduleEditors();
+
+            bindOptionCardGridEditors();
+
+            bindSingleImageUploaders();
+
+            bindContentBlockAccordions();
         }
 
 
@@ -1491,6 +1820,14 @@ document.addEventListener(
 
             let fields =
                 '';
+
+
+            const isCollapsed =
+                collapsedContentBlockIds.has(
+                    String(
+                        block.id
+                    )
+                );
 
 
             switch (
@@ -1670,7 +2007,7 @@ document.addEventListener(
 
                     fields = `
 
-                        ${textInput(
+                        ${imageUploaderInput(
                             block.id,
                             'url',
                             'Image URL / Path',
@@ -1800,6 +2137,17 @@ document.addEventListener(
                     );
 
 
+                case 'option_card_grid':
+
+                    fields =
+                        optionCardGridEditor(
+                            block,
+                            blockContent
+                        );
+
+                    break;
+
+
                 case 'shipping_schedule':
 
                     fields =
@@ -1865,21 +2213,36 @@ document.addEventListener(
             return `
 
                 <div
-                    class="content-block"
+                    class="content-block ${isCollapsed ? 'is-collapsed' : ''}"
                     data-block-id="${block.id}"
                 >
 
                     <div class="content-block-header">
 
-                        <span class="content-block-name">
+                        <button
+                            type="button"
+                            class="content-block-toggle"
+                            aria-expanded="${isCollapsed ? 'false' : 'true'}"
+                            title="Expand or collapse this block"
+                        >
 
-                            ${escapeHtml(
-                                getBlockName(
-                                    block.type
-                                )
-                            )}
+                            <span
+                                class="content-block-toggle-icon"
+                                aria-hidden="true"
+                            ></span>
 
-                        </span>
+
+                            <span class="content-block-name">
+
+                                ${escapeHtml(
+                                    getBlockName(
+                                        block.type
+                                    )
+                                )}
+
+                            </span>
+
+                        </button>
 
 
                         <span
@@ -1901,7 +2264,11 @@ document.addEventListener(
                     </div>
 
 
-                    ${fields}
+                    <div class="content-block-body">
+
+                        ${fields}
+
+                    </div>
 
                 </div>
 
@@ -1929,21 +2296,45 @@ document.addEventListener(
                 'Accordion Title';
 
 
+            const isCollapsed =
+                collapsedContentBlockIds.has(
+                    String(
+                        block.id
+                    )
+                );
+
+
             return `
 
                 <div
                     class="
                         content-block
                         accordion-editor
+                        ${isCollapsed ? 'is-collapsed' : ''}
                     "
                     data-block-id="${block.id}"
                 >
 
                     <div class="content-block-header">
 
-                        <span class="content-block-name">
-                            Accordion
-                        </span>
+                        <button
+                            type="button"
+                            class="content-block-toggle"
+                            aria-expanded="${isCollapsed ? 'false' : 'true'}"
+                            title="Expand or collapse this block"
+                        >
+
+                            <span
+                                class="content-block-toggle-icon"
+                                aria-hidden="true"
+                            ></span>
+
+
+                            <span class="content-block-name">
+                                Accordion
+                            </span>
+
+                        </button>
 
 
                         <span
@@ -1965,12 +2356,14 @@ document.addEventListener(
                     </div>
 
 
-                    ${textInput(
-                        block.id,
-                        'title',
-                        'Accordion Title',
-                        title
-                    )}
+                    <div class="content-block-body">
+
+                        ${textInput(
+                            block.id,
+                            'title',
+                            'Accordion Title',
+                            title
+                        )}
 
 
                     <label>
@@ -1978,7 +2371,7 @@ document.addEventListener(
                     </label>
 
 
-                    <div class="accordion-children">
+                        <div class="accordion-children">
 
                         ${
                             (
@@ -2006,11 +2399,1111 @@ document.addEventListener(
                             `
                         }
 
+                        </div>
+
                     </div>
 
                 </div>
 
             `;
+        }
+
+
+        function bindContentBlockAccordions()
+        {
+            document
+                .querySelectorAll(
+                    '.content-block-toggle'
+                )
+                .forEach(
+                    function (button) {
+
+                        button.onclick =
+                            function () {
+
+                                const block =
+                                    this.closest(
+                                        '.content-block'
+                                    );
+
+
+                                if (
+                                    !block
+                                ) {
+
+                                    return;
+
+                                }
+
+
+                                const blockId =
+                                    String(
+                                        block.dataset
+                                            .blockId
+                                        ?? ''
+                                    );
+
+
+                                const isCollapsed =
+                                    block.classList.toggle(
+                                        'is-collapsed'
+                                    );
+
+
+                                this.setAttribute(
+                                    'aria-expanded',
+                                    isCollapsed
+                                        ? 'false'
+                                        : 'true'
+                                );
+
+
+                                if (
+                                    blockId
+                                ) {
+
+                                    if (
+                                        isCollapsed
+                                    ) {
+
+                                        collapsedContentBlockIds.add(
+                                            blockId
+                                        );
+
+                                    } else {
+
+                                        collapsedContentBlockIds.delete(
+                                            blockId
+                                        );
+
+                                    }
+
+                                }
+
+                            };
+
+                    }
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | OptionCardGrid Dynamic Tab & Content Manager
+        |--------------------------------------------------------------------------
+        */
+
+        const optionCardGridStore = new Map();
+
+        let optionTabCounter = 1;
+        function generateOptionTabId()
+        {
+            return 'tab_' + Date.now() + '_' + (optionTabCounter++);
+        }
+
+        function normalizeOptionCardGridContent(content)
+        {
+            const defaultTabs = [
+                {
+                    id: 'tab_attachment',
+                    title: 'アタッチメント',
+                    type: 'parts',
+                    banner_image_url: '/products/images/accessories.webp',
+                    banner_link_url: '/products/rubberkeyholder/#part_keyholder',
+                    items: [
+                        { image_url: '/products/images/HM_part1.webp', title: '通常松葉+カニカン', price: '+0円', zoom_url: '/products/images/HM_part1.webp' },
+                        { image_url: '/products/images/HM_part2.webp', title: 'ゴム松葉+カニカン', price: '+0円', zoom_url: '/products/images/HM_part2.webp' },
+                        { image_url: '/products/images/HM_part14.webp', title: 'ボールチェーンシルバー', price: '+0円', zoom_url: '/products/images/HM_part14.webp' },
+                        { image_url: '/products/images/HM_part3.webp', title: '通常松葉+カニカン+スマホプラグ', price: '+11円', zoom_url: '/products/images/HM_part3.webp' },
+                        { image_url: '/products/images/HM_part9.webp', title: 'ボールチェーン黄色', price: '+11円', zoom_url: '/products/images/HM_part9.webp' },
+                        { image_url: '/products/images/HM_part10.webp', title: 'ボールチェーン赤色', price: '+11円', zoom_url: '/products/images/HM_part10.webp' },
+                        { image_url: '/products/images/HM_part11.webp', title: 'ボールチェーン青色', price: '+11円', zoom_url: '/products/images/HM_part11.webp' },
+                        { image_url: '/products/images/HM_part12.webp', title: 'ボールチェーンピンク色', price: '+11円', zoom_url: '/products/images/HM_part12.webp' },
+                        { image_url: '/products/images/HM_part13.webp', title: 'ボールチェーン緑色', price: '+11円', zoom_url: '/products/images/HM_part13.webp' }
+                    ]
+                },
+                {
+                    id: 'tab_processing',
+                    title: '加工方法',
+                    type: 'cards',
+                    items: [
+                        {
+                            image_url: '/products/images/rubberstrap/v2/rubber_guide02.webp',
+                            title: 'ぷっくり凹凸タイプ・フラットタイプ',
+                            description: 'あなたのデザインを最高のラバーキーホルダーに！キャラクターに最適な「ぷっくり凹凸タイプ」や、ドット絵・ロゴ向きの「フラットタイプ」が選べます。',
+                            link_text: '詳細はこちら',
+                            link_url: '/lp/rubber-guide-structure.php'
+                        },
+                        {
+                            image_url: '/products/images/rubberstrap/v2/rubber_guide07.webp',
+                            title: '特殊加工',
+                            description: '曲面加工や貼り合わせ半立体、貫通穴（中抜き）加工などの特殊加工もご用意！デザインをより活かす特別なラバーストラップを製作できます。',
+                            link_text: '詳細はこちら',
+                            link_url: '/lp/rubber-guide-structure.php?sec=special_processing'
+                        }
+                    ]
+                },
+                {
+                    id: 'tab_options',
+                    title: 'オプション',
+                    type: 'cards',
+                    items: [
+                        {
+                            image_url: '/products/images/rubberstrap/v2/rubber_strap_protect.webp',
+                            title: '汚れ防止加工オプション',
+                            description: '業界唯一の汚れ防止加工オプションをご用意！あなたの大切なラバーストラップをキレイに保ちます。',
+                            link_text: '詳細はこちら',
+                            link_url: 'https://hotmobily.jp/faq/details/rubberstrap/q4'
+                        },
+                        {
+                            image_url: '/products/images/rubberstrap/v2/rubberstrap_special.webp',
+                            title: '特殊素材',
+                            description: '金銀、蓄光、ラメ、蛍光、半透明素材の5種の特殊素材をご用意！',
+                            link_text: '詳細はこちら',
+                            link_url: '/lp/rubber-guide-special.php'
+                        },
+                        {
+                            image_url: '/products/images/rubberstrap/v2/rubber_guide11.webp',
+                            title: 'データ作成代行サービス',
+                            description: '入稿データをご自身で作成するのが難しい方は、データ作成代行サービスをぜひご利用ください。',
+                            link_text: '詳細はこちら',
+                            link_url: '/lp/rubber-guide-data.php'
+                        },
+                        {
+                            image_url: '/products/images/rubberstrap/v2/daishi_rubberstrap.webp',
+                            title: '台紙封入サービス',
+                            description: '台紙封入サービスをご用意しております。当店のテンプレートデザイン、またはお客様のオリジナルデザインの台紙を封入します。',
+                            link_text: '詳細はこちら',
+                            link_url: 'https://hotmobily.jp/products/daishi.html'
+                        }
+                    ]
+                }
+            ];
+
+            let tabs = null;
+            if (Array.isArray(content.tabs) && content.tabs.length > 0) {
+                tabs = content.tabs.map((tab, idx) => ({
+                    id: tab.id || ('tab_' + idx),
+                    title: String(tab.title ?? ('Tab ' + (idx + 1))),
+                    type: tab.type === 'parts' ? 'parts' : 'cards',
+                    banner_image_url: String(tab.banner_image_url ?? ''),
+                    banner_link_url: String(tab.banner_link_url ?? ''),
+                    items: Array.isArray(tab.items) ? tab.items.map(item => ({
+                        image_url: String(item.image_url ?? ''),
+                        title: String(item.title ?? ''),
+                        price: String(item.price ?? ''),
+                        zoom_url: String(item.zoom_url ?? ''),
+                        description: String(item.description ?? ''),
+                        link_text: String(item.link_text ?? ''),
+                        link_url: String(item.link_url ?? '')
+                    })) : []
+                }));
+            } else {
+                tabs = JSON.parse(JSON.stringify(defaultTabs));
+            }
+
+            return {
+                title: String(content.title ?? 'アタッチメント・加工・オプション'),
+                intro: String(content.intro ?? '当店ラバーストラップのアタッチメント・加工・オプションのご紹介です。'),
+                activeTabIndex: 0,
+                tabs: tabs
+            };
+        }
+
+        async function uploadSingleImageFile(file)
+        {
+            validateImageFile(file);
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const response = await fetch(
+                `/api/v1/admin/products/${productId}/images`,
+                {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                    },
+                    body: formData,
+                }
+            );
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result?.message || 'Upload failed');
+            }
+
+            return result?.data?.url || result?.url;
+        }
+
+        function optionCardGridEditor(block, content)
+        {
+            const data = normalizeOptionCardGridContent(content);
+            optionCardGridStore.set(block.id, data);
+
+            return `
+                <div class="option-card-grid-container" data-option-grid-block="${block.id}">
+                    ${renderOptionCardGridInner(block.id, data)}
+                </div>
+            `;
+        }
+
+        function renderOptionCardGridInner(blockId, data)
+        {
+            const activeIndex = Math.min(Math.max(0, data.activeTabIndex || 0), Math.max(0, data.tabs.length - 1));
+            data.activeTabIndex = activeIndex;
+            const activeTab = data.tabs[activeIndex] || null;
+
+            return `
+                <div class="card mb-3 border-0 bg-transparent">
+                    <div class="form-group mb-2">
+                        <label class="font-weight-bold text-dark">Section Title (หัวข้อ Component)</label>
+                        <input type="text" class="form-control option-grid-title-field" data-block-id="${blockId}" value="${escapeHtml(data.title)}" placeholder="アタッチメント・加工・オプション">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold text-dark">Intro Description (คำบรรยายสั้น)</label>
+                        <textarea class="form-control option-grid-intro-field" data-block-id="${blockId}" rows="2" placeholder="当店ラバーストラップのアタッチメント・加工・オプションのご紹介です。">${escapeHtml(data.intro)}</textarea>
+                    </div>
+
+                    <!-- Tabs Management Bar -->
+                    <div class="option-grid-nav-wrapper p-3 bg-white rounded border shadow-sm mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="font-weight-bold mb-0 text-dark">
+                                <i class="fas fa-folder-open text-warning mr-1"></i> Tabs List (${data.tabs.length} Tabs)
+                            </label>
+                            <button type="button" class="btn btn-sm btn-success font-weight-bold btn-add-option-tab" data-block-id="${blockId}">
+                                <i class="fas fa-plus mr-1"></i> + Add Tab (เพิ่มแท็บ)
+                            </button>
+                        </div>
+
+                        <div class="option-grid-tab-pills">
+                            ${data.tabs.map((tab, idx) => `
+                                <button type="button" class="btn btn-sm ${idx === activeIndex ? 'btn-warning shadow-sm font-weight-bold' : 'btn-outline-secondary'} btn-switch-option-tab" data-block-id="${blockId}" data-tab-index="${idx}">
+                                    <span class="mr-1">${idx + 1}. ${escapeHtml(tab.title || 'Untitled')}</span>
+                                    <span class="badge ${tab.type === 'parts' ? 'badge-success' : 'badge-primary'}">${tab.type === 'parts' ? 'ตัวสินค้า (Parts)' : 'Card Info'}</span>
+                                    <span class="badge badge-light border ml-1">${(tab.items || []).length}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Active Tab Settings & Items -->
+                    ${activeTab ? renderActiveTabPanel(blockId, activeTab, activeIndex, data.tabs.length) : '<div class="alert alert-info">No tabs created. Click "+ Add Tab" to get started.</div>'}
+                </div>
+            `;
+        }
+
+        function renderActiveTabPanel(blockId, tab, tabIndex, totalTabs)
+        {
+            const isParts = tab.type === 'parts';
+
+            return `
+                <div class="card shadow-sm border-warning">
+                    <div class="card-header bg-warning-light py-2 px-3 d-flex justify-content-between align-items-center flex-wrap" style="gap: 8px;">
+                        <div class="d-flex align-items-center flex-wrap" style="gap: 8px; flex: 1; min-width: 260px;">
+                            <span class="badge badge-dark">Tab #${tabIndex + 1}</span>
+                            <div class="input-group input-group-sm" style="max-width: 250px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text font-weight-bold">ชื่อ Tab:</span>
+                                </div>
+                                <input type="text" class="form-control option-tab-title-edit" data-block-id="${blockId}" data-tab-index="${tabIndex}" value="${escapeHtml(tab.title)}" placeholder="Tab Title">
+                            </div>
+
+                            <div class="input-group input-group-sm" style="max-width: 290px;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text font-weight-bold">Type:</span>
+                                </div>
+                                <select class="form-control option-tab-type-edit" data-block-id="${blockId}" data-tab-index="${tabIndex}">
+                                    <option value="parts" ${isParts ? 'selected' : ''}>📦 ตัวสินค้า / Parts Grid (ภาพ, ราคา, ภาพขยาย)</option>
+                                    <option value="cards" ${!isParts ? 'selected' : ''}>🗂️ Card Info / การ์ดข้อมูล (ภาพ, คำบรรยาย, ลิงก์)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center" style="gap: 4px;">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-move-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-direction="up" ${tabIndex === 0 ? 'disabled' : ''} title="ย้ายขึ้น">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-move-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-direction="down" ${tabIndex === totalTabs - 1 ? 'disabled' : ''} title="ย้ายลง">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" ${totalTabs <= 1 ? 'disabled' : ''} title="ลบแท็บนี้">
+                                <i class="fas fa-trash-alt mr-1"></i> ลบ Tab
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-3 bg-white">
+                        ${isParts
+                            ? renderPartsTabEditor(blockId, tab, tabIndex)
+                            : renderCardsTabEditor(blockId, tab, tabIndex)
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPartsTabEditor(blockId, tab, tabIndex)
+        {
+            const items = tab.items || [];
+
+            return `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0 font-weight-bold text-success">
+                        <i class="fas fa-cubes mr-1"></i> รายการพาร์ทสินค้า / Parts Items (${items.length} รายการ)
+                    </h6>
+                    <button type="button" class="btn btn-sm btn-outline-success font-weight-bold btn-add-part-item" data-block-id="${blockId}" data-tab-index="${tabIndex}">
+                        <i class="fas fa-plus mr-1"></i> + เพิ่มพาร์ทสินค้า (+ Add Part)
+                    </button>
+                </div>
+
+                <div class="row option-parts-grid-admin">
+                    ${items.map((item, itemIdx) => `
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <div class="card h-100 border shadow-none bg-light option-part-item-card">
+                                <div class="card-body p-2 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge badge-secondary">#${itemIdx + 1}</span>
+                                        <button type="button" class="btn btn-xs btn-outline-danger btn-delete-part-item" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="ลบพาร์ท">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="text-center mb-2 bg-white p-1 border rounded" style="height: 70px; display: flex; align-items: center; justify-content: center;">
+                                        <img src="${escapeHtml(item.image_url || '/products/images/HM_part1.webp')}" class="img-fluid part-img-preview" style="max-height: 60px; object-fit: contain;" onerror="this.src='/products/images/HM_part1.webp'">
+                                    </div>
+
+                                    <div class="form-group mb-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="small text-muted mb-0 font-weight-bold">Image URL / Path:</label>
+                                            <span class="small font-weight-bold part-upload-status" style="font-size: 11px;"></span>
+                                        </div>
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" class="form-control form-control-sm part-field-image" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.image_url)}" placeholder="/products/images/HM_part1.webp">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-primary btn-upload-part-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="อัพโหลดรูปภาพ">
+                                                    <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input type="file" class="d-none part-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif">
+                                    </div>
+
+                                    <div class="form-group mb-1">
+                                        <label class="small text-muted mb-0 font-weight-bold">ชื่อสินค้า (Title):</label>
+                                        <input type="text" class="form-control form-control-sm part-field-title" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.title)}" placeholder="通常松葉+カニカン">
+                                    </div>
+
+                                    <div class="form-group mb-1">
+                                        <label class="small text-muted mb-0 font-weight-bold">ราคา (Price badge):</label>
+                                        <input type="text" class="form-control form-control-sm part-field-price" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.price)}" placeholder="+0円 or +11円">
+                                    </div>
+
+                                    <div class="form-group mb-0 mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <label class="small text-muted mb-0 font-weight-bold">Zoom URL (รูปภาพตอนขยาย):</label>
+                                            <span class="small font-weight-bold part-zoom-upload-status" style="font-size: 11px;"></span>
+                                        </div>
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" class="form-control form-control-sm part-field-zoom" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.zoom_url || item.image_url)}" placeholder="(เว้นว่างจะใช้รูปหลัก)">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-outline-secondary btn-upload-zoom-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="อัพโหลดรูปขยาย">
+                                                    <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <input type="file" class="d-none part-zoom-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- Bottom Banner Section for Parts Tab -->
+                <div class="card mt-3 border-secondary bg-white">
+                    <div class="card-header py-1 px-3 bg-light d-flex justify-content-between align-items-center">
+                        <small class="font-weight-bold text-muted">
+                            <i class="fas fa-image mr-1"></i> แบนเนอร์ด้านล่างแท็บ (Bottom Banner - Optional)
+                        </small>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <label class="small font-weight-bold text-muted mb-0">Banner Image URL:</label>
+                                    <span class="small font-weight-bold banner-upload-status" style="font-size: 11px;"></span>
+                                </div>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-sm part-banner-image-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" value="${escapeHtml(tab.banner_image_url)}" placeholder="/products/images/accessories.webp">
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-primary btn-upload-banner-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" title="อัพโหลดแบนเนอร์">
+                                            <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                        </button>
+                                    </div>
+                                </div>
+                                <input type="file" class="d-none banner-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" accept="image/jpeg,image/png,image/webp,image/gif">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="small font-weight-bold text-muted">Banner Link URL:</label>
+                                <input type="text" class="form-control form-control-sm part-banner-link-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" value="${escapeHtml(tab.banner_link_url)}" placeholder="/products/rubberkeyholder/#part_keyholder">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCardsTabEditor(blockId, tab, tabIndex)
+        {
+            const items = tab.items || [];
+
+            return `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0 font-weight-bold text-primary">
+                        <i class="fas fa-id-card mr-1"></i> รายการการ์ดข้อมูล / Card Info Items (${items.length} รายการ)
+                    </h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold btn-add-card-item" data-block-id="${blockId}" data-tab-index="${tabIndex}">
+                        <i class="fas fa-plus mr-1"></i> + เพิ่มการ์ดข้อมูล (+ Add Card)
+                    </button>
+                </div>
+
+                <div class="option-cards-list-admin">
+                    ${items.map((item, itemIdx) => `
+                        <div class="card mb-3 border shadow-none bg-light option-card-item-card">
+                            <div class="card-header py-1 px-3 bg-white d-flex justify-content-between align-items-center">
+                                <span class="font-weight-bold small text-dark">
+                                    <i class="fas fa-file-alt mr-1 text-primary"></i> Card #${itemIdx + 1} ${item.title ? '— ' + escapeHtml(item.title) : ''}
+                                </span>
+                                <button type="button" class="btn btn-xs btn-outline-danger btn-delete-card-item" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="ลบการ์ดนี้">
+                                    <i class="fas fa-times mr-1"></i> ลบการ์ด
+                                </button>
+                            </div>
+                            <div class="card-body p-3">
+                                <div class="row">
+                                    <div class="col-md-4 text-center mb-2">
+                                        <div class="bg-white p-2 border rounded mb-2" style="height: 120px; display: flex; align-items: center; justify-content: center;">
+                                            <img src="${escapeHtml(item.image_url || '/products/images/rubberstrap/v2/rubber_guide02.webp')}" class="img-fluid rounded card-img-preview" style="max-height: 110px; object-fit: contain;" onerror="this.src='/products/images/rubberstrap/v2/rubber_guide02.webp'">
+                                        </div>
+                                        <div class="form-group mb-0 text-left">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <label class="small text-muted font-weight-bold mb-0">Card Image URL:</label>
+                                                <span class="small font-weight-bold card-upload-status" style="font-size: 11px;"></span>
+                                            </div>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control form-control-sm card-field-image" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.image_url)}" placeholder="/products/images/rubberstrap/v2/rubber_guide02.webp">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn btn-outline-primary btn-upload-card-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="อัพโหลดรูปภาพการ์ด">
+                                                        <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <input type="file" class="d-none card-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group mb-2">
+                                            <label class="small text-muted font-weight-bold mb-1">หัวข้อการ์ด (Card Title):</label>
+                                            <input type="text" class="form-control form-control-sm card-field-title" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.title)}" placeholder="ぷっくり凹凸タイプ・フラットタイプ">
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label class="small text-muted font-weight-bold mb-1">คำบรรยาย (Description):</label>
+                                            <textarea class="form-control form-control-sm card-field-desc" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" rows="3" placeholder="ข้อความอธิบายคุณสมบัติหรือรายละเอียด...">${escapeHtml(item.description)}</textarea>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-5 mb-2">
+                                                <label class="small text-muted font-weight-bold mb-1">ข้อความปุ่มลิงก์ (Link Text):</label>
+                                                <input type="text" class="form-control form-control-sm card-field-link-text" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.link_text || '詳細はこちら')}" placeholder="詳細はこちら">
+                                            </div>
+                                            <div class="col-md-7 mb-2">
+                                                <label class="small text-muted font-weight-bold mb-1">Link URL (URL หรือ #block-id):</label>
+                                                <input type="text" class="form-control form-control-sm card-field-link-url" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.link_url)}" placeholder="/lp/... or #block-id">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function rerenderOptionCardGrid(blockId)
+        {
+            const container = document.querySelector(`.option-card-grid-container[data-option-grid-block="${blockId}"]`);
+            if (!container) return;
+            const data = optionCardGridStore.get(blockId);
+            container.innerHTML = renderOptionCardGridInner(blockId, data);
+            bindOptionCardGridEvents(container, blockId);
+            bindLinkUrlPickers();
+        }
+
+        function bindOptionCardGridEvents(container, blockId)
+        {
+            const data = optionCardGridStore.get(blockId);
+            if (!data) return;
+
+            // Section title & intro sync
+            const titleInput = container.querySelector(`.option-grid-title-field[data-block-id="${blockId}"]`);
+            if (titleInput) {
+                titleInput.addEventListener('input', function () {
+                    data.title = this.value;
+                });
+            }
+
+            const introInput = container.querySelector(`.option-grid-intro-field[data-block-id="${blockId}"]`);
+            if (introInput) {
+                introInput.addEventListener('input', function () {
+                    data.intro = this.value;
+                });
+            }
+
+            // Switch tab
+            container.querySelectorAll('.btn-switch-option-tab').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const idx = Number(this.dataset.tabIndex);
+                    data.activeTabIndex = idx;
+                    rerenderOptionCardGrid(blockId);
+                });
+            });
+
+            // Add Tab
+            const addTabBtn = container.querySelector('.btn-add-option-tab');
+            if (addTabBtn) {
+                addTabBtn.addEventListener('click', function () {
+                    const newIdx = data.tabs.length + 1;
+                    data.tabs.push({
+                        id: generateOptionTabId(),
+                        title: 'Tab ' + newIdx,
+                        type: 'cards',
+                        banner_image_url: '',
+                        banner_link_url: '',
+                        items: [
+                            {
+                                image_url: '',
+                                title: 'Card 1',
+                                description: '',
+                                link_text: '詳細はこちら',
+                                link_url: ''
+                            }
+                        ]
+                    });
+                    data.activeTabIndex = data.tabs.length - 1;
+                    rerenderOptionCardGrid(blockId);
+                });
+            }
+
+            // Delete Tab
+            const delTabBtn = container.querySelector('.btn-delete-tab');
+            if (delTabBtn) {
+                delTabBtn.addEventListener('click', function () {
+                    const idx = Number(this.dataset.tabIndex);
+                    if (data.tabs.length <= 1) return;
+                    if (!confirm(`ต้องการลบ Tab "${data.tabs[idx]?.title || ''}" ใช่หรือไม่?`)) return;
+
+                    data.tabs.splice(idx, 1);
+                    data.activeTabIndex = Math.max(0, idx - 1);
+                    rerenderOptionCardGrid(blockId);
+                });
+            }
+
+            // Move Tab
+            container.querySelectorAll('.btn-move-tab').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const idx = Number(this.dataset.tabIndex);
+                    const dir = this.dataset.direction;
+                    const targetIdx = dir === 'up' ? idx - 1 : idx + 1;
+                    if (targetIdx < 0 || targetIdx >= data.tabs.length) return;
+
+                    const temp = data.tabs[idx];
+                    data.tabs[idx] = data.tabs[targetIdx];
+                    data.tabs[targetIdx] = temp;
+                    data.activeTabIndex = targetIdx;
+                    rerenderOptionCardGrid(blockId);
+                });
+            });
+
+            // Tab Title Edit
+            const tabTitleInput = container.querySelector('.option-tab-title-edit');
+            if (tabTitleInput) {
+                tabTitleInput.addEventListener('input', function () {
+                    const idx = Number(this.dataset.tabIndex);
+                    if (data.tabs[idx]) {
+                        data.tabs[idx].title = this.value;
+                    }
+                });
+            }
+
+            // Tab Type Edit
+            const tabTypeSelect = container.querySelector('.option-tab-type-edit');
+            if (tabTypeSelect) {
+                tabTypeSelect.addEventListener('change', function () {
+                    const idx = Number(this.dataset.tabIndex);
+                    const newType = this.value;
+                    if (data.tabs[idx]) {
+                        data.tabs[idx].type = newType;
+                        if (newType === 'parts' && (!data.tabs[idx].items || data.tabs[idx].items.length === 0)) {
+                            data.tabs[idx].items = [{ image_url: '', title: '', price: '+0円', zoom_url: '' }];
+                        } else if (newType === 'cards' && (!data.tabs[idx].items || data.tabs[idx].items.length === 0)) {
+                            data.tabs[idx].items = [{ image_url: '', title: '', description: '', link_text: '詳細はこちら', link_url: '' }];
+                        }
+                    }
+                    rerenderOptionCardGrid(blockId);
+                });
+            }
+
+            // Add Part Item
+            const addPartBtn = container.querySelector('.btn-add-part-item');
+            if (addPartBtn) {
+                addPartBtn.addEventListener('click', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    if (!data.tabs[tabIdx].items) data.tabs[tabIdx].items = [];
+                    data.tabs[tabIdx].items.push({
+                        image_url: '',
+                        title: '',
+                        price: '+0円',
+                        zoom_url: ''
+                    });
+                    rerenderOptionCardGrid(blockId);
+                });
+            }
+
+            // Delete Part Item
+            container.querySelectorAll('.btn-delete-part-item').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items) {
+                        data.tabs[tabIdx].items.splice(itemIdx, 1);
+                        rerenderOptionCardGrid(blockId);
+                    }
+                });
+            });
+
+            // Part Item Fields
+            container.querySelectorAll('.part-field-image').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].image_url = this.value;
+                        const card = this.closest('.option-part-item-card');
+                        const img = card?.querySelector('.part-img-preview');
+                        if (img) img.src = this.value || '/products/images/HM_part1.webp';
+                    }
+                });
+            });
+
+            container.querySelectorAll('.part-field-title').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].title = this.value;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.part-field-price').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].price = this.value;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.part-field-zoom').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].zoom_url = this.value;
+                    }
+                });
+            });
+
+            // Banner inputs
+            const bannerImgInput = container.querySelector('.part-banner-image-input');
+            if (bannerImgInput) {
+                bannerImgInput.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    if (data.tabs[tabIdx]) {
+                        data.tabs[tabIdx].banner_image_url = this.value;
+                    }
+                });
+            }
+
+            const bannerLinkInput = container.querySelector('.part-banner-link-input');
+            if (bannerLinkInput) {
+                bannerLinkInput.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    if (data.tabs[tabIdx]) {
+                        data.tabs[tabIdx].banner_link_url = this.value;
+                    }
+                });
+            }
+
+            // Add Card Item
+            const addCardBtn = container.querySelector('.btn-add-card-item');
+            if (addCardBtn) {
+                addCardBtn.addEventListener('click', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    if (!data.tabs[tabIdx].items) data.tabs[tabIdx].items = [];
+                    data.tabs[tabIdx].items.push({
+                        image_url: '',
+                        title: '',
+                        description: '',
+                        link_text: '詳細はこちら',
+                        link_url: ''
+                    });
+                    rerenderOptionCardGrid(blockId);
+                });
+            }
+
+            // Delete Card Item
+            container.querySelectorAll('.btn-delete-card-item').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items) {
+                        data.tabs[tabIdx].items.splice(itemIdx, 1);
+                        rerenderOptionCardGrid(blockId);
+                    }
+                });
+            });
+
+            // Card Item Fields
+            container.querySelectorAll('.card-field-image').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].image_url = this.value;
+                        const card = this.closest('.option-card-item-card');
+                        const img = card?.querySelector('.card-img-preview');
+                        if (img) img.src = this.value || '/products/images/rubberstrap/v2/rubber_guide02.webp';
+                    }
+                });
+            });
+
+            container.querySelectorAll('.card-field-title').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].title = this.value;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.card-field-desc').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].description = this.value;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.card-field-link-text').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].link_text = this.value;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.card-field-link-url').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].link_url = this.value;
+                    }
+                });
+            });
+
+            // Upload Part Image
+            container.querySelectorAll('.btn-upload-part-img').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabIdx = this.dataset.tabIndex;
+                    const itemIdx = this.dataset.itemIndex;
+                    const fileInput = container.querySelector(`.part-file-input[data-tab-index="${tabIdx}"][data-item-index="${itemIdx}"]`);
+                    fileInput?.click();
+                });
+            });
+
+            container.querySelectorAll('.part-file-input').forEach(input => {
+                input.addEventListener('change', async function () {
+                    const file = this.files?.[0];
+                    if (!file) return;
+
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    const card = this.closest('.option-part-item-card');
+                    const status = card?.querySelector('.part-upload-status');
+                    const btn = card?.querySelector('.btn-upload-part-img');
+
+                    try {
+                        if (status) {
+                            status.className = 'small font-weight-bold part-upload-status text-warning';
+                            status.textContent = '⏳ กำลังอัพโหลด...';
+                        }
+                        if (btn) btn.disabled = true;
+
+                        const url = await uploadSingleImageFile(file);
+
+                        if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                            data.tabs[tabIdx].items[itemIdx].image_url = url;
+                            if (!data.tabs[tabIdx].items[itemIdx].zoom_url) {
+                                data.tabs[tabIdx].items[itemIdx].zoom_url = url;
+                                const zoomInput = card?.querySelector('.part-field-zoom');
+                                if (zoomInput) zoomInput.value = url;
+                            }
+                        }
+
+                        const textInput = card?.querySelector('.part-field-image');
+                        if (textInput) textInput.value = url;
+
+                        const img = card?.querySelector('.part-img-preview');
+                        if (img) img.src = url;
+
+                        if (status) {
+                            status.className = 'small font-weight-bold part-upload-status text-success';
+                            status.textContent = '✓ สำเร็จ';
+                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                        }
+                    } catch (err) {
+                        alert(err?.message || 'Upload failed');
+                        if (status) {
+                            status.className = 'small font-weight-bold part-upload-status text-danger';
+                            status.textContent = '❌ ล้มเหลว';
+                        }
+                    } finally {
+                        if (btn) btn.disabled = false;
+                        this.value = '';
+                    }
+                });
+            });
+
+            // Upload Zoom Image
+            container.querySelectorAll('.btn-upload-zoom-img').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabIdx = this.dataset.tabIndex;
+                    const itemIdx = this.dataset.itemIndex;
+                    const fileInput = container.querySelector(`.part-zoom-file-input[data-tab-index="${tabIdx}"][data-item-index="${itemIdx}"]`);
+                    fileInput?.click();
+                });
+            });
+
+            container.querySelectorAll('.part-zoom-file-input').forEach(input => {
+                input.addEventListener('change', async function () {
+                    const file = this.files?.[0];
+                    if (!file) return;
+
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    const card = this.closest('.option-part-item-card');
+                    const status = card?.querySelector('.part-zoom-upload-status');
+                    const btn = card?.querySelector('.btn-upload-zoom-img');
+
+                    try {
+                        if (status) {
+                            status.className = 'small font-weight-bold part-zoom-upload-status text-warning';
+                            status.textContent = '⏳ กำลังอัพโหลด...';
+                        }
+                        if (btn) btn.disabled = true;
+
+                        const url = await uploadSingleImageFile(file);
+
+                        if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                            data.tabs[tabIdx].items[itemIdx].zoom_url = url;
+                        }
+
+                        const zoomInput = card?.querySelector('.part-field-zoom');
+                        if (zoomInput) zoomInput.value = url;
+
+                        if (status) {
+                            status.className = 'small font-weight-bold part-zoom-upload-status text-success';
+                            status.textContent = '✓ สำเร็จ';
+                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                        }
+                    } catch (err) {
+                        alert(err?.message || 'Upload failed');
+                        if (status) {
+                            status.className = 'small font-weight-bold part-zoom-upload-status text-danger';
+                            status.textContent = '❌ ล้มเหลว';
+                        }
+                    } finally {
+                        if (btn) btn.disabled = false;
+                        this.value = '';
+                    }
+                });
+            });
+
+            // Upload Banner Image
+            container.querySelectorAll('.btn-upload-banner-img').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabIdx = this.dataset.tabIndex;
+                    const fileInput = container.querySelector(`.banner-file-input[data-tab-index="${tabIdx}"]`);
+                    fileInput?.click();
+                });
+            });
+
+            container.querySelectorAll('.banner-file-input').forEach(input => {
+                input.addEventListener('change', async function () {
+                    const file = this.files?.[0];
+                    if (!file) return;
+
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const parent = this.closest('.col-md-6') || this.parentElement;
+                    const status = parent?.querySelector('.banner-upload-status');
+                    const btn = parent?.querySelector('.btn-upload-banner-img');
+
+                    try {
+                        if (status) {
+                            status.className = 'small font-weight-bold banner-upload-status text-warning';
+                            status.textContent = '⏳ กำลังอัพโหลด...';
+                        }
+                        if (btn) btn.disabled = true;
+
+                        const url = await uploadSingleImageFile(file);
+
+                        if (data.tabs[tabIdx]) {
+                            data.tabs[tabIdx].banner_image_url = url;
+                        }
+
+                        const bannerInput = container.querySelector('.part-banner-image-input');
+                        if (bannerInput) bannerInput.value = url;
+
+                        if (status) {
+                            status.className = 'small font-weight-bold banner-upload-status text-success';
+                            status.textContent = '✓ สำเร็จ';
+                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                        }
+                    } catch (err) {
+                        alert(err?.message || 'Upload failed');
+                        if (status) {
+                            status.className = 'small font-weight-bold banner-upload-status text-danger';
+                            status.textContent = '❌ ล้มเหลว';
+                        }
+                    } finally {
+                        if (btn) btn.disabled = false;
+                        this.value = '';
+                    }
+                });
+            });
+
+            // Upload Card Image
+            container.querySelectorAll('.btn-upload-card-img').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabIdx = this.dataset.tabIndex;
+                    const itemIdx = this.dataset.itemIndex;
+                    const fileInput = container.querySelector(`.card-file-input[data-tab-index="${tabIdx}"][data-item-index="${itemIdx}"]`);
+                    fileInput?.click();
+                });
+            });
+
+            container.querySelectorAll('.card-file-input').forEach(input => {
+                input.addEventListener('change', async function () {
+                    const file = this.files?.[0];
+                    if (!file) return;
+
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    const card = this.closest('.option-card-item-card');
+                    const status = card?.querySelector('.card-upload-status');
+                    const btn = card?.querySelector('.btn-upload-card-img');
+
+                    try {
+                        if (status) {
+                            status.className = 'small font-weight-bold card-upload-status text-warning';
+                            status.textContent = '⏳ กำลังอัพโหลด...';
+                        }
+                        if (btn) btn.disabled = true;
+
+                        const url = await uploadSingleImageFile(file);
+
+                        if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                            data.tabs[tabIdx].items[itemIdx].image_url = url;
+                        }
+
+                        const textInput = card?.querySelector('.card-field-image');
+                        if (textInput) textInput.value = url;
+
+                        const img = card?.querySelector('.card-img-preview');
+                        if (img) img.src = url;
+
+                        if (status) {
+                            status.className = 'small font-weight-bold card-upload-status text-success';
+                            status.textContent = '✓ สำเร็จ';
+                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                        }
+                    } catch (err) {
+                        alert(err?.message || 'Upload failed');
+                        if (status) {
+                            status.className = 'small font-weight-bold card-upload-status text-danger';
+                            status.textContent = '❌ ล้มเหลว';
+                        }
+                    } finally {
+                        if (btn) btn.disabled = false;
+                        this.value = '';
+                    }
+                });
+            });
+        }
+
+        function bindOptionCardGridEditors()
+        {
+            document
+                .querySelectorAll(
+                    '.option-card-grid-container'
+                )
+                .forEach(
+                    function (container) {
+
+                        const blockId =
+                            container.dataset
+                                .optionGridBlock;
+
+                        if (blockId) {
+                            bindOptionCardGridEvents(container, blockId);
+                        }
+
+                    }
+                );
+        }
+
+        function collectOptionCardGridData(blockId)
+        {
+            const data = optionCardGridStore.get(blockId) ?? normalizeOptionCardGridContent({});
+
+            const titleInput = document.querySelector(`.option-grid-title-field[data-block-id="${blockId}"]`);
+            if (titleInput) {
+                data.title = titleInput.value;
+            }
+
+            const introInput = document.querySelector(`.option-grid-intro-field[data-block-id="${blockId}"]`);
+            if (introInput) {
+                data.intro = introInput.value;
+            }
+
+            return {
+                title: data.title,
+                intro: data.intro,
+                tabs: data.tabs
+            };
         }
 
 
@@ -2379,6 +3872,12 @@ document.addEventListener(
                     id:
                         generateFlexRowId(),
 
+                    height:
+                        0,
+
+                    background_color:
+                        '',
+
                     cells: [
 
                         defaultFlexibleCell(
@@ -2422,6 +3921,18 @@ document.addEventListener(
                         row?.id
                         ||
                         generateFlexRowId()
+                    ),
+
+                height:
+                    normalizeFlexRowHeight(
+                        row?.height
+                        ?? 0
+                    ),
+
+                background_color:
+                    normalizeOptionalHexColor(
+                        row?.background_color
+                        ?? ''
                     ),
 
                 cells:
@@ -2588,6 +4099,12 @@ document.addEventListener(
                 id:
                     generateFlexRowId(),
 
+                height:
+                    0,
+
+                background_color:
+                    '',
+
                 cells:
                     safeValues.map(
                         function (
@@ -2686,18 +4203,43 @@ document.addEventListener(
                     </div>
 
 
-                    <button
-                        type="button"
-                        class="
-                            btn
-                            btn-sm
-                            btn-outline-primary
-                            flex-table-add-row
-                        "
-                        data-block-id="${blockId}"
-                    >
-                        + Add Row
-                    </button>
+                    <div class="flex-table-topbar-actions">
+
+                        <div class="flex-table-row-count-control">
+
+                            <label>
+                                Rows
+                            </label>
+
+
+                            <input
+                                type="number"
+                                class="form-control flex-table-row-count-input"
+                                min="1"
+                                max="100"
+                                step="1"
+                                value="${data.rows.length}"
+                                data-block-id="${blockId}"
+                                title="Set the number of rows in this table"
+                            >
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="
+                                btn
+                                btn-sm
+                                btn-outline-primary
+                                flex-table-add-row
+                            "
+                            data-block-id="${blockId}"
+                        >
+                            + Add Row
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -2861,10 +4403,97 @@ document.addEventListener(
 
                             </div>
 
+
+                            <div class="flex-table-row-height">
+
+                                <label>
+                                    Row Height (px)
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    class="form-control flex-row-height-input"
+                                    min="0"
+                                    max="1000"
+                                    step="1"
+                                    value="${escapeHtml(
+                                        normalizeFlexRowHeight(
+                                            row.height
+                                            ?? 0
+                                        )
+                                    )}"
+                                    title="Use 0 for automatic height"
+                                >
+
+
+                                <small class="text-muted">
+                                    0 = Auto
+                                </small>
+
+                            </div>
+
+
+                            <div class="flex-table-row-background">
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="flex-row-background-enabled"
+                                        ${
+                                            normalizeOptionalHexColor(
+                                                row.background_color
+                                                ?? ''
+                                            )
+                                            ? 'checked'
+                                            : ''
+                                        }
+                                    >
+
+                                    Apply Background to Entire Row
+                                </label>
+
+
+                                <input
+                                    type="color"
+                                    class="form-control flex-row-background-input"
+                                    value="${escapeHtml(
+                                        normalizeOptionalHexColor(
+                                            row.background_color
+                                            ?? ''
+                                        )
+                                        || '#ffffff'
+                                    )}"
+                                    title="Row background color"
+                                >
+
+                            </div>
+
                         </div>
 
 
                         <div class="flex-table-row-actions">
+
+                            <div class="flex-table-cell-count-control">
+
+                                <label>
+                                    Cells
+                                </label>
+
+
+                                <input
+                                    type="number"
+                                    class="form-control flex-table-cell-count-input"
+                                    min="0"
+                                    max="30"
+                                    step="1"
+                                    value="${row.cells.length}"
+                                    data-block-id="${blockId}"
+                                    data-row-index="${rowIndex}"
+                                    title="Set the number of cells in this row"
+                                >
+
+                            </div>
 
                             <button
                                 type="button"
@@ -3934,6 +5563,57 @@ document.addEventListener(
         function bindFlexibleTableEditors()
         {
             /*
+             * Set Row Count
+             */
+            document
+                .querySelectorAll(
+                    '.flex-table-row-count-input'
+                )
+                .forEach(
+                    function (input) {
+
+                        const applyRowCount =
+                            function () {
+
+                                resizeFlexibleTableRows(
+
+                                    input.dataset
+                                        .blockId,
+
+                                    input.value,
+
+                                    input
+
+                                );
+
+                            };
+
+
+                        input.onchange =
+                            applyRowCount;
+
+
+                        input.onkeydown =
+                            function (event) {
+
+                                if (
+                                    event.key
+                                    === 'Enter'
+                                ) {
+
+                                    event.preventDefault();
+
+                                    applyRowCount();
+
+                                }
+
+                            };
+
+                    }
+                );
+
+
+            /*
              * Add Row
              */
             document
@@ -3957,10 +5637,30 @@ document.addEventListener(
                                     );
 
 
+                                if (
+                                    data.rows.length
+                                    >= 100
+                                ) {
+
+                                    alert(
+                                        'A table can contain up to 100 Rows.'
+                                    );
+
+                                    return;
+
+                                }
+
+
                                 data.rows.push({
 
                                     id:
                                         generateFlexRowId(),
+
+                                    height:
+                                        0,
+
+                                    background_color:
+                                        '',
 
                                     cells:
                                         [],
@@ -4030,6 +5730,62 @@ document.addEventListener(
 
 
             /*
+             * Set Cell Count
+             */
+            document
+                .querySelectorAll(
+                    '.flex-table-cell-count-input'
+                )
+                .forEach(
+                    function (input) {
+
+                        const applyCellCount =
+                            function () {
+
+                                resizeFlexibleTableRowCells(
+
+                                    input.dataset
+                                        .blockId,
+
+                                    Number(
+                                        input.dataset
+                                            .rowIndex
+                                    ),
+
+                                    input.value,
+
+                                    input
+
+                                );
+
+                            };
+
+
+                        input.onchange =
+                            applyCellCount;
+
+
+                        input.onkeydown =
+                            function (event) {
+
+                                if (
+                                    event.key
+                                    === 'Enter'
+                                ) {
+
+                                    event.preventDefault();
+
+                                    applyCellCount();
+
+                                }
+
+                            };
+
+                    }
+                );
+
+
+            /*
              * Add Cell
              */
             document
@@ -4069,6 +5825,20 @@ document.addEventListener(
                                 if (
                                     !row
                                 ) {
+
+                                    return;
+
+                                }
+
+
+                                if (
+                                    row.cells.length
+                                    >= 30
+                                ) {
+
+                                    alert(
+                                        'A Row can contain up to 30 Cells.'
+                                    );
 
                                     return;
 
@@ -4433,6 +6203,36 @@ document.addEventListener(
                         const refresh =
                             function () {
 
+                                if (
+                                    field.classList.contains(
+                                        'flex-row-background-input'
+                                    )
+                                ) {
+
+                                    const rowEditor =
+                                        field.closest(
+                                            '.flex-table-row-editor'
+                                        );
+
+
+                                    const enabled =
+                                        rowEditor
+                                            ?.querySelector(
+                                                '.flex-row-background-enabled'
+                                            );
+
+
+                                    if (
+                                        enabled
+                                    ) {
+
+                                        enabled.checked =
+                                            true;
+
+                                    }
+
+                                }
+
                                 const editor =
                                     field.closest(
                                         '.flex-table-editor'
@@ -4482,6 +6282,402 @@ document.addEventListener(
 
                     }
                 );
+        }
+
+
+        function resizeFlexibleTableRows(
+            blockId,
+            requestedCount,
+            input
+        )
+        {
+            const data =
+                collectFlexibleTableData(
+                    blockId
+                );
+
+
+            const currentCount =
+                data.rows.length;
+
+
+            const desiredCount =
+                Math.min(
+                    100,
+                    Math.max(
+                        1,
+                        Math.round(
+                            Number(
+                                requestedCount
+                            )
+                            || 1
+                        )
+                    )
+                );
+
+
+            if (
+                desiredCount
+                === currentCount
+            ) {
+
+                if (
+                    input
+                ) {
+
+                    input.value =
+                        currentCount;
+
+                }
+
+
+                return;
+
+            }
+
+
+            if (
+                desiredCount
+                < currentCount
+                &&
+                !window.confirm(
+                    `Reduce this table from ${currentCount} to ${desiredCount} rows? Removed row content cannot be restored after saving.`
+                )
+            ) {
+
+                if (
+                    input
+                ) {
+
+                    input.value =
+                        currentCount;
+
+                }
+
+
+                return;
+
+            }
+
+
+            if (
+                desiredCount
+                < currentCount
+            ) {
+
+                data.rows =
+                    data.rows.slice(
+                        0,
+                        desiredCount
+                    );
+
+
+                data.rows.forEach(
+                    function (
+                        row,
+                        rowIndex
+                    ) {
+
+                        const remainingRows =
+                            desiredCount
+                            - rowIndex;
+
+
+                        row.cells.forEach(
+                            function (cell) {
+
+                                cell.rowspan =
+                                    Math.min(
+                                        normalizeFlexRowspan(
+                                            cell.rowspan
+                                        ),
+                                        remainingRows
+                                    );
+
+                            }
+                        );
+
+                    }
+                );
+
+            }
+
+
+            while (
+                data.rows.length
+                < desiredCount
+            ) {
+
+                data.rows.push({
+
+                    id:
+                        generateFlexRowId(),
+
+                    height:
+                        0,
+
+                    background_color:
+                        '',
+
+                    cells:
+                        [],
+
+                });
+
+
+                const rowIndex =
+                    data.rows.length
+                    - 1;
+
+
+                const layoutInfo =
+                    buildFlexibleTableLayout(
+                        data
+                    );
+
+
+                const inherited =
+                    layoutInfo
+                        .rowMeta[
+                            rowIndex
+                        ]
+                        ?.inheritedWidth
+                    ?? 0;
+
+
+                const available =
+                    Math.max(
+                        0,
+                        100
+                        - inherited
+                    );
+
+
+                if (
+                    available > 0
+                ) {
+
+                    data.rows[
+                        rowIndex
+                    ]
+                    .cells
+                    .push(
+                        defaultFlexibleCell(
+                            available
+                        )
+                    );
+
+                }
+
+            }
+
+
+            rerenderFlexibleTable(
+                blockId,
+                data
+            );
+        }
+
+        function resizeFlexibleTableRowCells(
+            blockId,
+            rowIndex,
+            requestedCount,
+            input
+        )
+        {
+            const data =
+                collectFlexibleTableData(
+                    blockId
+                );
+
+
+            const row =
+                data.rows[
+                    rowIndex
+                ];
+
+
+            if (
+                !row
+            ) {
+
+                return;
+
+            }
+
+
+            const currentCount =
+                row.cells.length;
+
+
+            const desiredCount =
+                Math.min(
+                    30,
+                    Math.max(
+                        0,
+                        Math.round(
+                            Number(
+                                requestedCount
+                            )
+                            || 0
+                        )
+                    )
+                );
+
+
+            if (
+                desiredCount
+                === currentCount
+            ) {
+
+                if (
+                    input
+                ) {
+
+                    input.value =
+                        currentCount;
+
+                }
+
+
+                return;
+
+            }
+
+
+            if (
+                desiredCount
+                < currentCount
+                &&
+                !window.confirm(
+                    `Reduce this row from ${currentCount} to ${desiredCount} cells? Removed cell content cannot be restored after saving.`
+                )
+            ) {
+
+                if (
+                    input
+                ) {
+
+                    input.value =
+                        currentCount;
+
+                }
+
+
+                return;
+
+            }
+
+
+            const layoutInfo =
+                buildFlexibleTableLayout(
+                    data
+                );
+
+
+            const inherited =
+                layoutInfo
+                    .rowMeta[
+                        rowIndex
+                    ]
+                    ?.inheritedWidth
+                ?? 0;
+
+
+            const available =
+                Math.max(
+                    0,
+                    100
+                    - inherited
+                );
+
+
+            if (
+                desiredCount > 0
+                &&
+                available <= 0
+            ) {
+
+                alert(
+                    'This Row is already fully occupied by Row Span from previous rows.'
+                );
+
+
+                if (
+                    input
+                ) {
+
+                    input.value =
+                        currentCount;
+
+                }
+
+
+                return;
+
+            }
+
+
+            row.cells =
+                row.cells.slice(
+                    0,
+                    desiredCount
+                );
+
+
+            while (
+                row.cells.length
+                < desiredCount
+            ) {
+
+                row.cells.push(
+                    defaultFlexibleCell(
+                        100
+                    )
+                );
+
+            }
+
+
+            if (
+                desiredCount > 0
+            ) {
+
+                const widths =
+                    distributeWidthUnits(
+
+                        percentToGridUnits(
+                            available
+                        ),
+
+                        desiredCount
+
+                    );
+
+
+                row.cells.forEach(
+                    function (
+                        cell,
+                        index
+                    ) {
+
+                        cell.width =
+                            unitsToPercent(
+                                widths[
+                                    index
+                                ]
+                            );
+
+                    }
+                );
+
+            }
+
+
+            rerenderFlexibleTable(
+                blockId,
+                data
+            );
         }
 
 
@@ -4696,6 +6892,32 @@ document.addEventListener(
                                     ?.value
                                 ||
                                 generateFlexRowId(),
+
+                            height:
+                                normalizeFlexRowHeight(
+                                    rowElement
+                                        .querySelector(
+                                            '.flex-row-height-input'
+                                        )
+                                        ?.value
+                                    ?? 0
+                                ),
+
+                            background_color:
+                                rowElement
+                                    .querySelector(
+                                        '.flex-row-background-enabled'
+                                    )
+                                    ?.checked
+                                    ? normalizeHexColor(
+                                        rowElement
+                                            .querySelector(
+                                                '.flex-row-background-input'
+                                            )
+                                            ?.value,
+                                        '#ffffff'
+                                    )
+                                    : '',
 
                             cells:
                                 [],
@@ -5226,7 +7448,27 @@ document.addEventListener(
                 }
 
 
-                <div class="flex-table-grid">
+                <div
+                    class="flex-table-grid"
+                    style="grid-template-rows: ${data.rows
+                        .map(
+                            row => {
+
+                                const height =
+                                    normalizeFlexRowHeight(
+                                        row.height
+                                        ?? 0
+                                    );
+
+
+                                return height > 0
+                                    ? `minmax(${height}px, auto)`
+                                    : 'auto';
+
+                            }
+                        )
+                        .join(' ')};"
+                >
 
                     ${tableLayout
                         .placements
@@ -5256,6 +7498,10 @@ document.addEventListener(
 
                                             background:
                                                 ${escapeHtml(
+                                                    data.rows[
+                                                        placement.rowIndex
+                                                    ]?.background_color
+                                                    ||
                                                     cell.background_color
                                                 )};
 
@@ -5674,6 +7920,43 @@ document.addEventListener(
         }
 
 
+        function normalizeFlexRowHeight(
+            value
+        )
+        {
+            let number =
+                Number(
+                    value
+                );
+
+
+            if (
+                !Number.isFinite(
+                    number
+                )
+            ) {
+
+                number =
+                    0;
+
+            }
+
+
+            return Math.min(
+
+                1000,
+
+                Math.max(
+                    0,
+                    Math.round(
+                        number
+                    )
+                )
+
+            );
+        }
+
+
         function normalizeHexColor(
             value,
             fallback
@@ -5692,6 +7975,27 @@ document.addEventListener(
             )
                 ? color.toLowerCase()
                 : fallback;
+        }
+
+
+        function normalizeOptionalHexColor(
+            value
+        )
+        {
+            const color =
+                String(
+                    value
+                    ?? ''
+                )
+                .trim()
+                .toLowerCase();
+
+
+            return /^#[0-9a-f]{6}$/.test(
+                color
+            )
+                ? color
+                : '';
         }
 
 
@@ -9799,6 +12103,129 @@ document.addEventListener(
             `;
         }
 
+        function imageUploaderInput(
+            blockId,
+            field,
+            label,
+            value
+        )
+        {
+            const hasImg =
+                String(value ?? '').trim() !== '';
+
+            return `
+                <div class="form-group single-image-uploader-wrapper" data-image-uploader-block="${blockId}">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="mb-0 font-weight-bold">
+                            ${escapeHtml(label)}
+                        </label>
+                        <span class="small font-weight-bold single-image-upload-status" style="font-size: 11px;"></span>
+                    </div>
+
+                    <div class="single-image-preview-box mb-2 p-1 border rounded bg-light text-center ${hasImg ? '' : 'd-none'}" style="max-height: 120px;">
+                        <img src="${escapeHtml(value)}" class="img-fluid single-image-preview" style="max-height: 110px; object-fit: contain;">
+                    </div>
+
+                    <div class="input-group input-group-sm">
+                        <input
+                            type="text"
+                            class="
+                                form-control
+                                product-field
+                                single-image-input-value
+                            "
+                            data-block-id="${blockId}"
+                            data-field="${field}"
+                            value="${escapeHtml(value)}"
+                            placeholder="/products/images/... or https://..."
+                        >
+                        <div class="input-group-append">
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary btn-upload-single-image"
+                                data-block-id="${blockId}"
+                                title="อัพโหลดรูปภาพ"
+                            >
+                                <i class="fas fa-upload mr-1"></i> อัพภาพ
+                            </button>
+                        </div>
+                    </div>
+
+                    <input
+                        type="file"
+                        class="d-none single-image-file-input"
+                        data-block-id="${blockId}"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                    >
+                </div>
+            `;
+        }
+
+        function bindSingleImageUploaders()
+        {
+            document
+                .querySelectorAll('.btn-upload-single-image')
+                .forEach(function (btn) {
+                    btn.onclick = function () {
+                        const wrapper = this.closest('.single-image-uploader-wrapper');
+                        wrapper?.querySelector('.single-image-file-input')?.click();
+                    };
+                });
+
+            document
+                .querySelectorAll('.single-image-file-input')
+                .forEach(function (input) {
+                    input.onchange = async function () {
+                        const file = this.files?.[0];
+                        if (!file) return;
+
+                        const wrapper = this.closest('.single-image-uploader-wrapper');
+                        const status = wrapper?.querySelector('.single-image-upload-status');
+                        const btn = wrapper?.querySelector('.btn-upload-single-image');
+
+                        try {
+                            if (status) {
+                                status.className = 'small font-weight-bold single-image-upload-status text-warning';
+                                status.textContent = '⏳ กำลังอัพโหลด...';
+                            }
+                            if (btn) btn.disabled = true;
+
+                            const url = await uploadSingleImageFile(file);
+
+                            const textInput = wrapper?.querySelector('.single-image-input-value');
+                            if (textInput) {
+                                textInput.value = url;
+                                textInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+
+                            const previewBox = wrapper?.querySelector('.single-image-preview-box');
+                            const img = wrapper?.querySelector('.single-image-preview');
+                            if (previewBox && img) {
+                                img.src = url;
+                                previewBox.classList.remove('d-none');
+                            }
+
+                            if (status) {
+                                status.className = 'small font-weight-bold single-image-upload-status text-success';
+                                status.textContent = '✓ สำเร็จ';
+                                setTimeout(function () {
+                                    if (status && status.textContent === '✓ สำเร็จ') status.textContent = '';
+                                }, 3000);
+                            }
+                        } catch (err) {
+                            alert(err?.message || 'Upload failed');
+                            if (status) {
+                                status.className = 'small font-weight-bold single-image-upload-status text-danger';
+                                status.textContent = '❌ ล้มเหลว';
+                            }
+                        } finally {
+                            if (btn) btn.disabled = false;
+                            this.value = '';
+                        }
+                    };
+                });
+        }
+
 
         function textareaInput(
             blockId,
@@ -10010,6 +12437,33 @@ document.addEventListener(
                             collectFlexibleTableData(
                                 blockId
                             );
+
+                    }
+                );
+
+
+            /*
+             * OptionCardGrid
+             */
+            document
+                .querySelectorAll(
+                    '.option-card-grid-container'
+                )
+                .forEach(
+                    function (container) {
+
+                        const blockId =
+                            container.dataset
+                                .optionGridBlock;
+
+                        if (blockId) {
+                            result[
+                                blockId
+                            ] =
+                                collectOptionCardGridData(
+                                    blockId
+                                );
+                        }
 
                     }
                 );
@@ -10888,6 +13342,9 @@ document.addEventListener(
 
                 accordion:
                     'Accordion',
+
+                option_card_grid:
+                    'OptionCardGrid',
 
                 price_accordion:
                     'Price',

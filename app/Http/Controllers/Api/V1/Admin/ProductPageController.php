@@ -948,6 +948,15 @@ class ProductPageController extends Controller
 
 
             /*
+             * OptionCardGrid
+             */
+            'option_card_grid' =>
+                $this->sanitizeOptionCardGridContent(
+                    $content
+                ),
+
+
+            /*
              * Shipping Schedule
              */
             'shipping_schedule' => [
@@ -1023,6 +1032,210 @@ class ProductPageController extends Controller
             default => [],
 
         };
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | OptionCardGrid Sanitizer
+    |--------------------------------------------------------------------------
+    */
+
+    private function sanitizeOptionCardGridContent(
+        array $content
+    ): array {
+
+        $sanitized = [
+
+            'title' =>
+                $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    1000
+                ),
+
+            'intro' =>
+                $this->stringValue(
+                    $content['intro']
+                    ?? null,
+                    5000
+                ),
+
+            'options_json' =>
+                $this->stringValue(
+                    $content['options_json']
+                    ?? null,
+                    50000
+                ),
+
+            'tabs' => [],
+
+        ];
+
+
+        if (
+            isset($content['tabs'])
+            &&
+            is_array($content['tabs'])
+        ) {
+
+            foreach ($content['tabs'] as $tab) {
+
+                if (!is_array($tab)) {
+                    continue;
+                }
+
+                $type =
+                    in_array(
+                        $tab['type'] ?? '',
+                        ['parts', 'cards'],
+                        true
+                    )
+                    ? $tab['type']
+                    : 'cards';
+
+                $tabData = [
+
+                    'id' =>
+                        $this->stringValue(
+                            $tab['id'] ?? uniqid('tab_'),
+                            100
+                        ),
+
+                    'title' =>
+                        $this->stringValue(
+                            $tab['title'] ?? '',
+                            255
+                        ),
+
+                    'type' =>
+                        $type,
+
+                    'items' => [],
+
+                ];
+
+                if ($type === 'parts') {
+
+                    $tabData['banner_image_url'] =
+                        $this->stringValue(
+                            $tab['banner_image_url'] ?? null,
+                            2000
+                        );
+
+                    $tabData['banner_link_url'] =
+                        $this->stringValue(
+                            $tab['banner_link_url'] ?? null,
+                            2000
+                        );
+
+                    if (
+                        isset($tab['items'])
+                        &&
+                        is_array($tab['items'])
+                    ) {
+
+                        foreach ($tab['items'] as $item) {
+
+                            if (!is_array($item)) {
+                                continue;
+                            }
+
+                            $tabData['items'][] = [
+
+                                'image_url' =>
+                                    $this->stringValue(
+                                        $item['image_url'] ?? null,
+                                        2000
+                                    ),
+
+                                'title' =>
+                                    $this->stringValue(
+                                        $item['title'] ?? null,
+                                        255
+                                    ),
+
+                                'price' =>
+                                    $this->stringValue(
+                                        $item['price'] ?? null,
+                                        100
+                                    ),
+
+                                'zoom_url' =>
+                                    $this->stringValue(
+                                        $item['zoom_url'] ?? null,
+                                        2000
+                                    ),
+
+                            ];
+
+                        }
+
+                    }
+
+                } else {
+
+                    if (
+                        isset($tab['items'])
+                        &&
+                        is_array($tab['items'])
+                    ) {
+
+                        foreach ($tab['items'] as $item) {
+
+                            if (!is_array($item)) {
+                                continue;
+                            }
+
+                            $tabData['items'][] = [
+
+                                'image_url' =>
+                                    $this->stringValue(
+                                        $item['image_url'] ?? null,
+                                        2000
+                                    ),
+
+                                'title' =>
+                                    $this->stringValue(
+                                        $item['title'] ?? null,
+                                        255
+                                    ),
+
+                                'description' =>
+                                    $this->stringValue(
+                                        $item['description'] ?? null,
+                                        5000
+                                    ),
+
+                                'link_text' =>
+                                    $this->stringValue(
+                                        $item['link_text'] ?? null,
+                                        255
+                                    ),
+
+                                'link_url' =>
+                                    $this->stringValue(
+                                        $item['link_url'] ?? null,
+                                        2000
+                                    ),
+
+                            ];
+
+                        }
+
+                    }
+
+                }
+
+                $sanitized['tabs'][] =
+                    $tabData;
+
+            }
+
+        }
+
+
+        return $sanitized;
     }
 
 
@@ -1222,6 +1435,32 @@ class ProductPageController extends Controller
                         ?? null,
                         100
                     ),
+
+                'height' =>
+                    $this->integerValue(
+                        $row['height']
+                        ?? null,
+                        0,
+                        1000
+                    )
+                    ?? 0,
+
+                'background_color' =>
+                    preg_match(
+                        '/^#[0-9a-fA-F]{6}$/',
+                        trim(
+                            (string)
+                            (
+                                $row['background_color']
+                                ?? ''
+                            )
+                        )
+                    ) === 1
+                        ? $this->hexColorValue(
+                            $row['background_color'],
+                            '#ffffff'
+                        )
+                        : '',
 
                 'cells' =>
                     $cleanCells,

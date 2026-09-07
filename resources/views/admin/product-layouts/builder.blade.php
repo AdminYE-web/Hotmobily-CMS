@@ -162,6 +162,16 @@
                     </button>
 
 
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="option_card_grid"
+                    >
+                        <span>🗂</span>
+                        OptionCardGrid
+                    </button>
+
+
                     <hr>
 
 
@@ -1553,6 +1563,166 @@
 
 
 /* ============================================================
+   Option Card Grid
+============================================================ */
+
+.sim-option-card-grid {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+    font-family: inherit;
+}
+
+.sim-option-header {
+    padding: 8px 12px;
+    background: #faf7f5;
+    border-bottom: 1px solid #eee;
+    font-weight: 700;
+    font-size: 12px;
+    color: #e67e22;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sim-tab-menu {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    background: #faf7f5;
+}
+
+.sim-tab-link {
+    flex: 1;
+    padding: 9px 12px;
+    border: none;
+    border-right: 1px solid #ddd;
+    background: transparent;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+    color: #e67e22;
+    text-align: center;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.sim-tab-link:last-child {
+    border-right: none;
+}
+
+.sim-tab-link.active {
+    background: #fff;
+    border-top: 3px solid #e67e22;
+    border-bottom: 1px solid #fff;
+    margin-bottom: -1px;
+    color: #d35400;
+}
+
+.sim-tab-content {
+    padding: 12px;
+    background: #fff;
+}
+
+.sim-parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 8px;
+}
+
+.sim-part-card {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 6px 4px;
+    text-align: center;
+    background: #fafafa;
+    font-size: 10px;
+}
+
+.sim-part-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin: 0 auto 4px;
+    display: block;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.sim-part-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: #eef7ee;
+    color: #27ae60;
+    font-weight: 700;
+    font-size: 10px;
+    margin-bottom: 2px;
+}
+
+.sim-part-badge.badge-extra {
+    background: #fff3e0;
+    color: #e67e22;
+}
+
+.sim-part-title {
+    font-size: 9px;
+    line-height: 1.2;
+    color: #555;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.sim-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.sim-feature-card {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.sim-feature-card img {
+    width: 100%;
+    height: 85px;
+    object-fit: cover;
+    display: block;
+    background: #f0f0f0;
+}
+
+.sim-feature-card-body {
+    padding: 7px 9px;
+    font-size: 11px;
+}
+
+.sim-feature-card-desc {
+    color: #555;
+    font-size: 10px;
+    line-height: 1.35;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.sim-feature-card-link {
+    color: #007bff;
+    font-size: 10px;
+    text-decoration: underline;
+}
+
+
+/* ============================================================
    Spacer
 ============================================================ */
 
@@ -2265,6 +2435,18 @@ document.addEventListener(
 
                         open_default:
                             true,
+
+                    };
+
+
+                case 'option_card_grid':
+
+                    return {
+
+                        ...base,
+
+                        title:
+                            'アタッチメント・加工・オプション',
 
                     };
 
@@ -3096,6 +3278,16 @@ document.addEventListener(
                     );
 
 
+                case 'option_card_grid':
+
+                    return contentWrapper(
+                        block,
+                        optionCardGridPreview(
+                            block
+                        )
+                    );
+
+
                 case 'price_accordion':
 
                     return contentWrapper(
@@ -3322,6 +3514,151 @@ document.addEventListener(
 
                 </div>
 
+            `;
+        }
+
+
+        function optionCardGridPreview(
+            block
+        )
+        {
+            const blockId =
+                escapeHtml(
+                    block.id
+                );
+
+            const title =
+                escapeHtml(
+                    block.settings
+                        ?.title
+                    ?? 'アタッチメント・加工・オプション'
+                );
+
+            return `
+                <div class="sim-option-card-grid" id="sim-opt-${blockId}">
+                    <div class="sim-option-header">
+                        <span>🗂</span>
+                        <span>${title}</span>
+                    </div>
+
+                    <div class="sim-tab-menu">
+                        <button
+                            type="button"
+                            class="sim-tab-link active"
+                            data-tab-target="sim-tab1-${blockId}"
+                            onclick="
+                                const p = this.closest('.sim-option-card-grid');
+                                p.querySelectorAll('.sim-tab-link').forEach(b => b.classList.remove('active'));
+                                this.classList.add('active');
+                                p.querySelectorAll('.sim-tab-content').forEach(c => c.style.display = 'none');
+                                p.querySelector('#' + this.dataset.tabTarget).style.display = 'block';
+                            "
+                        >
+                            アタッチメント
+                        </button>
+                        <button
+                            type="button"
+                            class="sim-tab-link"
+                            data-tab-target="sim-tab2-${blockId}"
+                            onclick="
+                                const p = this.closest('.sim-option-card-grid');
+                                p.querySelectorAll('.sim-tab-link').forEach(b => b.classList.remove('active'));
+                                this.classList.add('active');
+                                p.querySelectorAll('.sim-tab-content').forEach(c => c.style.display = 'none');
+                                p.querySelector('#' + this.dataset.tabTarget).style.display = 'block';
+                            "
+                        >
+                            加工方法
+                        </button>
+                        <button
+                            type="button"
+                            class="sim-tab-link"
+                            data-tab-target="sim-tab3-${blockId}"
+                            onclick="
+                                const p = this.closest('.sim-option-card-grid');
+                                p.querySelectorAll('.sim-tab-link').forEach(b => b.classList.remove('active'));
+                                this.classList.add('active');
+                                p.querySelectorAll('.sim-tab-content').forEach(c => c.style.display = 'none');
+                                p.querySelector('#' + this.dataset.tabTarget).style.display = 'block';
+                            "
+                        >
+                            オプション
+                        </button>
+                    </div>
+
+                    <div id="sim-tab1-${blockId}" class="sim-tab-content" style="display: block;">
+                        <div class="sim-parts-grid">
+                            <div class="sim-part-card">
+                                <img src="/products/images/HM_part1.webp" class="sim-part-img" onerror="this.style.opacity=0.3">
+                                <div><span class="sim-part-badge">+0円</span></div>
+                                <div class="sim-part-title">通常松葉+カニカン</div>
+                            </div>
+                            <div class="sim-part-card">
+                                <img src="/products/images/HM_part2.webp" class="sim-part-img" onerror="this.style.opacity=0.3">
+                                <div><span class="sim-part-badge">+0円</span></div>
+                                <div class="sim-part-title">ゴム松葉+カニカン</div>
+                            </div>
+                            <div class="sim-part-card">
+                                <img src="/products/images/HM_part14.webp" class="sim-part-img" onerror="this.style.opacity=0.3">
+                                <div><span class="sim-part-badge">+0円</span></div>
+                                <div class="sim-part-title">ボールチェーン銀</div>
+                            </div>
+                            <div class="sim-part-card">
+                                <img src="/products/images/HM_part3.webp" class="sim-part-img" onerror="this.style.opacity=0.3">
+                                <div><span class="sim-part-badge badge-extra">+11円</span></div>
+                                <div class="sim-part-title">スマホプラグ</div>
+                            </div>
+                            <div class="sim-part-card">
+                                <img src="/products/images/HM_part9.webp" class="sim-part-img" onerror="this.style.opacity=0.3">
+                                <div><span class="sim-part-badge badge-extra">+11円</span></div>
+                                <div class="sim-part-title">ボールチェーン黄</div>
+                            </div>
+                            <div class="sim-part-card">
+                                <img src="/products/images/HM_part10.webp" class="sim-part-img" onerror="this.style.opacity=0.3">
+                                <div><span class="sim-part-badge badge-extra">+11円</span></div>
+                                <div class="sim-part-title">ボールチェーン赤</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sim-tab2-${blockId}" class="sim-tab-content" style="display: none;">
+                        <div class="sim-features-grid">
+                            <div class="sim-feature-card">
+                                <img src="/products/images/rubberstrap/v2/rubber_guide02.webp" onerror="this.style.opacity=0.3">
+                                <div class="sim-feature-card-body">
+                                    <div class="sim-feature-card-desc">キャラクターに最適なぷっくり凹凸タイプやフラットタイプが選べます。</div>
+                                    <span class="sim-feature-card-link">詳細はこちら →</span>
+                                </div>
+                            </div>
+                            <div class="sim-feature-card">
+                                <img src="/products/images/rubberstrap/v2/rubber_guide07.webp" onerror="this.style.opacity=0.3">
+                                <div class="sim-feature-card-body">
+                                    <div class="sim-feature-card-desc">曲面加工や貼り合わせ半立体などの特殊加工もご用意！</div>
+                                    <span class="sim-feature-card-link">詳細はこちら →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sim-tab3-${blockId}" class="sim-tab-content" style="display: none;">
+                        <div class="sim-features-grid">
+                            <div class="sim-feature-card">
+                                <img src="/products/images/rubberstrap/v2/rubber_strap_protect.webp" onerror="this.style.opacity=0.3">
+                                <div class="sim-feature-card-body">
+                                    <div class="sim-feature-card-desc">業界唯一の汚れ防止加工オプションをご用意！</div>
+                                    <span class="sim-feature-card-link">詳細はこちら →</span>
+                                </div>
+                            </div>
+                            <div class="sim-feature-card">
+                                <img src="/products/images/rubberstrap/v2/rubberstrap_special.webp" onerror="this.style.opacity=0.3">
+                                <div class="sim-feature-card-body">
+                                    <div class="sim-feature-card-desc">金銀、蓄光、ラメ、蛍光、半透明素材の5種特殊素材！</div>
+                                    <span class="sim-feature-card-link">詳細はこちら →</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             `;
         }
 
@@ -4518,6 +4855,46 @@ document.addEventListener(
                             <br><br>
 
                             Product แต่ละตัวสามารถมีข้อมูลตารางต่างกันได้
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'option_card_grid':
+
+                    container.innerHTML = `
+
+                        <div class="form-group">
+
+                            <label>
+                                Title
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control block-setting"
+                                data-key="title"
+                                maxlength="255"
+                                value="${escapeHtml(
+                                    block.settings
+                                        ?.title
+                                    ?? 'アタッチメント・加工・オプション'
+                                )}"
+                            >
+
+                        </div>
+
+                        <div class="alert alert-light border mb-0">
+
+                            <strong>OptionCardGrid</strong>
+                            <br><br>
+                            แท็บ (Tabs), รายการอะไหล่/ออปชัน, ราคา, และลิงก์จะกำหนดจาก
+                            <strong>Product Content Editor</strong>
+                            <br><br>
+                            Product แต่ละตัวสามารถปรับแต่งข้อมูลออปชันและการ์ดต่างกันได้
 
                         </div>
 
@@ -5811,6 +6188,9 @@ document.addEventListener(
 
                 accordion:
                     'Accordion',
+
+                option_card_grid:
+                    'OptionCardGrid',
 
                 product_header:
                     'Product Header',

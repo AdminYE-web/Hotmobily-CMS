@@ -631,21 +631,45 @@
 
         .store-custom-table {
             width: 100%;
+            min-width: 500px;
 
             border-collapse: collapse;
 
-            table-layout: fixed;
+            table-layout: auto;
+
+            margin: 0;
+
+            font-size: .95rem;
+            line-height: normal;
+        }
+
+
+        .store-custom-table-title {
+            margin: 0 0 10px;
+
+            font-size: 16px;
+            font-weight: 500;
         }
 
 
         .store-custom-table td {
-            padding: 10px;
+            min-width: 0;
+
+            padding: 10px 12px;
 
             border: 1px solid #ccc;
 
+            text-align: center;
             vertical-align: middle;
 
-            white-space: pre-line;
+            white-space: normal;
+            overflow-wrap: normal;
+            word-break: normal;
+        }
+
+
+        .store-custom-table tbody tr:hover {
+            background-color: #f9f9f9;
         }
 
 
@@ -869,6 +893,185 @@
             }
 
         }
+
+        /* ============================================================
+           OptionCardGrid / Plan Section
+        ============================================================ */
+        .store-option-card-grid {
+            margin-bottom: 30px;
+        }
+
+        .product-d_feature_title {
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            border-bottom: 1px solid #d2d2d2;
+            padding: 0 0 15px !important;
+            margin: 20px 0 20px !important;
+            color: #f58904;
+            font-weight: 700;
+        }
+
+        .tab-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .tab-menu {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-link {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            background: #faf7f5;
+            cursor: pointer;
+            font-weight: 700;
+            color: #e67e22;
+            white-space: nowrap;
+            border-right: 1px solid #ddd;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            font-size: 15px;
+            transition: all .2s;
+            text-align: center;
+        }
+
+        .tab-link:first-child {
+            border-left: 1px solid #ddd;
+        }
+
+        .tab-link.active {
+            background: #fff;
+            border-top: 4px solid #e67e22;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            color: #e67e22;
+            border-bottom: 1px solid #fff;
+            margin-bottom: -1px;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 0 0 !important;
+            background: #fff !important;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .itemz {
+            flex: 1 1 calc(50% - 20px);
+            min-width: 250px;
+        }
+
+        .itemz img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .option-parts-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .mt-10-part-4 {
+            flex: 0 0 25%;
+            max-width: 25%;
+            padding: 10px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .mt-10-part-4 img.picpro {
+            max-width: 160px;
+            width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background: #fafafa;
+            transition: transform .2s;
+        }
+
+        .mt-10-part-4 img.picpro:hover {
+            transform: scale(1.04);
+        }
+
+        .part-price {
+            font-weight: 700;
+            color: #333;
+            margin: 6px 0 2px;
+            font-size: 14px;
+        }
+
+        .part-zoom {
+            font-size: 10px;
+            color: #666 !important;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .part_link {
+            width: 100%;
+            margin-top: 20px;
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        .part_link img {
+            max-width: 570px;
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }
+
+        .option-more-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .option-more-link:hover {
+            color: #e67e22;
+        }
+
+        @media (max-width: 768px) {
+            .store-custom-table {
+                font-size: .85rem;
+            }
+
+            .store-custom-table td {
+                padding: 8px;
+            }
+
+            .mt-10-part-4 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+
+            .tab-link {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .itemz {
+                flex: 1 1 100%;
+            }
+        }
     </style>
 @endsection
 
@@ -919,195 +1122,7 @@
 
                 </div>
             @endforeach
-            <div class="tab-container">
-                <div class="tab-menu">
-                    <button class="tab-link active" onclick="openTab(event, 'tab1')">アタッチメント</button>
-                    <button class="tab-link" onclick="openTab(event, 'tab2')">加工方法</button>
-                    <button class="tab-link" onclick="openTab(event, 'tab3')">オプション</button>
-                </div>
 
-                <div id="tab1" class="tab-content active">
-                    <div class="grid-layout">
-                        <div class="itemz">
-                            <div class="row">
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part1.webp" data-lightbox="img-part-set-1"
-                                        data-title="<strong>【通常松葉+カニカン】</strong>製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"><img
-                                            class="picpro lazy" data-src="/products/images/HM_part1.webp" width="160"
-                                            height="160" loading="lazy" /></a><br />
-                                    <div>+0円</div>
-                                    <a href="/products/images/HM_part1.webp" data-lightbox="img-part-set-1-1"
-                                        data-title="<strong>【通常松葉+カニカン】</strong>製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part2.webp" data-lightbox="img-part-set-2"
-                                        data-title="<strong>【ゴム松葉+カニカン】</strong>松葉紐が伸縮します。製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"><img
-                                            class="picpro lazy" data-src="/products/images/HM_part2.webp" width="160"
-                                            height="160" loading="lazy" /></a><br />
-                                    <div>+0円</div>
-                                    <a href="/products/images/HM_part2.webp" data-lightbox="img-part-set-2-1"
-                                        data-title="<strong>【ゴム松葉+カニカン】</strong>松葉紐が伸縮します。製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part14.webp" data-lightbox="img-part-set-14"
-                                        data-title="<strong>【ボールチェーンシルバー】</strong>銀色のボールチェーンです。追加料金なく手配できるボールチェーンです。"><img
-                                            class="picpro lazy" data-src="/products/images/HM_part14.webp" width="160"
-                                            height="160" loading="lazy" /></a><br />
-                                    <div>+0円</div>
-                                    <a href="/products/images/HM_part14.webp" data-lightbox="img-part-set-14-1"
-                                        data-title="<strong>【ボールチェーンシルバー】</strong>銀色のボールチェーンです。追加料金なく手配できるボールチェーンです。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part3.webp" data-lightbox="img-part-set-3"
-                                        data-title="<strong>【通常松葉+カニカン+スマホプラグ】</strong>通常松葉+カニカンの紐の先端にスマホプラグがついています。イヤホンジャックに挿入して使用できます。また、製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"><img
-                                            class="picpro lazy" data-src="/products/images/HM_part3.webp" width="160"
-                                            height="160" loading="lazy" /></a><br />
-                                    <div>+11円</div>
-                                    <a href="/products/images/HM_part3.webp" data-lightbox="img-part-set-3-1"
-                                        data-title="<strong>【通常松葉+カニカン+スマホプラグ】</strong>通常松葉+カニカンの紐の先端にスマホプラグがついています。イヤホンジャックに挿入して使用できます。また、製品本体と松葉を切り離すことができますので、携帯電話等への取り付けが容易になります。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part9.webp" data-lightbox="img-part-set-9"
-                                        data-title="<strong>【ボールチェーン黄色】</strong>黄色のボールチェーンです。"><img class="picpro lazy"
-                                            data-src="/products/images/HM_part9.webp" width="160" height="160"
-                                            loading="lazy" /></a><br />
-                                    <div>+11円</div>
-                                    <a href="/products/images/HM_part9.webp" data-lightbox="img-part-set-9-1"
-                                        data-title="<strong>【ボールチェーン黄色】</strong>黄色のボールチェーンです。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part10.webp" data-lightbox="img-part-set-10"
-                                        data-title="<strong>【ボールチェーン赤色】</strong>赤色のボールチェーンです。"><img class="picpro lazy"
-                                            data-src="/products/images/HM_part10.webp" width="160" height="160"
-                                            loading="lazy" /></a><br />
-                                    <div>+11円</div>
-                                    <a href="/products/images/HM_part10.webp" data-lightbox="img-part-set-10-1"
-                                        data-title="<strong>【ボールチェーン赤色】</strong>赤色のボールチェーンです。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part11.webp" data-lightbox="img-part-set-11"
-                                        data-title="<strong>【ボールチェーン青色】</strong>青色のボールチェーンです。"><img class="picpro lazy"
-                                            data-src="/products/images/HM_part11.webp" width="160" height="160"
-                                            loading="lazy" /></a><br />
-                                    <div>+11円</div>
-                                    <a href="/products/images/HM_part11.webp" data-lightbox="img-part-set-11-1"
-                                        data-title="<strong>【ボールチェーン青色】</strong>青色のボールチェーンです。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part12.webp" data-lightbox="img-part-set-12"
-                                        data-title="<strong>【ボールチェーンピンク色】</strong>ピンク色のボールチェーンです。"><img
-                                            class="picpro lazy" data-src="/products/images/HM_part12.webp" width="160"
-                                            height="160" loading="lazy" /></a><br />
-                                    <div>+11円</div>
-                                    <a href="/products/images/HM_part12.webp" data-lightbox="img-part-set-12-1"
-                                        data-title="<strong>【ボールチェーンピンク色】</strong>ピンク色のボールチェーンです。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="mt-10-part-4">
-                                    <a href="/products/images/HM_part13.webp" data-lightbox="img-part-set-13"
-                                        data-title="<strong>【ボールチェーン緑色】</strong>緑色のボールチェーンです。"><img class="picpro lazy"
-                                            data-src="/products/images/HM_part13.webp" width="160" height="160"
-                                            loading="lazy" /></a><br />
-                                    <div>+11円</div>
-                                    <a href="/products/images/HM_part13.webp" data-lightbox="img-part-set-13-1"
-                                        data-title="<strong>【ボールチェーン緑色】</strong>緑色のボールチェーンです。"
-                                        style="font-size: 10px; color: black !important;">📷<?= lang('クリックすると拡大します') ?></a>
-                                </div>
-                                <div class="part_link">
-                                    <a href="/products/rubberkeyholder/#part_keyholder"><img
-                                            data-src="/products/images/accessories.webp" class="lazy" width="570"
-                                            height="192" loading="lazy" /></a>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- <div class="itemz">
-                                                <img src="path_to_image2.jpg" alt="Double side" />
-                                                <h3>両面印刷の仕様</h3>
-                                                <p>両面印刷は透けにくい印刷方法を採用しています...</p>
-                                            </div>
-                                            <div class="itemz">
-                                                <img src="path_to_image3.jpg" alt="Connected" />
-                                                <h3>連結仕様もOK！</h3>
-                                                <p>別商品の「アクリルチャーム」を繋げて楽しい！</p>
-                                            </div> -->
-                    </div>
-                </div>
-
-                <div id="tab2" class="tab-content">
-                    <div class="grid-layout">
-                        <div class="itemz">
-                            <img src="/products/images/rubberstrap/v2/rubber_guide02.webp" alt="" loading="lazy">
-                            <p class="new-text">
-                                あなたのデザインを最高のラバーキーホルダーに！キャラクターに最適な「ぷっくり凹凸タイプ」や、ドット絵・ロゴ向きの「フラットタイプ」が選べます。
-                            </p><br>
-                            <div>
-                                <a href="/lp/rubber-guide-structure.php" class="new-text"
-                                    style="color: black;">詳細はこちら</a>
-                            </div>
-                        </div>
-                        <div class="itemz">
-                            <img src="/products/images/rubberstrap/v2/rubber_guide07.webp" alt="" loading="lazy">
-                            <p class="new-text">
-                                曲面加工や貼り合わせ半立体、貫通穴（中抜き）加工などの特殊加工もご用意！デザインをより活かす特別なラバーストラップを製作できます。
-                            </p><br>
-                            <div>
-                                <a href="/lp/rubber-guide-structure.php?sec=special_processing" class="new-text"
-                                    style="color: black;">詳細はこちら</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="tab3" class="tab-content">
-                    <div class="grid-layout">
-                        <div class="itemz">
-                            <img src="/products/images/rubberstrap/v2/rubber_strap_protect.webp" alt=""
-                                loading="lazy">
-                            <p class="new-text">業界唯一の汚れ防止加工オプションをご用意！あなたの大切なラバーストラップをキレイに保ちます。</p>
-                            <br>
-                            <div>
-                                <a href="https://hotmobily.jp/faq/details/rubberstrap/q4" class="new-text"
-                                    style="color: black;">詳細はこちら</a>
-                            </div>
-                        </div>
-                        <div class="itemz">
-                            <img src="/products/images/rubberstrap/v2/rubberstrap_special.webp" alt=""
-                                loading="lazy">
-                            <p class="new-text">金銀、蓄光、ラメ、蛍光、半透明素材の5種の特殊素材をご用意！</p><br>
-                            <div>
-                                <a href="/lp/rubber-guide-special.php" class="new-text" style="color: black;">詳細はこちら</a>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="grid-layout">
-                        <div class="itemz">
-                            <img src="/products/images/rubberstrap/v2/rubber_guide11.webp" alt="" loading="lazy">
-                            <p class="new-text">入稿データをご自身で作成するのが難しい方は、データ作成代行サービスをぜひご利用ください。</p><br>
-                            <div>
-                                <a href="/lp/rubber-guide-data.php" class="new-text" style="color: black;">詳細はこちら</a>
-                            </div>
-                        </div>
-                        <div class="itemz">
-                            <img src="/products/images/rubberstrap/v2/daishi_rubberstrap.webp" alt=""
-                                loading="lazy">
-                            <p class="new-text">
-                                台紙封入サービスをご用意しております。当店のテンプレートデザイン、またはお客様のオリジナルデザインの台紙を封入します。</p><br>
-                            <div>
-                                <a href="https://hotmobily.jp/products/daishi.html" class="new-text"
-                                    style="color: black;">詳細はこちら</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
 
@@ -1973,6 +1988,41 @@
                         navigateToBlock(window.location.hash);
                     }, 350);
                 }
+
+                /*
+                |--------------------------------------------------------------------------
+                | OptionCardGrid Tabs
+                |--------------------------------------------------------------------------
+                */
+                document.addEventListener('click', function(e) {
+                    const tabBtn =
+                        e.target.closest('.tab-link[data-tab-target]');
+                    if (!tabBtn) return;
+
+                    const container =
+                        tabBtn.closest('.store-option-card-grid');
+                    if (!container) return;
+
+                    const targetTabId =
+                        tabBtn.getAttribute('data-tab-target');
+                    if (!targetTabId) return;
+
+                    container.querySelectorAll('.tab-link').forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    container.querySelectorAll('.tab-content').forEach(function(p) {
+                        p.classList.remove('active');
+                        p.style.display = 'none';
+                    });
+
+                    tabBtn.classList.add('active');
+                    const targetPane =
+                        container.querySelector('#' + targetTabId);
+                    if (targetPane) {
+                        targetPane.classList.add('active');
+                        targetPane.style.display = 'block';
+                    }
+                });
 
             }
         );

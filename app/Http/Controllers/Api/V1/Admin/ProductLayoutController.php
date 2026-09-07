@@ -227,6 +227,8 @@ class ProductLayoutController extends Controller
 
             'accordion',
 
+            'option_card_grid',
+
             'product_header',
 
             'product_gallery',
@@ -278,6 +280,8 @@ class ProductLayoutController extends Controller
             'custom_table',
 
             'info_card',
+
+            'option_card_grid',
 
             'product_header',
 
