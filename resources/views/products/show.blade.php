@@ -634,6 +634,166 @@
 
 
         /* ============================================================
+           YouTube
+        ============================================================ */
+        .store-youtube-player {
+            position: relative;
+
+            width: 100%;
+            aspect-ratio: 771 / 434;
+
+            overflow: hidden;
+
+            background: #111;
+        }
+
+
+        .store-youtube-play {
+            position: relative;
+
+            display: block;
+
+            width: 100%;
+            aspect-ratio: 771 / 434;
+
+            padding: 0;
+
+            background: #111;
+
+            border: 0;
+
+            cursor: pointer;
+        }
+
+
+        .store-youtube-play img,
+        .store-youtube-player iframe {
+            display: block;
+
+            width: 100%;
+            height: 100%;
+
+            border: 0;
+
+            object-fit: cover;
+        }
+
+
+        .store-youtube-player iframe {
+            position: absolute;
+            inset: 0;
+        }
+
+
+        .store-youtube-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 68px;
+            height: 48px;
+
+            padding-left: 4px;
+
+            color: #fff;
+
+            background: #e62117;
+
+            border-radius: 11px;
+
+            font-size: 23px;
+
+            transform: translate(-50%, -50%);
+
+            transition: transform .2s ease;
+        }
+
+
+        .store-youtube-play:hover .store-youtube-play-icon {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+
+        .store-youtube-link {
+            margin-top: 12px;
+
+            text-align: right;
+        }
+
+
+        .store-youtube-link a {
+            color: #000 !important;
+
+            text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
+           Related Blogs
+        ============================================================ */
+        .store-related-blog-item {
+            display: flex;
+
+            justify-content: space-between;
+
+            width: 100%;
+        }
+
+
+        .store-related-blog-image {
+            display: block;
+
+            flex: 0 0 50%;
+
+            width: 50%;
+
+            max-width: 50%;
+        }
+
+
+        .store-related-blog-image img {
+            display: block;
+
+            width: 100%;
+            height: auto;
+        }
+
+
+        .store-related-blog-body {
+            flex: 0 0 50%;
+
+            width: 50%;
+
+            max-width: 50%;
+
+            margin-left: 10px;
+
+            min-width: 0;
+        }
+
+
+        .store-related-blog-spacer {
+            height: 15px;
+        }
+
+
+        .store-related-blog-body a {
+            color: #000 !important;
+
+            text-decoration: underline !important;
+        }
+
+
+        .store-related-blog-body a:hover {
+            text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
            Custom Table
         ============================================================ */
 
@@ -1325,6 +1485,73 @@
         document.addEventListener(
             'DOMContentLoaded',
             function() {
+
+                /*
+                |--------------------------------------------------------------------------
+                | YouTube
+                |--------------------------------------------------------------------------
+                */
+                document
+                    .querySelectorAll(
+                        '.store-youtube-play'
+                    )
+                    .forEach(
+                        function(button) {
+
+                            button.addEventListener(
+                                'click',
+                                function() {
+
+                                    const youtubeId =
+                                        String(
+                                            button.dataset.youtubeId
+                                            ?? ''
+                                        );
+
+
+                                    if (!/^[A-Za-z0-9_-]{11}$/.test(youtubeId)) {
+
+                                        return;
+
+                                    }
+
+
+                                    const iframe =
+                                        document.createElement(
+                                            'iframe'
+                                        );
+
+
+                                    iframe.src =
+                                        'https://www.youtube-nocookie.com/embed/'
+                                        + youtubeId
+                                        + '?autoplay=1&rel=0';
+
+                                    iframe.title =
+                                        button.getAttribute(
+                                            'aria-label'
+                                        )
+                                        ?? 'YouTube video';
+
+                                    iframe.allow =
+                                        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+
+                                    iframe.allowFullscreen =
+                                        true;
+
+
+                                    button.replaceWith(
+                                        iframe
+                                    );
+
+                                },
+                                {
+                                    once: true,
+                                }
+                            );
+
+                        }
+                    );
 
                 /*
                 |--------------------------------------------------------------------------

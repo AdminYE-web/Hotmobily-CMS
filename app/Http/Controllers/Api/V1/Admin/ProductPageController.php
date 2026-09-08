@@ -825,6 +825,78 @@ class ProductPageController extends Controller
 
 
             /*
+             * YouTube accordion
+             */
+            'youtube' => [
+
+                'title' =>
+                    $this->stringValue(
+                        $content['title']
+                        ?? null,
+                        1000
+                    ),
+
+                'youtube_id' =>
+                    $this->stringValue(
+                        $content['youtube_id']
+                        ?? null,
+                        30
+                    ),
+
+                'youtube_url' =>
+                    $this->stringValue(
+                        $content['youtube_url']
+                        ?? null,
+                        2000
+                    ),
+
+                'thumbnail_url' =>
+                    $this->stringValue(
+                        $content['thumbnail_url']
+                        ?? null,
+                        2000
+                    ),
+
+                'link_text' =>
+                    $this->stringValue(
+                        $content['link_text']
+                        ?? null,
+                        1000
+                    ),
+
+                'link_url' =>
+                    $this->stringValue(
+                        $content['link_url']
+                        ?? null,
+                        2000
+                    ),
+
+            ],
+
+
+            /*
+             * Related blog articles
+             */
+            'related_blogs' => [
+
+                'title' =>
+                    $this->stringValue(
+                        $content['title']
+                        ?? null,
+                        1000
+                    ),
+
+                'articles' =>
+                    $this->sanitizeRelatedBlogArticles(
+                        $content['articles']
+                        ?? null,
+                        $content
+                    ),
+
+            ],
+
+
+            /*
              * Button
              */
             'button' => [
@@ -1090,6 +1162,111 @@ class ProductPageController extends Controller
             default => [],
 
         };
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Related Blogs Sanitizer
+    |--------------------------------------------------------------------------
+    */
+
+    private function sanitizeRelatedBlogArticles(
+        mixed $articles,
+        array $legacyContent
+    ): array {
+        if (
+            !is_array(
+                $articles
+            )
+        ) {
+
+            $articles = [
+                [
+                    'title' =>
+                        $legacyContent['article_1_title']
+                        ?? null,
+                    'url' =>
+                        $legacyContent['article_1_url']
+                        ?? null,
+                    'image_url' =>
+                        $legacyContent['article_1_image_url']
+                        ?? null,
+                ],
+                [
+                    'title' =>
+                        $legacyContent['article_2_title']
+                        ?? null,
+                    'url' =>
+                        $legacyContent['article_2_url']
+                        ?? null,
+                    'image_url' =>
+                        $legacyContent['article_2_image_url']
+                        ?? null,
+                ],
+            ];
+
+        }
+
+
+        $sanitized = [];
+
+        foreach (
+            array_slice(
+                $articles,
+                0,
+                20
+            ) as $article
+        ) {
+            if (
+                !is_array(
+                    $article
+                )
+            ) {
+
+                continue;
+
+            }
+
+
+            $item = [
+                'title' =>
+                    $this->stringValue(
+                        $article['title']
+                        ?? null,
+                        1000
+                    ),
+                'url' =>
+                    $this->stringValue(
+                        $article['url']
+                        ?? null,
+                        2000
+                    ),
+                'image_url' =>
+                    $this->stringValue(
+                        $article['image_url']
+                        ?? null,
+                        2000
+                    ),
+            ];
+
+
+            if (
+                $item['title'] === null
+                && $item['url'] === null
+                && $item['image_url'] === null
+            ) {
+
+                continue;
+
+            }
+
+
+            $sanitized[] = $item;
+        }
+
+
+        return $sanitized;
     }
 
 

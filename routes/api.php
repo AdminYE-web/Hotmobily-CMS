@@ -14,6 +14,8 @@ use App\Http\Controllers\Api\V1\HolidayController;
 use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\ProductPageController;
 use App\Http\Controllers\Api\V1\Admin\ProductLayoutController;
+use App\Http\Controllers\Api\V1\Admin\FaqController;
+use App\Http\Controllers\Api\V1\Admin\FaqImageController;
 
 
 /*
@@ -51,17 +53,17 @@ Route::prefix('v1')->group(function () {
     |
     */
 
-   Route::get(
-    '/products/{productPath}',
-    [
-        ProductController::class,
-        'show'
-    ]
-)
-->where(
-    'productPath',
-    '.+'
-);
+    Route::get(
+        '/products/{productPath}',
+        [
+            ProductController::class,
+            'show'
+        ]
+    )
+        ->where(
+            'productPath',
+            '.+'
+        );
 
 
     /*
@@ -248,31 +250,128 @@ Route::prefix('v1')->group(function () {
 
             Route::prefix('admin')
                 ->group(function () {
-/*
+
+                /*
 |--------------------------------------------------------------------------
-| Product Image Upload
+| FAQ Management
 |--------------------------------------------------------------------------
 |
-| POST /api/v1/admin/products/1/images
+| GET     /api/v1/admin/faqs
+| POST    /api/v1/admin/faqs
+| GET     /api/v1/admin/faqs/1
+| PUT     /api/v1/admin/faqs/1
+| DELETE  /api/v1/admin/faqs/1
 |
 */
 
-Route::post(
-    '/products/{product}/images',
+
+/*
+ * FAQ List
+ *
+ * GET /api/v1/admin/faqs
+ */
+Route::get(
+    '/faqs',
     [
-        ProductPageController::class,
-        'uploadImage'
+        FaqController::class,
+        'index'
     ]
 );
 
 
+/*
+ * Create FAQ
+ *
+ * POST /api/v1/admin/faqs
+ */
 Route::post(
-    '/products/{product}/templates',
+    '/faqs',
     [
-        ProductPageController::class,
-        'uploadTemplate'
+        FaqController::class,
+        'store'
     ]
 );
+
+
+/*
+ * Upload FAQ Image
+ *
+ * POST /api/v1/admin/faqs/upload-image
+ */
+Route::post(
+    '/faqs/upload-image',
+    [
+        FaqImageController::class,
+        'store'
+    ]
+);
+
+
+/*
+ * FAQ Detail
+ *
+ * GET /api/v1/admin/faqs/1
+ */
+Route::get(
+    '/faqs/{faq}',
+    [
+        FaqController::class,
+        'show'
+    ]
+);
+
+
+/*
+ * Update FAQ
+ *
+ * PUT /api/v1/admin/faqs/1
+ */
+Route::put(
+    '/faqs/{faq}',
+    [
+        FaqController::class,
+        'update'
+    ]
+);
+
+
+/*
+ * Delete FAQ
+ *
+ * DELETE /api/v1/admin/faqs/1
+ */
+Route::delete(
+    '/faqs/{faq}',
+    [
+        FaqController::class,
+        'destroy'
+    ]
+);
+                    /*
+             |--------------------------------------------------------------------------
+             | Product Image Upload
+              |--------------------------------------------------------------------------
+              |
+               | POST /api/v1/admin/products/1/images
+                 |
+                */
+
+                    Route::post(
+                        '/products/{product}/images',
+                        [
+                            ProductPageController::class,
+                            'uploadImage'
+                        ]
+                    );
+
+
+                    Route::post(
+                        '/products/{product}/templates',
+                        [
+                            ProductPageController::class,
+                            'uploadTemplate'
+                        ]
+                    );
 
 
                     /*
@@ -562,12 +661,6 @@ Route::post(
                             'publish'
                         ]
                     );
-
-
                 });
-
-
         });
-
-
 });

@@ -1303,6 +1303,272 @@
 
 
             {{-- ============================================================
+                YouTube
+            ============================================================ --}}
+            @elseif(
+                $type
+                ===
+                'youtube'
+            )
+
+                @php
+                    $youtubeToggleId =
+                        'store-youtube-toggle-'
+                        .
+                        (
+                            $effectiveId !== ''
+                                ? $effectiveId
+                                : md5(json_encode($block))
+                        );
+
+                    $youtubeTitle = trim((string) (
+                        $content['title']
+                        ?? 'ラバーストラップ自社工場のご紹介'
+                    ));
+
+                    $youtubeUrl = trim((string) (
+                        $content['youtube_url']
+                        ?? ''
+                    ));
+
+                    $youtubeId = trim((string) (
+                        $content['youtube_id']
+                        ?? '5KK0a4b1C9Q'
+                    ));
+
+                    if ($youtubeUrl !== '') {
+                        $youtubeMatches = [];
+
+                        if (preg_match(
+                            '/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:[^#&]+&)*v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/i',
+                            $youtubeUrl,
+                            $youtubeMatches
+                        )) {
+                            $youtubeId = $youtubeMatches[1];
+                        }
+                    }
+
+                    $youtubeThumbnail = trim((string) (
+                        $content['thumbnail_url']
+                        ?? '/products/img/rubber-production-yt.webp'
+                    ));
+
+                    $youtubeLinkText = trim((string) (
+                        $content['link_text']
+                        ?? '自社生産の詳細はこちら'
+                    ));
+
+                    $youtubeLinkUrl = trim((string) (
+                        $content['link_url']
+                        ?? '/lp/rubber-guide-inhouse.php'
+                    ));
+
+                    $youtubeTitle = $youtubeTitle !== ''
+                        ? $youtubeTitle
+                        : 'ラバーストラップ自社工場のご紹介';
+
+                    $youtubeThumbnail = $youtubeThumbnail !== ''
+                        ? $youtubeThumbnail
+                        : '/products/img/rubber-production-yt.webp';
+
+                    $youtubeLinkText = $youtubeLinkText !== ''
+                        ? $youtubeLinkText
+                        : '自社生産の詳細はこちら';
+
+                    $isValidYoutubeId = (bool) preg_match(
+                        '/^[A-Za-z0-9_-]{11}$/',
+                        $youtubeId
+                    );
+                @endphp
+
+                @if($isValidYoutubeId)
+                    <div class="store-youtube store-accordion">
+                        <input
+                            id="{{ $youtubeToggleId }}"
+                            class="store-accordion-input"
+                            type="checkbox"
+                            checked
+                        >
+
+                        <label
+                            class="store-accordion-summary"
+                            for="{{ $youtubeToggleId }}"
+                        >
+                            <span>{{ $youtubeTitle }}</span>
+                            <span class="store-accordion-arrow"></span>
+                        </label>
+
+                        <div class="store-accordion-content">
+                            <div class="store-youtube-player">
+                                <button
+                                    type="button"
+                                    class="store-youtube-play"
+                                    data-youtube-id="{{ $youtubeId }}"
+                                    aria-label="Play {{ $youtubeTitle }}"
+                                >
+                                    <img
+                                        src="{{ $youtubeThumbnail }}"
+                                        alt="{{ $youtubeTitle }}"
+                                        loading="lazy"
+                                    >
+                                    <span class="store-youtube-play-icon">▶</span>
+                                </button>
+                            </div>
+
+                            @if($youtubeLinkUrl !== '')
+                                <div class="store-youtube-link">
+                                    <a href="{{ $youtubeLinkUrl }}">
+                                        {{ $youtubeLinkText }}
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
+
+            {{-- ============================================================
+                Related Blogs
+            ============================================================ --}}
+            @elseif(
+                $type
+                ===
+                'related_blogs'
+            )
+
+                @php
+                    $relatedBlogsToggleId =
+                        'store-related-blogs-toggle-'
+                        .
+                        (
+                            $effectiveId !== ''
+                                ? $effectiveId
+                                : md5(json_encode($block))
+                        );
+
+                    $relatedBlogsTitle = trim((string) (
+                        $content['title']
+                        ?? ''
+                    ));
+
+                    $relatedBlogsTitle = $relatedBlogsTitle !== ''
+                        ? $relatedBlogsTitle
+                        : '関連記事';
+
+                    $defaultRelatedBlogArticles = [
+                        [
+                            'title' => 'ラバーストラップを安く作るコツと価格を抑えるポイント',
+                            'url' => '/blog-content/howtomake-cheaper',
+                            'image_url' => '/products/images/rubberstrap/v2/rubber_strap_product01.webp',
+                        ],
+                        [
+                            'title' => 'データトレースサービスとは？画像1枚からグッズを作る方法',
+                            'url' => '/blog-content/about-trace',
+                            'image_url' => '/products/images/rubberstrap/v2/rubber_strap_product02.webp',
+                        ],
+                    ];
+
+                    $hasLegacyRelatedBlogArticles =
+                        !empty($content['article_1_title'])
+                        || !empty($content['article_1_url'])
+                        || !empty($content['article_1_image_url'])
+                        || !empty($content['article_2_title'])
+                        || !empty($content['article_2_url'])
+                        || !empty($content['article_2_image_url']);
+
+                    $relatedBlogArticles = is_array(
+                        $content['articles']
+                        ?? null
+                    )
+                        ? $content['articles']
+                        : (
+                            $hasLegacyRelatedBlogArticles
+                                ? [
+                                    [
+                                        'title' => $content['article_1_title'] ?? '',
+                                        'url' => $content['article_1_url'] ?? '',
+                                        'image_url' => $content['article_1_image_url'] ?? '',
+                                    ],
+                                    [
+                                        'title' => $content['article_2_title'] ?? '',
+                                        'url' => $content['article_2_url'] ?? '',
+                                        'image_url' => $content['article_2_image_url'] ?? '',
+                                    ],
+                                ]
+                                : $defaultRelatedBlogArticles
+                        );
+                @endphp
+
+                <div class="store-related-blogs store-accordion">
+                    <input
+                        id="{{ $relatedBlogsToggleId }}"
+                        class="store-accordion-input"
+                        type="checkbox"
+                        checked
+                    >
+
+                    <label
+                        class="store-accordion-summary"
+                        for="{{ $relatedBlogsToggleId }}"
+                    >
+                        <span>{{ $relatedBlogsTitle }}</span>
+                        <span class="store-accordion-arrow"></span>
+                    </label>
+
+                    <div class="store-accordion-content">
+                        @foreach($relatedBlogArticles as $article)
+                            @php
+                                $articleTitle = trim((string) (
+                                    $article['title']
+                                    ?? ''
+                                ));
+
+                                $articleUrl = trim((string) (
+                                    $article['url']
+                                    ?? ''
+                                ));
+
+                                $articleImageUrl = trim((string) (
+                                    $article['image_url']
+                                    ?? ''
+                                ));
+                            @endphp
+
+                            @if($articleTitle !== '' && $articleUrl !== '')
+                                <div class="store-related-blog-item">
+                                    <div class="store-related-blog-image">
+                                        <a
+                                            href="{{ $articleUrl }}"
+                                            style="color:black;"
+                                        >
+                                            @if($articleImageUrl !== '')
+                                                <img
+                                                    src="{{ $articleImageUrl }}"
+                                                    alt="{{ $articleTitle }}"
+                                                    loading="lazy"
+                                                >
+                                            @endif
+                                        </a>
+                                    </div>
+
+                                    <div class="store-related-blog-body">
+                                        <a
+                                            href="{{ $articleUrl }}"
+                                            style="color:black;"
+                                        >
+                                            {{ $articleTitle }}
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="store-related-blog-spacer">&nbsp;</div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+
+
+            {{-- ============================================================
                 Custom Table
             ============================================================ --}}
 

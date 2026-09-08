@@ -1943,6 +1943,8 @@ document.addEventListener(
 
             bindSingleImageUploaders();
 
+            bindRelatedBlogEditors();
+
             bindRichTextEditors();
 
             bindContentBlockAccordions();
@@ -2232,6 +2234,73 @@ document.addEventListener(
                         )}
 
                     `;
+
+                    break;
+
+
+                case 'youtube':
+
+                    fields = `
+
+                        ${textInput(
+                            block.id,
+                            'title',
+                            'Accordion Title',
+                            blockContent.title
+                            ?? 'ラバーストラップ自社工場のご紹介'
+                        )}
+
+
+                        ${textInput(
+                            block.id,
+                            'youtube_url',
+                            'YouTube URL',
+                            blockContent.youtube_url
+                            || (
+                                blockContent.youtube_id
+                                ? `https://www.youtube.com/watch?v=${blockContent.youtube_id}`
+                                : 'https://www.youtube.com/watch?v=5KK0a4b1C9Q'
+                            )
+                        )}
+
+
+                        ${imageUploaderInput(
+                            block.id,
+                            'thumbnail_url',
+                            'Video Thumbnail',
+                            blockContent.thumbnail_url
+                            ?? '/products/img/rubber-production-yt.webp'
+                        )}
+
+
+                        ${textInput(
+                            block.id,
+                            'link_text',
+                            'Detail Link Text',
+                            blockContent.link_text
+                            ?? '自社生産の詳細はこちら'
+                        )}
+
+
+                        ${linkUrlInput(
+                            block.id,
+                            'link_url',
+                            'Detail Link URL',
+                            blockContent.link_url
+                            ?? '/lp/rubber-guide-inhouse.php'
+                        )}
+
+                    `;
+
+                    break;
+
+
+                case 'related_blogs':
+
+                    fields = relatedBlogsEditor(
+                        block,
+                        blockContent
+                    );
 
                     break;
 
@@ -7398,7 +7467,6 @@ document.addEventListener(
 
                     }
                 );
-
 
             return result;
         }
@@ -13304,6 +13372,261 @@ document.addEventListener(
         }
 
 
+        function relatedBlogsEditor(
+            block,
+            content
+        )
+        {
+            const articles =
+                normalizeRelatedBlogArticles(
+                    content
+                );
+
+
+            return `
+
+                <div
+                    class="related-blogs-editor"
+                    data-related-blogs-block="${escapeHtml(block.id)}"
+                >
+
+                    <div class="form-group">
+                        <label>Accordion Title</label>
+
+                        <input
+                            type="text"
+                            class="form-control related-blogs-title"
+                            value="${escapeHtml(
+                                content.title
+                                || '関連記事'
+                            )}"
+                        >
+                    </div>
+
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>Articles</strong>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary add-related-blog"
+                        >
+                            + Add Article
+                        </button>
+                    </div>
+
+
+                    <div class="related-blogs-list">
+                        ${articles
+                            .map(
+                                relatedBlogArticleEditor
+                            )
+                            .join('')}
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+
+        function normalizeRelatedBlogArticles(
+            content
+        )
+        {
+            if (
+                Array.isArray(
+                    content.articles
+                )
+            ) {
+
+                return content.articles.map(
+                    function (article) {
+
+                        return {
+                            title: article?.title ?? '',
+                            url: article?.url ?? '',
+                            image_url: article?.image_url ?? '',
+                        };
+
+                    }
+                );
+
+            }
+
+
+            if (
+                content.article_1_title
+                || content.article_1_url
+                || content.article_1_image_url
+                || content.article_2_title
+                || content.article_2_url
+                || content.article_2_image_url
+            ) {
+
+                return [
+                    {
+                        title:
+                            content.article_1_title
+                            ?? '',
+                        url:
+                            content.article_1_url
+                            ?? '',
+                        image_url:
+                            content.article_1_image_url
+                            ?? '',
+                    },
+                    {
+                        title:
+                            content.article_2_title
+                            ?? '',
+                        url:
+                            content.article_2_url
+                            ?? '',
+                        image_url:
+                            content.article_2_image_url
+                            ?? '',
+                    },
+                ];
+
+            }
+
+
+            return [
+                {
+                    title:
+                        'ラバーストラップを安く作るコツと価格を抑えるポイント',
+                    url:
+                        '/blog-content/howtomake-cheaper',
+                    image_url:
+                        '/products/images/rubberstrap/v2/rubber_strap_product01.webp',
+                },
+                {
+                    title:
+                        'データトレースサービスとは？画像1枚からグッズを作る方法',
+                    url:
+                        '/blog-content/about-trace',
+                    image_url:
+                        '/products/images/rubberstrap/v2/rubber_strap_product02.webp',
+                },
+            ];
+        }
+
+
+        function relatedBlogArticleEditor(
+            article
+        )
+        {
+            return `
+
+                <div class="card mb-2 related-blog-article">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="small">Article</strong>
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-danger remove-related-blog"
+                            >
+                                Remove
+                            </button>
+                        </div>
+
+
+                        ${imageUploaderInput(
+                            '',
+                            'image_url',
+                            'Article Image',
+                            article.image_url ?? ''
+                        )}
+
+
+                        <div class="form-group mb-2">
+                            <label class="small mb-1">Article Title</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm related-blog-article-title"
+                                value="${escapeHtml(article.title ?? '')}"
+                            >
+                        </div>
+
+
+                        <div class="form-group mb-0">
+                            <label class="small mb-1">Article URL</label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm related-blog-url"
+                                value="${escapeHtml(article.url ?? '')}"
+                                placeholder="/blog-content/..."
+                            >
+                        </div>
+                    </div>
+                </div>
+
+            `;
+        }
+
+
+        function bindRelatedBlogEditors()
+        {
+            document
+                .querySelectorAll(
+                    '.related-blogs-editor'
+                )
+                .forEach(
+                    function (editor) {
+
+                        const list =
+                            editor.querySelector(
+                                '.related-blogs-list'
+                            );
+
+
+                        editor
+                            .querySelector(
+                                '.add-related-blog'
+                            )
+                            ?.addEventListener(
+                                'click',
+                                function () {
+
+                                    list.insertAdjacentHTML(
+                                        'beforeend',
+                                        relatedBlogArticleEditor({})
+                                    );
+
+                                    bindSingleImageUploaders();
+
+                                }
+                            );
+
+
+                        list?.addEventListener(
+                            'click',
+                            function (event) {
+
+                                const removeButton =
+                                    event.target.closest(
+                                        '.remove-related-blog'
+                                    );
+
+
+                                if (removeButton) {
+
+                                    removeButton.closest(
+                                        '.related-blog-article'
+                                    )?.remove();
+
+                                }
+
+                            }
+                        );
+
+                    }
+                );
+        }
+
+
         function systemMessage(
             message
         )
@@ -13505,6 +13828,99 @@ document.addEventListener(
                                     blockId
                                 );
                         }
+
+                    }
+                );
+
+
+            /*
+             * Related Blogs
+             */
+            document
+                .querySelectorAll(
+                    '.related-blogs-editor'
+                )
+                .forEach(
+                    function (editor) {
+
+                        const blockId =
+                            editor.dataset
+                                .relatedBlogsBlock;
+
+
+                        if (!blockId) {
+
+                            return;
+
+                        }
+
+
+                        result[blockId] = {
+                            title:
+                                String(
+                                    editor
+                                        .querySelector(
+                                            '.related-blogs-title'
+                                        )
+                                        ?.value
+                                    ?? ''
+                                )
+                                .trim(),
+
+                            articles:
+                                Array
+                                    .from(
+                                        editor.querySelectorAll(
+                                            '.related-blog-article'
+                                        )
+                                    )
+                                    .map(
+                                        function (article) {
+
+                                            return {
+                                                title:
+                                                    String(
+                                                        article
+                                                            .querySelector(
+                                                                '.related-blog-article-title'
+                                                            )
+                                                            ?.value
+                                                        ?? ''
+                                                    )
+                                                    .trim(),
+
+                                                url:
+                                                    String(
+                                                        article
+                                                            .querySelector(
+                                                                '.related-blog-url'
+                                                            )
+                                                            ?.value
+                                                        ?? ''
+                                                    )
+                                                    .trim(),
+
+                                                image_url:
+                                                    String(
+                                                        article
+                                                            .querySelector(
+                                                                '.single-image-input-value'
+                                                            )
+                                                            ?.value
+                                                        ?? ''
+                                                    )
+                                                    .trim(),
+                                            };
+
+                                        }
+                                    )
+                                    .filter(
+                                        article =>
+                                            article.title
+                                            || article.url
+                                            || article.image_url
+                                    ),
+                        };
 
                     }
                 );
@@ -14368,6 +14784,12 @@ document.addEventListener(
 
                 image:
                     'Image',
+
+                youtube:
+                    'YouTube',
+
+                related_blogs:
+                    'Related Blogs',
 
                 button:
                     'Button',

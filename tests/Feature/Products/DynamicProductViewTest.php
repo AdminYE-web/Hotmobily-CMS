@@ -293,4 +293,100 @@ class DynamicProductViewTest extends TestCase
             'After order form',
         ], false);
     }
+
+    public function test_dynamic_product_view_renders_youtube_accordion_component(): void
+    {
+        $product = new Product([
+            'name' => 'Video Product',
+            'slug' => 'video-product',
+            'status' => 'active',
+        ]);
+
+        $view = $this->view('products.show', [
+            'product' => $product,
+            'layout' => [
+                'rows' => [[
+                    'columns' => [[
+                        'width' => 12,
+                        'blocks' => [[
+                            'id' => 'factory-video',
+                            'type' => 'youtube',
+                        ]],
+                    ]],
+                ]],
+            ],
+            'contents' => [
+                'factory-video' => [
+                    'title' => 'Factory video',
+                    'youtube_url' => 'https://www.youtube.com/watch?v=5KK0a4b1C9Q',
+                    'thumbnail_url' => '/products/img/rubber-production-yt.webp',
+                    'link_text' => 'See factory details',
+                    'link_url' => '/lp/rubber-guide-inhouse.php',
+                ],
+            ],
+            'publishedAt' => null,
+        ]);
+
+        $view
+            ->assertSee('Factory video')
+            ->assertSee('data-youtube-id="5KK0a4b1C9Q"', false)
+            ->assertSee('See factory details')
+            ->assertSee('https://www.youtube-nocookie.com/embed/', false);
+    }
+
+    public function test_dynamic_product_view_renders_related_blogs_component(): void
+    {
+        $product = new Product([
+            'name' => 'Blog Product',
+            'slug' => 'blog-product',
+            'status' => 'active',
+        ]);
+
+        $view = $this->view('products.show', [
+            'product' => $product,
+            'layout' => [
+                'rows' => [[
+                    'columns' => [[
+                        'width' => 12,
+                        'blocks' => [[
+                            'id' => 'related-blogs',
+                            'type' => 'related_blogs',
+                        ]],
+                    ]],
+                ]],
+            ],
+            'contents' => [
+                'related-blogs' => [
+                    'title' => 'Related articles',
+                    'articles' => [
+                        [
+                            'title' => 'First article',
+                            'url' => '/blog-content/first-article',
+                            'image_url' => '/images/first.webp',
+                        ],
+                        [
+                            'title' => 'Second article',
+                            'url' => '/blog-content/second-article',
+                            'image_url' => '/images/second.webp',
+                        ],
+                        [
+                            'title' => 'Third article',
+                            'url' => '/blog-content/third-article',
+                            'image_url' => '/images/third.webp',
+                        ],
+                    ],
+                ],
+            ],
+            'publishedAt' => null,
+        ]);
+
+        $view
+            ->assertSee('Related articles')
+            ->assertSee('First article')
+            ->assertSee('/blog-content/first-article', false)
+            ->assertSee('Second article')
+            ->assertSee('/blog-content/second-article', false)
+            ->assertSee('Third article')
+            ->assertSee('/blog-content/third-article', false);
+    }
 }

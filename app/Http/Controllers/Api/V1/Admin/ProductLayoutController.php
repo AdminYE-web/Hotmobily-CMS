@@ -211,6 +211,10 @@ class ProductLayoutController extends Controller
 
             'image',
 
+            'youtube',
+
+            'related_blogs',
+
             'button',
 
             /*
@@ -266,6 +270,10 @@ class ProductLayoutController extends Controller
             'rich_text',
 
             'image',
+
+            'youtube',
+
+            'related_blogs',
 
             'button',
 

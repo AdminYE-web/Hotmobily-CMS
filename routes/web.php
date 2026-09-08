@@ -11,6 +11,7 @@ use App\Http\Controllers\Web\LegacyMockController;
 use App\Http\Controllers\Web\ProductController;
 
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
+use App\Http\Controllers\Storefront\FaqController;
 
 use App\Models\Product;
 use App\Models\ProductLayout;
@@ -141,6 +142,19 @@ Route::prefix('admin')
                     'admin.holidays.index'
                 )
                 ->name('holidays.index');
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | FAQs
+                |--------------------------------------------------------------------------
+                */
+
+                Route::view(
+                    '/faqs',
+                    'admin.faqs.index'
+                )
+                ->name('faqs.index');
 
 
                 /*
@@ -519,3 +533,24 @@ Route::get(
 ->name(
     'products.show'
 );
+
+Route::view('/faq', 'faq.index')
+    ->name('faq.index');
+
+    Route::get(
+    '/faq/product',
+    [
+        FaqController::class,
+        'productIndex'
+    ]
+)
+    ->name('faq.product');
+
+    Route::get(
+    '/faq/product/{product:slug}',
+    [
+        FaqController::class,
+        'productShow'
+    ]
+)
+    ->name('faq.product.show');

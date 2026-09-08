@@ -627,10 +627,17 @@
 >
     Products
 </a>
+ <a
+                href="{{ route('admin.faqs.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                FAQ
+            </a>
 
         @endif
 
     </div>
+    
 
 </div>
 

@@ -113,6 +113,26 @@
                     <button
                         type="button"
                         class="component-button add-block"
+                        data-type="youtube"
+                    >
+                        <span>▶</span>
+                        YouTube
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="related_blogs"
+                    >
+                        <span>📰</span>
+                        Related Blogs
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="component-button add-block"
                         data-type="button"
                     >
                         <span>▣</span>
@@ -1541,6 +1561,68 @@
     padding: 12px;
 
     background: white;
+}
+
+
+.sim-youtube-preview {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 210px;
+
+    color: #fff;
+
+    background:
+        linear-gradient(rgba(0, 0, 0, .24), rgba(0, 0, 0, .24)),
+        url('/products/img/rubber-production-yt.webp') center / cover;
+}
+
+
+.sim-youtube-play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    height: 42px;
+
+    padding-left: 3px;
+
+    color: #fff;
+
+    background: #e62117;
+
+    border-radius: 10px;
+
+    font-size: 21px;
+}
+
+
+.sim-related-blog-item {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 10px;
+}
+
+
+.sim-related-blog-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 30%;
+
+    min-height: 54px;
+
+    background: #f1f3f5;
+
+    color: #6c757d;
 }
 
 
@@ -3236,6 +3318,71 @@ document.addEventListener(
 
                                 <div>
                                     Image
+                                </div>
+
+                            </div>
+
+                        `
+                    );
+
+
+                case 'youtube':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-accordion">
+
+                                <div class="sim-accordion-header">
+                                    ラバーストラップ自社工場のご紹介
+                                </div>
+
+
+                                <div class="sim-accordion-body">
+
+                                    <div class="sim-youtube-preview">
+                                        <span class="sim-youtube-play">▶</span>
+                                    </div>
+
+
+                                    <div class="text-right mt-2">
+                                        自社生産の詳細はこちら
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        `
+                    );
+
+
+                case 'related_blogs':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-accordion">
+
+                                <div class="sim-accordion-header">
+                                    関連記事
+                                </div>
+
+
+                                <div class="sim-accordion-body">
+
+                                    <div class="sim-related-blog-item">
+                                        <div class="sim-related-blog-image">🖼</div>
+                                        <div>ラバーストラップを安く作るコツ</div>
+                                    </div>
+
+                                    <div class="sim-related-blog-item mb-0">
+                                        <div class="sim-related-blog-image">🖼</div>
+                                        <div>データトレースサービスとは？</div>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -4950,6 +5097,45 @@ document.addEventListener(
                     break;
 
 
+                case 'youtube':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+
+                            หัวข้อ, YouTube URL, ภาพปก และลิงก์รายละเอียดจะกำหนดจาก
+
+                            <strong>
+                                Product Content Editor
+                            </strong>
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'related_blogs':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+
+                            หัวข้อ, รูปภาพ, ชื่อบทความ และลิงก์ของ Related Blogs
+                            จะกำหนดจาก
+
+                            <strong>
+                                Product Content Editor
+                            </strong>
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
                 case 'accordion':
 
                     container.innerHTML = `
@@ -6415,6 +6601,12 @@ document.addEventListener(
 
                 image:
                     'Image',
+
+                youtube:
+                    'YouTube',
+
+                related_blogs:
+                    'Related Blogs',
 
                 button:
                     'Button',
