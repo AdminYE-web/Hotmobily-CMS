@@ -123,6 +123,24 @@
 }
 
 
+.editor-row-order-position {
+    flex: 0 0 calc(100% - 16px);
+
+    margin: 0 8px 10px;
+    padding: 8px 12px;
+
+    color: #842029;
+
+    background: #fff3cd;
+
+    border: 1px solid #ffda6a;
+    border-radius: 4px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
 .editor-column {
     flex: 0 0 var(--column-width);
     max-width: var(--column-width);
@@ -1816,6 +1834,22 @@ document.addEventListener(
 
                     rowElement.className =
                         'editor-row';
+
+
+                    if (
+                        row.region
+                        === 'after_order'
+                    ) {
+
+                        rowElement.innerHTML = `
+
+                            <div class="editor-row-order-position">
+                                ↓ This row is displayed after the Order Form
+                            </div>
+
+                        `;
+
+                    }
 
 
                     (

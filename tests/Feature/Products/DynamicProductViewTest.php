@@ -243,4 +243,54 @@ class DynamicProductViewTest extends TestCase
             ->assertSee('data-shipping-date-days="7"', false)
             ->assertSee('data-shipping-start-time', false);
     }
+
+    public function test_dynamic_product_view_renders_after_order_rows_below_the_order_form(): void
+    {
+        $product = new Product([
+            'name' => 'Rubber Strap',
+            'slug' => 'rubberstrap',
+            'status' => 'active',
+        ]);
+
+        $layout = [
+            'rows' => [
+                [
+                    'region' => 'before_order',
+                    'columns' => [[
+                        'width' => 12,
+                        'blocks' => [[
+                            'id' => 'before-order-title',
+                            'type' => 'heading',
+                            'settings' => ['tag' => 'h2'],
+                        ]],
+                    ]],
+                ],
+                [
+                    'region' => 'after_order',
+                    'columns' => [[
+                        'width' => 12,
+                        'blocks' => [[
+                            'id' => 'after-order-title',
+                            'type' => 'heading',
+                            'settings' => ['tag' => 'h2'],
+                        ]],
+                    ]],
+                ],
+            ],
+        ];
+
+        $this->view('products.show', [
+            'product' => $product,
+            'layout' => $layout,
+            'contents' => [
+                'before-order-title' => ['text' => 'Before order form'],
+                'after-order-title' => ['text' => 'After order form'],
+            ],
+            'publishedAt' => null,
+        ])->assertSeeInOrder([
+            'Before order form',
+            'id="order-form"',
+            'After order form',
+        ], false);
+    }
 }

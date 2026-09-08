@@ -476,7 +476,10 @@
                             </div>
 
 
-                            <div class="preview-order-form">
+                            <div
+                                id="preview-order-form"
+                                class="preview-order-form"
+                            >
 
                                 <div>
 
@@ -493,6 +496,21 @@
                                 <span class="badge badge-secondary">
                                     SYSTEM
                                 </span>
+
+                            </div>
+
+
+                            <div
+                                id="builder-after-order-region"
+                                class="builder-after-order-region d-none"
+                            >
+
+                                <div class="builder-region-label">
+                                    Content after Order Form
+                                </div>
+
+
+                                <div id="builder-after-order-canvas"></div>
 
                             </div>
 
@@ -1052,6 +1070,36 @@
     padding: 1px 6px;
 
     font-size: 9px;
+}
+
+
+.row-placement-control {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    margin-left: auto;
+    margin-right: 8px;
+
+    color: #495057;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+
+.row-placement-control select {
+    height: 22px;
+
+    padding: 0 4px;
+
+    border: 1px solid #b8c7dd;
+    border-radius: 3px;
+
+    background: #fff;
+
+    font-size: 10px;
 }
 
 
@@ -1799,6 +1847,21 @@
 }
 
 
+.builder-after-order-region {
+    margin-top: 25px;
+}
+
+
+.builder-region-label {
+    margin-bottom: 10px;
+
+    color: #842029;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
 /* ============================================================
    Effective ID
 ============================================================ */
@@ -1896,6 +1959,18 @@ document.addEventListener(
         const canvas =
             document.getElementById(
                 'builder-canvas'
+            );
+
+
+        const afterOrderCanvas =
+            document.getElementById(
+                'builder-after-order-canvas'
+            );
+
+
+        const afterOrderRegion =
+            document.getElementById(
+                'builder-after-order-region'
             );
 
 
@@ -2012,6 +2087,12 @@ document.addEventListener(
 
                     row.id ??=
                         generateRowId();
+
+
+                    row.region =
+                        row.region === 'after_order'
+                            ? 'after_order'
+                            : 'before_order';
 
 
                     row.columns ??=
@@ -2156,6 +2237,10 @@ document.addEventListener(
 
                 id:
                     generateRowId(),
+
+
+                region:
+                    'before_order',
 
                 columns:
                     widths.map(
@@ -2488,8 +2573,12 @@ document.addEventListener(
                 '';
 
 
-            rows.forEach(
-                function (row) {
+            afterOrderCanvas.innerHTML =
+                '';
+
+
+            const renderRow =
+                function (row, targetCanvas) {
 
                     const rowElement =
                         document.createElement(
@@ -2505,6 +2594,10 @@ document.addEventListener(
                         row.id;
 
 
+                    rowElement.dataset.region =
+                        row.region;
+
+
                     rowElement.innerHTML = `
 
                         <div class="layout-row-toolbar">
@@ -2512,6 +2605,42 @@ document.addEventListener(
                             <div class="row-drag-handle">
                                 ☰ ROW
                             </div>
+
+
+                            <label class="row-placement-control">
+                                <span>Place</span>
+
+                                <select
+                                    class="row-placement"
+                                    data-id="${escapeHtml(
+                                        row.id
+                                    )}"
+                                >
+                                    <option
+                                        value="before_order"
+                                        ${
+                                            row.region
+                                            === 'before_order'
+                                                ? 'selected'
+                                                : ''
+                                        }
+                                    >
+                                        Before Order Form
+                                    </option>
+
+                                    <option
+                                        value="after_order"
+                                        ${
+                                            row.region
+                                            === 'after_order'
+                                                ? 'selected'
+                                                : ''
+                                        }
+                                    >
+                                        After Order Form
+                                    </option>
+                                </select>
+                            </label>
 
 
                             <div class="row-actions">
@@ -2658,11 +2787,48 @@ document.addEventListener(
                     );
 
 
-                    canvas.appendChild(
+                    targetCanvas.appendChild(
                         rowElement
                     );
 
-                }
+                };
+
+
+            rows
+                .filter(
+                    row =>
+                        row.region
+                        !== 'after_order'
+                )
+                .forEach(
+                    row =>
+                        renderRow(
+                            row,
+                            canvas
+                        )
+                );
+
+
+            const afterOrderRows =
+                rows.filter(
+                    row =>
+                        row.region
+                        === 'after_order'
+                );
+
+
+            afterOrderRows.forEach(
+                row =>
+                    renderRow(
+                        row,
+                        afterOrderCanvas
+                    )
+            );
+
+
+            afterOrderRegion.classList.toggle(
+                'd-none',
+                afterOrderRows.length === 0
             );
 
 
@@ -3829,6 +3995,51 @@ document.addEventListener(
         {
             document
                 .querySelectorAll(
+                    '.row-placement'
+                )
+                .forEach(
+                    function (select) {
+
+                        select.onchange =
+                            function (event) {
+
+                                event.stopPropagation();
+
+
+                                const row =
+                                    rows.find(
+                                        item =>
+                                            item.id
+                                            ===
+                                            this.dataset
+                                                .id
+                                    );
+
+
+                                if (!row) {
+
+                                    return;
+
+                                }
+
+
+                                row.region =
+                                    this.value
+                                    === 'after_order'
+                                        ? 'after_order'
+                                        : 'before_order';
+
+
+                                render();
+
+                            };
+
+                    }
+                );
+
+
+            document
+                .querySelectorAll(
                     '.delete-row'
                 )
                 .forEach(
@@ -4106,32 +4317,42 @@ document.addEventListener(
 
         function initializeSortables()
         {
-            sortableInstances.push(
+            [
+                canvas,
+                afterOrderCanvas,
+            ]
+                .forEach(
+                    function (rowCanvas) {
 
-                new Sortable(
-                    canvas,
-                    {
-                        animation:
-                            150,
+                        sortableInstances.push(
 
-                        handle:
-                            '.row-drag-handle',
+                            new Sortable(
+                                rowCanvas,
+                                {
+                                    animation:
+                                        150,
 
-                        ghostClass:
-                            'sortable-ghost',
+                                    handle:
+                                        '.row-drag-handle',
 
-                        onEnd:
-                            function () {
+                                    ghostClass:
+                                        'sortable-ghost',
 
-                                syncStructureFromDom();
+                                    onEnd:
+                                        function () {
 
-                                render();
+                                            syncStructureFromDom();
 
-                            },
+                                            render();
+
+                                        },
+                                }
+                            )
+
+                        );
+
                     }
-                )
-
-            );
+                );
 
 
             document
@@ -4266,10 +4487,14 @@ document.addEventListener(
                 [];
 
 
-            Array
-                .from(
+            [
+                ...Array.from(
                     canvas.children
-                )
+                ),
+                ...Array.from(
+                    afterOrderCanvas.children
+                ),
+            ]
                 .filter(
                     element =>
                         element.classList.contains(
@@ -4297,6 +4522,13 @@ document.addEventListener(
 
                             id:
                                 oldRow.id,
+
+
+                            region:
+                                rowElement.dataset.region
+                                === 'after_order'
+                                    ? 'after_order'
+                                    : 'before_order',
 
                             columns:
                                 [],

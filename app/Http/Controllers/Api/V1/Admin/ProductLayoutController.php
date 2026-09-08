@@ -326,6 +326,15 @@ class ProductLayoutController extends Controller
                 ],
 
 
+                'rows.*.region' => [
+                    'nullable',
+                    Rule::in([
+                        'before_order',
+                        'after_order',
+                    ]),
+                ],
+
+
                 'rows.*.columns' => [
                     'present',
                     'array',
@@ -595,6 +604,22 @@ class ProductLayoutController extends Controller
                 ],
 
             ]);
+
+
+        $data['rows'] =
+            array_map(
+                static function (array $row): array {
+                    $row['region'] =
+                        ($row['region'] ?? null)
+                        === 'after_order'
+                            ? 'after_order'
+                            : 'before_order';
+
+
+                    return $row;
+                },
+                $data['rows']
+            );
 
 
         /*

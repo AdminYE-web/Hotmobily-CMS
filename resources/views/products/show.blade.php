@@ -66,6 +66,11 @@
         }
 
 
+        .product-layout-container-after-order {
+            margin-top: 25px;
+        }
+
+
         .product-layout-row {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -1249,54 +1254,33 @@
 @section('content')
     <div class="product-cms-page" data-product-slug="{{ $product->slug }}">
 
+        @php
+            $layoutRows = is_array($layout['rows'] ?? null) ? $layout['rows'] : [];
+
+            $beforeOrderRows = array_values(array_filter(
+                $layoutRows,
+                fn($row) => ($row['region'] ?? 'before_order') !== 'after_order'
+            ));
+
+            $afterOrderRows = array_values(array_filter(
+                $layoutRows,
+                fn($row) => ($row['region'] ?? 'before_order') === 'after_order'
+            ));
+        @endphp
+
         <div class="product-layout-container">
-
-            @foreach ($layout['rows'] ?? [] as $row)
-                <div class="product-layout-row">
-
-                    @foreach ($row['columns'] ?? [] as $column)
-                        @php
-
-                            $columnWidth = (int) ($column['width'] ?? 12);
-
-                            $columnWidth = max(1, min(12, $columnWidth));
-
-                            $columnPercent = ($columnWidth / 12) * 100;
-                        @endphp
-
-
-                        <div class="product-layout-column"
-                            style="
-                            --product-column-width:
-                            {{ $columnPercent }}%;
-                        ">
-
-                            <div class="product-layout-column-inner">
-
-                                @foreach ($column['blocks'] ?? [] as $block)
-                                    @include('products.partials.block', [
-                                        'block' => $block,
-                                    
-                                        'contents' => $contents,
-                                    
-                                        'product' => $product,
-                                    
-                                        'publishedAt' => $publishedAt,
-                                    ])
-                                @endforeach
-
-                            </div>
-
-                        </div>
-                    @endforeach
-
-                </div>
-            @endforeach
+            @include('products.partials.layout-rows', ['rows' => $beforeOrderRows])
 
         </div>
 
         @if ($product->slug === 'rubberstrap')
             @include('products.partials.order-form')
+        @endif
+
+        @if (count($afterOrderRows))
+            <div class="product-layout-container product-layout-container-after-order">
+                @include('products.partials.layout-rows', ['rows' => $afterOrderRows])
+            </div>
         @endif
 
     </div>
