@@ -660,6 +660,13 @@ class ProductPageController extends Controller
                         20
                     ),
 
+                'background_color' =>
+                    $this->hexColorValue(
+                        $content['background_color']
+                        ?? null,
+                        '#ffffff'
+                    ),
+
                 'show_share' =>
                     (bool)
                     (
@@ -723,6 +730,13 @@ class ProductPageController extends Controller
                         $content['highlight_title']
                         ?? null,
                         1000
+                    ),
+
+                'highlight_title_color' =>
+                    $this->hexColorValue(
+                        $content['highlight_title_color']
+                        ?? null,
+                        '#f59420'
                     ),
 
             ],
@@ -936,6 +950,13 @@ class ProductPageController extends Controller
                         $content['title']
                         ?? null,
                         1000
+                    ),
+
+                'title_color' =>
+                    $this->hexColorValue(
+                        $content['title_color']
+                        ?? null,
+                        '#281600'
                     ),
 
                 'image_url' =>

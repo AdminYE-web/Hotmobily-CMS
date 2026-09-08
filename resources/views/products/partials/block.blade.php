@@ -292,6 +292,32 @@
                         '';
 
 
+                    $backgroundColor =
+                        strtolower(
+                            trim(
+                                (string)
+                                (
+                                    $content['background_color']
+                                    ??
+                                    ''
+                                )
+                            )
+                        );
+
+
+                    if (
+                        !preg_match(
+                            '/^#[0-9a-f]{6}$/',
+                            $backgroundColor
+                        )
+                    ) {
+
+                        $backgroundColor =
+                            '#ffffff';
+
+                    }
+
+
                     $showShare =
                         (bool)
                         (
@@ -303,9 +329,14 @@
                 @endphp
 
 
-                <div class="store-product-header">
+                <div
+                    class="store-product-header"
+                >
 
-                    <h1 class="store-product-title h1-new">
+                    <h1
+                        class="store-product-title h1-new"
+                        style="background-color: {{ $backgroundColor }} !important;"
+                    >
 
                         {{ $title }}
 
@@ -519,6 +550,37 @@
 
                 <div class="store-product-details product-details">
 
+                    @php
+
+                        $highlightTitleColor =
+                            strtolower(
+                                trim(
+                                    (string)
+                                    (
+                                        $content[
+                                            'highlight_title_color'
+                                        ]
+                                        ??
+                                        ''
+                                    )
+                                )
+                            );
+
+
+                        if (
+                            !preg_match(
+                                '/^#[0-9a-f]{6}$/',
+                                $highlightTitleColor
+                            )
+                        ) {
+
+                            $highlightTitleColor =
+                                '#f59420';
+
+                        }
+
+                    @endphp
+
                     @if(
                         !empty(
                             $content[
@@ -649,7 +711,10 @@
                         )
                     )
 
-                        <h2 class="store-highlight-title promo-title">
+                        <h2
+                            class="store-highlight-title promo-title"
+                            style="color: {{ $highlightTitleColor }} !important;"
+                        >
 
                             {{
                                 $content[
@@ -977,6 +1042,32 @@
 
                 @php
 
+                    $infoCardTitleColor =
+                        strtolower(
+                            trim(
+                                (string)
+                                (
+                                    $content['title_color']
+                                    ??
+                                    ''
+                                )
+                            )
+                        );
+
+
+                    if (
+                        !preg_match(
+                            '/^#[0-9a-f]{6}$/',
+                            $infoCardTitleColor
+                        )
+                    ) {
+
+                        $infoCardTitleColor =
+                            '#281600';
+
+                    }
+
+
                     $infoImage =
                         $safeUrl(
                             $content[
@@ -1007,7 +1098,10 @@
                         )
                     )
 
-                        <h3 class="store-info-card-title">
+                        <h3
+                            class="store-info-card-title"
+                            style="color: {{ $infoCardTitleColor }} !important;"
+                        >
 
                             {{
                                 $content['title']

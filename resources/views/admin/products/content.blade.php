@@ -323,6 +323,20 @@
 }
 
 
+.product-header-background-color-input,
+.product-highlight-title-color-input,
+.info-card-title-color-input {
+    display: inline-block;
+
+    width: 64px !important;
+    height: 38px;
+
+    padding: 2px;
+
+    cursor: pointer;
+}
+
+
 .rich-text-surface {
     min-height: 170px;
     max-height: 420px;
@@ -1936,6 +1950,13 @@ document.addEventListener(
 
                 case 'product_header':
 
+                    const backgroundColor =
+                        normalizeHexColor(
+                            blockContent.background_color,
+                            '#ffffff'
+                        );
+
+
                     fields = `
 
                         ${textInput(
@@ -1954,6 +1975,28 @@ document.addEventListener(
                             blockContent.updated_date
                             ?? ''
                         )}
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Background Color
+                            </label>
+
+                            <input
+                                type="color"
+                                class="
+                                    form-control
+                                    product-field
+                                    product-header-background-color-input
+                                "
+                                data-block-id="${block.id}"
+                                data-field="background_color"
+                                value="${backgroundColor}"
+                                title="Product Header background color"
+                            >
+
+                        </div>
 
 
                         <div class="form-check">
@@ -1996,6 +2039,13 @@ document.addEventListener(
 
 
                 case 'product_details':
+
+                    const highlightTitleColor =
+                        normalizeHexColor(
+                            blockContent.highlight_title_color,
+                            '#f59420'
+                        );
+
 
                     fields = `
 
@@ -2042,6 +2092,28 @@ document.addEventListener(
                             ?? '',
                             3
                         )}
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Highlight Title Text Color
+                            </label>
+
+                            <input
+                                type="color"
+                                class="
+                                    form-control
+                                    product-field
+                                    product-highlight-title-color-input
+                                "
+                                data-block-id="${block.id}"
+                                data-field="highlight_title_color"
+                                value="${highlightTitleColor}"
+                                title="Highlight Title text color"
+                            >
+
+                        </div>
 
                     `;
 
@@ -2180,6 +2252,13 @@ document.addEventListener(
 
                 case 'info_card':
 
+                    const infoCardTitleColor =
+                        normalizeHexColor(
+                            blockContent.title_color,
+                            '#281600'
+                        );
+
+
                     fields = `
 
                         ${textInput(
@@ -2189,6 +2268,28 @@ document.addEventListener(
                             blockContent.title
                             ?? ''
                         )}
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Title Text Color
+                            </label>
+
+                            <input
+                                type="color"
+                                class="
+                                    form-control
+                                    product-field
+                                    info-card-title-color-input
+                                "
+                                data-block-id="${block.id}"
+                                data-field="title_color"
+                                value="${infoCardTitleColor}"
+                                title="Info Card title text color"
+                            >
+
+                        </div>
 
 
                         ${infoCardImageUploader(

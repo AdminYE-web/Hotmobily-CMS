@@ -28,6 +28,12 @@
 
         <link rel="stylesheet" href="/products/acrylic/css/renew_products.css?v=1.163" type="text/css">
 
+        <link rel="stylesheet" href="/products/css/box.css" type="text/css">
+
+        <link rel="stylesheet" href="/css/modal.css?v=1.01" type="text/css">
+
+        <link rel="stylesheet" href="/products/css/calendar.css?v=2" type="text/css">
+
         <link rel="stylesheet" href="/products/css/scroll.css" type="text/css">
 
         <link rel="stylesheet" href="/css/rubber.css?v=1.06" type="text/css">
@@ -986,14 +992,35 @@
 
         @media (max-width: 768px) {
 
+            /* Keep the legacy product shell and CMS rows inside the mobile viewport. */
+            body#top {
+                overflow-x: hidden;
+            }
+
+
+            #wrapper,
+            #content_wrapper,
+            .product-layout-container {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+
             .product-layout-row {
                 flex-wrap: wrap !important;
+                width: 100%;
+                margin-left: 0;
+                margin-right: 0;
             }
 
 
             .product-layout-column {
                 flex:
                     0 0 100% !important;
+
+                width:
+                    100% !important;
 
                 max-width:
                     100% !important;
@@ -1268,25 +1295,48 @@
 
         </div>
 
-
-        {{--
-    |--------------------------------------------------------------------------
-    | Order Form
-    |--------------------------------------------------------------------------
-    |
-    | ยังไม่ทำรอบนี้
-    |
-    | ภายหลังค่อย:
-    |
-    | @include('products.partials.order-form')
-    |
-    --}}
+        @if ($product->slug === 'rubberstrap')
+            @include('products.partials.order-form')
+        @endif
 
     </div>
 @endsection
 
 
 @push('scripts')
+    @if ($product->slug === 'rubberstrap')
+        <script type="text/javascript" src="/js/_setToInput_2026.js?v=1.01"></script>
+        <script type="text/javascript" src="/js/validation_new.js?v=1.11"></script>
+        <script type="text/javascript" src="/products/js/calendar_n2.js?v=3.17"></script>
+        <script type="text/javascript" src="/products/js/date.js"></script>
+        <script type="text/javascript" src="/js/pdf_rubber-campaign.js"></script>
+        <script type="text/javascript" src="/js/common.js?v=1.02"></script>
+
+        <script>
+            /* The dynamic URL does not end in /rubberstrap/, so keep the
+             * legacy attachment lookup on its Laravel endpoint. */
+            window.getPartData = function(value) {
+                if (!window.jQuery) return;
+
+                window.jQuery.get(
+                    @json(route('products.rubberstrap.part')),
+                    { c: 'passed' },
+                    function(data) {
+                        var parts = typeof data === 'string' ? JSON.parse(data) : data;
+
+                        window.parts_obj = (parts || []).find(function(part) {
+                            return part.part_name === value;
+                        });
+
+                        if (window.parts_obj && typeof window.setToInput === 'function') {
+                            window.setToInput();
+                        }
+                    }
+                );
+            };
+        </script>
+    @endif
+
     <script>
         document.addEventListener(
             'DOMContentLoaded',
