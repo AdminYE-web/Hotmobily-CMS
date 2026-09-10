@@ -17,6 +17,8 @@
                             'contents' => $contents,
                             'product' => $product,
                             'publishedAt' => $publishedAt,
+                            'faqData' => $faqData ?? [],
+                            'reviewData' => $reviewData ?? [],
                         ])
                     @endforeach
                 </div>

@@ -9,7 +9,7 @@
     <meta name="description" content="@yield('description', '小ロット・短納期に対応したオリジナルグッズ、ノベルティの製作サービスです。')">
     <meta name="robots" content="index,follow">
 
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" href="{{ asset('images/home/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('css/site.css') }}">
     @stack('styles')
 </head>

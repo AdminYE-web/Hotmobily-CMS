@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Faq;
 use App\Models\Product;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -25,22 +27,19 @@ class ProductPageController extends Controller
             'page',
         ]);
 
-
         if (
-            !$product->layout
+            ! $product->layout
         ) {
 
             return response()->json([
 
                 'success' => false,
 
-                'message' =>
-                    'Please select a Product Layout first.',
+                'message' => 'Please select a Product Layout first.',
 
             ], 422);
 
         }
-
 
         $page =
             $product
@@ -58,7 +57,6 @@ class ProductPageController extends Controller
                     ]
                 );
 
-
         $layout =
             $product
                 ->layout
@@ -68,7 +66,6 @@ class ProductPageController extends Controller
                 ->layout
                 ->published_layout_json;
 
-
         return response()->json([
 
             'success' => true,
@@ -77,58 +74,80 @@ class ProductPageController extends Controller
 
                 'product' => [
 
-                    'id' =>
-                        $product->id,
+                    'id' => $product->id,
 
-                    'name' =>
-                        $product->name,
+                    'name' => $product->name,
 
-                    'slug' =>
-                        $product->slug,
+                    'slug' => $product->slug,
 
-                    'product_code' =>
-                        $product->product_code,
+                    'product_code' => $product->product_code,
 
-                    'status' =>
-                        $product->status,
+                    'status' => $product->status,
 
                 ],
-
 
                 'product_layout' => [
 
-                    'id' =>
-                        $product->layout->id,
+                    'id' => $product->layout->id,
 
-                    'name' =>
-                        $product->layout->name,
+                    'name' => $product->layout->name,
 
-                    'status' =>
-                        $product->layout->status,
+                    'status' => $product->layout->status,
 
-                    'layout' =>
-                        $layout,
+                    'layout' => $layout,
 
                 ],
 
-
-                'content' =>
-                    $page->draft_content_json
+                'content' => $page->draft_content_json
                     ??
                     [
                         'version' => 1,
                         'blocks' => [],
                     ],
 
+                'published_at' => $page->published_at,
 
-                'published_at' =>
-                    $page->published_at,
+                'faq_products' => Faq::query()
+                    ->where('category', 'product')
+                    ->where('entry_type', 'product')
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->get([
+                        'id',
+                        'material',
+                        'question_name',
+                        'is_active',
+                    ])
+                    ->map(
+                        fn (Faq $faq): array => [
+                            'id' => (int) $faq->id,
+                            'material' => (string) ($faq->material ?? ''),
+                            'question_name' => (string) ($faq->question_name ?? ''),
+                            'is_active' => (bool) $faq->is_active,
+                        ]
+                    )
+                    ->values()
+                    ->all(),
+
+                'review_product_types' => Review::tableExists()
+                        ? Review::query()
+                            ->whereNotNull('product_type')
+                            ->where('product_type', '<>', '')
+                            ->select('product_type')
+                            ->distinct()
+                            ->orderBy('product_type')
+                            ->pluck('product_type')
+                            ->map(static fn (mixed $type): string => trim((string) $type))
+                            ->filter()
+                            ->unique()
+                            ->values()
+                            ->all()
+                        : [],
 
             ],
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -144,22 +163,19 @@ class ProductPageController extends Controller
             'layout'
         );
 
-
         if (
-            !$product->layout
+            ! $product->layout
         ) {
 
             return response()->json([
 
                 'success' => false,
 
-                'message' =>
-                    'Please select a Product Layout first.',
+                'message' => 'Please select a Product Layout first.',
 
             ], 422);
 
         }
-
 
         $layout =
             $product
@@ -169,7 +185,6 @@ class ProductPageController extends Controller
             $product
                 ->layout
                 ->published_layout_json;
-
 
         if (
             empty(
@@ -182,13 +197,11 @@ class ProductPageController extends Controller
 
                 'success' => false,
 
-                'message' =>
-                    'Selected layout is empty.',
+                'message' => 'Selected layout is empty.',
 
             ], 422);
 
         }
-
 
         $request->validate([
 
@@ -199,12 +212,10 @@ class ProductPageController extends Controller
 
         ]);
 
-
         $layoutBlocks =
             $this->collectLayoutBlocks(
                 $layout
             );
-
 
         $incoming =
             $request->input(
@@ -212,18 +223,15 @@ class ProductPageController extends Controller
                 []
             );
 
-
         $cleanContent =
             [];
 
-
         foreach (
-            $layoutBlocks
-            as $blockId => $blockType
+            $layoutBlocks as $blockId => $blockType
         ) {
 
             if (
-                !array_key_exists(
+                ! array_key_exists(
                     $blockId,
                     $incoming
                 )
@@ -232,7 +240,6 @@ class ProductPageController extends Controller
                 continue;
 
             }
-
 
             $cleanContent[
                 $blockId
@@ -249,12 +256,69 @@ class ProductPageController extends Controller
 
         }
 
+        $selectedFaqProductIds = collect($cleanContent)
+            ->filter(
+                fn (mixed $blockContent): bool => is_array($blockContent)
+                    && ! empty($blockContent['faq_product_id'])
+            )
+            ->map(
+                fn (array $blockContent): int => (int) $blockContent['faq_product_id']
+            )
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($selectedFaqProductIds->isNotEmpty()) {
+            $validFaqProductIds = Faq::query()
+                ->whereIn('id', $selectedFaqProductIds->all())
+                ->where('category', 'product')
+                ->where('entry_type', 'product')
+                ->pluck('id')
+                ->map(fn (mixed $id): int => (int) $id)
+                ->all();
+
+            if ($selectedFaqProductIds->diff($validFaqProductIds)->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'blocks' => 'Please select a valid Product FAQ.',
+                ]);
+            }
+        }
+
+        $selectedReviewProductTypes = collect($cleanContent)
+            ->filter(
+                fn (mixed $blockContent): bool => is_array($blockContent)
+                    && ! empty($blockContent['review_product_type'])
+            )
+            ->map(
+                fn (array $blockContent): string => trim((string) $blockContent['review_product_type'])
+            )
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($selectedReviewProductTypes->isNotEmpty()) {
+            $validReviewProductTypes = Review::tableExists()
+                ? Review::query()
+                    ->whereIn('product_type', $selectedReviewProductTypes->all())
+                    ->pluck('product_type')
+                    ->map(static fn (mixed $type): string => trim((string) $type))
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all()
+                : [];
+
+            if ($selectedReviewProductTypes->diff($validReviewProductTypes)->isNotEmpty()) {
+                throw ValidationException::withMessages([
+                    'blocks' => 'Please select a valid Product Review type.',
+                ]);
+            }
+        }
 
         $page =
             $product
                 ->page()
                 ->firstOrCreate();
-
 
         $page->update([
 
@@ -262,34 +326,28 @@ class ProductPageController extends Controller
 
                 'version' => 1,
 
-                'blocks' =>
-                    $cleanContent,
+                'blocks' => $cleanContent,
 
             ],
 
         ]);
-
 
         return response()->json([
 
             'success' => true,
 
-            'message' =>
-                'Product content draft saved.',
-
+            'message' => 'Product content draft saved.',
 
             'data' => [
 
-                'draft_content_json' =>
-                    $page
-                        ->fresh()
-                        ->draft_content_json,
+                'draft_content_json' => $page
+                    ->fresh()
+                    ->draft_content_json,
 
             ],
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -305,22 +363,19 @@ class ProductPageController extends Controller
             'page',
         ]);
 
-
         if (
-            !$product->layout
+            ! $product->layout
         ) {
 
             return response()->json([
 
                 'success' => false,
 
-                'message' =>
-                    'Product Layout is not selected.',
+                'message' => 'Product Layout is not selected.',
 
             ], 422);
 
         }
-
 
         if (
             empty(
@@ -334,20 +389,17 @@ class ProductPageController extends Controller
 
                 'success' => false,
 
-                'message' =>
-                    'Please publish the Product Layout first.',
+                'message' => 'Please publish the Product Layout first.',
 
             ], 422);
 
         }
 
-
         $page =
             $product->page;
 
-
         if (
-            !$page
+            ! $page
             ||
             empty(
                 $page->draft_content_json
@@ -358,45 +410,36 @@ class ProductPageController extends Controller
 
                 'success' => false,
 
-                'message' =>
-                    'Product content draft not found.',
+                'message' => 'Product content draft not found.',
 
             ], 422);
 
         }
 
-
         $page->update([
 
-            'published_content_json' =>
-                $page->draft_content_json,
+            'published_content_json' => $page->draft_content_json,
 
-            'published_at' =>
-                now(),
+            'published_at' => now(),
 
         ]);
-
 
         return response()->json([
 
             'success' => true,
 
-            'message' =>
-                'Product page published.',
-
+            'message' => 'Product page published.',
 
             'data' => [
 
-                'published_at' =>
-                    $page
-                        ->fresh()
-                        ->published_at,
+                'published_at' => $page
+                    ->fresh()
+                    ->published_at,
 
             ],
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -405,26 +448,25 @@ class ProductPageController extends Controller
     */
 
     public function show(
-    string $productPath
-) {
+        string $productPath
+    ) {
 
-    $productPath =
-        trim(
-            $productPath,
-            '/'
-        );
+        $productPath =
+            trim(
+                $productPath,
+                '/'
+            );
 
-
-    $product = Product::query()
-        ->where(
-            'slug',
-            $productPath
-        )
-        ->where(
-            'status',
-            'active'
-        )
-        ->firstOrFail();
+        $product = Product::query()
+            ->where(
+                'slug',
+                $productPath
+            )
+            ->where(
+                'status',
+                'active'
+            )
+            ->firstOrFail();
 
         if (
             $product->status
@@ -437,15 +479,13 @@ class ProductPageController extends Controller
 
         }
 
-
         $product->load([
             'layout',
             'page',
         ]);
 
-
         if (
-            !$product->layout
+            ! $product->layout
             ||
             empty(
                 $product
@@ -460,9 +500,8 @@ class ProductPageController extends Controller
 
         }
 
-
         if (
-            !$product->page
+            ! $product->page
             ||
             empty(
                 $product
@@ -477,53 +516,40 @@ class ProductPageController extends Controller
 
         }
 
-
         return response()->json([
 
             'success' => true,
-
 
             'data' => [
 
                 'product' => [
 
-                    'id' =>
-                        $product->id,
+                    'id' => $product->id,
 
-                    'name' =>
-                        $product->name,
+                    'name' => $product->name,
 
-                    'slug' =>
-                        $product->slug,
+                    'slug' => $product->slug,
 
-                    'product_code' =>
-                        $product->product_code,
+                    'product_code' => $product->product_code,
 
                 ],
 
+                'layout' => $product
+                    ->layout
+                    ->published_layout_json,
 
-                'layout' =>
-                    $product
-                        ->layout
-                        ->published_layout_json,
+                'content' => $product
+                    ->page
+                    ->published_content_json,
 
-
-                'content' =>
-                    $product
-                        ->page
-                        ->published_content_json,
-
-
-                'published_at' =>
-                    $product
-                        ->page
-                        ->published_at,
+                'published_at' => $product
+                    ->page
+                    ->published_at,
 
             ],
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -537,23 +563,19 @@ class ProductPageController extends Controller
         $result =
             [];
 
-
         foreach (
             $layout['rows']
-            ?? []
-            as $row
+            ?? [] as $row
         ) {
 
             foreach (
                 $row['columns']
-                ?? []
-                as $column
+                ?? [] as $column
             ) {
 
                 foreach (
                     $column['blocks']
-                    ?? []
-                    as $block
+                    ?? [] as $block
                 ) {
 
                     $this->collectBlock(
@@ -567,10 +589,8 @@ class ProductPageController extends Controller
 
         }
 
-
         return $result;
     }
-
 
     private function collectBlock(
         array $block,
@@ -590,7 +610,6 @@ class ProductPageController extends Controller
 
         }
 
-
         if (
             (
                 $block['type']
@@ -601,8 +620,7 @@ class ProductPageController extends Controller
 
             foreach (
                 $block['children']
-                ?? []
-                as $child
+                ?? [] as $child
             ) {
 
                 $this->collectBlock(
@@ -615,7 +633,6 @@ class ProductPageController extends Controller
         }
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Sanitize Block Content
@@ -627,7 +644,7 @@ class ProductPageController extends Controller
         mixed $content
     ): array {
         if (
-            !is_array(
+            ! is_array(
                 $content
             )
         ) {
@@ -635,7 +652,6 @@ class ProductPageController extends Controller
             return [];
 
         }
-
 
         return match (
             $type
@@ -646,29 +662,25 @@ class ProductPageController extends Controller
              */
             'product_header' => [
 
-                'title' =>
-                    $this->stringValue(
-                        $content['title']
-                        ?? null,
-                        255
-                    ),
+                'title' => $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    255
+                ),
 
-                'updated_date' =>
-                    $this->stringValue(
-                        $content['updated_date']
-                        ?? null,
-                        20
-                    ),
+                'updated_date' => $this->stringValue(
+                    $content['updated_date']
+                    ?? null,
+                    20
+                ),
 
-                'background_color' =>
-                    $this->hexColorValue(
-                        $content['background_color']
-                        ?? null,
-                        '#ffffff'
-                    ),
+                'background_color' => $this->hexColorValue(
+                    $content['background_color']
+                    ?? null,
+                    '#ffffff'
+                ),
 
-                'show_share' =>
-                    (bool)
+                'show_share' => (bool)
                     (
                         $content['show_share']
                         ?? false
@@ -676,97 +688,84 @@ class ProductPageController extends Controller
 
             ],
 
-
             /*
              * Gallery
              */
             'product_gallery' => [
 
-                'images' =>
-                    $this->stringArray(
-                        $content['images']
-                        ?? []
-                    ),
+                'images' => $this->stringArray(
+                    $content['images']
+                    ?? []
+                ),
 
             ],
-
 
             /*
              * Product Details
              */
             'product_details' => [
 
-                'reference_price' =>
-                    $this->stringValue(
-                        $content['reference_price']
-                        ?? null,
-                        255
-                    ),
+                'reference_price' => $this->stringValue(
+                    $content['reference_price']
+                    ?? null,
+                    255
+                ),
 
-                'total_price' =>
-                    $this->stringValue(
-                        $content['total_price']
-                        ?? null,
-                        255
-                    ),
+                'total_price' => $this->stringValue(
+                    $content['total_price']
+                    ?? null,
+                    255
+                ),
 
-                'shipping_days' =>
-                    $this->integerValue(
-                        $content['shipping_days']
-                        ?? null,
-                        0,
-                        365
-                    ),
+                'shipping_days' => $this->integerValue(
+                    $content['shipping_days']
+                    ?? null,
+                    0,
+                    365
+                ),
 
-                'shipping_note' =>
-                    $this->stringValue(
-                        $content['shipping_note']
-                        ?? null,
-                        2000
-                    ),
+                'shipping_note' => $this->stringValue(
+                    $content['shipping_note']
+                    ?? null,
+                    2000
+                ),
 
-                'highlight_title' =>
-                    $this->stringValue(
-                        $content['highlight_title']
-                        ?? null,
-                        1000
-                    ),
+                'highlight_title' => $this->stringValue(
+                    $content['highlight_title']
+                    ?? null,
+                    1000
+                ),
 
-                'highlight_title_color' =>
-                    $this->hexColorValue(
-                        $content['highlight_title_color']
-                        ?? null,
-                        '#f59420'
-                    ),
+                'highlight_title_color' => $this->hexColorValue(
+                    $content['highlight_title_color']
+                    ?? null,
+                    '#f59420'
+                ),
 
             ],
-
 
             /*
              * Heading
              */
             'heading' => [
 
-                'text' =>
-                    $this->stringValue(
-                        $content['text']
-                        ?? null,
-                        1000
-                    ),
+                'text' => $this->stringValue(
+                    $content['text']
+                    ?? null,
+                    1000
+                ),
 
             ],
-
 
             /*
              * Rich Text
              */
             'rich_text' => [
 
-                'content' =>
-                    (
-                        $content['content_format']
-                        ?? 'plain'
-                    ) === 'html'
+                'content' => (
+                    $content['content_format']
+                    ?? 'plain'
+                ) === 'html'
                         ? $this->sanitizeRichTextHtml(
                             $content['content']
                             ?? null
@@ -777,378 +776,355 @@ class ProductPageController extends Controller
                             20000
                         ),
 
-                'content_format' =>
-                    $this->enumValue(
-                        $content['content_format']
-                        ?? null,
-                        [
-                            'plain',
-                            'html',
-                        ],
-                        'plain'
-                    ),
+                'content_format' => $this->enumValue(
+                    $content['content_format']
+                    ?? null,
+                    [
+                        'plain',
+                        'html',
+                    ],
+                    'plain'
+                ),
 
-                'text_size' =>
-                    $this->enumValue(
-                        $content['text_size']
-                        ?? null,
-                        [
-                            'normal',
-                            'small',
-                        ],
-                        'normal'
-                    ),
+                'text_size' => $this->enumValue(
+                    $content['text_size']
+                    ?? null,
+                    [
+                        'normal',
+                        'small',
+                    ],
+                    'normal'
+                ),
 
             ],
-
 
             /*
              * Image
              */
             'image' => [
 
-                'url' =>
-                    $this->stringValue(
-                        $content['url']
-                        ?? null,
-                        2000
-                    ),
+                'url' => $this->stringValue(
+                    $content['url']
+                    ?? null,
+                    2000
+                ),
 
-                'alt' =>
-                    $this->stringValue(
-                        $content['alt']
-                        ?? null,
-                        500
-                    ),
+                'alt' => $this->stringValue(
+                    $content['alt']
+                    ?? null,
+                    500
+                ),
 
             ],
-
 
             /*
              * YouTube accordion
              */
             'youtube' => [
 
-                'title' =>
-                    $this->stringValue(
-                        $content['title']
-                        ?? null,
-                        1000
-                    ),
+                'title' => $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    1000
+                ),
 
-                'youtube_id' =>
-                    $this->stringValue(
-                        $content['youtube_id']
-                        ?? null,
-                        30
-                    ),
+                'youtube_id' => $this->stringValue(
+                    $content['youtube_id']
+                    ?? null,
+                    30
+                ),
 
-                'youtube_url' =>
-                    $this->stringValue(
-                        $content['youtube_url']
-                        ?? null,
-                        2000
-                    ),
+                'youtube_url' => $this->stringValue(
+                    $content['youtube_url']
+                    ?? null,
+                    2000
+                ),
 
-                'thumbnail_url' =>
-                    $this->stringValue(
-                        $content['thumbnail_url']
-                        ?? null,
-                        2000
-                    ),
+                'thumbnail_url' => $this->stringValue(
+                    $content['thumbnail_url']
+                    ?? null,
+                    2000
+                ),
 
-                'link_text' =>
-                    $this->stringValue(
-                        $content['link_text']
-                        ?? null,
-                        1000
-                    ),
+                'link_text' => $this->stringValue(
+                    $content['link_text']
+                    ?? null,
+                    1000
+                ),
 
-                'link_url' =>
-                    $this->stringValue(
-                        $content['link_url']
-                        ?? null,
-                        2000
-                    ),
+                'link_url' => $this->stringValue(
+                    $content['link_url']
+                    ?? null,
+                    2000
+                ),
 
             ],
-
 
             /*
              * Related blog articles
              */
             'related_blogs' => [
 
-                'title' =>
-                    $this->stringValue(
-                        $content['title']
-                        ?? null,
-                        1000
-                    ),
+                'title' => $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    1000
+                ),
 
-                'articles' =>
-                    $this->sanitizeRelatedBlogArticles(
-                        $content['articles']
-                        ?? null,
-                        $content
-                    ),
+                'articles' => $this->sanitizeRelatedBlogArticles(
+                    $content['articles']
+                    ?? null,
+                    $content
+                ),
 
             ],
-
 
             /*
              * Button
              */
             'button' => [
 
-                'text' =>
-                    $this->stringValue(
-                        $content['text']
-                        ?? null,
-                        255
-                    ),
+                'text' => $this->stringValue(
+                    $content['text']
+                    ?? null,
+                    255
+                ),
 
-                'url' =>
-                    $this->stringValue(
-                        $content['url']
-                        ?? null,
-                        2000
-                    ),
+                'url' => $this->stringValue(
+                    $content['url']
+                    ?? null,
+                    2000
+                ),
 
             ],
-
 
             /*
              * Downloadable Template Button
              */
             'template_button' => [
 
-                'text' =>
-                    $this->stringValue(
-                        $content['text']
-                        ?? null,
-                        255
-                    ),
+                'text' => $this->stringValue(
+                    $content['text']
+                    ?? null,
+                    255
+                ),
 
-                'template_url' =>
-                    $this->stringValue(
-                        $content['template_url']
-                        ?? null,
-                        2000
-                    ),
+                'template_url' => $this->stringValue(
+                    $content['template_url']
+                    ?? null,
+                    2000
+                ),
 
-                'template_name' =>
-                    $this->stringValue(
-                        $content['template_name']
-                        ?? null,
-                        255
-                    ),
+                'template_name' => $this->stringValue(
+                    $content['template_name']
+                    ?? null,
+                    255
+                ),
 
             ],
-
 
             /*
              * Text Link
              */
             'text_link' => [
 
-                'text' =>
-                    $this->stringValue(
-                        $content['text']
-                        ?? null,
-                        1000
-                    ),
+                'text' => $this->stringValue(
+                    $content['text']
+                    ?? null,
+                    1000
+                ),
 
-                'url' =>
-                    $this->stringValue(
-                        $content['url']
-                        ?? null,
-                        2000
-                    ),
+                'url' => $this->stringValue(
+                    $content['url']
+                    ?? null,
+                    2000
+                ),
 
-                'target' =>
-                    $this->enumValue(
+                'target' => $this->enumValue(
 
-                        $content['target']
-                        ?? null,
+                    $content['target']
+                    ?? null,
 
-                        [
-                            '_self',
-                            '_blank',
-                        ],
+                    [
+                        '_self',
+                        '_blank',
+                    ],
 
-                        '_self'
+                    '_self'
 
-                    ),
+                ),
 
-                'text_color' =>
-                    $this->hexColorValue(
-                        $content['text_color']
-                        ?? null,
-                        '#111111'
-                    ),
+                'text_color' => $this->hexColorValue(
+                    $content['text_color']
+                    ?? null,
+                    '#111111'
+                ),
 
             ],
-
 
             /*
              * Flexible Custom Table V2
              */
             'custom_table' => [
 
-                'title' =>
-                    $this->stringValue(
-                        $content['title']
-                        ?? null,
-                        1000
-                    ),
+                'title' => $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    1000
+                ),
 
-                'rows' =>
-                    $this->sanitizeFlexibleTableRows(
-                        $content['rows']
-                        ?? []
-                    ),
+                'rows' => $this->sanitizeFlexibleTableRows(
+                    $content['rows']
+                    ?? []
+                ),
 
             ],
-
 
             /*
              * Info Card
              */
             'info_card' => [
 
-                'title' =>
-                    $this->stringValue(
-                        $content['title']
-                        ?? null,
-                        1000
-                    ),
+                'title' => $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    1000
+                ),
 
-                'title_color' =>
-                    $this->hexColorValue(
-                        $content['title_color']
-                        ?? null,
-                        '#281600'
-                    ),
+                'title_color' => $this->hexColorValue(
+                    $content['title_color']
+                    ?? null,
+                    '#281600'
+                ),
 
-                'image_url' =>
-                    $this->stringValue(
-                        $content['image_url']
-                        ?? null,
-                        2000
-                    ),
+                'image_url' => $this->stringValue(
+                    $content['image_url']
+                    ?? null,
+                    2000
+                ),
 
-                'description' =>
-                    $this->stringValue(
-                        $content['description']
-                        ?? null,
-                        10000
-                    ),
+                'description' => $this->stringValue(
+                    $content['description']
+                    ?? null,
+                    10000
+                ),
 
-                'link_text' =>
-                    $this->stringValue(
-                        $content['link_text']
-                        ?? null,
-                        255
-                    ),
+                'link_text' => $this->stringValue(
+                    $content['link_text']
+                    ?? null,
+                    255
+                ),
 
-                'link_url' =>
-                    $this->stringValue(
-                        $content['link_url']
-                        ?? null,
-                        2000
-                    ),
+                'link_url' => $this->stringValue(
+                    $content['link_url']
+                    ?? null,
+                    2000
+                ),
 
             ],
-
 
             /*
              * Accordion
              */
             'accordion' => [
 
-                'title' =>
-                    $this->stringValue(
-                        $content['title']
-                        ?? null,
-                        1000
-                    ),
+                'title' => $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    1000
+                ),
 
             ],
 
+            /*
+             * Product FAQ
+             */
+            'faq' => [
+
+                'faq_product_id' => $this->integerValue(
+                    $content['faq_product_id']
+                    ?? null,
+                    1,
+                    PHP_INT_MAX
+                ),
+
+            ],
+
+            /*
+             * Product Reviews
+             */
+            'review' => [
+
+                'review_product_type' => $this->stringValue(
+                    $content['review_product_type']
+                    ?? null,
+                    100
+                ),
+
+            ],
 
             /*
              * OptionCardGrid
              */
-            'option_card_grid' =>
-                $this->sanitizeOptionCardGridContent(
-                    $content
-                ),
-
+            'option_card_grid' => $this->sanitizeOptionCardGridContent(
+                $content
+            ),
 
             /*
              * Shipping Schedule
              */
             'shipping_schedule' => [
 
-                'title' =>
-                    $this->stringValue(
-                        $content['title']
-                        ?? null,
-                        1000
-                    ),
+                'title' => $this->stringValue(
+                    $content['title']
+                    ?? null,
+                    1000
+                ),
 
-                'display_type' =>
-                    $this->enumValue(
+                'display_type' => $this->enumValue(
 
-                        $content['display_type']
-                        ?? null,
+                    $content['display_type']
+                    ?? null,
 
-                        [
-                            'stacked',
-                            'grouped',
-                        ],
+                    [
+                        'stacked',
+                        'grouped',
+                    ],
 
-                        'stacked'
+                    'stacked'
 
-                    ),
+                ),
 
-                'intro_text' =>
-                    $this->stringValue(
-                        $content['intro_text']
-                        ?? null,
-                        2000
-                    ),
+                'intro_text' => $this->stringValue(
+                    $content['intro_text']
+                    ?? null,
+                    2000
+                ),
 
-                'start_label' =>
-                    $this->stringValue(
-                        $content['start_label']
-                        ?? null,
-                        500
-                    ),
+                'start_label' => $this->stringValue(
+                    $content['start_label']
+                    ?? null,
+                    500
+                ),
 
-                'shipping_label' =>
-                    $this->stringValue(
-                        $content['shipping_label']
-                        ?? null,
-                        500
-                    ),
+                'shipping_label' => $this->stringValue(
+                    $content['shipping_label']
+                    ?? null,
+                    500
+                ),
 
-                'footer_note' =>
-                    $this->stringValue(
-                        $content['footer_note']
-                        ?? null,
-                        10000
-                    ),
+                'footer_note' => $this->stringValue(
+                    $content['footer_note']
+                    ?? null,
+                    10000
+                ),
 
-                'schedules' =>
-                    $this->sanitizeShippingSchedules(
-                        $content['schedules']
-                        ?? []
-                    ),
+                'schedules' => $this->sanitizeShippingSchedules(
+                    $content['schedules']
+                    ?? []
+                ),
 
             ],
-
 
             /*
              * System Components
@@ -1158,12 +1134,10 @@ class ProductPageController extends Controller
             'divider',
             'spacer' => [],
 
-
             default => [],
 
         };
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1176,38 +1150,31 @@ class ProductPageController extends Controller
         array $legacyContent
     ): array {
         if (
-            !is_array(
+            ! is_array(
                 $articles
             )
         ) {
 
             $articles = [
                 [
-                    'title' =>
-                        $legacyContent['article_1_title']
+                    'title' => $legacyContent['article_1_title']
                         ?? null,
-                    'url' =>
-                        $legacyContent['article_1_url']
+                    'url' => $legacyContent['article_1_url']
                         ?? null,
-                    'image_url' =>
-                        $legacyContent['article_1_image_url']
+                    'image_url' => $legacyContent['article_1_image_url']
                         ?? null,
                 ],
                 [
-                    'title' =>
-                        $legacyContent['article_2_title']
+                    'title' => $legacyContent['article_2_title']
                         ?? null,
-                    'url' =>
-                        $legacyContent['article_2_url']
+                    'url' => $legacyContent['article_2_url']
                         ?? null,
-                    'image_url' =>
-                        $legacyContent['article_2_image_url']
+                    'image_url' => $legacyContent['article_2_image_url']
                         ?? null,
                 ],
             ];
 
         }
-
 
         $sanitized = [];
 
@@ -1219,7 +1186,7 @@ class ProductPageController extends Controller
             ) as $article
         ) {
             if (
-                !is_array(
+                ! is_array(
                     $article
                 )
             ) {
@@ -1228,28 +1195,23 @@ class ProductPageController extends Controller
 
             }
 
-
             $item = [
-                'title' =>
-                    $this->stringValue(
-                        $article['title']
-                        ?? null,
-                        1000
-                    ),
-                'url' =>
-                    $this->stringValue(
-                        $article['url']
-                        ?? null,
-                        2000
-                    ),
-                'image_url' =>
-                    $this->stringValue(
-                        $article['image_url']
-                        ?? null,
-                        2000
-                    ),
+                'title' => $this->stringValue(
+                    $article['title']
+                    ?? null,
+                    1000
+                ),
+                'url' => $this->stringValue(
+                    $article['url']
+                    ?? null,
+                    2000
+                ),
+                'image_url' => $this->stringValue(
+                    $article['image_url']
+                    ?? null,
+                    2000
+                ),
             ];
-
 
             if (
                 $item['title'] === null
@@ -1261,14 +1223,11 @@ class ProductPageController extends Controller
 
             }
 
-
             $sanitized[] = $item;
         }
 
-
         return $sanitized;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1282,31 +1241,27 @@ class ProductPageController extends Controller
 
         $sanitized = [
 
-            'title' =>
-                $this->stringValue(
-                    $content['title']
-                    ?? null,
-                    1000
-                ),
+            'title' => $this->stringValue(
+                $content['title']
+                ?? null,
+                1000
+            ),
 
-            'intro' =>
-                $this->stringValue(
-                    $content['intro']
-                    ?? null,
-                    5000
-                ),
+            'intro' => $this->stringValue(
+                $content['intro']
+                ?? null,
+                5000
+            ),
 
-            'options_json' =>
-                $this->stringValue(
-                    $content['options_json']
-                    ?? null,
-                    50000
-                ),
+            'options_json' => $this->stringValue(
+                $content['options_json']
+                ?? null,
+                50000
+            ),
 
             'tabs' => [],
 
         ];
-
 
         if (
             isset($content['tabs'])
@@ -1316,7 +1271,7 @@ class ProductPageController extends Controller
 
             foreach ($content['tabs'] as $tab) {
 
-                if (!is_array($tab)) {
+                if (! is_array($tab)) {
                     continue;
                 }
 
@@ -1331,20 +1286,17 @@ class ProductPageController extends Controller
 
                 $tabData = [
 
-                    'id' =>
-                        $this->stringValue(
-                            $tab['id'] ?? uniqid('tab_'),
-                            100
-                        ),
+                    'id' => $this->stringValue(
+                        $tab['id'] ?? uniqid('tab_'),
+                        100
+                    ),
 
-                    'title' =>
-                        $this->stringValue(
-                            $tab['title'] ?? '',
-                            255
-                        ),
+                    'title' => $this->stringValue(
+                        $tab['title'] ?? '',
+                        255
+                    ),
 
-                    'type' =>
-                        $type,
+                    'type' => $type,
 
                     'items' => [],
 
@@ -1372,35 +1324,31 @@ class ProductPageController extends Controller
 
                         foreach ($tab['items'] as $item) {
 
-                            if (!is_array($item)) {
+                            if (! is_array($item)) {
                                 continue;
                             }
 
                             $tabData['items'][] = [
 
-                                'image_url' =>
-                                    $this->stringValue(
-                                        $item['image_url'] ?? null,
-                                        2000
-                                    ),
+                                'image_url' => $this->stringValue(
+                                    $item['image_url'] ?? null,
+                                    2000
+                                ),
 
-                                'title' =>
-                                    $this->stringValue(
-                                        $item['title'] ?? null,
-                                        255
-                                    ),
+                                'title' => $this->stringValue(
+                                    $item['title'] ?? null,
+                                    255
+                                ),
 
-                                'price' =>
-                                    $this->stringValue(
-                                        $item['price'] ?? null,
-                                        100
-                                    ),
+                                'price' => $this->stringValue(
+                                    $item['price'] ?? null,
+                                    100
+                                ),
 
-                                'zoom_url' =>
-                                    $this->stringValue(
-                                        $item['zoom_url'] ?? null,
-                                        2000
-                                    ),
+                                'zoom_url' => $this->stringValue(
+                                    $item['zoom_url'] ?? null,
+                                    2000
+                                ),
 
                             ];
 
@@ -1418,41 +1366,36 @@ class ProductPageController extends Controller
 
                         foreach ($tab['items'] as $item) {
 
-                            if (!is_array($item)) {
+                            if (! is_array($item)) {
                                 continue;
                             }
 
                             $tabData['items'][] = [
 
-                                'image_url' =>
-                                    $this->stringValue(
-                                        $item['image_url'] ?? null,
-                                        2000
-                                    ),
+                                'image_url' => $this->stringValue(
+                                    $item['image_url'] ?? null,
+                                    2000
+                                ),
 
-                                'title' =>
-                                    $this->stringValue(
-                                        $item['title'] ?? null,
-                                        255
-                                    ),
+                                'title' => $this->stringValue(
+                                    $item['title'] ?? null,
+                                    255
+                                ),
 
-                                'description' =>
-                                    $this->stringValue(
-                                        $item['description'] ?? null,
-                                        5000
-                                    ),
+                                'description' => $this->stringValue(
+                                    $item['description'] ?? null,
+                                    5000
+                                ),
 
-                                'link_text' =>
-                                    $this->stringValue(
-                                        $item['link_text'] ?? null,
-                                        255
-                                    ),
+                                'link_text' => $this->stringValue(
+                                    $item['link_text'] ?? null,
+                                    255
+                                ),
 
-                                'link_url' =>
-                                    $this->stringValue(
-                                        $item['link_url'] ?? null,
-                                        2000
-                                    ),
+                                'link_url' => $this->stringValue(
+                                    $item['link_url'] ?? null,
+                                    2000
+                                ),
 
                             ];
 
@@ -1469,10 +1412,8 @@ class ProductPageController extends Controller
 
         }
 
-
         return $sanitized;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1484,7 +1425,7 @@ class ProductPageController extends Controller
         mixed $rows
     ): array {
         if (
-            !is_array(
+            ! is_array(
                 $rows
             )
         ) {
@@ -1492,7 +1433,6 @@ class ProductPageController extends Controller
             return [];
 
         }
-
 
         /*
          * จำกัด 100 Rows
@@ -1504,18 +1444,15 @@ class ProductPageController extends Controller
                 100
             );
 
-
         $cleanRows =
             [];
 
-
         foreach (
-            $rows
-            as $row
+            $rows as $row
         ) {
 
             if (
-                !is_array(
+                ! is_array(
                     $row
                 )
             ) {
@@ -1523,7 +1460,6 @@ class ProductPageController extends Controller
                 continue;
 
             }
-
 
             $cells =
                 is_array(
@@ -1537,18 +1473,15 @@ class ProductPageController extends Controller
                     )
                     : [];
 
-
             $cleanCells =
                 [];
 
-
             foreach (
-                $cells
-                as $cell
+                $cells as $cell
             ) {
 
                 if (
-                    !is_array(
+                    ! is_array(
                         $cell
                     )
                 ) {
@@ -1557,153 +1490,136 @@ class ProductPageController extends Controller
 
                 }
 
-
                 $cleanCells[] = [
 
-                    'id' =>
-                        $this->stringValue(
-                            $cell['id']
-                            ?? null,
-                            100
-                        ),
+                    'id' => $this->stringValue(
+                        $cell['id']
+                        ?? null,
+                        100
+                    ),
 
-                    'content' =>
-                        $this->stringValue(
-                            $cell['content']
-                            ?? null,
-                            20000
-                        ),
+                    'content' => $this->stringValue(
+                        $cell['content']
+                        ?? null,
+                        20000
+                    ),
 
                     /*
                      * 0.5% steps
                      */
-                    'width' =>
-                        $this->tableWidthValue(
-                            $cell['width']
-                            ?? null
-                        ),
+                    'width' => $this->tableWidthValue(
+                        $cell['width']
+                        ?? null
+                    ),
 
                     /*
                      * NEW
                      */
-                    'rowspan' =>
-                        $this->integerValue(
-                            $cell['rowspan']
-                            ?? 1,
-                            1,
-                            20
-                        )
+                    'rowspan' => $this->integerValue(
+                        $cell['rowspan']
+                        ?? 1,
+                        1,
+                        20
+                    )
                         ?? 1,
 
-                    'background_color' =>
-                        $this->hexColorValue(
-                            $cell['background_color']
-                            ?? null,
-                            '#ffffff'
-                        ),
+                    'background_color' => $this->hexColorValue(
+                        $cell['background_color']
+                        ?? null,
+                        '#ffffff'
+                    ),
 
-                    'text_color' =>
-                        $this->hexColorValue(
-                            $cell['text_color']
-                            ?? null,
-                            '#000000'
-                        ),
+                    'text_color' => $this->hexColorValue(
+                        $cell['text_color']
+                        ?? null,
+                        '#000000'
+                    ),
 
-                    'align' =>
-                        $this->enumValue(
+                    'align' => $this->enumValue(
 
-                            $cell['align']
-                            ?? null,
+                        $cell['align']
+                        ?? null,
 
-                            [
-                                'left',
-                                'center',
-                                'right',
-                            ],
+                        [
+                            'left',
+                            'center',
+                            'right',
+                        ],
 
-                            'center'
+                        'center'
 
-                        ),
+                    ),
 
-                    'vertical_align' =>
-                        $this->enumValue(
+                    'vertical_align' => $this->enumValue(
 
-                            $cell['vertical_align']
-                            ?? null,
+                        $cell['vertical_align']
+                        ?? null,
 
-                            [
-                                'top',
-                                'middle',
-                                'bottom',
-                            ],
+                        [
+                            'top',
+                            'middle',
+                            'bottom',
+                        ],
 
-                            'middle'
+                        'middle'
 
-                        ),
+                    ),
 
-                    'bold' =>
-                        (bool)
+                    'bold' => (bool)
                         (
                             $cell['bold']
                             ?? false
                         ),
 
-                    'padding' =>
-                        $this->integerValue(
-                            $cell['padding']
-                            ?? null,
-                            0,
-                            50
-                        )
+                    'padding' => $this->integerValue(
+                        $cell['padding']
+                        ?? null,
+                        0,
+                        50
+                    )
                         ?? 8,
 
                 ];
 
             }
 
-
             $cleanRows[] = [
 
-                'id' =>
-                    $this->stringValue(
-                        $row['id']
-                        ?? null,
-                        100
-                    ),
+                'id' => $this->stringValue(
+                    $row['id']
+                    ?? null,
+                    100
+                ),
 
-                'height' =>
-                    $this->integerValue(
-                        $row['height']
-                        ?? null,
-                        0,
-                        1000
-                    )
+                'height' => $this->integerValue(
+                    $row['height']
+                    ?? null,
+                    0,
+                    1000
+                )
                     ?? 0,
 
-                'background_color' =>
-                    preg_match(
-                        '/^#[0-9a-fA-F]{6}$/',
-                        trim(
-                            (string)
-                            (
-                                $row['background_color']
-                                ?? ''
-                            )
+                'background_color' => preg_match(
+                    '/^#[0-9a-fA-F]{6}$/',
+                    trim(
+                        (string)
+                        (
+                            $row['background_color']
+                            ?? ''
                         )
-                    ) === 1
+                    )
+                ) === 1
                         ? $this->hexColorValue(
                             $row['background_color'],
                             '#ffffff'
                         )
                         : '',
 
-                'cells' =>
-                    $cleanCells,
+                'cells' => $cleanCells,
 
             ];
 
         }
-
 
         /*
          * Validate Width + Rowspan
@@ -1712,10 +1628,8 @@ class ProductPageController extends Controller
             $cleanRows
         );
 
-
         return $cleanRows;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1739,7 +1653,6 @@ class ProductPageController extends Controller
         ) {
 
             throw ValidationException::withMessages([
-
                 'blocks' => [
                     'Custom Table must have at least one row.',
                 ],
@@ -1748,10 +1661,8 @@ class ProductPageController extends Controller
 
         }
 
-
         $totalUnits =
             200;
-
 
         /*
          * Rowspan จาก Row ก่อน
@@ -1759,16 +1670,13 @@ class ProductPageController extends Controller
         $spans =
             [];
 
-
         $totalRows =
             count(
                 $rows
             );
 
-
         foreach (
-            $rows
-            as $rowIndex => $row
+            $rows as $rowIndex => $row
         ) {
 
             /*
@@ -1778,8 +1686,7 @@ class ProductPageController extends Controller
                 array_values(
                     array_filter(
                         $spans,
-                        fn (array $span) =>
-                            $span['start_row']
+                        fn (array $span) => $span['start_row']
                             <
                             $rowIndex
                             &&
@@ -1789,26 +1696,21 @@ class ProductPageController extends Controller
                     )
                 );
 
-
             $occupied =
                 array_map(
                     fn (array $span) => [
 
-                        'start' =>
-                            $span['start'],
+                        'start' => $span['start'],
 
-                        'end' =>
-                            $span['end'],
+                        'end' => $span['end'],
 
                     ],
                     $inherited
                 );
 
-
             foreach (
                 $row['cells']
-                ?? []
-                as $cellIndex => $cell
+                ?? [] as $cellIndex => $cell
             ) {
 
                 $widthUnits =
@@ -1822,14 +1724,12 @@ class ProductPageController extends Controller
                         2
                     );
 
-
                 $rowspan =
                     (int)
                     (
                         $cell['rowspan']
                         ?? 1
                     );
-
 
                 /*
                  * Row Span เกิน Table
@@ -1843,7 +1743,6 @@ class ProductPageController extends Controller
                 ) {
 
                     throw ValidationException::withMessages([
-
                         'blocks' => [
 
                             sprintf(
@@ -1862,7 +1761,6 @@ class ProductPageController extends Controller
 
                 }
 
-
                 $start =
                     $this->findFirstFreeTablePosition(
 
@@ -1874,13 +1772,11 @@ class ProductPageController extends Controller
 
                     );
 
-
                 if (
                     $start === null
                 ) {
 
                     throw ValidationException::withMessages([
-
                         'blocks' => [
 
                             sprintf(
@@ -1899,23 +1795,18 @@ class ProductPageController extends Controller
 
                 }
 
-
                 $end =
                     $start
                     +
                     $widthUnits;
 
-
                 $occupied[] = [
 
-                    'start' =>
-                        $start,
+                    'start' => $start,
 
-                    'end' =>
-                        $end,
+                    'end' => $end,
 
                 ];
-
 
                 if (
                     $rowspan > 1
@@ -1923,17 +1814,13 @@ class ProductPageController extends Controller
 
                     $spans[] = [
 
-                        'start' =>
-                            $start,
+                        'start' => $start,
 
-                        'end' =>
-                            $end,
+                        'end' => $end,
 
-                        'start_row' =>
-                            $rowIndex,
+                        'start_row' => $rowIndex,
 
-                        'end_row' =>
-                            $rowIndex
+                        'end_row' => $rowIndex
                             +
                             $rowspan
                             -
@@ -1945,12 +1832,10 @@ class ProductPageController extends Controller
 
             }
 
-
             $coveredUnits =
                 $this->sumOccupiedTableUnits(
                     $occupied
                 );
-
 
             if (
                 $coveredUnits
@@ -1959,7 +1844,6 @@ class ProductPageController extends Controller
             ) {
 
                 throw ValidationException::withMessages([
-
                     'blocks' => [
 
                         sprintf(
@@ -1980,7 +1864,6 @@ class ProductPageController extends Controller
 
         }
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -2003,26 +1886,21 @@ class ProductPageController extends Controller
 
         }
 
-
         usort(
             $occupied,
             fn (
                 array $a,
                 array $b
-            ) =>
-                $a['start']
+            ) => $a['start']
                 <=>
                 $b['start']
         );
 
-
         $candidate =
             0;
 
-
         foreach (
-            $occupied
-            as $range
+            $occupied as $range
         ) {
 
             if (
@@ -2037,7 +1915,6 @@ class ProductPageController extends Controller
 
             }
 
-
             $candidate =
                 max(
                     $candidate,
@@ -2045,7 +1922,6 @@ class ProductPageController extends Controller
                 );
 
         }
-
 
         if (
             $candidate
@@ -2059,10 +1935,8 @@ class ProductPageController extends Controller
 
         }
 
-
         return null;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -2084,30 +1958,24 @@ class ProductPageController extends Controller
 
         }
 
-
         usort(
             $ranges,
             fn (
                 array $a,
                 array $b
-            ) =>
-                $a['start']
+            ) => $a['start']
                 <=>
                 $b['start']
         );
 
-
         $currentStart =
             $ranges[0]['start'];
-
 
         $currentEnd =
             $ranges[0]['end'];
 
-
         $total =
             0;
-
 
         for (
             $index = 1;
@@ -2119,7 +1987,6 @@ class ProductPageController extends Controller
                 $ranges[
                     $index
                 ];
-
 
             if (
                 $range['start']
@@ -2133,37 +2000,30 @@ class ProductPageController extends Controller
                         $range['end']
                     );
 
-
                 continue;
 
             }
-
 
             $total +=
                 $currentEnd
                 -
                 $currentStart;
 
-
             $currentStart =
                 $range['start'];
-
 
             $currentEnd =
                 $range['end'];
 
         }
 
-
         $total +=
             $currentEnd
             -
             $currentStart;
 
-
         return $total;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -2175,7 +2035,7 @@ class ProductPageController extends Controller
         mixed $value
     ): float {
         if (
-            !is_numeric(
+            ! is_numeric(
                 $value
             )
         ) {
@@ -2184,11 +2044,9 @@ class ProductPageController extends Controller
 
         }
 
-
         $number =
             (float)
             $value;
-
 
         /*
          * 0.5% step
@@ -2202,7 +2060,6 @@ class ProductPageController extends Controller
             /
             2;
 
-
         return min(
 
             100,
@@ -2215,7 +2072,6 @@ class ProductPageController extends Controller
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Shipping Schedule
@@ -2226,7 +2082,7 @@ class ProductPageController extends Controller
         mixed $schedules
     ): array {
         if (
-            !is_array(
+            ! is_array(
                 $schedules
             )
         ) {
@@ -2235,22 +2091,19 @@ class ProductPageController extends Controller
 
         }
 
-
         $clean =
             [];
-
 
         foreach (
             array_slice(
                 $schedules,
                 0,
                 20
-            )
-            as $schedule
+            ) as $schedule
         ) {
 
             if (
-                !is_array(
+                ! is_array(
                     $schedule
                 )
             ) {
@@ -2259,58 +2112,51 @@ class ProductPageController extends Controller
 
             }
 
-
             $clean[] = [
 
-                'id' =>
-                    $this->stringValue(
-                        $schedule['id']
-                        ?? null,
-                        100
-                    ),
+                'id' => $this->stringValue(
+                    $schedule['id']
+                    ?? null,
+                    100
+                ),
 
-                'label' =>
-                    $this->stringValue(
-                        $schedule['label']
-                        ?? null,
-                        1000
-                    ),
+                'label' => $this->stringValue(
+                    $schedule['label']
+                    ?? null,
+                    1000
+                ),
 
-                'days' =>
-                    $this->integerValue(
-                        $schedule['days']
-                        ?? null,
-                        0,
-                        365
-                    )
+                'days' => $this->integerValue(
+                    $schedule['days']
+                    ?? null,
+                    0,
+                    365
+                )
                     ?? 0,
 
-                'theme' =>
-                    $this->enumValue(
+                'theme' => $this->enumValue(
 
-                        $schedule['theme']
-                        ?? null,
+                    $schedule['theme']
+                    ?? null,
 
-                        [
-                            'blue',
-                            'pink',
-                            'cyan',
-                            'orange',
-                            'gray',
-                        ],
+                    [
+                        'blue',
+                        'pink',
+                        'cyan',
+                        'orange',
+                        'gray',
+                    ],
 
-                        'blue'
+                    'blue'
 
-                    ),
+                ),
 
             ];
 
         }
 
-
         return $clean;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -2333,7 +2179,6 @@ class ProductPageController extends Controller
 
         }
 
-
         if (
             filter_var(
                 $value,
@@ -2345,7 +2190,6 @@ class ProductPageController extends Controller
             return null;
 
         }
-
 
         return max(
 
@@ -2360,7 +2204,6 @@ class ProductPageController extends Controller
         );
     }
 
-
     private function enumValue(
         mixed $value,
         array $allowed,
@@ -2373,7 +2216,6 @@ class ProductPageController extends Controller
                 ?? ''
             );
 
-
         return in_array(
             $value,
             $allowed,
@@ -2382,7 +2224,6 @@ class ProductPageController extends Controller
             ? $value
             : $default;
     }
-
 
     private function hexColorValue(
         mixed $value,
@@ -2396,7 +2237,6 @@ class ProductPageController extends Controller
                 )
             );
 
-
         return preg_match(
             '/^#[0-9a-f]{6}$/',
             $color
@@ -2405,7 +2245,6 @@ class ProductPageController extends Controller
             ? $color
             : $default;
     }
-
 
     private function sanitizeRichTextHtml(
         mixed $value
@@ -2418,7 +2257,6 @@ class ProductPageController extends Controller
 
         }
 
-
         $html =
             mb_substr(
                 trim(
@@ -2429,7 +2267,6 @@ class ProductPageController extends Controller
                 20000
             );
 
-
         if (
             $html === ''
         ) {
@@ -2438,9 +2275,8 @@ class ProductPageController extends Controller
 
         }
 
-
         if (
-            !class_exists(
+            ! class_exists(
                 \DOMDocument::class
             )
         ) {
@@ -2457,63 +2293,53 @@ class ProductPageController extends Controller
 
         }
 
-
         $document =
             new \DOMDocument(
                 '1.0',
                 'UTF-8'
             );
 
-
         $previousErrors =
             libxml_use_internal_errors(
                 true
             );
 
-
         $document->loadHTML(
             '<?xml encoding="UTF-8"><div id="rich-text-root">'
-            . $html
-            . '</div>',
+            .$html
+            .'</div>',
             LIBXML_HTML_NOIMPLIED
             |
             LIBXML_HTML_NODEFDTD
         );
-
 
         libxml_clear_errors();
         libxml_use_internal_errors(
             $previousErrors
         );
 
-
         $root =
             $document->getElementById(
                 'rich-text-root'
             );
 
-
         if (
-            !$root
+            ! $root
         ) {
 
             return '';
 
         }
 
-
         $this->sanitizeRichTextChildren(
             $root
         );
 
-
         $result =
             '';
 
-
         foreach (
-            $root->childNodes
-            as $child
+            $root->childNodes as $child
         ) {
 
             $result .=
@@ -2523,10 +2349,8 @@ class ProductPageController extends Controller
 
         }
 
-
         return $result;
     }
-
 
     private function sanitizeRichTextChildren(
         \DOMNode $parent
@@ -2546,7 +2370,6 @@ class ProductPageController extends Controller
             'font',
         ];
 
-
         $dangerousTags = [
             'script',
             'style',
@@ -2555,20 +2378,17 @@ class ProductPageController extends Controller
             'embed',
         ];
 
-
         $children =
             iterator_to_array(
                 $parent->childNodes
             );
 
-
         foreach (
-            $children
-            as $child
+            $children as $child
         ) {
 
             if (
-                !$child
+                ! $child
                 instanceof \DOMElement
             ) {
 
@@ -2576,12 +2396,10 @@ class ProductPageController extends Controller
 
             }
 
-
             $tag =
                 strtolower(
                     $child->tagName
                 );
-
 
             if (
                 in_array(
@@ -2599,9 +2417,8 @@ class ProductPageController extends Controller
 
             }
 
-
             if (
-                !in_array(
+                ! in_array(
                     $tag,
                     $allowedTags,
                     true
@@ -2611,7 +2428,6 @@ class ProductPageController extends Controller
                 $this->sanitizeRichTextChildren(
                     $child
                 );
-
 
                 while (
                     $child->firstChild
@@ -2624,7 +2440,6 @@ class ProductPageController extends Controller
 
                 }
 
-
                 $parent->removeChild(
                     $child
                 );
@@ -2632,7 +2447,6 @@ class ProductPageController extends Controller
                 continue;
 
             }
-
 
             $color =
                 $tag === 'font'
@@ -2643,7 +2457,6 @@ class ProductPageController extends Controller
                     )
                     : '';
 
-
             $size =
                 $tag === 'font'
                     ? $child->getAttribute(
@@ -2651,14 +2464,12 @@ class ProductPageController extends Controller
                     )
                     : '';
 
-
             $face =
                 $tag === 'font'
                     ? $child->getAttribute(
                         'face'
                     )
                     : '';
-
 
             while (
                 $child->attributes->length
@@ -2670,7 +2481,6 @@ class ProductPageController extends Controller
                 );
 
             }
-
 
             if (
                 preg_match(
@@ -2686,7 +2496,6 @@ class ProductPageController extends Controller
 
             }
 
-
             if (
                 preg_match(
                     '/^[1-7]$/',
@@ -2700,7 +2509,6 @@ class ProductPageController extends Controller
                 );
 
             }
-
 
             if (
                 in_array(
@@ -2722,14 +2530,12 @@ class ProductPageController extends Controller
 
             }
 
-
             $this->sanitizeRichTextChildren(
                 $child
             );
 
         }
     }
-
 
     private function stringValue(
         mixed $value,
@@ -2742,7 +2548,6 @@ class ProductPageController extends Controller
             return null;
 
         }
-
 
         return mb_substr(
 
@@ -2758,12 +2563,11 @@ class ProductPageController extends Controller
         );
     }
 
-
     private function stringArray(
         mixed $values
     ): array {
         if (
-            !is_array(
+            ! is_array(
                 $values
             )
         ) {
@@ -2772,25 +2576,22 @@ class ProductPageController extends Controller
 
         }
 
-
         return collect(
             $values
         )
-        ->map(
-            fn ($value) =>
-                trim(
+            ->map(
+                fn ($value) => trim(
                     (string)
                     $value
                 )
-        )
-        ->filter()
-        ->take(
-            20
-        )
-        ->values()
-        ->all();
+            )
+            ->filter()
+            ->take(
+                20
+            )
+            ->values()
+            ->all();
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -2814,12 +2615,10 @@ class ProductPageController extends Controller
 
         ]);
 
-
         $file =
             $request->file(
                 'image'
             );
-
 
         /*
          * Verify actual image
@@ -2835,37 +2634,29 @@ class ProductPageController extends Controller
 
                 'success' => false,
 
-                'message' =>
-                    'The uploaded file is not a valid image.',
+                'message' => 'The uploaded file is not a valid image.',
 
             ], 422);
 
         }
 
-
         $mime =
             $file->getMimeType();
 
-
         $extensionMap = [
 
-            'image/jpeg' =>
-                'jpg',
+            'image/jpeg' => 'jpg',
 
-            'image/png' =>
-                'png',
+            'image/png' => 'png',
 
-            'image/webp' =>
-                'webp',
+            'image/webp' => 'webp',
 
-            'image/gif' =>
-                'gif',
+            'image/gif' => 'gif',
 
         ];
 
-
         if (
-            !isset(
+            ! isset(
                 $extensionMap[
                     $mime
                 ]
@@ -2876,13 +2667,11 @@ class ProductPageController extends Controller
 
                 'success' => false,
 
-                'message' =>
-                    'Unsupported image type.',
+                'message' => 'Unsupported image type.',
 
             ], 422);
 
         }
-
 
         $filename =
             Str::uuid()
@@ -2892,7 +2681,6 @@ class ProductPageController extends Controller
             $extensionMap[
                 $mime
             ];
-
 
         $path =
             $file->storeAs(
@@ -2907,44 +2695,35 @@ class ProductPageController extends Controller
 
             );
 
-
         $url =
             Storage::disk(
                 'public'
             )
-            ->url(
-                $path
-            );
-
+                ->url(
+                    $path
+                );
 
         return response()->json([
 
             'success' => true,
 
-
             'data' => [
 
-                'path' =>
-                    $path,
+                'path' => $path,
 
-                'url' =>
-                    $url,
+                'url' => $url,
 
-                'filename' =>
-                    $filename,
+                'filename' => $filename,
 
-                'original_name' =>
-                    $file
-                        ->getClientOriginalName(),
+                'original_name' => $file
+                    ->getClientOriginalName(),
 
-                'mime_type' =>
-                    $mime,
+                'mime_type' => $mime,
 
             ],
 
         ], 201);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -2967,18 +2746,15 @@ class ProductPageController extends Controller
 
         ]);
 
-
         $file =
             $request->file(
                 'template'
             );
 
-
         $extension =
             strtolower(
                 $file->getClientOriginalExtension()
             );
-
 
         $filename =
             Str::uuid()
@@ -2986,7 +2762,6 @@ class ProductPageController extends Controller
             '.'
             .
             $extension;
-
 
         $path =
             $file->storeAs(
@@ -3003,15 +2778,13 @@ class ProductPageController extends Controller
 
             );
 
-
         $url =
             Storage::disk(
                 'public'
             )
-            ->url(
-                $path
-            );
-
+                ->url(
+                    $path
+                );
 
         return response()->json([
 
@@ -3019,21 +2792,16 @@ class ProductPageController extends Controller
 
             'data' => [
 
-                'path' =>
-                    $path,
+                'path' => $path,
 
-                'url' =>
-                    $url,
+                'url' => $url,
 
-                'filename' =>
-                    $filename,
+                'filename' => $filename,
 
-                'original_name' =>
-                    $file
-                        ->getClientOriginalName(),
+                'original_name' => $file
+                    ->getClientOriginalName(),
 
-                'mime_type' =>
-                    $file->getMimeType(),
+                'mime_type' => $file->getMimeType(),
 
             ],
 

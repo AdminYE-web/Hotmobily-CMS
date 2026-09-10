@@ -19,6 +19,8 @@
 --}}
     @include('partials.legacy-head-products')
 
+    <link rel="stylesheet" href="/reviews/css/reviews.css" type="text/css">
+
 
     @if ($product->slug === 'rubberstrap')
         <link rel="preload" type="text/css" href="/css/homepage_hotstrap.css" as="style"
@@ -543,6 +545,201 @@
             color: #000 !important;
 
             text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
+           Product FAQ
+        ============================================================ */
+
+        .store-product-faq {
+            width: 100%;
+
+            margin-top: 15px;
+
+            color: #281600;
+
+            font-size: 16px;
+            line-height: 1.65;
+        }
+
+
+        .store-product-faq-item {
+            margin-bottom: 15px;
+        }
+
+
+        .store-product-faq-item p {
+            margin: 0;
+        }
+
+
+        .store-product-faq-question-label {
+            color: #f00000;
+        }
+
+
+        .store-product-faq-answer-label {
+            flex: 0 0 34px;
+
+            color: #0000ff;
+        }
+
+
+        .store-product-faq-answer-row {
+            display: flex;
+
+            align-items: flex-start;
+        }
+
+
+        .store-product-faq-answer-text {
+            flex: 1 1 auto;
+
+            min-width: 0;
+        }
+
+
+        .store-product-faq-answer-text p {
+            margin: 0;
+        }
+
+
+        .store-product-faq-last-item {
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        .store-product-faq-last-item::after {
+            position: absolute;
+
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, .6) 50%,
+                    rgba(255, 255, 255, 1) 100%
+                );
+
+            content: '';
+
+            pointer-events: none;
+        }
+
+
+        .store-product-faq-link {
+            margin-top: 15px;
+
+            text-align: right;
+        }
+
+
+        .store-product-faq-link a {
+            color: #111 !important;
+
+            text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
+           Product Reviews
+        ============================================================ */
+
+        .store-product-review-component {
+            width: 100%;
+
+            margin-top: 15px;
+        }
+
+
+        .store-product-review-component .reviews_area {
+            display: grid;
+            grid-template-columns: 30px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+
+            margin: 0 0 10px;
+        }
+
+
+        .store-product-review-component .reviews_box {
+            min-width: 0;
+        }
+
+
+        .store-product-review-component .rev-last-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+
+        .store-product-review-component .rev-last-item::after {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            height: 100%;
+
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0) 30%,
+                rgba(255, 255, 255, 1) 100%
+            );
+
+            content: '';
+            pointer-events: none;
+            transition: opacity .5s ease-in-out;
+        }
+
+
+        .store-product-review-component .rev-last-item .rev-question {
+            opacity: .6;
+        }
+
+
+        .store-product-review-component .rev-last-item .rev-answer {
+            opacity: .3;
+        }
+
+
+        .store-product-review-link {
+            margin-top: 10px;
+
+            text-align: right;
+        }
+
+
+        .store-product-review-link a {
+            color: #000 !important;
+
+            text-decoration: underline !important;
+        }
+
+
+        @media (max-width: 768px) {
+
+            .store-product-review-component .reviews_area {
+                grid-template-columns: 24px minmax(0, 1fr);
+                gap: 11px;
+            }
+
+        }
+
+
+        @media (max-width: 768px) {
+
+            .store-product-faq {
+                font-size: 15px;
+            }
+
         }
 
 
@@ -1429,7 +1626,11 @@
         @endphp
 
         <div class="product-layout-container">
-            @include('products.partials.layout-rows', ['rows' => $beforeOrderRows])
+            @include('products.partials.layout-rows', [
+                'rows' => $beforeOrderRows,
+                'faqData' => $faqData ?? [],
+                'reviewData' => $reviewData ?? [],
+            ])
 
         </div>
 
@@ -1439,7 +1640,11 @@
 
         @if (count($afterOrderRows))
             <div class="product-layout-container product-layout-container-after-order">
-                @include('products.partials.layout-rows', ['rows' => $afterOrderRows])
+                @include('products.partials.layout-rows', [
+                    'rows' => $afterOrderRows,
+                    'faqData' => $faqData ?? [],
+                    'reviewData' => $reviewData ?? [],
+                ])
             </div>
         @endif
 

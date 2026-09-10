@@ -23,13 +23,11 @@ class ProductLayoutController extends Controller
                 ->latest()
                 ->get();
 
-
         return response()->json([
             'success' => true,
             'data' => $layouts,
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -64,47 +62,36 @@ class ProductLayoutController extends Controller
 
             ]);
 
-
         $layout =
             ProductLayout::create([
 
-                'name' =>
-                    $data['name'],
+                'name' => $data['name'],
 
-                'slug' =>
-                    $data['slug'],
+                'slug' => $data['slug'],
 
-                'description' =>
-                    $data['description']
+                'description' => $data['description']
                     ?? null,
 
-                'status' =>
-                    'draft',
+                'status' => 'draft',
 
                 'draft_layout_json' => [
 
-                    'version' =>
-                        2,
+                    'version' => 2,
 
-                    'rows' =>
-                        [],
+                    'rows' => [],
 
                 ],
 
             ]);
 
-
         return response()->json([
 
-            'success' =>
-                true,
+            'success' => true,
 
-            'data' =>
-                $layout,
+            'data' => $layout,
 
         ], 201);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -117,15 +104,12 @@ class ProductLayoutController extends Controller
     ) {
         return response()->json([
 
-            'success' =>
-                true,
+            'success' => true,
 
-            'data' =>
-                $productLayout,
+            'data' => $productLayout,
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -169,23 +153,18 @@ class ProductLayoutController extends Controller
 
             ]);
 
-
         $productLayout->update(
             $data
         );
 
-
         return response()->json([
 
-            'success' =>
-                true,
+            'success' => true,
 
-            'data' =>
-                $productLayout->fresh(),
+            'data' => $productLayout->fresh(),
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -239,6 +218,10 @@ class ProductLayoutController extends Controller
 
             'product_details',
 
+            'faq',
+
+            'review',
+
             'template_button',
 
             'price_accordion',
@@ -252,7 +235,6 @@ class ProductLayoutController extends Controller
             'spacer',
 
         ];
-
 
         /*
         |--------------------------------------------------------------------------
@@ -297,6 +279,10 @@ class ProductLayoutController extends Controller
 
             'product_details',
 
+            'faq',
+
+            'review',
+
             'template_button',
 
             'price_accordion',
@@ -310,7 +296,6 @@ class ProductLayoutController extends Controller
             'spacer',
 
         ];
-
 
         /*
         |--------------------------------------------------------------------------
@@ -326,13 +311,11 @@ class ProductLayoutController extends Controller
                     'array',
                 ],
 
-
                 'rows.*.id' => [
                     'required',
                     'string',
                     'max:100',
                 ],
-
 
                 'rows.*.region' => [
                     'nullable',
@@ -342,7 +325,6 @@ class ProductLayoutController extends Controller
                     ]),
                 ],
 
-
                 'rows.*.columns' => [
                     'present',
                     'array',
@@ -350,13 +332,11 @@ class ProductLayoutController extends Controller
                     'max:3',
                 ],
 
-
                 'rows.*.columns.*.id' => [
                     'required',
                     'string',
                     'max:100',
                 ],
-
 
                 'rows.*.columns.*.width' => [
 
@@ -373,19 +353,16 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks' => [
                     'present',
                     'array',
                 ],
-
 
                 'rows.*.columns.*.blocks.*.id' => [
                     'required',
                     'string',
                     'max:100',
                 ],
-
 
                 'rows.*.columns.*.blocks.*.type' => [
 
@@ -399,12 +376,10 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.settings' => [
                     'present',
                     'array',
                 ],
-
 
                 'rows.*.columns.*.blocks.*.settings.custom_id' => [
 
@@ -417,7 +392,6 @@ class ProductLayoutController extends Controller
                     'regex:/^[A-Za-z][A-Za-z0-9_-]*$/',
 
                 ],
-
 
                 'rows.*.columns.*.blocks.*.settings.content_width' => [
 
@@ -434,7 +408,6 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.settings.alignment' => [
 
                     'nullable',
@@ -446,7 +419,6 @@ class ProductLayoutController extends Controller
                     ]),
 
                 ],
-
 
                 'rows.*.columns.*.blocks.*.settings.tag' => [
 
@@ -460,7 +432,6 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.settings.height' => [
 
                     'nullable',
@@ -473,7 +444,6 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.settings.open_default' => [
 
                     'nullable',
@@ -481,7 +451,6 @@ class ProductLayoutController extends Controller
                     'boolean',
 
                 ],
-
 
                 'rows.*.columns.*.blocks.*.settings.title' => [
 
@@ -492,7 +461,6 @@ class ProductLayoutController extends Controller
                     'max:255',
 
                 ],
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -510,7 +478,6 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.children.*.id' => [
 
                     'required',
@@ -520,7 +487,6 @@ class ProductLayoutController extends Controller
                     'max:100',
 
                 ],
-
 
                 'rows.*.columns.*.blocks.*.children.*.type' => [
 
@@ -534,7 +500,6 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.children.*.settings' => [
 
                     'present',
@@ -542,7 +507,6 @@ class ProductLayoutController extends Controller
                     'array',
 
                 ],
-
 
                 'rows.*.columns.*.blocks.*.children.*.settings.custom_id' => [
 
@@ -555,7 +519,6 @@ class ProductLayoutController extends Controller
                     'regex:/^[A-Za-z][A-Za-z0-9_-]*$/',
 
                 ],
-
 
                 'rows.*.columns.*.blocks.*.children.*.settings.content_width' => [
 
@@ -572,7 +535,6 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.children.*.settings.alignment' => [
 
                     'nullable',
@@ -585,7 +547,6 @@ class ProductLayoutController extends Controller
 
                 ],
 
-
                 'rows.*.columns.*.blocks.*.children.*.settings.tag' => [
 
                     'nullable',
@@ -597,7 +558,6 @@ class ProductLayoutController extends Controller
                     ]),
 
                 ],
-
 
                 'rows.*.columns.*.blocks.*.children.*.settings.height' => [
 
@@ -613,7 +573,6 @@ class ProductLayoutController extends Controller
 
             ]);
 
-
         $data['rows'] =
             array_map(
                 static function (array $row): array {
@@ -623,12 +582,10 @@ class ProductLayoutController extends Controller
                             ? 'after_order'
                             : 'before_order';
 
-
                     return $row;
                 },
                 $data['rows']
             );
-
 
         /*
         |--------------------------------------------------------------------------
@@ -639,22 +596,17 @@ class ProductLayoutController extends Controller
         $rowIds =
             [];
 
-
         $columnIds =
             [];
-
 
         $internalBlockIds =
             [];
 
-
         $effectiveBlockIds =
             [];
 
-
         foreach (
-            $data['rows']
-            as $row
+            $data['rows'] as $row
         ) {
 
             /*
@@ -673,11 +625,9 @@ class ProductLayoutController extends Controller
 
                 return response()->json([
 
-                    'success' =>
-                        false,
+                    'success' => false,
 
-                    'message' =>
-                        'Duplicate Row ID found: '
+                    'message' => 'Duplicate Row ID found: '
                         .
                         $row['id'],
 
@@ -685,12 +635,10 @@ class ProductLayoutController extends Controller
 
             }
 
-
             $rowIds[
                 $row['id']
             ] =
                 true;
-
 
             /*
             |--------------------------------------------------------------------------
@@ -701,16 +649,13 @@ class ProductLayoutController extends Controller
             $totalWidth =
                 0;
 
-
             foreach (
-                $row['columns']
-                as $column
+                $row['columns'] as $column
             ) {
 
                 $totalWidth +=
                     (int)
                     $column['width'];
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -728,11 +673,9 @@ class ProductLayoutController extends Controller
 
                     return response()->json([
 
-                        'success' =>
-                            false,
+                        'success' => false,
 
-                        'message' =>
-                            'Duplicate Column ID found: '
+                        'message' => 'Duplicate Column ID found: '
                             .
                             $column['id'],
 
@@ -740,12 +683,10 @@ class ProductLayoutController extends Controller
 
                 }
 
-
                 $columnIds[
                     $column['id']
                 ] =
                     true;
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -754,8 +695,7 @@ class ProductLayoutController extends Controller
                 */
 
                 foreach (
-                    $column['blocks']
-                    as $block
+                    $column['blocks'] as $block
                 ) {
 
                     $error =
@@ -769,23 +709,19 @@ class ProductLayoutController extends Controller
 
                         );
 
-
                     if (
                         $error
                     ) {
 
                         return response()->json([
 
-                            'success' =>
-                                false,
+                            'success' => false,
 
-                            'message' =>
-                                $error,
+                            'message' => $error,
 
                         ], 422);
 
                     }
-
 
                     /*
                      * Only accordion can contain children.
@@ -794,7 +730,7 @@ class ProductLayoutController extends Controller
                         $block['type']
                         !== 'accordion'
                         &&
-                        !empty(
+                        ! empty(
                             $block['children']
                             ?? []
                         )
@@ -802,21 +738,17 @@ class ProductLayoutController extends Controller
 
                         return response()->json([
 
-                            'success' =>
-                                false,
+                            'success' => false,
 
-                            'message' =>
-                                'Only Accordion components may contain child components.',
+                            'message' => 'Only Accordion components may contain child components.',
 
                         ], 422);
 
                     }
 
-
                     foreach (
                         $block['children']
-                        ?? []
-                        as $child
+                        ?? [] as $child
                     ) {
 
                         $error =
@@ -830,18 +762,15 @@ class ProductLayoutController extends Controller
 
                             );
 
-
                         if (
                             $error
                         ) {
 
                             return response()->json([
 
-                                'success' =>
-                                    false,
+                                'success' => false,
 
-                                'message' =>
-                                    $error,
+                                'message' => $error,
 
                             ], 422);
 
@@ -852,7 +781,6 @@ class ProductLayoutController extends Controller
                 }
 
             }
-
 
             /*
             |--------------------------------------------------------------------------
@@ -867,18 +795,15 @@ class ProductLayoutController extends Controller
 
                 return response()->json([
 
-                    'success' =>
-                        false,
+                    'success' => false,
 
-                    'message' =>
-                        'Each row must have a total column width of 12.',
+                    'message' => 'Each row must have a total column width of 12.',
 
                 ], 422);
 
             }
 
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -888,43 +813,34 @@ class ProductLayoutController extends Controller
 
         $layoutJson = [
 
-            'version' =>
-                2,
+            'version' => 2,
 
-            'rows' =>
-                $data['rows'],
+            'rows' => $data['rows'],
 
         ];
 
-
         $productLayout->update([
 
-            'draft_layout_json' =>
-                $layoutJson,
+            'draft_layout_json' => $layoutJson,
 
         ]);
 
-
         return response()->json([
 
-            'success' =>
-                true,
+            'success' => true,
 
-            'message' =>
-                'Layout draft saved.',
+            'message' => 'Layout draft saved.',
 
             'data' => [
 
-                'draft_layout_json' =>
-                    $productLayout
-                        ->fresh()
-                        ->draft_layout_json,
+                'draft_layout_json' => $productLayout
+                    ->fresh()
+                    ->draft_layout_json,
 
             ],
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -941,7 +857,6 @@ class ProductLayoutController extends Controller
         $internalId =
             $block['id'];
 
-
         /*
         |--------------------------------------------------------------------------
         | Internal ID
@@ -956,20 +871,17 @@ class ProductLayoutController extends Controller
             )
         ) {
 
-            return (
+            return
                 'Duplicate internal Block ID found: '
                 .
-                $internalId
-            );
+                $internalId;
 
         }
-
 
         $internalBlockIds[
             $internalId
         ] =
             true;
-
 
         /*
         |--------------------------------------------------------------------------
@@ -981,24 +893,20 @@ class ProductLayoutController extends Controller
             trim(
                 (string)
                 (
-                    $block['settings']
-                        ['custom_id']
+                    $block['settings']['custom_id']
                     ?? ''
                 )
             );
-
 
         $effectiveId =
             $customId !== ''
                 ? $customId
                 : $internalId;
 
-
         $effectiveKey =
             mb_strtolower(
                 $effectiveId
             );
-
 
         if (
             isset(
@@ -1008,24 +916,20 @@ class ProductLayoutController extends Controller
             )
         ) {
 
-            return (
+            return
                 'Duplicate Block ID found: '
                 .
-                $effectiveId
-            );
+                $effectiveId;
 
         }
-
 
         $effectiveBlockIds[
             $effectiveKey
         ] =
             true;
 
-
         return null;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1040,7 +944,6 @@ class ProductLayoutController extends Controller
             $productLayout
                 ->draft_layout_json;
 
-
         if (
             empty(
                 $draft
@@ -1049,45 +952,36 @@ class ProductLayoutController extends Controller
 
             return response()->json([
 
-                'success' =>
-                    false,
+                'success' => false,
 
-                'message' =>
-                    'Layout draft not found.',
+                'message' => 'Layout draft not found.',
 
             ], 422);
 
         }
 
-
         $rows =
             $draft['rows']
             ?? [];
 
-
         $blockCount =
             0;
 
-
         foreach (
-            $rows
-            as $row
+            $rows as $row
         ) {
 
             foreach (
                 $row['columns']
-                ?? []
-                as $column
+                ?? [] as $column
             ) {
 
                 foreach (
                     $column['blocks']
-                    ?? []
-                    as $block
+                    ?? [] as $block
                 ) {
 
                     $blockCount++;
-
 
                     if (
                         $block['type']
@@ -1108,7 +1002,6 @@ class ProductLayoutController extends Controller
 
         }
 
-
         if (
             $blockCount
             === 0
@@ -1116,51 +1009,40 @@ class ProductLayoutController extends Controller
 
             return response()->json([
 
-                'success' =>
-                    false,
+                'success' => false,
 
-                'message' =>
-                    'Please add at least one component before publishing.',
+                'message' => 'Please add at least one component before publishing.',
 
             ], 422);
 
         }
 
-
         $productLayout->update([
 
-            'published_layout_json' =>
-                $draft,
+            'published_layout_json' => $draft,
 
-            'status' =>
-                'published',
+            'status' => 'published',
 
-            'published_at' =>
-                now(),
+            'published_at' => now(),
 
         ]);
 
-
         return response()->json([
 
-            'success' =>
-                true,
+            'success' => true,
 
-            'message' =>
-                'Layout published successfully.',
+            'message' => 'Layout published successfully.',
 
             'data' => [
 
-                'published_at' =>
-                    $productLayout
-                        ->fresh()
-                        ->published_at,
+                'published_at' => $productLayout
+                    ->fresh()
+                    ->published_at,
 
             ],
 
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -1179,27 +1061,21 @@ class ProductLayoutController extends Controller
 
             return response()->json([
 
-                'success' =>
-                    false,
+                'success' => false,
 
-                'message' =>
-                    'This layout is currently used by products.',
+                'message' => 'This layout is currently used by products.',
 
             ], 422);
 
         }
 
-
         $productLayout->delete();
-
 
         return response()->json([
 
-            'success' =>
-                true,
+            'success' => true,
 
-            'message' =>
-                'Layout deleted.',
+            'message' => 'Layout deleted.',
 
         ]);
     }

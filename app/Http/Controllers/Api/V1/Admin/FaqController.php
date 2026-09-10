@@ -43,7 +43,6 @@ class FaqController extends Controller
         ]);
     }
 
-
     /**
      * Create a Product or FAQ entry
      */
@@ -63,7 +62,6 @@ class FaqController extends Controller
         ], 201);
     }
 
-
     /**
      * Show FAQ
      */
@@ -73,7 +71,6 @@ class FaqController extends Controller
             'data' => $faq,
         ]);
     }
-
 
     /**
      * Update FAQ
@@ -96,7 +93,6 @@ class FaqController extends Controller
         ]);
     }
 
-
     /**
      * Delete FAQ
      */
@@ -109,28 +105,28 @@ class FaqController extends Controller
         ]);
     }
 
-
     /**
      * Normalize Product and FAQ data before persistence.
      */
     private function normalizeData(array $data): array
     {
         if ($data['entry_type'] === 'product') {
-            if ($data['category'] !== 'product') {
-                throw ValidationException::withMessages([
-                    'category' => 'Product entries must use the product category.',
-                ]);
-            }
-
             $data['product_id'] = null;
             $data['question'] = '';
             $data['answer'] = '';
+
+            if ($data['category'] !== 'product') {
+                $data['material'] = null;
+                $data['question_name'] = null;
+                $data['product_link'] = null;
+                $data['product_link_text'] = null;
+            }
 
             return $data;
         }
 
         if ($data['category'] === 'product') {
-            $product = !empty($data['product_id'])
+            $product = ! empty($data['product_id'])
                 ? Faq::query()
                     ->whereKey($data['product_id'])
                     ->where('entry_type', 'product')
@@ -138,7 +134,7 @@ class FaqController extends Controller
                     ->first()
                 : null;
 
-            if (!$product) {
+            if (! $product) {
                 throw ValidationException::withMessages([
                     'product_id' => 'Please select a valid Product.',
                 ]);
@@ -156,7 +152,6 @@ class FaqController extends Controller
 
         return $data;
     }
-
 
     /**
      * Validation
@@ -191,28 +186,40 @@ class FaqController extends Controller
                 'nullable',
                 'string',
                 'max:100',
-                'required_if:entry_type,product',
+                Rule::requiredIf(
+                    fn (): bool => $request->input('entry_type') === 'product'
+                        && $request->input('category') === 'product'
+                ),
             ],
 
             'question_name' => [
                 'nullable',
                 'string',
                 'max:500',
-                'required_if:entry_type,product',
+                Rule::requiredIf(
+                    fn (): bool => $request->input('entry_type') === 'product'
+                        && $request->input('category') === 'product'
+                ),
             ],
 
             'product_link' => [
                 'nullable',
                 'string',
                 'max:2000',
-                'required_if:entry_type,product',
+                Rule::requiredIf(
+                    fn (): bool => $request->input('entry_type') === 'product'
+                        && $request->input('category') === 'product'
+                ),
             ],
 
             'product_link_text' => [
                 'nullable',
                 'string',
                 'max:500',
-                'required_if:entry_type,product',
+                Rule::requiredIf(
+                    fn (): bool => $request->input('entry_type') === 'product'
+                        && $request->input('category') === 'product'
+                ),
             ],
 
             'question' => [

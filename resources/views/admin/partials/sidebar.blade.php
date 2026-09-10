@@ -166,7 +166,7 @@
 
                     <li>
                         <a
-                            href="/admin/showdata.php"
+                            href="{{ route('admin.reviews.index') }}"
                             class="list-group-item list-group-item-action bg-light"
                         >
                             口コミ(参照)
@@ -175,7 +175,7 @@
 
                     <li>
                         <a
-                            href="/admin/answer.php"
+                            href="{{ route('admin.review-answers.index') }}"
                             class="list-group-item list-group-item-action bg-light"
                         >
                             口コミ(返答)
@@ -627,6 +627,21 @@
 >
     Products
 </a>
+
+<a
+    href="{{ route('admin.option-groups.index') }}"
+    class="list-group-item list-group-item-action bg-light"
+>
+    Option Groups
+</a>
+
+<a
+    href="{{ route('admin.product-options.index') }}"
+    class="list-group-item list-group-item-action bg-light"
+>
+    Product Options
+</a>
+
  <a
                 href="{{ route('admin.faqs.index') }}"
                 class="list-group-item list-group-item-action bg-light"

@@ -52,6 +52,18 @@
             );
 
 
+    $faqData =
+        is_array($faqData ?? null)
+            ? $faqData
+            : [];
+
+
+    $reviewData =
+        is_array($reviewData ?? null)
+            ? $reviewData
+            : [];
+
+
     /*
     |--------------------------------------------------------------------------
     | Block HTML ID
@@ -1292,6 +1304,12 @@
 
                                     'publishedAt' =>
                                         $publishedAt,
+
+                                    'faqData' =>
+                                        $faqData,
+
+                                    'reviewData' =>
+                                        $reviewData,
                                 ]
                             )
 
@@ -2964,6 +2982,227 @@
                     @endif
 
                 </div>
+
+
+            {{-- ============================================================
+                Product FAQ
+            ============================================================ --}}
+
+            @elseif(
+                $type
+                ===
+                'faq'
+            )
+
+                @php
+
+                    $faqBlock =
+                        is_array(
+                            $faqData[
+                                $blockId
+                            ]
+                            ??
+                            null
+                        )
+                            ? $faqData[
+                                $blockId
+                            ]
+                            : [];
+
+
+                    $faqProduct =
+                        $faqBlock['product']
+                        ??
+                        null;
+
+
+                    $faqItems =
+                        $faqBlock['faqs']
+                        ??
+                        collect();
+
+
+                    if (
+                        is_array(
+                            $faqItems
+                        )
+                    ) {
+
+                        $faqItems =
+                            collect(
+                                $faqItems
+                            );
+
+                    }
+
+
+                    $faqTitle =
+                        trim(
+                            (string)
+                            (
+                                $faqProduct?->question_name
+                                ??
+                                ''
+                            )
+                        );
+
+
+                    if (
+                        $faqTitle
+                        ===
+                        ''
+                    ) {
+
+                        $faqTitle =
+                            $product->name
+                            .
+                            'について';
+
+                    }
+
+
+                    $faqPageUrl =
+                        route(
+                            'faq.product.show',
+                            [
+                                'product' =>
+                                    $product->slug,
+                            ]
+                        );
+
+                @endphp
+
+
+                @if(
+                    $faqProduct
+                    &&
+                    $faqItems->count()
+                )
+
+                    <div class="store-product-faq">
+
+                        @foreach(
+                            $faqItems
+                            as $faq
+                        )
+
+                            @php
+
+                                $faqAnswer =
+                                    (string)
+                                    (
+                                        $faq->answer
+                                        ??
+                                        ''
+                                    );
+
+
+                                $faqAnswerHasHtml =
+                                    preg_match(
+                                        '/<\s*\/?\s*[a-z][^>]*>/i',
+                                        $faqAnswer
+                                    )
+                                    ===
+                                    1;
+
+                            @endphp
+
+                            <div
+                                class="
+                                    store-product-faq-item
+                                    {{
+                                        $loop->last
+                                            ? 'store-product-faq-last-item'
+                                            : ''
+                                    }}
+                                "
+                            >
+
+                                <div class="store-product-faq-question">
+
+                                    <p>
+
+                                        <span
+                                            class="store-product-faq-question-label"
+                                        >
+                                            Q{{ $loop->iteration }}.
+                                        </span>
+
+                                        {!! nl2br(
+                                            e(
+                                                $faq->question
+                                                ??
+                                                ''
+                                            )
+                                        ) !!}
+
+                                    </p>
+
+                                </div>
+
+
+                                <div class="store-product-faq-answer">
+
+                                    <div class="store-product-faq-answer-row">
+
+                                        <span
+                                            class="store-product-faq-answer-label"
+                                        >
+                                            A{{ $loop->iteration }}.
+                                        </span>
+
+                                        <div class="store-product-faq-answer-text">
+
+                                            @if($faqAnswerHasHtml)
+                                                {!! $faqAnswer !!}
+                                            @else
+                                                {!! nl2br(e($faqAnswer)) !!}
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+
+                        <div class="store-product-faq-link">
+
+                            <a href="{{ $faqPageUrl }}">
+                                {{ $faqTitle }}FAQページへ
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                @endif
+
+
+            {{-- ============================================================
+                Product Reviews
+            ============================================================ --}}
+
+            @elseif(
+                $type
+                ===
+                'review'
+            )
+
+                @include(
+                    'products.partials.review',
+                    [
+                        'blockId' =>
+                            $blockId,
+
+                        'reviewData' =>
+                            $reviewData,
+                    ]
+                )
 
 
             {{-- ============================================================

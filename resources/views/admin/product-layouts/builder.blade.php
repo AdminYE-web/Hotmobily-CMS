@@ -233,6 +233,24 @@
                     <button
                         type="button"
                         class="component-button add-block"
+                        data-type="faq"
+                    >
+                        Product FAQ
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="review"
+                    >
+                        Product Review
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="component-button add-block"
                         data-type="template_button"
                     >
                         Template Button
@@ -1451,6 +1469,113 @@
 
     font-size: 18px;
     font-weight: 700;
+}
+
+
+/* ============================================================
+   Product FAQ
+============================================================ */
+
+.sim-product-faq {
+    padding: 4px 0;
+
+    color: #281600;
+
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+
+.sim-product-faq-item {
+    margin-bottom: 10px;
+}
+
+
+.sim-product-faq-item p {
+    margin: 0;
+}
+
+
+.sim-product-faq-question-label {
+    color: #f00000;
+}
+
+
+.sim-product-faq-answer-label {
+    color: #0000ff;
+}
+
+
+.sim-product-faq-link {
+    margin-top: 8px;
+
+    color: #111;
+
+    text-align: right;
+    text-decoration: underline;
+}
+
+
+/* ============================================================
+   Product Review
+============================================================ */
+
+.sim-product-review {
+    padding: 4px 0;
+
+    color: #281600;
+
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+
+.sim-product-review-entry {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+
+    margin-bottom: 8px;
+}
+
+
+.sim-product-review-icon {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+
+    border-radius: 50%;
+    background: #222;
+    color: #fff;
+    font-size: 10px;
+}
+
+
+.sim-product-review-card {
+    padding: 8px;
+
+    border-radius: 4px;
+    background: #f3f3f3;
+}
+
+
+.sim-product-review-meta span {
+    color: #f5a623;
+}
+
+
+.sim-product-review-card small {
+    color: #777;
+}
+
+
+.sim-product-review-link {
+    color: #111;
+
+    text-align: right;
+    text-decoration: underline;
 }
 
 
@@ -3581,6 +3706,94 @@ document.addEventListener(
                     );
 
 
+                case 'faq':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-product-faq">
+
+                                <div class="sim-product-faq-item">
+
+                                    <p>
+                                        <span class="sim-product-faq-question-label">Q1.</span>
+                                        Product FAQ question
+                                    </p>
+
+                                    <p>
+                                        <span class="sim-product-faq-answer-label">A1.</span>
+                                        Product FAQ answer
+                                    </p>
+
+                                </div>
+
+                                <div class="sim-product-faq-item">
+
+                                    <p>
+                                        <span class="sim-product-faq-question-label">Q2.</span>
+                                        Another question
+                                    </p>
+
+                                    <p>
+                                        <span class="sim-product-faq-answer-label">A2.</span>
+                                        Another answer
+                                    </p>
+
+                                </div>
+
+                                <div class="sim-product-faq-link">
+                                    Product FAQ page
+                                </div>
+
+                            </div>
+
+                        `
+                    );
+
+
+                case 'review':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-product-review">
+
+                                <div class="sim-product-review-entry">
+                                    <span class="sim-product-review-icon">●</span>
+                                    <div class="sim-product-review-card">
+                                        <div class="sim-product-review-meta">
+                                            お客様対応: <span>★★★★★</span>
+                                            製品の満足度: <span>★★★★☆</span>
+                                            営業担当： 担当者
+                                        </div>
+                                        <small>製品： Product Type</small>
+                                    </div>
+                                </div>
+
+                                <div class="sim-product-review-entry">
+                                    <span class="sim-product-review-icon">●</span>
+                                    <div class="sim-product-review-card">
+                                        <div class="sim-product-review-meta">
+                                            お客様対応: <span>★★★★★</span>
+                                            製品の満足度: <span>★★★★★</span>
+                                            営業担当： 担当者
+                                        </div>
+                                        <small>製品： Product Type</small>
+                                    </div>
+                                </div>
+
+                                <div class="sim-product-review-link">
+                                    レビュー一覧ページへ
+                                </div>
+
+                            </div>
+
+                        `
+                    );
+
+
                 case 'accordion':
 
                     return contentWrapper(
@@ -5136,6 +5349,48 @@ document.addEventListener(
                     break;
 
 
+                case 'faq':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+
+                            Product FAQ category and its FAQ items are selected in
+
+                            <strong>
+                                Product Content Editor
+                            </strong>
+
+                            after this component is added to the layout.
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'review':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+
+                            Product review product type is selected in
+
+                            <strong>
+                                Product Content Editor
+                            </strong>
+
+                            after this component is added to the layout.
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
                 case 'accordion':
 
                     container.innerHTML = `
@@ -6640,6 +6895,12 @@ document.addEventListener(
 
                 product_details:
                     'Product Details',
+
+                faq:
+                    'Product FAQ',
+
+                review:
+                    'Product Review',
 
                 template_button:
                     'Template Button',

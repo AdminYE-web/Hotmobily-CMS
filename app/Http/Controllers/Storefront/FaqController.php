@@ -59,6 +59,50 @@ class FaqController extends Controller
         );
     }
 
+    /**
+     * Shared FAQ category detail page.
+     *
+     * GET /faq/order
+     * GET /faq/delivery
+     * GET /faq/payment
+     */
+    public function categoryShow(string $category)
+    {
+        $category = Str::lower(trim($category));
+
+        $titles = [
+            'order' => 'ご注文につきまして',
+            'delivery' => '納期・配送につきまして',
+            'payment' => 'お支払いにつきまして',
+        ];
+
+        if (! isset($titles[$category])) {
+            abort(404);
+        }
+
+        $faqs = Faq::query()
+            ->where('category', $category)
+            ->where('entry_type', 'faq')
+            ->where('is_active', true)
+            ->whereNotNull('question')
+            ->where('question', '<>', '')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get([
+                'id',
+                'question',
+                'answer',
+            ]);
+
+        return view(
+            'faq.category-show',
+            [
+                'category' => $category,
+                'pageTitle' => $titles[$category],
+                'faqs' => $faqs,
+            ]
+        );
+    }
 
     public function productShow(Product $product)
     {
@@ -124,7 +168,6 @@ class FaqController extends Controller
             ]
         );
     }
-
 
     private function faqBelongsToProduct(Faq $faq, Product $product): bool
     {

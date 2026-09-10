@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/css/footer.css?v=1.01" type="text/css" />
 <link rel="stylesheet" href="/css/colorbox.css" type="text/css" />
 <link rel="stylesheet" href="/css/slider.css" type="text/css" />
-<link rel="shortcut icon" href="//hotmobily.jp/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="{{ asset('images/home/favicon.ico') }}" type="image/x-icon" />
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="/js/sidemenu.js"></script>
 <link rel="stylesheet" href="/css/banner_style.css?v=1.19" type="text/css" />

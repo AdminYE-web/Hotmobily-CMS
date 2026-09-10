@@ -1169,6 +1169,18 @@ document.addEventListener(
                                 ${contentButton}
 
 
+                                <a
+                                    href="/admin/products/${product.id}/options"
+                                    class="
+                                        btn
+                                        btn-sm
+                                        btn-outline-info
+                                    "
+                                >
+                                    Options
+                                </a>
+
+
                                 <button
                                     type="button"
                                     class="

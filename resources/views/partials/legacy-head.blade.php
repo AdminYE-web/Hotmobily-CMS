@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="/css/design3.css" type="text/css" />
 <link rel="stylesheet" href="/css/footer.css?v=1.02" type="text/css" />
 <link rel="stylesheet" href="/css/colorbox.css" type="text/css" />
-<link rel="shortcut icon" href="//hotmobily.jp/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="{{ asset('images/home/favicon.ico') }}" type="image/x-icon" />
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="/js/sidemenu.js"></script>
 <link rel="stylesheet" href="/css/banner_style.css?v=1.19" type="text/css" />
@@ -58,4 +58,3 @@
   <style type="text/css">
    body{font-family:IwaUDGoDspPro-Th,sans-serif!important;font-size:13.6px;font-feature-settings:palt;-webkit-text-size-adjust:100%;letter-spacing:-.06em;color:#281600}@media screen and (max-width: 768px){body#top{font-size:3.47vw;line-height:1.53;letter-spacing:-.06em}}#content_wrapper>h2{text-align:center;border-bottom:3px solid #f47722;margin-bottom:10px;font-family:IwaUDGoDspPro-Eb,sans-serif!important;background-color:#f2f2f2;line-height:1.93;padding:13px 0 8.5px;color:#281600}#content_wrapper>h2:first-child{margin-top:0}.faq>a{color:#000;display:block;padding:10px 0;font-size:15px;text-decoration:none;cursor:pointer}.read-more1{text-align:center;margin:15px}span.faq-q{color:red;padding-right:10px}a,h1,h2,h3,h4,h5,h6{font-family:IwaUDGoDspPro-Th,sans-serif!important}.side_link{font-size:13px}img:not([src]){visibility:hidden}.playbtn{background:rgba(0,0,0,0.55);width:50px;height:24px;border-radius:5px;padding-top:10px;position:absolute;margin:0 auto;top:45%;right:45%}.videoWrapper:hover .playbtn{background:#cd201f;cursor:pointer}.tri{width:0;height:0;border-style:solid;border-width:7px 0 7px 14px;border-color:transparent transparent transparent #fff;margin:0 auto}.sns-footer h3{width:100%}
  </style>
-

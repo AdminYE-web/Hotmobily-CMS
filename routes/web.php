@@ -1,21 +1,23 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\OtpController;
 use App\Http\Controllers\Admin\DashboardController;
-
+use App\Http\Controllers\Admin\OtpController;
+use App\Http\Controllers\Admin\OptionGroupController;
+use App\Http\Controllers\Admin\ProductOptionController;
+use App\Http\Controllers\Admin\ProductOptionManagerController;
+use App\Http\Controllers\Admin\ReviewAnswerController as AdminReviewAnswerController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Storefront\FaqController;
+use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\LegacyMockController;
 use App\Http\Controllers\Web\ProductController;
-
-use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
-use App\Http\Controllers\Storefront\FaqController;
-
+use App\Http\Controllers\Web\ReviewController;
+use App\Http\Controllers\Web\ReviewImportController;
 use App\Models\Product;
 use App\Models\ProductLayout;
-
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +30,6 @@ Route::get(
     HomeController::class
 )->name('home');
 
-
 /*
 |--------------------------------------------------------------------------
 | Admin
@@ -39,7 +40,6 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-
         /*
         |--------------------------------------------------------------------------
         | Guest
@@ -48,7 +48,6 @@ Route::prefix('admin')
 
         Route::middleware('guest:admin')
             ->group(function () {
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -60,21 +59,19 @@ Route::prefix('admin')
                     '/login',
                     [
                         AuthController::class,
-                        'showLogin'
+                        'showLogin',
                     ]
                 )
-                ->name('login');
-
+                    ->name('login');
 
                 Route::post(
                     '/login',
                     [
                         AuthController::class,
-                        'login'
+                        'login',
                     ]
                 )
-                ->name('login.submit');
-
+                    ->name('login.submit');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -86,24 +83,21 @@ Route::prefix('admin')
                     '/login/verify',
                     [
                         OtpController::class,
-                        'show'
+                        'show',
                     ]
                 )
-                ->name('otp');
-
+                    ->name('otp');
 
                 Route::post(
                     '/login/verify',
                     [
                         OtpController::class,
-                        'verify'
+                        'verify',
                     ]
                 )
-                ->name('otp.verify');
-
+                    ->name('otp.verify');
 
             });
-
 
         /*
         |--------------------------------------------------------------------------
@@ -113,7 +107,6 @@ Route::prefix('admin')
 
         Route::middleware('auth:admin')
             ->group(function () {
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -125,11 +118,10 @@ Route::prefix('admin')
                     '/dashboard',
                     [
                         DashboardController::class,
-                        'index'
+                        'index',
                     ]
                 )
-                ->name('dashboard');
-
+                    ->name('dashboard');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -141,8 +133,7 @@ Route::prefix('admin')
                     '/holidays',
                     'admin.holidays.index'
                 )
-                ->name('holidays.index');
-
+                    ->name('holidays.index');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -154,8 +145,43 @@ Route::prefix('admin')
                     '/faqs',
                     'admin.faqs.index'
                 )
-                ->name('faqs.index');
+                    ->name('faqs.index');
 
+                /*
+                |--------------------------------------------------------------------------
+                | Reviews
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/reviews', [AdminReviewController::class, 'index'])
+                    ->name('reviews.index');
+
+                Route::get('/reviews/create', [AdminReviewController::class, 'create'])
+                    ->name('reviews.create');
+
+                Route::post('/reviews', [AdminReviewController::class, 'store'])
+                    ->name('reviews.store');
+
+                Route::get('/reviews/{review}/edit', [AdminReviewController::class, 'edit'])
+                    ->name('reviews.edit');
+
+                Route::put('/reviews/{review}', [AdminReviewController::class, 'update'])
+                    ->name('reviews.update');
+
+                Route::get('/reviews/{review}/answer', [AdminReviewAnswerController::class, 'create'])
+                    ->name('review-answers.create');
+
+                Route::post('/reviews/{review}/answer', [AdminReviewAnswerController::class, 'store'])
+                    ->name('review-answers.store');
+
+                Route::get('/review-answers', [AdminReviewAnswerController::class, 'index'])
+                    ->name('review-answers.index');
+
+                Route::get('/review-answers/{answer}/edit', [AdminReviewAnswerController::class, 'edit'])
+                    ->name('review-answers.edit');
+
+                Route::put('/review-answers/{answer}', [AdminReviewAnswerController::class, 'update'])
+                    ->name('review-answers.update');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -173,8 +199,7 @@ Route::prefix('admin')
 
                     }
                 )
-                ->name('production');
-
+                    ->name('production');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -192,8 +217,7 @@ Route::prefix('admin')
 
                     }
                 )
-                ->name('design');
-
+                    ->name('design');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -205,8 +229,55 @@ Route::prefix('admin')
                     '/products',
                     'admin.products.index'
                 )
-                ->name('products.index');
+                    ->name('products.index');
 
+                Route::get('/products/{product}/options', [ProductOptionManagerController::class, 'edit'])
+                    ->name('products.options.edit');
+
+                Route::put('/products/{product}/options', [ProductOptionManagerController::class, 'update'])
+                    ->name('products.options.update');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Option Groups
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/option-groups', [OptionGroupController::class, 'index'])
+                    ->name('option-groups.index');
+
+                Route::get('/option-groups/create', [OptionGroupController::class, 'create'])
+                    ->name('option-groups.create');
+
+                Route::post('/option-groups', [OptionGroupController::class, 'store'])
+                    ->name('option-groups.store');
+
+                Route::get('/option-groups/{optionGroup}/edit', [OptionGroupController::class, 'edit'])
+                    ->name('option-groups.edit');
+
+                Route::put('/option-groups/{optionGroup}', [OptionGroupController::class, 'update'])
+                    ->name('option-groups.update');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product Options
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/product-options', [ProductOptionController::class, 'index'])
+                    ->name('product-options.index');
+
+                Route::get('/product-options/create', [ProductOptionController::class, 'create'])
+                    ->name('product-options.create');
+
+                Route::post('/product-options', [ProductOptionController::class, 'store'])
+                    ->name('product-options.store');
+
+                Route::get('/product-options/{productOption}/edit', [ProductOptionController::class, 'edit'])
+                    ->name('product-options.edit');
+
+                Route::put('/product-options/{productOption}', [ProductOptionController::class, 'update'])
+                    ->name('product-options.update');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -232,8 +303,7 @@ Route::prefix('admin')
 
                     }
                 )
-                ->name('products.builder');
-
+                    ->name('products.builder');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -261,8 +331,7 @@ Route::prefix('admin')
 
                     }
                 )
-                ->name('products.content');
-
+                    ->name('products.content');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -274,8 +343,7 @@ Route::prefix('admin')
                     '/product-layouts',
                     'admin.product-layouts.index'
                 )
-                ->name('product-layouts.index');
-
+                    ->name('product-layouts.index');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -303,8 +371,7 @@ Route::prefix('admin')
 
                     }
                 )
-                ->name('product-layouts.builder');
-
+                    ->name('product-layouts.builder');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -316,17 +383,14 @@ Route::prefix('admin')
                     '/logout',
                     [
                         AuthController::class,
-                        'logout'
+                        'logout',
                     ]
                 )
-                ->name('logout');
-
+                    ->name('logout');
 
             });
 
-
     });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -351,7 +415,6 @@ Route::prefix('admin')
 |
 */
 
-
 /*
 |--------------------------------------------------------------------------
 | Rubber Strap Delivery Schedule
@@ -362,11 +425,10 @@ Route::get(
     '/products/getdate_disp2023-rubber',
     [
         ProductController::class,
-        'deliveryScheduleRubber'
+        'deliveryScheduleRubber',
     ]
 )
-->name('products.rubberstrap.schedule');
-
+    ->name('products.rubberstrap.schedule');
 
 /*
 |--------------------------------------------------------------------------
@@ -377,16 +439,15 @@ Route::get(
 Route::match(
     [
         'get',
-        'post'
+        'post',
     ],
     '/products/check_holiday.php',
     [
         ProductController::class,
-        'checkHoliday'
+        'checkHoliday',
     ]
 )
-->name('products.holiday');
-
+    ->name('products.holiday');
 
 /*
 |--------------------------------------------------------------------------
@@ -397,16 +458,15 @@ Route::match(
 Route::match(
     [
         'get',
-        'post'
+        'post',
     ],
     '/products/get_sample_date.php',
     [
         ProductController::class,
-        'getSampleDate'
+        'getSampleDate',
     ]
 )
-->name('products.sample-date');
-
+    ->name('products.sample-date');
 
 /*
 |--------------------------------------------------------------------------
@@ -418,11 +478,10 @@ Route::get(
     '/products/paper_preview.php',
     [
         ProductController::class,
-        'paperPreview'
+        'paperPreview',
     ]
 )
-->name('products.paper-preview');
-
+    ->name('products.paper-preview');
 
 /*
 |--------------------------------------------------------------------------
@@ -438,11 +497,10 @@ Route::get(
     '/products/rubberstrap/part.php',
     [
         ProductController::class,
-        'rubberstrapPart'
+        'rubberstrapPart',
     ]
 )
-->name('products.rubberstrap.part');
-
+    ->name('products.rubberstrap.part');
 
 /*
 |--------------------------------------------------------------------------
@@ -454,31 +512,43 @@ Route::get(
     '/info/index.php',
     [
         LegacyMockController::class,
-        'info'
+        'info',
     ]
 )
-->name('legacy-mock.info');
+    ->name('legacy-mock.info');
 
+Route::get(
+    '/get_data_review.php',
+    ReviewImportController::class
+)
+    ->name('reviews.import');
+
+Route::get(
+    '/reviews',
+    [
+        ReviewController::class,
+        'index',
+    ]
+)
+    ->name('reviews.index');
 
 Route::get(
     '/get_review.php',
     [
-        LegacyMockController::class,
-        'reviews'
+        ReviewController::class,
+        'feed',
     ]
 )
-->name('legacy-mock.reviews');
-
+    ->name('reviews.feed');
 
 Route::get(
     '/getLang',
     [
         LegacyMockController::class,
-        'language'
+        'language',
     ]
 )
-->name('legacy-mock.language');
-
+    ->name('legacy-mock.language');
 
 /*
 |--------------------------------------------------------------------------
@@ -523,34 +593,47 @@ Route::get(
     '/products/{productPath}',
     [
         StorefrontProductController::class,
-        'show'
+        'show',
     ]
 )
-->where(
-    'productPath',
-    '.+'
-)
-->name(
-    'products.show'
-);
+    ->where(
+        'productPath',
+        '.+'
+    )
+    ->name(
+        'products.show'
+    );
 
 Route::view('/faq', 'faq.index')
     ->name('faq.index');
 
-    Route::get(
+Route::get(
+    '/faq/{category}',
+    [
+        FaqController::class,
+        'categoryShow',
+    ]
+)
+    ->where(
+        'category',
+        'order|delivery|payment'
+    )
+    ->name('faq.category.show');
+
+Route::get(
     '/faq/product',
     [
         FaqController::class,
-        'productIndex'
+        'productIndex',
     ]
 )
     ->name('faq.product');
 
-    Route::get(
+Route::get(
     '/faq/product/{product:slug}',
     [
         FaqController::class,
-        'productShow'
+        'productShow',
     ]
 )
     ->name('faq.product.show');

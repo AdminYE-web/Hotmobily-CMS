@@ -1539,6 +1539,14 @@ document.addEventListener(
             {};
 
 
+        let faqProducts =
+            [];
+
+
+        let reviewProductTypes =
+            [];
+
+
         const collapsedContentBlockIds =
             new Set();
 
@@ -1602,6 +1610,20 @@ document.addEventListener(
                         .content
                         ?.blocks
                     ?? {};
+
+
+                faqProducts =
+                    result
+                        .data
+                        .faq_products
+                    ?? [];
+
+
+                reviewProductTypes =
+                    result
+                        .data
+                        .review_product_types
+                    ?? [];
 
 
                 collapseAllContentBlocks(
@@ -2301,6 +2323,207 @@ document.addEventListener(
                         block,
                         blockContent
                     );
+
+                    break;
+
+
+                case 'faq':
+
+                    const selectedFaqProductId =
+                        String(
+                            blockContent.faq_product_id
+                            ?? ''
+                        );
+
+
+                    const faqOptions =
+                        faqProducts
+                            .map(
+                                function (faqProduct, index) {
+                                    const id =
+                                        String(
+                                            faqProduct?.id
+                                            ?? ''
+                                        );
+
+
+                                    if (!id) {
+                                        return '';
+                                    }
+
+
+                                    const material =
+                                        String(
+                                            faqProduct?.material
+                                            ?? ''
+                                        ).trim();
+
+
+                                    const title =
+                                        String(
+                                            faqProduct?.question_name
+                                            ?? ''
+                                        ).trim();
+
+
+                                    const label =
+                                        [
+                                            material,
+                                            title,
+                                        ]
+                                        .filter(Boolean)
+                                        .join(' - ')
+                                        ||
+                                        `Product FAQ No. ${index + 1}`;
+
+
+                                    const status =
+                                        faqProduct?.is_active === false
+                                            ? ' (Inactive)'
+                                            : '';
+
+
+                                    return `
+
+                                        <option
+                                            value="${escapeHtml(id)}"
+                                            ${
+                                                selectedFaqProductId === id
+                                                    ? 'selected'
+                                                    : ''
+                                            }
+                                        >
+                                            ${escapeHtml(label + status)}
+                                        </option>
+
+                                    `;
+                                }
+                            )
+                            .join('');
+
+
+                    fields = `
+
+                        <div class="form-group">
+
+                            <label>
+                                Product FAQ Category
+                            </label>
+
+                            <select
+                                class="form-control product-field"
+                                data-block-id="${escapeHtml(block.id)}"
+                                data-field="faq_product_id"
+                            >
+
+                                <option value="">
+                                    -- Select Product FAQ --
+                                </option>
+
+                                ${
+                                    faqOptions
+                                    ||
+                                    `
+                                        <option value="" disabled>
+                                            No Product FAQ has been created yet.
+                                        </option>
+                                    `
+                                }
+
+                            </select>
+
+                            <small class="form-text text-muted">
+                                Select a Product entry from FAQ management. Its FAQ items will be shown on the public Product page.
+                            </small>
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'review':
+
+                    const selectedReviewProductType =
+                        String(
+                            blockContent.review_product_type
+                            ?? ''
+                        ).trim();
+
+
+                    const reviewOptions =
+                        reviewProductTypes
+                            .map(
+                                function (productType) {
+                                    const value =
+                                        String(
+                                            productType
+                                            ?? ''
+                                        ).trim();
+
+
+                                    if (!value) {
+                                        return '';
+                                    }
+
+
+                                    return `
+
+                                        <option
+                                            value="${escapeHtml(value)}"
+                                            ${
+                                                selectedReviewProductType === value
+                                                    ? 'selected'
+                                                    : ''
+                                            }
+                                        >
+                                            ${escapeHtml(value)}
+                                        </option>
+
+                                    `;
+                                }
+                            )
+                            .join('');
+
+
+                    fields = `
+
+                        <div class="form-group">
+
+                            <label>
+                                Product Review Type
+                            </label>
+
+                            <select
+                                class="form-control product-field"
+                                data-block-id="${escapeHtml(block.id)}"
+                                data-field="review_product_type"
+                            >
+
+                                <option value="">
+                                    -- Select Product Review Type --
+                                </option>
+
+                                ${
+                                    reviewOptions
+                                    ||
+                                    `
+                                        <option value="" disabled>
+                                            No review product type has been imported yet.
+                                        </option>
+                                    `
+                                }
+
+                            </select>
+
+                            <small class="form-text text-muted">
+                                Select the product_type used by reviews_hm. The latest 3 matching reviews will be shown on the public Product page.
+                            </small>
+
+                        </div>
+
+                    `;
 
                     break;
 
@@ -14802,6 +15025,12 @@ document.addEventListener(
 
                 info_card:
                     'Info Card',
+
+                faq:
+                    'Product FAQ',
+
+                review:
+                    'Product Review',
 
                 accordion:
                     'Accordion',

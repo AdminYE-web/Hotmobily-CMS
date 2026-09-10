@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Review;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 class HomeController extends Controller
 {
@@ -29,8 +31,9 @@ class HomeController extends Controller
             ],
         ]);
 
-        // Temporary review data until the legacy reviews table is migrated.
-        $reviews = [
+        // Fallback data keeps the page renderable before the reviews
+        // migration is run. Once the table exists, imported reviews are used.
+        $fallbackReviews = [
             [
                 'id' => 1,
                 'comment' => '',
@@ -60,6 +63,27 @@ class HomeController extends Controller
             ],
         ];
 
+        $reviews = $this->loadReviews($fallbackReviews);
+
         return view('home', compact('news', 'reviews'));
+    }
+
+    private function loadReviews(array $fallbackReviews): array
+    {
+        try {
+            if (! Review::tableExists()) {
+                return $fallbackReviews;
+            }
+
+            return Review::query()
+                ->orderByDesc('date_reviews')
+                ->orderByDesc('id')
+                ->limit((int) config('reviews.display_limit', 20))
+                ->get()
+                ->map(static fn (Review $review): array => $review->toDisplayArray())
+                ->all();
+        } catch (Throwable) {
+            return $fallbackReviews;
+        }
     }
 }

@@ -49,8 +49,8 @@
 
             <div class="d-flex justify-content-between align-items-center">
 
-                <h6 class="m-0 font-weight-bold text-primary">
-                    Product / FAQ List
+                <h6 class="m-0 font-weight-bold text-primary" id="faq-table-title">
+                    Product List
                 </h6>
 
                 <button
@@ -90,7 +90,7 @@
                 class="text-center text-muted py-5 d-none"
             >
 
-                No FAQs found.
+                No Products found.
 
                 <br>
 
@@ -99,13 +99,13 @@
                     class="btn btn-primary mt-3"
                     id="btn-empty-create"
                 >
-                    Create First FAQ
+                    Create First Product
                 </button>
 
             </div>
 
 
-            {{-- Table --}}
+            {{-- Product Table --}}
             <div
                 class="table-responsive d-none"
                 id="faq-table-wrapper"
@@ -118,35 +118,19 @@
                         <tr>
 
                             <th style="width:70px;">
-                                ID
+                                No.
                             </th>
 
                             <th style="width:120px;">
                                 Category
                             </th>
 
-                            <th style="width:110px;">
-                                Type
-                            </th>
-
-                            <th style="width:220px;">
-                                Product
-                            </th>
-
-                            <th style="width:130px;">
-                                Material
-                            </th>
-
-                            <th style="width:220px;">
-                                Question Name
-                            </th>
-
                             <th>
-                                Question
+                                Product / FAQ Group
                             </th>
 
-                            <th style="width:90px;">
-                                Order
+                            <th style="width:100px;">
+                                FAQ Count
                             </th>
 
                             <th style="width:110px;">
@@ -164,6 +148,90 @@
                     <tbody id="faq-list"></tbody>
 
                 </table>
+
+            </div>
+
+
+            {{-- FAQ Detail Table --}}
+            <div
+                id="faq-detail-wrapper"
+                class="d-none"
+            >
+
+                <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                >
+
+                    <div>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-secondary mb-2"
+                            id="btn-back-to-products"
+                        >
+                            ← Product List
+                        </button>
+
+                        <h5
+                            class="mb-0"
+                            id="faq-detail-title"
+                        ></h5>
+
+                        <small
+                            class="text-muted"
+                            id="faq-detail-meta"
+                        ></small>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        id="btn-detail-add-faq"
+                    >
+                        + Add FAQ
+                    </button>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead class="thead-light">
+
+                            <tr>
+
+                                <th style="width:70px;">
+                                    No.
+                                </th>
+
+                                <th>
+                                    Question
+                                </th>
+
+                                <th style="width:90px;">
+                                    Order
+                                </th>
+
+                                <th style="width:110px;">
+                                    Status
+                                </th>
+
+                                <th style="width:160px;">
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="faq-detail-list"></tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
@@ -263,6 +331,13 @@
                             Payment
                         </option>
                     </select>
+
+                    <small
+                        id="faq-category-help"
+                        class="form-text text-muted"
+                    >
+                        Product ใช้สำหรับข้อมูลสินค้า ส่วน Order, Delivery และ Payment ใช้สำหรับหมวด FAQ กลาง
+                    </small>
 
                 </div>
 
@@ -529,6 +604,29 @@
         vertical-align: middle;
     }
 
+    .faq-product-row {
+        cursor: pointer;
+    }
+
+    .faq-product-row:hover {
+        background: #f8f9fa;
+    }
+
+    .faq-product-name {
+        font-weight: 600;
+    }
+
+    #faq-detail-list td {
+        vertical-align: middle;
+    }
+
+    .faq-answer-preview {
+        max-width: 520px;
+        max-height: 80px;
+        overflow: hidden;
+        white-space: pre-wrap;
+    }
+
     .faq-question {
         font-weight: 600;
     }
@@ -625,10 +723,43 @@ document.addEventListener('DOMContentLoaded', function () {
         );
 
 
+    const tableTitle =
+        document.getElementById(
+            'faq-table-title'
+        );
+
+
     const list =
         document.getElementById(
             'faq-list'
         );
+
+
+    const detailWrapper =
+        document.getElementById(
+            'faq-detail-wrapper'
+        );
+
+
+    const detailTitle =
+        document.getElementById(
+            'faq-detail-title'
+        );
+
+
+    const detailMeta =
+        document.getElementById(
+            'faq-detail-meta'
+        );
+
+
+    const detailList =
+        document.getElementById(
+            'faq-detail-list'
+        );
+
+
+    let activeProductId = null;
 
 
     /*
@@ -887,10 +1018,14 @@ document.addEventListener('DOMContentLoaded', function () {
             'product';
 
 
+        const isProductCategory =
+            categorySelect.value ===
+            'product';
+
+
         if (isProductEntry) {
 
-            categorySelect.value = 'product';
-            categorySelect.disabled = true;
+            categorySelect.disabled = false;
 
             categoryGroup
                 .classList
@@ -910,21 +1045,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 .classList
                 .add('d-none');
 
-            materialGroup
-                .classList
-                .remove('d-none');
+            if (isProductCategory) {
 
-            questionNameGroup
-                .classList
-                .remove('d-none');
+                materialGroup
+                    .classList
+                    .remove('d-none');
 
-            productLinkGroup
-                .classList
-                .remove('d-none');
+                questionNameGroup
+                    .classList
+                    .remove('d-none');
 
-            productLinkTextGroup
-                .classList
-                .remove('d-none');
+                productLinkGroup
+                    .classList
+                    .remove('d-none');
+
+                productLinkTextGroup
+                    .classList
+                    .remove('d-none');
+
+            } else {
+
+                materialGroup
+                    .classList
+                    .add('d-none');
+
+                questionNameGroup
+                    .classList
+                    .add('d-none');
+
+                productLinkGroup
+                    .classList
+                    .add('d-none');
+
+                productLinkTextGroup
+                    .classList
+                    .add('d-none');
+
+                materialInput.value = '';
+                questionNameInput.value = '';
+                productLinkInput.value = '';
+                productLinkTextInput.value = '';
+
+            }
 
         } else {
 
@@ -1126,8 +1288,9 @@ document.addEventListener('DOMContentLoaded', function () {
         faqs
             .filter(
                 faq => faq.entry_type === 'product'
+                    && faq.category === 'product'
             )
-            .forEach(function (product) {
+            .forEach(function (product, index) {
 
                 const option =
                     document.createElement('option');
@@ -1136,7 +1299,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const productName =
                     product.question_name
                     || product.material
-                    || `Product #${product.id}`;
+                    || `Product ${index + 1}`;
 
 
                 const materialText =
@@ -1173,10 +1336,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function renderFaqs()
     {
+        activeProductId = null;
+
+        tableTitle.textContent =
+            'Product List';
+
+        detailWrapper
+            .classList
+            .add('d-none');
+
         list.innerHTML = '';
 
+        const products =
+            faqs.filter(
+                faq => faq.entry_type === 'product'
+            );
 
-        if (faqs.length === 0) {
+
+        if (products.length === 0) {
+
+            tableWrapper
+                .classList
+                .add('d-none');
 
             emptyBox
                 .classList
@@ -1191,106 +1372,62 @@ document.addEventListener('DOMContentLoaded', function () {
             .remove('d-none');
 
 
-        faqs.forEach(function (faq) {
+        products.forEach(function (product, index) {
 
-            const linkedProduct =
-                faqs.find(
-                    item =>
-                        faq.product_id
-                        && String(item.id) ===
-                            String(faq.product_id)
-                        && item.entry_type === 'product'
-                );
+            const faqCount =
+                getFaqsForProduct(product).length;
+
+            const statusClass =
+                product.is_active
+                    ? 'status-active'
+                    : 'status-inactive';
+
+            const statusText =
+                product.is_active
+                    ? 'Active'
+                    : 'Inactive';
 
             const tr =
                 document.createElement('tr');
 
+            tr.className =
+                'faq-product-row';
 
-            const statusClass =
-                faq.is_active
-                    ? 'status-active'
-                    : 'status-inactive';
+            tr.dataset.id =
+                product.id;
 
-
-            const statusText =
-                faq.is_active
-                    ? 'Active'
-                    : 'Inactive';
-
+            tr.tabIndex =
+                0;
 
             tr.innerHTML = `
 
                 <td>
-                    ${faq.id}
+                    ${index + 1}
                 </td>
 
 
                 <td>
                     <span class="faq-category">
-                        ${escapeHtml(faq.category)}
+                        ${escapeHtml(categoryLabel(product.category))}
                     </span>
                 </td>
 
 
                 <td>
-                    <span class="faq-entry-type">
-                        ${
-                            faq.entry_type === 'product'
-                                ? 'Product'
-                                : 'FAQ'
-                        }
-                    </span>
-                </td>
+                    <div class="faq-product-name">
+                        ${escapeHtml(productDisplayName(product))}
+                    </div>
 
-
-                <td>
                     ${
-                        linkedProduct
-                            ? escapeHtml(
-                                linkedProduct.question_name
-                                || linkedProduct.material
-                                || `Product #${linkedProduct.id}`
-                            )
-                            : '-'
+                        product.category === 'product'
+                            ? `<small class="text-muted">${escapeHtml(product.material || '')}</small>`
+                            : ''
                     }
                 </td>
 
 
                 <td>
-                    <span class="faq-material">
-                        ${
-                            faq.material
-                                ? escapeHtml(
-                                    faq.material
-                                )
-                                : '-'
-                        }
-                    </span>
-                </td>
-
-
-                <td>
-                    <span class="faq-question-name">
-                        ${
-                            faq.question_name
-                                ? escapeHtml(
-                                    faq.question_name
-                                )
-                                : '-'
-                        }
-                    </span>
-                </td>
-
-
-                <td>
-                    <div class="faq-question">
-                        ${escapeHtml(faq.question)}
-                    </div>
-                </td>
-
-
-                <td>
-                    ${faq.sort_order ?? 0}
+                    ${faqCount}
                 </td>
 
 
@@ -1312,12 +1449,202 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     <button
                         type="button"
-                        class="
-                            btn
-                            btn-sm
-                            btn-warning
-                            btn-edit
-                        "
+                        class="btn btn-sm btn-primary btn-view-faq"
+                        data-id="${product.id}"
+                    >
+                        View FAQs
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-warning btn-edit"
+                        data-id="${product.id}"
+                    >
+                        Edit
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-danger btn-delete"
+                        data-id="${product.id}"
+                    >
+                        Delete
+                    </button>
+
+                </td>
+
+            `;
+
+            list.appendChild(tr);
+
+        });
+
+
+        bindTableButtons();
+    }
+
+
+    function categoryLabel(category)
+    {
+        return {
+            product: 'Product',
+            order: 'Order',
+            delivery: 'Delivery',
+            payment: 'Payment',
+        }[category]
+            || category
+            || '-';
+    }
+
+
+    function productDisplayName(product)
+    {
+        if (product.category === 'product') {
+            return product.question_name
+                || product.material
+                || 'Product';
+        }
+
+        return `${categoryLabel(product.category)} FAQ`;
+    }
+
+
+    function findProduct(id)
+    {
+        return faqs.find(
+            item =>
+                item.entry_type === 'product'
+                && String(item.id) === String(id)
+        );
+    }
+
+
+    function getFaqsForProduct(product)
+    {
+        return faqs.filter(function (faq) {
+
+            if (faq.entry_type !== 'faq') {
+                return false;
+            }
+
+            if (product.category === 'product') {
+                return String(faq.product_id || '')
+                    === String(product.id);
+            }
+
+            return faq.category === product.category
+                && (
+                    !faq.product_id
+                    || String(faq.product_id)
+                        === String(product.id)
+                );
+        });
+    }
+
+
+    function openProductFaqs(id)
+    {
+        const product =
+            findProduct(id);
+
+        if (!product) {
+            return;
+        }
+
+        activeProductId =
+            String(product.id);
+
+        const productFaqs =
+            getFaqsForProduct(product);
+
+        tableWrapper
+            .classList
+            .add('d-none');
+
+        emptyBox
+            .classList
+            .add('d-none');
+
+        detailWrapper
+            .classList
+            .remove('d-none');
+
+        tableTitle.textContent =
+            'FAQ List';
+
+        detailTitle.textContent =
+            productDisplayName(product);
+
+        detailMeta.textContent =
+            categoryLabel(product.category);
+
+        detailList.innerHTML = '';
+
+        if (productFaqs.length === 0) {
+
+            detailList.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        No FAQs found for this item.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        productFaqs.forEach(function (faq, index) {
+
+            const statusClass =
+                faq.is_active
+                    ? 'status-active'
+                    : 'status-inactive';
+
+            const statusText =
+                faq.is_active
+                    ? 'Active'
+                    : 'Inactive';
+
+            const tr =
+                document.createElement('tr');
+
+            tr.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+
+                <td>
+                    <div class="faq-question">
+                        ${escapeHtml(faq.question || '-')}
+                    </div>
+
+                    <div class="faq-answer-preview text-muted">
+                        ${escapeHtml(stripHtml(faq.answer || ''))}
+                    </div>
+                </td>
+
+
+                <td>
+                    ${faq.sort_order ?? 0}
+                </td>
+
+
+                <td>
+                    <span class="status-badge ${statusClass}">
+                        ${statusText}
+                    </span>
+                </td>
+
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-warning btn-edit"
                         data-id="${faq.id}"
                     >
                         Edit
@@ -1326,12 +1653,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     <button
                         type="button"
-                        class="
-                            btn
-                            btn-sm
-                            btn-danger
-                            btn-delete
-                        "
+                        class="btn btn-sm btn-danger btn-delete"
                         data-id="${faq.id}"
                     >
                         Delete
@@ -1341,13 +1663,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
             `;
 
-
-            list.appendChild(tr);
+            detailList.appendChild(tr);
 
         });
 
-
         bindTableButtons();
+    }
+
+
+    function stripHtml(value)
+    {
+        const element =
+            document.createElement('div');
+
+        element.innerHTML =
+            String(value ?? '');
+
+        return element.textContent
+            || element.innerText
+            || '';
     }
 
 
@@ -1393,7 +1727,7 @@ document.addEventListener('DOMContentLoaded', function () {
             'click',
             function () {
 
-                openCreateModal('faq');
+                openCreateModal('product');
 
             }
         );
@@ -1406,6 +1740,26 @@ document.addEventListener('DOMContentLoaded', function () {
         .addEventListener(
             'click',
             loadFaqs
+        );
+
+
+    document
+        .getElementById(
+            'btn-back-to-products'
+        )
+        .addEventListener(
+            'click',
+            renderFaqs
+        );
+
+
+    document
+        .getElementById(
+            'btn-detail-add-faq'
+        )
+        .addEventListener(
+            'click',
+            openCreateFaqForActiveProduct
         );
 
 
@@ -1423,6 +1777,43 @@ document.addEventListener('DOMContentLoaded', function () {
                     ? 'Create Product'
                     : 'Create FAQ';
 
+
+        modal.modal('show');
+    }
+
+
+    function openCreateFaqForActiveProduct()
+    {
+        const product =
+            findProduct(activeProductId);
+
+        if (!product) {
+            openCreateModal('faq');
+
+            return;
+        }
+
+        resetForm('faq');
+
+        categorySelect.value =
+            product.category;
+
+        showCategoryForFaq =
+            true;
+
+        toggleMaterial();
+
+        if (product.category === 'product') {
+            productSelect.value =
+                product.id;
+        }
+
+        document
+            .getElementById(
+                'faq-modal-title'
+            )
+            .textContent =
+                'Create FAQ';
 
         modal.modal('show');
     }
@@ -1604,6 +1995,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         .value;
 
 
+                const isProductMetaEntry =
+                    currentEntryType === 'product'
+                    && category === 'product';
+
+
                 const payload = {
 
                     entry_type:
@@ -1623,7 +2019,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     material:
-                        currentEntryType === 'product'
+                        isProductMetaEntry
                             ? document
                                 .getElementById(
                                     'faq-material'
@@ -1633,7 +2029,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     question_name:
-                        currentEntryType === 'product'
+                        isProductMetaEntry
                             ? document
                                 .getElementById(
                                     'faq-question-name'
@@ -1643,7 +2039,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     product_link:
-                        currentEntryType === 'product'
+                        isProductMetaEntry
                             ? document
                                 .getElementById(
                                     'faq-product-link'
@@ -1653,7 +2049,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     product_link_text:
-                        currentEntryType === 'product'
+                        isProductMetaEntry
                             ? document
                                 .getElementById(
                                     'faq-product-link-text'
@@ -1702,6 +2098,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (
                     currentEntryType ===
                     'product' &&
+                    category === 'product' &&
                     !payload.material
                 ) {
 
@@ -1731,6 +2128,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (
                     currentEntryType ===
                     'product' &&
+                    category === 'product' &&
                     !payload.question_name
                 ) {
 
@@ -1745,6 +2143,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (
                     currentEntryType ===
                     'product' &&
+                    category === 'product' &&
                     !payload.product_link
                 ) {
 
@@ -1759,6 +2158,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (
                     currentEntryType ===
                     'product' &&
+                    category === 'product' &&
                     !payload.product_link_text
                 ) {
 
@@ -1814,6 +2214,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     this;
 
 
+                const previousActiveProductId =
+                    activeProductId;
+
+
                 try {
 
                     button.disabled =
@@ -1867,6 +2271,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                     await loadFaqs();
+
+                    if (previousActiveProductId !== null) {
+                        openProductFaqs(previousActiveProductId);
+                    }
 
                 } catch (error) {
 
@@ -1927,6 +2335,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
 
+        const previousActiveProductId =
+            activeProductId;
+
+
         try {
 
             const response =
@@ -1962,6 +2374,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             await loadFaqs();
 
+            if (previousActiveProductId !== null) {
+                openProductFaqs(previousActiveProductId);
+            }
+
         } catch (error) {
 
             alert(
@@ -1983,12 +2399,68 @@ document.addEventListener('DOMContentLoaded', function () {
     {
         document
             .querySelectorAll(
+                '.faq-product-row'
+            )
+            .forEach(function (row) {
+
+                row.onclick =
+                    function () {
+
+                        openProductFaqs(
+                            this.dataset.id
+                        );
+
+                    };
+
+                row.onkeydown =
+                    function (event) {
+
+                        if (
+                            event.key === 'Enter'
+                            || event.key === ' '
+                        ) {
+                            event.preventDefault();
+
+                            openProductFaqs(
+                                this.dataset.id
+                            );
+                        }
+
+                    };
+
+            });
+
+
+        document
+            .querySelectorAll(
+                '.btn-view-faq'
+            )
+            .forEach(function (button) {
+
+                button.onclick =
+                    function (event) {
+
+                        event.stopPropagation();
+
+                        openProductFaqs(
+                            this.dataset.id
+                        );
+
+                    };
+
+            });
+
+
+        document
+            .querySelectorAll(
                 '.btn-edit'
             )
             .forEach(function (button) {
 
                 button.onclick =
-                    function () {
+                    function (event) {
+
+                        event.stopPropagation();
 
                         openEditModal(
                             this.dataset.id
@@ -2006,7 +2478,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .forEach(function (button) {
 
                 button.onclick =
-                    function () {
+                    function (event) {
+
+                        event.stopPropagation();
 
                         deleteFaq(
                             this.dataset.id
@@ -2032,7 +2506,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 : 'faq';
 
 
-        showCategoryForFaq = false;
+        showCategoryForFaq =
+            currentEntryType ===
+            'faq';
 
 
         entryTypeInput.value =
