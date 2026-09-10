@@ -28,18 +28,25 @@ class FaqController extends Controller
 
         $productFaqs = Faq::query()
             ->where('category', 'product')
+            ->where('entry_type', 'product')
             ->where('is_active', true)
             ->whereNotNull('question_name')
             ->where('question_name', '<>', '')
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get([
+                'entry_type',
                 'material',
                 'question_name',
+                'product_link',
+                'product_link_text',
             ]);
 
         $products->each(function (Product $product) use ($productFaqs): void {
             $faq = $productFaqs->first(
+                fn (Faq $faq): bool => ($faq->entry_type ?? 'faq') === 'product'
+                    && $this->faqBelongsToProduct($faq, $product)
+            ) ?? $productFaqs->first(
                 fn (Faq $faq): bool => $this->faqBelongsToProduct($faq, $product)
             );
 
@@ -51,18 +58,20 @@ class FaqController extends Controller
             compact('products')
         );
     }
+
+
     public function productShow(Product $product)
     {
-        $faqs = Faq::query()
+        $productEntries = Faq::query()
             ->where('category', 'product')
+            ->where('entry_type', 'product')
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get([
                 'id',
+                'entry_type',
                 'material',
-                'question',
-                'answer',
                 'product_link',
                 'product_link_text',
                 'question_name',
@@ -72,10 +81,39 @@ class FaqController extends Controller
             )
             ->values();
 
-        $productFaq = $faqs->first(
-            fn (Faq $faq): bool => trim((string) $faq->product_link) !== ''
-                || trim((string) $faq->product_link_text) !== ''
-        ) ?? $faqs->first();
+        $productFaq = $productEntries->first();
+
+        $faqs = Faq::query()
+            ->where('category', 'product')
+            ->where('entry_type', 'faq')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get([
+                'id',
+                'product_id',
+                'material',
+                'question',
+                'answer',
+            ])
+            ->filter(
+                function (Faq $faq) use ($product, $productFaq): bool {
+                    if (trim((string) $faq->question) === '') {
+                        return false;
+                    }
+
+                    if ($productFaq && $faq->product_id !== null) {
+                        return (int) $faq->product_id === (int) $productFaq->id;
+                    }
+
+                    if ($faq->product_id !== null) {
+                        return false;
+                    }
+
+                    return $this->faqBelongsToProduct($faq, $product);
+                }
+            )
+            ->values();
 
         return view(
             'faq.product-show',

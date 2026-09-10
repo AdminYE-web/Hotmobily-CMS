@@ -19,13 +19,25 @@
             </p>
         </div>
 
-        <button
-            type="button"
-            class="btn btn-primary"
-            id="btn-add-faq"
-        >
-            + Create FAQ
-        </button>
+        <div>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="btn-add-product"
+            >
+                + Create Product
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-primary ml-2"
+                id="btn-add-faq"
+            >
+                + Create FAQ
+            </button>
+
+        </div>
 
     </div>
 
@@ -38,7 +50,7 @@
             <div class="d-flex justify-content-between align-items-center">
 
                 <h6 class="m-0 font-weight-bold text-primary">
-                    FAQ List
+                    Product / FAQ List
                 </h6>
 
                 <button
@@ -113,6 +125,14 @@
                                 Category
                             </th>
 
+                            <th style="width:110px;">
+                                Type
+                            </th>
+
+                            <th style="width:220px;">
+                                Product
+                            </th>
+
                             <th style="width:130px;">
                                 Material
                             </th>
@@ -155,7 +175,7 @@
 
 
 {{-- ============================================================ --}}
-{{-- Create / Edit FAQ Modal --}}
+{{-- Create / Edit Product or FAQ Modal --}}
 {{-- ============================================================ --}}
 
 <div
@@ -205,9 +225,18 @@
                     id="faq-id"
                 >
 
+                <input
+                    type="hidden"
+                    id="faq-entry-type"
+                    value="faq"
+                >
+
 
                 {{-- Category --}}
-                <div class="form-group">
+                <div
+                    class="form-group"
+                    id="faq-category-group"
+                >
 
                     <label>
                         Category
@@ -238,6 +267,33 @@
                 </div>
 
 
+                {{-- FAQ Product --}}
+                <div
+                    class="form-group"
+                    id="faq-product-group"
+                >
+
+                    <label>
+                        Product
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select
+                        id="faq-product-id"
+                        class="form-control"
+                    >
+                        <option value="">
+                            Select a Product
+                        </option>
+                    </select>
+
+                    <small class="form-text text-muted">
+                        Select a Product created from Create Product.
+                    </small>
+
+                </div>
+
+
                 {{-- Material --}}
                 <div
                     class="form-group"
@@ -257,7 +313,7 @@
                     >
 
                     <small class="form-text text-muted">
-                        Material is required only for Product FAQs.
+                        Material is required when creating a Product.
                     </small>
 
                 </div>
@@ -338,7 +394,10 @@
 
 
                 {{-- Question --}}
-                <div class="form-group">
+                <div
+                    class="form-group"
+                    id="faq-question-group"
+                >
 
                     <label>
                         Question
@@ -357,7 +416,10 @@
 
 
                 {{-- Answer --}}
-                <div class="form-group">
+                <div
+                    class="form-group"
+                    id="faq-answer-group"
+                >
 
                     <label>
                         Answer
@@ -721,6 +783,48 @@ document.addEventListener('DOMContentLoaded', function () {
         );
 
 
+    let currentEntryType = 'faq';
+
+
+    let showCategoryForFaq = false;
+
+
+    const entryTypeInput =
+        document.getElementById(
+            'faq-entry-type'
+        );
+
+
+    const categoryGroup =
+        document.getElementById(
+            'faq-category-group'
+        );
+
+
+    const productGroup =
+        document.getElementById(
+            'faq-product-group'
+        );
+
+
+    const productSelect =
+        document.getElementById(
+            'faq-product-id'
+        );
+
+
+    const questionGroup =
+        document.getElementById(
+            'faq-question-group'
+        );
+
+
+    const answerGroup =
+        document.getElementById(
+            'faq-answer-group'
+        );
+
+
     categorySelect
         .addEventListener(
             'change',
@@ -778,10 +882,33 @@ document.addEventListener('DOMContentLoaded', function () {
             );
 
 
-        if (
-            categorySelect.value ===
-            'product'
-        ) {
+        const isProductEntry =
+            currentEntryType ===
+            'product';
+
+
+        if (isProductEntry) {
+
+            categorySelect.value = 'product';
+            categorySelect.disabled = true;
+
+            categoryGroup
+                .classList
+                .remove('d-none');
+
+            productGroup
+                .classList
+                .add('d-none');
+
+            productSelect.value = '';
+
+            questionGroup
+                .classList
+                .add('d-none');
+
+            answerGroup
+                .classList
+                .add('d-none');
 
             materialGroup
                 .classList
@@ -801,12 +928,61 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } else {
 
+            const shouldShowFaqCategory =
+                showCategoryForFaq;
+
+
+            if (shouldShowFaqCategory) {
+
+                categorySelect.disabled = false;
+
+                categoryGroup
+                    .classList
+                    .remove('d-none');
+
+            } else {
+
+                categorySelect.value = 'product';
+                categorySelect.disabled = true;
+
+                categoryGroup
+                    .classList
+                    .add('d-none');
+
+            }
+
+            questionGroup
+                .classList
+                .remove('d-none');
+
+            answerGroup
+                .classList
+                .remove('d-none');
+
             materialGroup
                 .classList
                 .add('d-none');
 
-
             materialInput.value = '';
+
+            if (
+                categorySelect.value ===
+                'product'
+            ) {
+
+                productGroup
+                    .classList
+                    .remove('d-none');
+
+            } else {
+
+                productGroup
+                    .classList
+                    .add('d-none');
+
+                productSelect.value = '';
+
+            }
 
             questionNameGroup
                 .classList
@@ -888,6 +1064,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 result.data ?? [];
 
 
+            populateProductOptions();
+
+
             renderFaqs();
 
         } catch (error) {
@@ -911,6 +1090,78 @@ document.addEventListener('DOMContentLoaded', function () {
                 .add('d-none');
 
         }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Product Options
+    |--------------------------------------------------------------------------
+    */
+
+    function populateProductOptions()
+    {
+        const selectedProductId =
+            productSelect.value;
+
+
+        productSelect.innerHTML = '';
+
+
+        const placeholder =
+            document.createElement('option');
+
+
+        placeholder.value = '';
+
+        placeholder.textContent =
+            'Select a Product';
+
+
+        productSelect.appendChild(
+            placeholder
+        );
+
+
+        faqs
+            .filter(
+                faq => faq.entry_type === 'product'
+            )
+            .forEach(function (product) {
+
+                const option =
+                    document.createElement('option');
+
+
+                const productName =
+                    product.question_name
+                    || product.material
+                    || `Product #${product.id}`;
+
+
+                const materialText =
+                    product.material
+                        ? ` (${product.material})`
+                        : '';
+
+
+                option.value =
+                    product.id;
+
+
+                option.textContent =
+                    `${productName}${materialText}`;
+
+
+                productSelect.appendChild(
+                    option
+                );
+
+            });
+
+
+        productSelect.value =
+            selectedProductId;
     }
 
 
@@ -942,6 +1193,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         faqs.forEach(function (faq) {
 
+            const linkedProduct =
+                faqs.find(
+                    item =>
+                        faq.product_id
+                        && String(item.id) ===
+                            String(faq.product_id)
+                        && item.entry_type === 'product'
+                );
+
             const tr =
                 document.createElement('tr');
 
@@ -969,6 +1229,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span class="faq-category">
                         ${escapeHtml(faq.category)}
                     </span>
+                </td>
+
+
+                <td>
+                    <span class="faq-entry-type">
+                        ${
+                            faq.entry_type === 'product'
+                                ? 'Product'
+                                : 'FAQ'
+                        }
+                    </span>
+                </td>
+
+
+                <td>
+                    ${
+                        linkedProduct
+                            ? escapeHtml(
+                                linkedProduct.question_name
+                                || linkedProduct.material
+                                || `Product #${linkedProduct.id}`
+                            )
+                            : '-'
+                    }
                 </td>
 
 
@@ -1075,11 +1359,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document
         .getElementById(
+            'btn-add-product'
+        )
+        .addEventListener(
+            'click',
+            function () {
+
+                openCreateModal('product');
+
+            }
+        );
+
+
+    document
+        .getElementById(
             'btn-add-faq'
         )
         .addEventListener(
             'click',
-            openCreateModal
+            function () {
+
+                openCreateModal('faq');
+
+            }
         );
 
 
@@ -1089,7 +1391,11 @@ document.addEventListener('DOMContentLoaded', function () {
         )
         .addEventListener(
             'click',
-            openCreateModal
+            function () {
+
+                openCreateModal('faq');
+
+            }
         );
 
 
@@ -1103,9 +1409,9 @@ document.addEventListener('DOMContentLoaded', function () {
         );
 
 
-    function openCreateModal()
+    function openCreateModal(entryType = 'faq')
     {
-        resetForm();
+        resetForm(entryType);
 
 
         document
@@ -1113,7 +1419,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 'faq-modal-title'
             )
             .textContent =
-                'Create FAQ';
+                entryType === 'product'
+                    ? 'Create Product'
+                    : 'Create FAQ';
 
 
         modal.modal('show');
@@ -1141,7 +1449,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
 
-        resetForm();
+        const entryType =
+            faq.entry_type === 'product'
+                ? 'product'
+                : 'faq';
+
+
+        resetForm(entryType);
 
 
         document
@@ -1149,7 +1463,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 'faq-modal-title'
             )
             .textContent =
-                'Edit FAQ';
+                entryType === 'product'
+                    ? 'Edit Product'
+                    : 'Edit FAQ';
 
 
         document
@@ -1166,6 +1482,19 @@ document.addEventListener('DOMContentLoaded', function () {
             )
             .value =
                 faq.category;
+
+
+        showCategoryForFaq =
+            entryType === 'faq'
+            && faq.category !== 'product';
+
+
+        document
+            .getElementById(
+                'faq-product-id'
+            )
+            .value =
+                faq.product_id ?? '';
 
 
         document
@@ -1277,11 +1606,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const payload = {
 
+                    entry_type:
+                        currentEntryType,
+
                     category:
                         category,
 
+                    product_id:
+                        currentEntryType === 'faq'
+                        && category === 'product'
+                            ? document
+                                .getElementById(
+                                    'faq-product-id'
+                                )
+                                .value
+                            : null,
+
                     material:
-                        category === 'product'
+                        currentEntryType === 'product'
                             ? document
                                 .getElementById(
                                     'faq-material'
@@ -1291,7 +1633,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     question_name:
-                        category === 'product'
+                        currentEntryType === 'product'
                             ? document
                                 .getElementById(
                                     'faq-question-name'
@@ -1301,7 +1643,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     product_link:
-                        category === 'product'
+                        currentEntryType === 'product'
                             ? document
                                 .getElementById(
                                     'faq-product-link'
@@ -1311,7 +1653,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     product_link_text:
-                        category === 'product'
+                        currentEntryType === 'product'
                             ? document
                                 .getElementById(
                                     'faq-product-link-text'
@@ -1321,15 +1663,17 @@ document.addEventListener('DOMContentLoaded', function () {
                             : null,
 
                     question:
-                        document
-                            .getElementById(
-                                'faq-question'
-                            )
-                            .value
-                            .trim(),
+                        currentEntryType === 'faq'
+                            ? document
+                                .getElementById(
+                                    'faq-question'
+                                )
+                                .value
+                                .trim()
+                            : '',
 
                     answer:
-                        answerEditor
+                        currentEntryType === 'faq' && answerEditor
                             ? answerEditor
                                 .getData()
                                 .trim()
@@ -1356,13 +1700,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 if (
-                    payload.category ===
+                    currentEntryType ===
                     'product' &&
                     !payload.material
                 ) {
 
                     showFormError(
-                        'Material is required for Product FAQ.'
+                        'Material is required for Product.'
                     );
 
                     return;
@@ -1370,13 +1714,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 if (
-                    payload.category ===
+                    currentEntryType ===
+                    'faq' &&
+                    payload.category === 'product' &&
+                    !payload.product_id
+                ) {
+
+                    showFormError(
+                        'Please select a Product.'
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    currentEntryType ===
                     'product' &&
                     !payload.question_name
                 ) {
 
                     showFormError(
-                        'Question Name is required for Product FAQ.'
+                        'Question Name is required for Product.'
                     );
 
                     return;
@@ -1384,13 +1743,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 if (
-                    payload.category ===
+                    currentEntryType ===
                     'product' &&
                     !payload.product_link
                 ) {
 
                     showFormError(
-                        'Product Link is required for Product FAQ.'
+                        'Product Link is required for Product.'
                     );
 
                     return;
@@ -1398,20 +1757,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 if (
-                    payload.category ===
+                    currentEntryType ===
                     'product' &&
                     !payload.product_link_text
                 ) {
 
                     showFormError(
-                        'Product Link Text is required for Product FAQ.'
+                        'Product Link Text is required for Product.'
                     );
 
                     return;
                 }
 
 
-                if (!payload.question) {
+                if (
+                    currentEntryType ===
+                    'faq' &&
+                    !payload.question
+                ) {
 
                     showFormError(
                         'Question is required.'
@@ -1421,7 +1784,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
 
-                if (!payload.answer) {
+                if (
+                    currentEntryType ===
+                    'faq' &&
+                    !payload.answer
+                ) {
 
                     showFormError(
                         'Answer is required.'
@@ -1545,7 +1912,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (
             !confirm(
-                `Delete FAQ "${faq.question}"?`
+                `Delete ${
+                    faq.entry_type === 'product'
+                        ? 'Product'
+                        : 'FAQ'
+                } "${
+                    faq.entry_type === 'product'
+                        ? (faq.question_name || 'Product')
+                        : (faq.question || 'FAQ')
+                }"?`
             )
         ) {
             return;
@@ -1649,8 +2024,21 @@ document.addEventListener('DOMContentLoaded', function () {
     |--------------------------------------------------------------------------
     */
 
-    function resetForm()
+    function resetForm(entryType = 'faq')
     {
+        currentEntryType =
+            entryType === 'product'
+                ? 'product'
+                : 'faq';
+
+
+        showCategoryForFaq = false;
+
+
+        entryTypeInput.value =
+            currentEntryType;
+
+
         document
             .getElementById(
                 'faq-id'
@@ -1664,6 +2052,13 @@ document.addEventListener('DOMContentLoaded', function () {
             )
             .value =
                 'product';
+
+
+        document
+            .getElementById(
+                'faq-product-id'
+            )
+            .value = '';
 
 
         document

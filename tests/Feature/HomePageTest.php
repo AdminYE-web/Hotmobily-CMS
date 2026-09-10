@@ -17,7 +17,10 @@ class HomePageTest extends TestCase
             ->assertSee('id="sidemenu"', false)
             ->assertSee('id="calendar"', false)
             ->assertSee('News!')
-            ->assertSee('【モック】ホームページのリニューアル準備を進めています。');
+            ->assertSee('【モック】ホームページのリニューアル準備を進めています。')
+            ->assertSee('class="slider_review"', false)
+            ->assertSee('お客様対応:', false)
+            ->assertSee('竹村');
     }
 
     public function test_legacy_database_endpoints_return_mock_content(): void

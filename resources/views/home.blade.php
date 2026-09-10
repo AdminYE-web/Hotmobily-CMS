@@ -1,352 +1,377 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+@extends('layouts.product')
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="keywords" content="ノベルティ,同人グッズ,印刷,記念品,製作,販促,名入れ,激安">
-  <meta name="description" content="小ロットもOKで短納期。アクリルグッズ、ラバーグッズ、アクキー、反射キーホルダー、3D立体キーホルダー、お守り、PVCケース、フライトタグ、キッチンスポンジの製作を中心に、社名やロゴが印刷できる、オリジナルグッズ、販促品を製造しております。同人や学校の記念品はもちろん大ロットの企業・官公庁や個人のお客様もご注文頂けます。">
-  <meta name="robots" content="index,follow">
-  <title>オリジナルグッズ・ノベルティを小ロット短納期で製作。ホットモバイリーオリジナルグッズ</title>
-  <!-- <link rel="canonical" href="//hotmobily.jp/" /> -->
-  @include('partials.legacy-head')
-  <link rel="stylesheet" href="css/tinyscrollbar_2nd.css?v=1.015" type="text/css" media="screen" />
-  <link href="/reviews/css/reviews.css?v=1.07" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" href="/css/jquery.bxslider.css">
-  <style type="text/css">
-    body {
-      font-family:
-        IwaUDGoDspPro-Th,
-        'Hiragino Sans',
-        'ヒラギノ角ゴシック',
-        'メイリオ',
-        Meiryo,
-        'Hiragino Kaku Gothic ProN',
-        'Yu Gothic',
-        sans-serif !important;
-      -webkit-font-smoothing: antialiased !important;
-      font-size: 13.6px;
-      font-feature-settings: palt;
-      -webkit-text-size-adjust: 100%;
-      letter-spacing: -.06em;
-      color: #281600;
-    }
+@section('head')
 
-    a,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      font-family:
-        IwaUDGoDspPro-Th,
-        'Hiragino Sans',
-        'ヒラギノ角ゴシック',
-        'メイリオ',
-        Meiryo,
-        'Hiragino Kaku Gothic ProN',
-        'Yu Gothic',
-        sans-serif !important;
-    }
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="keywords" content="ノベルティ,同人グッズ,印刷,記念品,製作,販促,名入れ,激安">
+    <meta name="description" content="小ロットもOKで短納期。アクリルグッズ、ラバーグッズ、アクキー、反射キーホルダー、3D立体キーホルダー、お守り、PVCケース、フライトタグ、キッチンスポンジの製作を中心に、社名やロゴが印刷できる、オリジナルグッズ、販促品を製造しております。同人や学校の記念品はもちろん大ロットの企業・官公庁や個人のお客様もご注文頂けます。">
+    <meta name="robots" content="index,follow">
+    <title>オリジナルグッズ・ノベルティを小ロット短納期で製作。ホットモバイリーオリジナルグッズ</title>
+    <link rel="canonical" href="{{ url('/') }}">
+    @include('partials.legacy-head-products')
+    <link rel="stylesheet" href="{{ asset('css/tinyscrollbar_2nd.css') }}?v=1.015" type="text/css" media="screen" />
+    <link href="{{ asset('reviews/css/reviews.css') }}?v=1.07" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('css/jquery.bxslider.css') }}">
+    <style type="text/css">
+        body {
+          font-family:
+            IwaUDGoDspPro-Th,
+            'Hiragino Sans',
+            'ヒラギノ角ゴシック',
+            'メイリオ',
+            Meiryo,
+            'Hiragino Kaku Gothic ProN',
+            'Yu Gothic',
+            sans-serif !important;
+          -webkit-font-smoothing: antialiased !important;
+          font-size: 13.6px;
+          font-feature-settings: palt;
+          -webkit-text-size-adjust: 100%;
+          letter-spacing: -.06em;
+          color: #281600;
+        }
 
-    .info {
-      margin: 0 0 15px;
-      padding: 5px !important;
-      background-color: #fff;
-      border: #d90000 2px solid;
-      font-size: 15px
-    }
+        a,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          font-family:
+            IwaUDGoDspPro-Th,
+            'Hiragino Sans',
+            'ヒラギノ角ゴシック',
+            'メイリオ',
+            Meiryo,
+            'Hiragino Kaku Gothic ProN',
+            'Yu Gothic',
+            sans-serif !important;
+        }
 
-    .red {
-      color: red
-    }
+        .info {
+          margin: 0 0 15px;
+          padding: 5px !important;
+          background-color: #fff;
+          border: #d90000 2px solid;
+          font-size: 15px
+        }
 
-    .txt {
-      font-size: 15px !important;
-      padding: 0 10px !important;
-      background: none !important
-    }
+        .red {
+          color: red
+        }
 
-    .reviews_box {
-      margin: 0
-    }
+        .txt {
+          font-size: 15px !important;
+          padding: 0 10px !important;
+          background: none !important
+        }
 
-    .bx-wrapper {
-      margin-bottom: 0
-    }
+        #customer_review_area {
+          display: block;
+          width: 100%;
+          height: 210px;
+          box-sizing: border-box;
+          border: 1px solid #dcdcdc;
+          margin: auto;
+          overflow: hidden;
+          background: #fff;
+        }
 
-    #customer_review_area {
-      display: block;
-      width: 100%;
-      height: 210px;
-      box-sizing: border-box;
-      border-left: 1px solid #dcdcdc;
-      border-right: 1px solid #dcdcdc;
-      border-top: 1px solid #dcdcdc;
-      border-bottom: 1px solid #dcdcdc;
-      margin: auto;
-      overflow: hidden
-    }
+        #customer_review_area .slider_review {
+          margin: 0;
+          padding: 0;
+        }
 
-    #google-qr {
-      display: none;
-    }
+        #customer_review_area .bx-wrapper {
+          margin-bottom: 0;
+          border: 5px solid #fff;
+          background: #fff;
+          box-shadow: 0 0 5px #ccc;
+        }
 
-    table.tbl_index:hover {
-      box-shadow: 1px 1px 3px 1px grey;
-      transition-duration: .1s
-    }
+        #customer_review_area .reviews_box {
+          box-sizing: border-box;
+          width: calc(100% - 10px) !important;
+          max-width: none;
+          margin: 0 5px 10px;
+          padding: 12px 15px 7px;
+          background: #f4f4f4;
+          border-radius: 3px;
+          box-shadow: 2px 2px 3px rgba(0, 0, 0, .25);
+          color: #111;
+        }
 
-    .social-box {
-      width: 48%;
-      height: 500px;
-      border: 1px solid #CCC;
-      margin: 5px 0 10px;
-      max-height: 500px;
-      overflow: auto
-    }
+        #customer_review_area .reviews_box p {
+          margin: 0;
+          padding: 0;
+        }
 
-    .social-group {
-      display: flex;
-      justify-content: space-between
-    }
+        #customer_review_area .reviews_box .star {
+          font-size: 16px;
+          line-height: 22px;
+          white-space: nowrap;
+        }
 
-    .pc_only {
-      display: block !important
-    }
+        #customer_review_area .reviews_box .score {
+          display: inline-block;
+          margin: 0 4px 0 6px;
+          color: #f5a623;
+          letter-spacing: 0;
+          white-space: nowrap;
+        }
 
-    #twitter-widget-1 {
-      max-width: 99.8% !important
-    }
+        #customer_review_area .reviews_box .date {
+          margin-top: 3px;
+          color: #888;
+          font-size: 11px;
+          line-height: 14px;
+        }
 
-    /* body .tbl_index .topic {
-      font-family: IwaUDGoDspPro-Bd, sans-serif !important
-    } */
+        #customer_review_area .reviews_box hr {
+          margin: 7px 0;
+          border: 0;
+          border-top: 1px solid #ddd;
+        }
 
-    .tbl_index div p {
-      padding-left: 10px
-    }
+        #customer_review_area .reviews_box .comment {
+          margin-bottom: 5px;
+          line-height: 1.5;
+        }
 
-    .new-text {
-      font-size: 16px !important;
-      letter-spacing: 0.05em !important;
-      line-height: 150% !important;
-    }
+        #google-qr {
+          display: none;
+        }
+
+        table.tbl_index:hover {
+          box-shadow: 1px 1px 3px 1px grey;
+          transition-duration: .1s
+        }
+
+        .social-box {
+          width: 48%;
+          height: 500px;
+          border: 1px solid #CCC;
+          margin: 5px 0 10px;
+          max-height: 500px;
+          overflow: auto
+        }
+
+        .social-group {
+          display: flex;
+          justify-content: space-between
+        }
+
+        .pc_only {
+          display: block !important
+        }
+
+        #twitter-widget-1 {
+          max-width: 99.8% !important
+        }
+
+        /* body .tbl_index .topic {
+          font-family: IwaUDGoDspPro-Bd, sans-serif !important
+        } */
+
+        .tbl_index div p {
+          padding-left: 10px
+        }
+
+        .new-text {
+          font-size: 16px !important;
+          letter-spacing: 0.05em !important;
+          line-height: 150% !important;
+        }
 
 
 
-    @media screen and (min-width: 768px) {
-      .tbl_index .text-box span {
-        font-size: 14px;
-        padding: 2.4px 7px
-      }
+        @media screen and (min-width: 768px) {
+          .tbl_index .text-box span {
+            font-size: 14px;
+            padding: 2.4px 7px
+          }
 
-      body .tbl_index .topic {
-        font-size: 26px
-      }
+          body .tbl_index .topic {
+            font-size: 26px
+          }
 
-      .text-box {
-        width: 20% !important;
-        padding-left: 5px !important
-      }
+          .text-box {
+            width: 20% !important;
+            padding-left: 5px !important
+          }
 
-    }
+        }
 
-    @media screen and (max-width: 768px) {
-      .social-box {
-        width: -webkit-fill-available
-      }
+        @media screen and (max-width: 768px) {
+          .social-box {
+            width: -webkit-fill-available
+          }
 
-      .social-group {
-        display: block
-      }
+          .social-group {
+            display: block
+          }
 
-      .pc_only {
-        display: none !important
-      }
+          .pc_only {
+            display: none !important
+          }
 
-      #google-qr {
-        display: block;
-      }
-    }
+          #google-qr {
+            display: block;
+          }
+        }
 
-    @media screen and (max-width: 576px) {
-      body .tbl_index .topic {
-        font-size: 3.3vw
-      }
+        @media screen and (max-width: 576px) {
+          body .tbl_index .topic {
+            font-size: 3.3vw
+          }
 
-      #google-qr {
-        display: block;
-      }
-    }
+          #google-qr {
+            display: block;
+          }
+        }
 
-    div.active-slide {
-      box-shadow: 3px 3px 3px #ccc;
-      opacity: 1;
-    }
+        .fullw-img {
+          text-align: center;
+          margin-top: 15px;
+        }
 
-    .reviews_box {
-      margin: 0 5px 10px;
-      width: 100% !important;
-      max-width: -webkit-fill-available;
-    }
+        .tbl_index div p {
+          padding-left: 0;
+        }
 
-    .reviews_box:after {
-      border-style: none;
-    }
+        @media(max-width: 768px) {
+          #customer_review_area {
+            width: 100%;
+          }
 
-    .fullw-img {
-      text-align: center;
-      margin-top: 15px;
-    }
+          .fullw-img {
+            margin-top: 0
+          }
+        }
 
-    .tbl_index div p {
-      padding-left: 0;
-    }
+        .tbl_index .detail {
+          font-size: calc(16px + 6 * ((15vw - 320px) / 680));
+          line-height: 26px;
+        }
 
-    @media(max-width: 768px) {
-      #customer_review_area {
-        width: 100%;
-      }
+        @media(max-width: 576px) {
+          .tbl_index .detail {
+            font-size: 2.2vw;
+            line-height: 3vw;
+            font-weight: 100;
+          }
 
-      .fullw-img {
-        margin-top: 0
-      }
-    }
+          #customer_review_area {
+            height: 350px;
+          }
 
-    .tbl_index .detail {
-      font-size: calc(16px + 6 * ((15vw - 320px) / 680));
-      line-height: 26px;
-    }
+          #customer_review_area .reviews_box .star {
+            font-size: 12px;
+            line-height: 18px;
+            white-space: normal;
+          }
 
-    @media(max-width: 576px) {
-      .tbl_index .detail {
-        font-size: 2.2vw;
-        line-height: 3vw;
-        font-weight: 100;
-      }
+          p.comment,
+          p.star {
+            font-size: 12px;
+          }
 
-      #customer_review_area {
-        height: 350px;
-      }
+          #customer_review_area .bx-viewport {
+            height: 350px !important;
+          }
 
-      p.comment,
-      p.star {
-        font-size: 12px;
-      }
+          .slideshow-container {
+            display: block;
+          }
 
-      .bx-viewport {
-        height: 350px !important;
-      }
+          .dot-pic {
+            display: none;
+          }
 
-      .slideshow-container {
-        display: block;
-      }
+          .social-group {
+            display: none;
+          }
 
-      .dot-pic {
-        display: none;
-      }
+          .prev,
+          .next {
+            display: none;
+          }
 
-      .social-group {
-        display: none;
-      }
+          /* #info_div {
+            display: none;
+          } */
 
-      .prev,
-      .next {
-        display: none;
-      }
+          .info_box a {
+            font-size: 0.65rem;
+          }
+        }
 
-      /* #info_div {
-        display: none;
-      } */
+        .twitter-tweet {
+          max-width: 100% !important;
+        }
 
-      .info_box a {
-        font-size: 0.65rem;
-      }
-    }
+        .mobile-viewer {
+          display: none;
+        }
 
-    .twitter-tweet {
-      max-width: 100% !important;
-    }
+        section[aria-label="Timeline"] div div:nth-child(n+4) {
+          display: none;
+        }
 
-    .mobile-viewer {
-      display: none;
-    }
+        @media screen and (max-width: 768px) {
+          .mobile-viewer {
+            display: block;
+          }
 
-    section[aria-label="Timeline"] div div:nth-child(n+4) {
-      display: none;
-    }
-
-    @media screen and (max-width: 768px) {
-      .mobile-viewer {
-        display: block;
-      }
-
-    }
-  </style>
-  <script type="text/javascript" src="js/coin-slider.min.js"></script>
-  <link rel="stylesheet" href="css/coin-slider-styles.css" type="text/css" />
-  <link rel="preload" href="css/my-slider.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <script src="js/ism-2.2.min.js"></script>
-  <noscript>
-    <link rel="stylesheet" href="css/my-slider.css" />
-  </noscript>
-  <!-- end -->
-  <script type="text/javascript" src="js/jquery.tinyscrollbar.js"></script>
-  <script type="text/javascript">
-    $(document).ready(function() {
-      $('#scrollbar1').tinyscrollbar();
-      $('#flash_slide').coinslider();
-      $('#coin-slider').coinslider({
-        width: 900,
-        navigation: false,
-        delay: 5000
+        }
+    </style>
+    <script type="text/javascript" src="{{ asset('js/coin-slider.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/coin-slider-styles.css') }}" type="text/css" />
+    <link rel="preload" href="{{ asset('css/my-slider.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <script src="{{ asset('js/ism-2.2.min.js') }}"></script>
+    <noscript>
+      <link rel="stylesheet" href="{{ asset('css/my-slider.css') }}" />
+    </noscript>
+    <!-- end -->
+    <script type="text/javascript" src="{{ asset('js/jquery.tinyscrollbar.js') }}"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+          $('#scrollbar1').tinyscrollbar();
+          $('#flash_slide').coinslider();
+          $('#coin-slider').coinslider({
+            width: 900,
+            navigation: false,
+            delay: 5000
+          });
       });
-    });
-  </script>
-  <script type="application/ld+json">
-    {
-      "@@context": "https://schema.org",
-      "@type": "OnlineStore",
-      "@id": "https://hotmobily.jp/#organization",
-      "name": "ホットモバイリー",
-      "url": "https://hotmobily.jp/",
-      "description": "個人の小ロットから企業・官公庁の量産まで、アクリルグッズ、ラバーグッズ、アクキー、反射キーホルダー、3D立体キーホルダー、お守り、PVCケース、フライトタグ、キッチンスポンジ等の多彩なオリジナルグッズを、良品廉価・顧客第一主義で製作するサービス。"
-    }
-  </script>
-  <!-- end -->
-</head>
-
-<body id="top">
-  <script language="javascript" type="text/javascript">
-    function popitup(url) {
-      newwindow = window.open(url, 'popup', 'height=518,width=518');
-      if (window.focus) {
-        newwindow.focus()
+    </script>
+    <script type="application/ld+json">
+      {
+        "@@context": "https://schema.org",
+        "@type": "OnlineStore",
+        "@id": "https://hotmobily.jp/#organization",
+        "name": "ホットモバイリー",
+        "url": "https://hotmobily.jp/",
+        "description": "個人の小ロットから企業・官公庁の量産まで、アクリルグッズ、ラバーグッズ、アクキー、反射キーホルダー、3D立体キーホルダー、お守り、PVCケース、フライトタグ、キッチンスポンジ等の多彩なオリジナルグッズを、良品廉価・顧客第一主義で製作するサービス。"
       }
-      return false;
-    }
-  </script>
-  <noscript>
-    <div style="display:inline;">
-      <p>&nbsp;</p>
-      <p><img height="0" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1036353231/?label=IGnMCK-CuAEQz_2V7gM&amp;guid=ON&amp;script=0" />
-      </p>
-    </div>
-  </noscript>
-  <!-- :: header start :: -->
-  @include('partials.header')
-  <!-- :: header end :: -->
-  <!-- globalNavi -->
-  @include('partials.legacy-navigation')
-  <!-- globalNavi End -->
-  <!-- :: wrapper start :: -->
-  <div id="wrapper">
-    <!-- sidemenu-->
-    @include('partials.legacy-sidebar')
-    <!-- sidemenu End -->
-    <!-- :: content_right start :: -->
-    <div id="content_right">
+    </script>
+    <!-- end -->
+
+@endsection
+
+
+@section('content')
+
+    <div class="home-page">
+
+        <noscript>
+            <div style="display:inline;">
+              <p>&nbsp;</p>
+              <p><img height="0" width="1" style="border-style:none;" alt="" src="http://www.googleadservices.com/pagead/conversion/1036353231/?label=IGnMCK-CuAEQz_2V7gM&amp;guid=ON&amp;script=0" />
+              </p>
+            </div>
+          </noscript>
       <div id="info_div"></div>
       {{-- Legacy campaign_2021.php is currently empty. --}}
 
@@ -1483,7 +1508,7 @@
         </style>
         <div class="news-bor">
           <div>
-            <h2 class="font-news">News!</h1>
+            <h2 class="font-news">News!</h2>
           </div>
           @foreach ($news as $item)
             <a href="news-detail.php?id={{ $item['id'] }}" style="color:black;" class="ddv">
@@ -1519,8 +1544,10 @@
       <div class="fullw-img">
         <a href="/reviews/"><img class="lazy" data-src="/reviews/img/reviews_bannerB.webp" width="771" height="238"></a>
       </div>
-      <div id="customer_review_area" style="">
-        <div class="slider_review"></div>
+      <div id="customer_review_area">
+        <div class="slider_review">
+          @include('partials.review-slider', ['reviews' => $reviews])
+        </div>
       </div>
 
       <br>
@@ -1531,54 +1558,44 @@
         </div>
       </div>
     </div>
-    <!-- :: content_right end :: -->
-  </div>
-  <!-- :: wrapper end :: -->
 
-  <!--フッター ここから-->
-  @include('partials.footer')
-  <!--フッター ここまで-->
+@endsection
 
-  <div id="fb-root"></div>
-  <script type="text/javascript" src="js/jquery.bxslider.js?v=1.01"></script>
+@push('scripts')
+
+  <script>
+    function popitup(url) {
+      newwindow = window.open(url, 'popup', 'height=518,width=518');
+      if (window.focus) {
+        newwindow.focus()
+      }
+      return false;
+    }
+  </script>
+  <script type="text/javascript" src="{{ asset('js/jquery.bxslider.js') }}?v=1.01"></script>
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script type="text/javascript">
     $(function() {
-      $('#info_div').load('/info/index.php');
+      $('#info_div').load(@json(route('legacy-mock.info')));
 
-      $.ajax({
-        type: "GET",
-        url: "get_review.php",
-        success: function(data) {
-          $('.slider_review').html(data);
-        },
-        complete: function() {
-          $('.slider_review').bxSlider({
-            mode: 'vertical',
-            auto: true,
-            pause: 4000,
-            speed: 1000,
-            maxSlides: 3, //一度に表示させる数
-            minSlides: 3, //最低限表示させる数
-            moveSlides: 1, //スライドで動かす数
-            pager: false,
-            controls: false,
-            autoControls: false,
-            preventDefaultSwipeY: false,
-            touchEnabled: false,
-            autoHover: true,
-            onSlideAfter: function(currentSlideNumber, toltalSlideQty, currentSlideHtmlObject) {
-              $('.active-slide').removeClass('active-slide');
-              $('.slider_review > div').eq(currentSlideHtmlObject + 3).addClass('active-slide');
-            },
-            onSliderLoad: function() {
-              $('slider_review > div').eq(3).addClass('active-slide');
-            },
-          });
-        }
-      });
+      var $reviewSlider = $('.slider_review');
+      if ($reviewSlider.length && $.fn.bxSlider) {
+        $reviewSlider.bxSlider({
+          mode: 'vertical',
+          auto: true,
+          pause: 4000,
+          speed: 1000,
+          maxSlides: 3,
+          minSlides: 3,
+          moveSlides: 1,
+          pager: false,
+          controls: false,
+          autoControls: false,
+          preventDefaultSwipeY: false,
+          touchEnabled: false,
+          autoHover: true
+        });
+      }
     });
   </script>
-</body>
-
-</html>
+@endpush

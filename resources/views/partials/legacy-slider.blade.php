@@ -1,8 +1,3 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		.bannerSlides {
 			display: none
@@ -135,9 +130,7 @@
 			display: none;
 		}
 	</style>
-</head>
 
-<body>
 	<div class="slideshow-container">
 		<!-- <div class="bannerSlides fade"><a href="/products/sponge/"><img src="/products/sponge/images/banner-sponge-3.webp"
 					width="770" height="194"></a></div> -->
@@ -239,6 +232,7 @@
 		<!-- <span class="dot" onclick="currentSlide(3)"></span> -->
 		<!-- <span class="dot" onclick="currentSlide(4)"></span> -->
 	</div>
+@push('scripts')
 	<script>
 		var slideIndex = 0; showSlides();
 		function plusSlides(n) { (n >= 0 ? showSlides(slideIndex) : showSlides(slideIndex -= 2)); }
@@ -255,7 +249,4 @@
 			if (n == undefined) { setTimeout(showSlides, 10000); }
 		}
 	</script>
-</body>
-
-</html>
-
+@endpush
