@@ -34,6 +34,7 @@
                                 <th>Display Type</th>
                                 <th>Main Price</th>
                                 <th>Required</th>
+                                <th>Order Summary</th>
                                 <th>Active</th>
                                 <th>Help Text</th>
                                 <th style="width: 110px;">Action</th>
@@ -46,18 +47,28 @@
                                     <td><code>{{ $optionGroup->group_code }}</code></td>
                                     <td>{{ $optionGroup->group_name }}</td>
                                     <td>
-                                        <span class="badge badge-{{ $optionGroup->display_type === 'image_card' ? 'info' : 'primary' }}">
-                                            {{ $optionGroup->display_type === 'image_card' ? 'Image card' : 'Button' }}
+                                        <span class="badge badge-{{ in_array($optionGroup->display_type, ['image_card', 'image_grid', 'paper_preview'], true) ? 'info' : ($optionGroup->display_type === 'previous_order' ? 'warning' : ($optionGroup->display_type === 'radio_list' ? 'success' : ($optionGroup->display_type === 'button_group' ? 'secondary' : ($optionGroup->display_type === 'switch' ? 'dark' : 'primary')))) }}">
+                                            {{ match ($optionGroup->display_type) {
+                                                'button_group' => 'Button group',
+                                                'image_card' => 'Image card',
+                                                'image_grid' => 'Image grid',
+                                                'paper_preview' => 'Paper preview',
+                                                'previous_order' => 'Previous order',
+                                                'radio_list' => 'Radio list',
+                                                'switch' => 'Switch',
+                                                default => 'Button',
+                                            } }}
                                         </span>
                                     </td>
                                     <td><span class="badge badge-{{ $optionGroup->is_main_price_group ? 'primary' : 'secondary' }}">{{ $optionGroup->is_main_price_group ? 'Yes' : 'No' }}</span></td>
                                     <td><span class="badge badge-{{ $optionGroup->is_required ? 'warning' : 'secondary' }}">{{ $optionGroup->is_required ? 'Yes' : 'No' }}</span></td>
+                                    <td><span class="badge badge-{{ $optionGroup->show_in_order_summary ? 'info' : 'secondary' }}">{{ $optionGroup->show_in_order_summary ? 'Show' : 'Hide' }}</span></td>
                                     <td><span class="badge badge-{{ $optionGroup->is_active ? 'success' : 'secondary' }}">{{ $optionGroup->is_active ? 'Active' : 'Inactive' }}</span></td>
                                     <td>{!! nl2br(e($optionGroup->help_text ?: '-')) !!}</td>
                                     <td><a href="{{ route('admin.option-groups.edit', $optionGroup) }}" class="btn btn-sm btn-outline-primary">Edit</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="9" class="text-center text-muted py-4">No Option Groups created yet.</td></tr>
+                                <tr><td colspan="10" class="text-center text-muted py-4">No Option Groups created yet.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

@@ -1634,7 +1634,9 @@
 
         </div>
 
-        @if ($product->slug === 'rubberstrap')
+        @if (!empty($orderSteps))
+            @include('products.partials.admin-order-form', ['orderSteps' => $orderSteps])
+        @elseif ($product->slug === 'rubberstrap')
             @include('products.partials.order-form')
         @endif
 
@@ -1653,7 +1655,7 @@
 
 
 @push('scripts')
-    @if ($product->slug === 'rubberstrap')
+    @if ($product->slug === 'rubberstrap' && empty($orderSteps))
         <script type="text/javascript" src="/js/_setToInput_2026.js?v=1.01"></script>
         <script type="text/javascript" src="/js/validation_new.js?v=1.11"></script>
         <script type="text/javascript" src="/products/js/calendar_n2.js?v=3.17"></script>

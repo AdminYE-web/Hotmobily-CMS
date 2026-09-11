@@ -40,9 +40,15 @@
                         <label for="display_type">Display Type <span class="text-danger">*</span></label>
                         <select id="display_type" name="display_type" class="form-control @error('display_type') is-invalid @enderror">
                             <option value="button" @selected(old('display_type', $optionGroup->display_type) === 'button')>Button</option>
+                            <option value="button_group" @selected(old('display_type', $optionGroup->display_type) === 'button_group')>Button group</option>
                             <option value="image_card" @selected(old('display_type', $optionGroup->display_type) === 'image_card')>Image card</option>
+                            <option value="image_grid" @selected(old('display_type', $optionGroup->display_type) === 'image_grid')>Image grid</option>
+                            <option value="paper_preview" @selected(old('display_type', $optionGroup->display_type) === 'paper_preview')>Paper preview</option>
+                            <option value="previous_order" @selected(old('display_type', $optionGroup->display_type) === 'previous_order')>Previous order (いいえ / はい)</option>
+                            <option value="radio_list" @selected(old('display_type', $optionGroup->display_type) === 'radio_list')>Radio list</option>
+                            <option value="switch" @selected(old('display_type', $optionGroup->display_type) === 'switch')>Switch</option>
                         </select>
-                        <small class="form-text text-muted">This setting is saved now and will control storefront rendering in a later iteration.</small>
+                        <small class="form-text text-muted">Button group renders horizontal selectable buttons. Image grid renders selectable images in a grid. Paper preview renders selectable paper-pattern previews. Previous order renders いいえ / はい. Radio list renders a vertical list of radio choices. Switch renders a toggle control.</small>
                         @error('display_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
@@ -53,21 +59,28 @@
                     </div>
 
                     <div class="form-row mb-4">
-                        <div class="col-md-4 mb-2 mb-md-0">
+                        <div class="col-md-3 mb-2 mb-md-0">
                             <div class="custom-control custom-checkbox">
                                 <input id="is_main_price_group" name="is_main_price_group" type="checkbox" value="1" class="custom-control-input" @checked(old('is_main_price_group', $optionGroup->is_main_price_group))>
                                 <label class="custom-control-label" for="is_main_price_group">Main Price Group</label>
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-2 mb-md-0">
+                        <div class="col-md-3 mb-2 mb-md-0">
                             <div class="custom-control custom-checkbox">
                                 <input id="is_required" name="is_required" type="checkbox" value="1" class="custom-control-input" @checked(old('is_required', $optionGroup->is_required))>
                                 <label class="custom-control-label" for="is_required">Required</label>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <div class="custom-control custom-checkbox">
+                                <input id="show_in_order_summary" name="show_in_order_summary" type="checkbox" value="1" class="custom-control-input" @checked(old('show_in_order_summary', $optionGroup->show_in_order_summary))>
+                                <label class="custom-control-label" for="show_in_order_summary">Show in order summary</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
                             <div class="custom-control custom-checkbox">
                                 <input id="is_active" name="is_active" type="checkbox" value="1" class="custom-control-input" @checked(old('is_active', $optionGroup->is_active))>
                                 <label class="custom-control-label" for="is_active">Active</label>
@@ -81,3 +94,112 @@
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        .ck-editor__editable_inline { min-height: 280px; }
+        .ck-content .image-style-align-left { float: left; margin-right: 1.5em; }
+        .ck-content .image-style-align-right { float: right; margin-left: 1.5em; }
+        .ck-content figure.horizontal-line { clear: both; margin: 1em 0; }
+        .ck-content figure.horizontal-line hr,
+        .ck-content hr { margin: 0; border: 0; border-top: 1px solid #d0d0d0; }
+        .option-group-help-preview img { max-width: 100%; height: auto; }
+    </style>
+@endpush
+
+@push('scripts')
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const textarea = document.querySelector('#help_text');
+            const Editor = window.CKEDITOR && window.CKEDITOR.ClassicEditor;
+            if (!textarea || !Editor) return;
+
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            class OptionGroupUploadAdapter {
+                constructor(loader) {
+                    this.loader = loader;
+                    this.controller = new AbortController();
+                }
+
+                upload() {
+                    return this.loader.file.then(function (file) {
+                        const formData = new FormData();
+                        formData.append('upload', file);
+
+                        return fetch(@json(url('api/v1/admin/option-groups/upload-image')), {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {
+                                Accept: 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                            },
+                            body: formData,
+                        });
+                    }).then(async function (response) {
+                        const result = await response.json();
+                        if (!response.ok) throw result;
+                        return { default: result.url };
+                    });
+                }
+
+                abort() {
+                    this.controller.abort();
+                }
+            }
+
+            Editor.create(textarea, {
+                licenseKey: 'GPL',
+                toolbar: {
+                    items: [
+                        'heading', '|', 'bold', 'italic', 'link',
+                        'bulletedList', 'numberedList', '|',
+                        'uploadImage', 'blockQuote', 'insertTable', 'horizontalLine', '|',
+                        'undo', 'redo',
+                    ],
+                    shouldNotGroupWhenFull: true,
+                },
+                image: {
+                    toolbar: [
+                        'imageTextAlternative', '|',
+                        'imageStyle:wrapText', 'imageStyle:breakText',
+                    ],
+                },
+                removePlugins: [
+                    'AIAssistant',
+                    'CKBox',
+                    'CKFinder',
+                    'EasyImage',
+                    'ExportPdf',
+                    'ExportWord',
+                    'MultiLevelList',
+                    'RealTimeCollaborativeComments',
+                    'RealTimeCollaborativeTrackChanges',
+                    'RealTimeCollaborativeRevisionHistory',
+                    'PresenceList',
+                    'Comments',
+                    'TrackChanges',
+                    'TrackChangesData',
+                    'RevisionHistory',
+                    'Pagination',
+                    'WProofreader',
+                    'MathType',
+                    'SlashCommand',
+                    'Template',
+                    'DocumentOutline',
+                    'FormatPainter',
+                    'TableOfContents',
+                    'PasteFromOfficeEnhanced',
+                    'CaseChange',
+                ],
+            }).then(function (editor) {
+                editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+                    return new OptionGroupUploadAdapter(loader);
+                };
+            }).catch(function (error) {
+                console.error('Option Group Help Text CKEditor error:', error);
+            });
+        });
+    </script>
+@endpush

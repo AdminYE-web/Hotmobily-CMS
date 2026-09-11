@@ -40,4 +40,11 @@ class Product extends Model
             ->orderBy('sort_order')
             ->orderBy('id');
     }
+
+    public function optionSteps(): HasMany
+    {
+        return $this->hasMany(ProductOptionStep::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
+    }
 }

@@ -4,8 +4,11 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OtpController;
 use App\Http\Controllers\Admin\OptionGroupController;
+use App\Http\Controllers\Admin\OptionDependencyController;
+use App\Http\Controllers\Admin\OptionPriceRuleController;
 use App\Http\Controllers\Admin\ProductOptionController;
 use App\Http\Controllers\Admin\ProductOptionManagerController;
+use App\Http\Controllers\Admin\ProductPriceRuleController;
 use App\Http\Controllers\Admin\ReviewAnswerController as AdminReviewAnswerController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Storefront\FaqController;
@@ -278,6 +281,69 @@ Route::prefix('admin')
 
                 Route::put('/product-options/{productOption}', [ProductOptionController::class, 'update'])
                     ->name('product-options.update');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Option Dependencies
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/option-dependencies', [OptionDependencyController::class, 'index'])
+                    ->name('option-dependencies.index');
+
+                Route::get('/option-dependencies/create', [OptionDependencyController::class, 'create'])
+                    ->name('option-dependencies.create');
+
+                Route::post('/option-dependencies', [OptionDependencyController::class, 'store'])
+                    ->name('option-dependencies.store');
+
+                Route::get('/option-dependencies/{optionDependency}/edit', [OptionDependencyController::class, 'edit'])
+                    ->name('option-dependencies.edit');
+
+                Route::put('/option-dependencies/{optionDependency}', [OptionDependencyController::class, 'update'])
+                    ->name('option-dependencies.update');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Option Price Rules
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/option-price-rules', [OptionPriceRuleController::class, 'index'])
+                    ->name('option-price-rules.index');
+
+                Route::get('/option-price-rules/create', [OptionPriceRuleController::class, 'create'])
+                    ->name('option-price-rules.create');
+
+                Route::post('/option-price-rules', [OptionPriceRuleController::class, 'store'])
+                    ->name('option-price-rules.store');
+
+                Route::get('/option-price-rules/{optionPriceRule}/edit', [OptionPriceRuleController::class, 'edit'])
+                    ->name('option-price-rules.edit');
+
+                Route::put('/option-price-rules/{optionPriceRule}', [OptionPriceRuleController::class, 'update'])
+                    ->name('option-price-rules.update');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product Price Rules
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/product-price-rules', [ProductPriceRuleController::class, 'index'])
+                    ->name('product-price-rules.index');
+
+                Route::get('/product-price-rules/create', [ProductPriceRuleController::class, 'create'])
+                    ->name('product-price-rules.create');
+
+                Route::post('/product-price-rules', [ProductPriceRuleController::class, 'store'])
+                    ->name('product-price-rules.store');
+
+                Route::get('/product-price-rules/{productPriceRule}/edit', [ProductPriceRuleController::class, 'edit'])
+                    ->name('product-price-rules.edit');
+
+                Route::put('/product-price-rules/{productPriceRule}', [ProductPriceRuleController::class, 'update'])
+                    ->name('product-price-rules.update');
 
                 /*
                 |--------------------------------------------------------------------------

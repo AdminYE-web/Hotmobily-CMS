@@ -66,6 +66,9 @@ class ProductController extends Controller
         $product->load([
             'layout',
             'page',
+            'optionSteps',
+            'optionGroupAssignments.optionGroup.productOptions',
+            'optionGroupAssignments.items.productOption',
         ]);
 
         /*
@@ -290,7 +293,124 @@ class ProductController extends Controller
 
                 'reviewData' => $reviewData,
 
+                'orderSteps' => $this->storefrontOrderSteps($product),
+
             ]
         );
+    }
+
+    /**
+     * Build the storefront-safe order configuration from the product options
+     * selected in the Admin "Manage Options" screen.
+     *
+     * @return list<array{id: int|null, name: string, groups: list<array<string, mixed>>}>
+     */
+    private function storefrontOrderSteps(Product $product): array
+    {
+        $assignmentsByStep = $product->optionGroupAssignments
+            ->groupBy('product_option_step_id');
+
+        $groupsForAssignments = static function ($assignments): array {
+            return $assignments
+                ->map(static function ($assignment): ?array {
+                    $group = $assignment->optionGroup;
+
+                    if ($group === null || ! $group->is_active) {
+                        return null;
+                    }
+
+                    $optionRows = $assignment->has_option_configuration
+                        ? $assignment->items
+                            ->filter(static fn ($item): bool => $item->is_active && $item->productOption !== null && $item->productOption->is_active)
+                            ->sortBy('sort_order')
+                            ->map(static fn ($item): array => [
+                                'option' => $item->productOption,
+                                'is_default' => $item->is_default,
+                                'quantity_rule' => $item->quantity_rule,
+                                'min_qty' => $item->min_qty,
+                                'max_qty' => $item->max_qty,
+                                'exact_qty' => $item->exact_qty,
+                            ])
+                        : $group->productOptions
+                            ->filter(static fn ($option): bool => $option->is_active)
+                            ->map(static fn ($option): array => [
+                                'option' => $option,
+                                'is_default' => false,
+                                'quantity_rule' => 'no_limit',
+                                'min_qty' => null,
+                                'max_qty' => null,
+                                'exact_qty' => null,
+                            ]);
+
+                    $options = $optionRows
+                        ->map(static function (array $row): array {
+                            $option = $row['option'];
+
+                            return [
+                                'id' => $option->id,
+                                'code' => $option->option_code,
+                                'name' => $option->option_name,
+                                'color_code' => $option->color_code,
+                                'detail' => $option->option_detail,
+                                'images' => collect($option->option_images ?? [])
+                                    ->map(static fn ($image): string => basename((string) $image))
+                                    ->filter()
+                                    ->values()
+                                    ->all(),
+                                'is_default' => (bool) $row['is_default'],
+                                'quantity_rule' => $row['quantity_rule'],
+                                'min_qty' => $row['min_qty'],
+                                'max_qty' => $row['max_qty'],
+                                'exact_qty' => $row['exact_qty'],
+                            ];
+                        })
+                        ->values()
+                        ->all();
+
+                    if ($options === []) {
+                        return null;
+                    }
+
+                    return [
+                        'id' => $group->id,
+                        'code' => $group->group_code,
+                        'name' => $group->group_name,
+                        'display_type' => $group->display_type ?: 'button',
+                        'help_text' => $group->help_text,
+                        'is_required' => (bool) $group->is_required,
+                        'show_in_order_summary' => (bool) $group->show_in_order_summary,
+                        'options' => $options,
+                    ];
+                })
+                ->filter()
+                ->values()
+                ->all();
+        };
+
+        $steps = $product->optionSteps
+            ->map(static function ($step) use ($assignmentsByStep, $groupsForAssignments): array {
+                return [
+                    'id' => $step->id,
+                    'name' => $step->step_name,
+                    'groups' => $groupsForAssignments($assignmentsByStep->get($step->id, collect())),
+                ];
+            })
+            ->filter(static fn (array $step): bool => $step['groups'] !== [])
+            ->values();
+
+        $unassignedGroups = $groupsForAssignments(
+            $product->optionGroupAssignments
+                ->filter(static fn ($assignment): bool => $assignment->product_option_step_id === null)
+        );
+
+        if ($unassignedGroups !== []) {
+            $steps->push([
+                'id' => null,
+                'name' => $steps->isEmpty() ? 'Options' : 'Other options',
+                'groups' => $unassignedGroups,
+            ]);
+        }
+
+        return $steps->all();
     }
 }

@@ -9,6 +9,7 @@ CREATE TABLE `option_groups` (
     `help_text` TEXT NULL,
     `is_main_price_group` TINYINT(1) NOT NULL DEFAULT 0,
     `is_required` TINYINT(1) NOT NULL DEFAULT 0,
+    `show_in_order_summary` TINYINT(1) NOT NULL DEFAULT 1,
     `is_active` TINYINT(1) NOT NULL DEFAULT 1,
     `created_at` TIMESTAMP NULL DEFAULT NULL,
     `updated_at` TIMESTAMP NULL DEFAULT NULL,

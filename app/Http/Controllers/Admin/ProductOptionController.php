@@ -57,7 +57,16 @@ class ProductOptionController extends Controller
 
     public function update(Request $request, ProductOption $productOption): RedirectResponse
     {
-        $productOption->update($this->validatedData($request, $productOption));
+        $data = $this->validatedData($request, $productOption);
+        $previousImages = collect($productOption->option_images ?? [])
+            ->map(static fn ($image): string => basename((string) $image))
+            ->filter()
+            ->values()
+            ->all();
+
+        $productOption->update($data);
+
+        $this->deleteStoredImages(array_values(array_diff($previousImages, $data['option_images'])));
 
         return redirect()
             ->route('admin.product-options.index')
@@ -92,14 +101,29 @@ class ProductOptionController extends Controller
             'option_detail' => ['nullable', 'string', 'max:10000'],
             'option_images' => ['nullable', 'array'],
             'option_images.*' => ['image', 'max:5120'],
+            'remove_images' => ['nullable', 'array'],
+            'remove_images.*' => ['string', 'max:255'],
         ]);
 
-        unset($data['option_images']);
+        $imagesToRemove = collect($data['remove_images'] ?? [])
+            ->map(static fn ($image): string => basename((string) $image))
+            ->filter()
+            ->unique()
+            ->all();
+
+        $currentImages = collect($productOption?->option_images ?? [])
+            ->map(static fn ($image): string => basename((string) $image))
+            ->filter()
+            ->reject(static fn (string $image): bool => in_array($image, $imagesToRemove, true))
+            ->values()
+            ->all();
+
+        unset($data['option_images'], $data['remove_images']);
 
         return [
             ...$data,
             'option_images' => [
-                ...($productOption?->option_images ?? []),
+                ...$currentImages,
                 ...$this->storeImages($request),
             ],
             'is_active' => $request->boolean('is_active'),
@@ -131,5 +155,23 @@ class ProductOptionController extends Controller
         }
 
         return $names;
+    }
+
+    /** @param list<string> $images */
+    private function deleteStoredImages(array $images): void
+    {
+        foreach ($images as $image) {
+            $filename = basename($image);
+
+            if ($filename === '') {
+                continue;
+            }
+
+            $path = public_path('product-options'.DIRECTORY_SEPARATOR.$filename);
+
+            if (File::isFile($path)) {
+                File::delete($path);
+            }
+        }
     }
 }

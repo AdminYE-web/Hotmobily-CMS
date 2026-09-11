@@ -642,6 +642,27 @@
     Product Options
 </a>
 
+<a
+    href="{{ route('admin.option-dependencies.index') }}"
+    class="list-group-item list-group-item-action bg-light"
+>
+    Option Dependencies
+</a>
+
+<a
+    href="{{ route('admin.option-price-rules.index') }}"
+    class="list-group-item list-group-item-action bg-light"
+>
+    Option Price Rules
+</a>
+
+<a
+    href="{{ route('admin.product-price-rules.index') }}"
+    class="list-group-item list-group-item-action bg-light"
+>
+    Product Price Rules
+</a>
+
  <a
                 href="{{ route('admin.faqs.index') }}"
                 class="list-group-item list-group-item-action bg-light"

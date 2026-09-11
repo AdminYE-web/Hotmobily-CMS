@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductOption;
 use App\Models\ProductOptionGroup;
 use App\Models\ProductOptionGroupItem;
+use App\Models\ProductOptionStep;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +29,26 @@ class ProductOptionManagerController extends Controller
             ->pluck('option_group_id')
             ->map(static fn ($id): int => (int) $id)
             ->all();
+
+        $selectedGroupSteps = $assignments
+            ->mapWithKeys(static fn (ProductOptionGroup $assignment): array => [
+                $assignment->option_group_id => $assignment->product_option_step_id === null
+                    ? null
+                    : 'step-'.$assignment->product_option_step_id,
+            ])
+            ->all();
+
+        $steps = ProductOptionStep::query()
+            ->where('product_id', $product->id)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->map(static fn (ProductOptionStep $step): array => [
+                'id' => $step->id,
+                'key' => 'step-'.$step->id,
+                'name' => $step->step_name,
+            ])
+            ->values();
 
         $selectedOptionSettings = $assignments
             ->mapWithKeys(static fn (ProductOptionGroup $assignment): array => [
@@ -101,7 +122,13 @@ class ProductOptionManagerController extends Controller
             })
             ->values();
 
-        return view('admin.products.options', compact('product', 'optionGroups', 'selectedIds'));
+        return view('admin.products.options', compact(
+            'product',
+            'optionGroups',
+            'selectedIds',
+            'selectedGroupSteps',
+            'steps'
+        ));
     }
 
     public function update(Request $request, Product $product): RedirectResponse
@@ -109,6 +136,14 @@ class ProductOptionManagerController extends Controller
         $data = $request->validate([
             'option_group_ids' => ['nullable', 'array'],
             'option_group_ids.*' => ['integer', 'distinct', 'exists:option_groups,id'],
+            'steps' => ['required', 'array', 'min:1'],
+            'steps.*.key' => ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9_-]+$/'],
+            'steps.*.id' => ['nullable', 'integer'],
+            'steps.*.name' => ['required', 'string', 'max:255'],
+            'option_group_steps' => ['nullable', 'array'],
+            'option_group_steps.*' => ['nullable', 'string', 'max:100'],
+            'option_group_sort_orders' => ['nullable', 'array'],
+            'option_group_sort_orders.*' => ['nullable', 'integer', 'min:1'],
             'option_ids' => ['nullable', 'array'],
             'option_ids.*' => ['nullable', 'array'],
             'option_ids.*.*' => ['integer', 'distinct', 'exists:product_options,id'],
@@ -126,7 +161,52 @@ class ProductOptionManagerController extends Controller
             ->values()
             ->all();
 
-        DB::transaction(function () use ($data, $product, $groupIds): void {
+        $stepPayload = collect($data['steps'])
+            ->values();
+        $stepKeys = $stepPayload->pluck('key')->map(static fn ($key): string => (string) $key);
+
+        if ($stepKeys->unique()->count() !== $stepKeys->count()) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'steps' => 'Each Step must have a unique key.',
+            ]);
+        }
+
+        foreach ($groupIds as $groupId) {
+            $stepKey = (string) ($data['option_group_steps'][$groupId] ?? '');
+
+            if (! $stepKeys->contains($stepKey)) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'option_group_steps' => 'Every selected Option Group must be assigned to a Step.',
+                ]);
+            }
+        }
+
+        DB::transaction(function () use ($data, $product, $groupIds, $stepPayload): void {
+            $existingStepIds = ProductOptionStep::query()
+                ->where('product_id', $product->id)
+                ->pluck('id')
+                ->map(static fn ($id): int => (int) $id);
+            $stepIdsByKey = [];
+
+            foreach ($stepPayload as $position => $step) {
+                $stepId = (int) ($step['id'] ?? 0);
+                $attributes = [
+                    'step_name' => $step['name'],
+                    'sort_order' => $position + 1,
+                ];
+
+                if ($stepId > 0 && $existingStepIds->contains($stepId)) {
+                    ProductOptionStep::query()->whereKey($stepId)->update($attributes);
+                } else {
+                    $stepId = ProductOptionStep::query()->create([
+                        'product_id' => $product->id,
+                        ...$attributes,
+                    ])->id;
+                }
+
+                $stepIdsByKey[$step['key']] = $stepId;
+            }
+
             $assignments = ProductOptionGroup::query()
                 ->where('product_id', $product->id);
 
@@ -148,13 +228,15 @@ class ProductOptionManagerController extends Controller
             }
 
             foreach ($groupIds as $position => $groupId) {
+                $stepKey = $data['option_group_steps'][$groupId];
                 $assignment = ProductOptionGroup::query()->updateOrCreate(
                     [
                         'product_id' => $product->id,
                         'option_group_id' => $groupId,
                     ],
                     [
-                        'sort_order' => $position + 1,
+                        'product_option_step_id' => $stepIdsByKey[$stepKey],
+                        'sort_order' => $data['option_group_sort_orders'][$groupId] ?? ($position + 1),
                         'has_option_configuration' => true,
                     ]
                 );
@@ -192,10 +274,18 @@ class ProductOptionManagerController extends Controller
                     ]);
                 }
             }
+
+            $removedStepIds = $existingStepIds->diff(collect($stepIdsByKey)->values());
+
+            if ($removedStepIds->isNotEmpty()) {
+                ProductOptionStep::query()
+                    ->whereIn('id', $removedStepIds)
+                    ->delete();
+            }
         });
 
         return redirect()
             ->route('admin.products.options.edit', $product)
-            ->with('status', 'Option Group order was saved.');
+            ->with('status', 'Option Steps and Option Group order were saved.');
     }
 }

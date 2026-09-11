@@ -14,6 +14,7 @@ class OptionGroup extends Model
         'help_text',
         'is_main_price_group',
         'is_required',
+        'show_in_order_summary',
         'is_active',
     ];
 
@@ -22,6 +23,7 @@ class OptionGroup extends Model
         return [
             'is_main_price_group' => 'boolean',
             'is_required' => 'boolean',
+            'show_in_order_summary' => 'boolean',
             'is_active' => 'boolean',
         ];
     }

@@ -25,6 +25,7 @@ class OptionGroupController extends Controller
         return view('admin.option-groups.form', [
             'optionGroup' => new OptionGroup([
                 'display_type' => 'button',
+                'show_in_order_summary' => true,
                 'is_active' => true,
             ]),
             'isEditing' => false,
@@ -56,7 +57,7 @@ class OptionGroupController extends Controller
             ->with('status', "Option Group {$optionGroup->group_code} was updated.");
     }
 
-    /** @return array{group_code: string, group_name: string, display_type: string, help_text: string|null, is_main_price_group: bool, is_required: bool, is_active: bool} */
+    /** @return array{group_code: string, group_name: string, display_type: string, help_text: string|null, is_main_price_group: bool, is_required: bool, show_in_order_summary: bool, is_active: bool} */
     private function validatedData(Request $request, ?OptionGroup $optionGroup = null): array
     {
         $data = $request->validate([
@@ -68,7 +69,7 @@ class OptionGroupController extends Controller
                 Rule::unique('option_groups', 'group_code')->ignore($optionGroup),
             ],
             'group_name' => ['required', 'string', 'max:255'],
-            'display_type' => ['required', Rule::in(['button', 'image_card'])],
+            'display_type' => ['required', Rule::in(['button', 'button_group', 'image_card', 'image_grid', 'paper_preview', 'previous_order', 'radio_list', 'switch'])],
             'help_text' => ['nullable', 'string', 'max:2000'],
         ]);
 
@@ -76,6 +77,7 @@ class OptionGroupController extends Controller
             ...$data,
             'is_main_price_group' => $request->boolean('is_main_price_group'),
             'is_required' => $request->boolean('is_required'),
+            'show_in_order_summary' => $request->boolean('show_in_order_summary'),
             'is_active' => $request->boolean('is_active'),
         ];
     }

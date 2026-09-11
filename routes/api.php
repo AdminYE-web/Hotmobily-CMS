@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\V1\Admin\ProductPageController;
 use App\Http\Controllers\Api\V1\Admin\ProductLayoutController;
 use App\Http\Controllers\Api\V1\Admin\FaqController;
 use App\Http\Controllers\Api\V1\Admin\FaqImageController;
+use App\Http\Controllers\Api\V1\Admin\OptionGroupImageController;
 
 
 /*
@@ -302,6 +303,20 @@ Route::post(
     '/faqs/upload-image',
     [
         FaqImageController::class,
+        'store'
+    ]
+);
+
+
+/*
+ * Upload Option Group Help Text Image
+ *
+ * POST /api/v1/admin/option-groups/upload-image
+ */
+Route::post(
+    '/option-groups/upload-image',
+    [
+        OptionGroupImageController::class,
         'store'
     ]
 );

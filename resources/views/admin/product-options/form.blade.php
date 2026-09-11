@@ -79,11 +79,15 @@
                             <label>Current Option Images</label>
                             <div class="d-flex flex-wrap">
                                 @foreach ($imageNames as $imageName)
-                                    <a href="{{ asset('product-options/'.rawurlencode($imageName)) }}" target="_blank" rel="noopener" class="mr-2 mb-2">
-                                        <img src="{{ asset('product-options/'.rawurlencode($imageName)) }}" alt="Option image" style="width: 90px; height: 90px; object-fit: cover;">
-                                    </a>
+                                    <div class="mr-2 mb-2 text-center" data-option-image="{{ $imageName }}">
+                                        <a href="{{ asset('product-options/'.rawurlencode($imageName)) }}" target="_blank" rel="noopener" class="d-block mb-1">
+                                            <img src="{{ asset('product-options/'.rawurlencode($imageName)) }}" alt="Option image" style="width: 90px; height: 90px; object-fit: cover;">
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-option-image" data-image-name="{{ $imageName }}">Remove</button>
+                                    </div>
                                 @endforeach
                             </div>
+                            <small class="form-text text-muted">Click Remove, then click Update Product Option to permanently remove the selected image.</small>
                         </div>
                     @endif
 
@@ -105,3 +109,26 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form[enctype="multipart/form-data"]');
+            if (!form) return;
+
+            document.querySelectorAll('.remove-option-image').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const imageName = button.dataset.imageName;
+                    if (!imageName) return;
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'remove_images[]';
+                    input.value = imageName;
+                    form.appendChild(input);
+                    button.closest('[data-option-image]')?.remove();
+                });
+            });
+        });
+    </script>
+@endpush

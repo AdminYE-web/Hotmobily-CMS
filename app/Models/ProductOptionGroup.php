@@ -11,6 +11,7 @@ class ProductOptionGroup extends Model
     protected $fillable = [
         'product_id',
         'option_group_id',
+        'product_option_step_id',
         'sort_order',
         'has_option_configuration',
     ];
@@ -31,6 +32,11 @@ class ProductOptionGroup extends Model
     public function optionGroup(): BelongsTo
     {
         return $this->belongsTo(OptionGroup::class);
+    }
+
+    public function step(): BelongsTo
+    {
+        return $this->belongsTo(ProductOptionStep::class, 'product_option_step_id');
     }
 
     public function items(): HasMany
