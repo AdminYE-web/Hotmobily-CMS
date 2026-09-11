@@ -36,7 +36,7 @@
                                 <th>Required</th>
                                 <th>Order Summary</th>
                                 <th>Active</th>
-                                <th>Help Text</th>
+                                {{-- <th>Help Text</th> --}}
                                 <th style="width: 110px;">Action</th>
                             </tr>
                         </thead>
@@ -64,7 +64,7 @@
                                     <td><span class="badge badge-{{ $optionGroup->is_required ? 'warning' : 'secondary' }}">{{ $optionGroup->is_required ? 'Yes' : 'No' }}</span></td>
                                     <td><span class="badge badge-{{ $optionGroup->show_in_order_summary ? 'info' : 'secondary' }}">{{ $optionGroup->show_in_order_summary ? 'Show' : 'Hide' }}</span></td>
                                     <td><span class="badge badge-{{ $optionGroup->is_active ? 'success' : 'secondary' }}">{{ $optionGroup->is_active ? 'Active' : 'Inactive' }}</span></td>
-                                    <td>{!! nl2br(e($optionGroup->help_text ?: '-')) !!}</td>
+                                    {{-- <td>{!! nl2br(e($optionGroup->help_text ?: '-')) !!}</td> --}}
                                     <td><a href="{{ route('admin.option-groups.edit', $optionGroup) }}" class="btn btn-sm btn-outline-primary">Edit</a></td>
                                 </tr>
                             @empty
