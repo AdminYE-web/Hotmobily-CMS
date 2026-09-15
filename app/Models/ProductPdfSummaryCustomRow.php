@@ -4,32 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ProductOptionStep extends Model
+class ProductPdfSummaryCustomRow extends Model
 {
     protected $fillable = [
         'product_id',
-        'step_name',
         'sort_order',
-        'is_summary_step',
+        'label',
+        'content',
     ];
 
     protected function casts(): array
     {
         return [
             'sort_order' => 'integer',
-            'is_summary_step' => 'boolean',
         ];
     }
 
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function optionGroupAssignments(): HasMany
-    {
-        return $this->hasMany(ProductOptionGroup::class)->orderBy('sort_order')->orderBy('id');
     }
 }

@@ -47,7 +47,7 @@
                                     <td><code>{{ $optionGroup->group_code }}</code></td>
                                     <td>{{ $optionGroup->group_name }}</td>
                                     <td>
-                                        <span class="badge badge-{{ in_array($optionGroup->display_type, ['image_card', 'image_grid', 'paper_preview'], true) ? 'info' : ($optionGroup->display_type === 'previous_order' ? 'warning' : ($optionGroup->display_type === 'radio_list' ? 'success' : ($optionGroup->display_type === 'button_group' ? 'secondary' : ($optionGroup->display_type === 'switch' ? 'dark' : 'primary')))) }}">
+                                        <span class="badge badge-{{ in_array($optionGroup->display_type, ['image_card', 'image_grid', 'paper_preview'], true) ? 'info' : ($optionGroup->display_type === 'previous_order' ? 'warning' : ($optionGroup->display_type === 'radio_list' ? 'success' : ($optionGroup->display_type === 'button_group' ? 'secondary' : ($optionGroup->display_type === 'switch' ? 'dark' : ($optionGroup->display_type === 'quantity_input' ? 'danger' : 'primary'))))) }}">
                                             {{ match ($optionGroup->display_type) {
                                                 'button_group' => 'Button group',
                                                 'image_card' => 'Image card',
@@ -56,6 +56,7 @@
                                                 'previous_order' => 'Previous order',
                                                 'radio_list' => 'Radio list',
                                                 'switch' => 'Switch',
+                                                'quantity_input' => 'Quantity input',
                                                 default => 'Button',
                                             } }}
                                         </span>

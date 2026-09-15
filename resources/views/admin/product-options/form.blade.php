@@ -74,6 +74,21 @@
                         @error('option_detail')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input id="is_disabled" name="is_disabled" type="checkbox" value="1" class="custom-control-input" @checked(old('is_disabled', $productOption->is_disabled))>
+                            <label class="custom-control-label" for="is_disabled">Disable when selected</label>
+                        </div>
+                        <small class="form-text text-muted">Users can select this option to see the notice, but they cannot continue to the next step while it is selected.</small>
+                    </div>
+
+                    <div class="form-group product-option-disable-text-editor">
+                        <label for="disable_text">Disable Text</label>
+                        <textarea id="disable_text" name="disable_text" rows="4" class="form-control @error('disable_text') is-invalid @enderror" maxlength="10000" placeholder="Example: 今週の受付数量を越えております為、ご注文停止中です">{{ old('disable_text', $productOption->disable_text) }}</textarea>
+                        <small class="form-text text-muted">Displayed below the option when it is selected. Use the toolbar to format the text and change its color.</small>
+                        @error('disable_text')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
                     @if ($imageNames->isNotEmpty())
                         <div class="form-group">
                             <label>Current Option Images</label>
@@ -110,11 +125,77 @@
     </div>
 @endsection
 
+@push('styles')
+    <style>
+        .product-option-disable-text-editor .ck-editor__editable_inline { min-height: 130px; }
+    </style>
+@endpush
+
 @push('scripts')
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form[enctype="multipart/form-data"]');
             if (!form) return;
+
+            const textarea = document.querySelector('#disable_text');
+            const Editor = window.CKEDITOR && window.CKEDITOR.ClassicEditor;
+
+            if (textarea && Editor) {
+                Editor.create(textarea, {
+                    licenseKey: 'GPL',
+                    toolbar: {
+                        items: [
+                            'bold', 'italic', 'underline', '|',
+                            'fontColor', '|',
+                            'bulletedList', 'numberedList', '|',
+                            'undo', 'redo',
+                        ],
+                        shouldNotGroupWhenFull: true,
+                    },
+                    fontColor: {
+                        colors: [
+                            { color: '#000000', label: 'Black' },
+                            { color: '#e60000', label: 'Red' },
+                            { color: '#ff8c00', label: 'Orange' },
+                            { color: '#f7b516', label: 'Yellow' },
+                            { color: '#008000', label: 'Green' },
+                            { color: '#1e90ff', label: 'Blue' },
+                            { color: '#800080', label: 'Purple' },
+                        ],
+                        columns: 4,
+                    },
+                    removePlugins: [
+                        'AIAssistant',
+                        'CKBox',
+                        'CKFinder',
+                        'EasyImage',
+                        'ExportPdf',
+                        'ExportWord',
+                        'MultiLevelList',
+                        'RealTimeCollaborativeComments',
+                        'RealTimeCollaborativeTrackChanges',
+                        'RealTimeCollaborativeRevisionHistory',
+                        'PresenceList',
+                        'Comments',
+                        'TrackChanges',
+                        'TrackChangesData',
+                        'RevisionHistory',
+                        'Pagination',
+                        'WProofreader',
+                        'MathType',
+                        'SlashCommand',
+                        'Template',
+                        'DocumentOutline',
+                        'FormatPainter',
+                        'TableOfContents',
+                        'PasteFromOfficeEnhanced',
+                        'CaseChange',
+                    ],
+                }).catch(function (error) {
+                    console.error('Product Option Disable Text CKEditor error:', error);
+                });
+            }
 
             document.querySelectorAll('.remove-option-image').forEach(function (button) {
                 button.addEventListener('click', function () {

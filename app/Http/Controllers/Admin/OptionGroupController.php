@@ -25,6 +25,7 @@ class OptionGroupController extends Controller
         return view('admin.option-groups.form', [
             'optionGroup' => new OptionGroup([
                 'display_type' => 'button',
+                'is_required' => true,
                 'show_in_order_summary' => true,
                 'is_active' => true,
             ]),
@@ -57,7 +58,7 @@ class OptionGroupController extends Controller
             ->with('status', "Option Group {$optionGroup->group_code} was updated.");
     }
 
-    /** @return array{group_code: string, group_name: string, display_type: string, help_text: string|null, is_main_price_group: bool, is_required: bool, show_in_order_summary: bool, is_active: bool} */
+    /** @return array{group_code: string, group_name: string, display_type: string, help_text: string|null, remark_text: string|null, is_main_price_group: bool, is_required: bool, show_in_order_summary: bool, is_active: bool} */
     private function validatedData(Request $request, ?OptionGroup $optionGroup = null): array
     {
         $data = $request->validate([
@@ -69,8 +70,9 @@ class OptionGroupController extends Controller
                 Rule::unique('option_groups', 'group_code')->ignore($optionGroup),
             ],
             'group_name' => ['required', 'string', 'max:255'],
-            'display_type' => ['required', Rule::in(['button', 'button_group', 'image_card', 'image_grid', 'paper_preview', 'previous_order', 'radio_list', 'switch'])],
+            'display_type' => ['required', Rule::in(['button', 'button_group', 'image_card', 'image_grid', 'paper_preview', 'previous_order', 'radio_list', 'switch', 'quantity_input'])],
             'help_text' => ['nullable', 'string', 'max:2000'],
+            'remark_text' => ['nullable', 'string', 'max:2000'],
         ]);
 
         return [

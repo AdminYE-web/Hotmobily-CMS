@@ -47,4 +47,11 @@ class Product extends Model
             ->orderBy('sort_order')
             ->orderBy('id');
     }
+
+    public function pdfSummaryCustomRows(): HasMany
+    {
+        return $this->hasMany(ProductPdfSummaryCustomRow::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
+    }
 }

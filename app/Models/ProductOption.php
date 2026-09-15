@@ -13,7 +13,9 @@ class ProductOption extends Model
         'option_name',
         'color_code',
         'option_detail',
+        'disable_text',
         'option_images',
+        'is_disabled',
         'is_active',
     ];
 
@@ -21,6 +23,7 @@ class ProductOption extends Model
     {
         return [
             'option_images' => 'array',
+            'is_disabled' => 'boolean',
             'is_active' => 'boolean',
         ];
     }

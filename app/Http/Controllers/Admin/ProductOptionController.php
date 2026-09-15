@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\OptionGroup;
 use App\Models\ProductOption;
+use App\Support\RichTextSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -99,6 +100,7 @@ class ProductOptionController extends Controller
             'option_name' => ['required', 'string', 'max:255'],
             'color_code' => ['nullable', 'string', 'max:20', 'regex:/^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$/'],
             'option_detail' => ['nullable', 'string', 'max:10000'],
+            'disable_text' => ['nullable', 'string', 'max:10000'],
             'option_images' => ['nullable', 'array'],
             'option_images.*' => ['image', 'max:5120'],
             'remove_images' => ['nullable', 'array'],
@@ -120,12 +122,15 @@ class ProductOptionController extends Controller
 
         unset($data['option_images'], $data['remove_images']);
 
+        $data['disable_text'] = (new RichTextSanitizer())->sanitize($data['disable_text'] ?? null);
+
         return [
             ...$data,
             'option_images' => [
                 ...$currentImages,
                 ...$this->storeImages($request),
             ],
+            'is_disabled' => $request->boolean('is_disabled'),
             'is_active' => $request->boolean('is_active'),
         ];
     }

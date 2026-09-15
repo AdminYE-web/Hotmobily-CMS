@@ -446,6 +446,78 @@
                 </ul>
 
             </div>
+            <div class="list-group-item list-group-item-action bg-light">
+
+    Product Settings
+
+    <ul class="submenu">
+
+        <li>
+            <a
+                href="{{ route('admin.product-layouts.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Product Layouts
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.products.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Products
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.option-groups.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Option Groups
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.product-options.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Product Options
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.option-dependencies.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Option Dependencies
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.option-price-rules.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Option Price Rules
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.product-price-rules.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Product Price Rules
+            </a>
+        </li>
+
+    </ul>
+
+</div>
 
 
             <a
@@ -547,12 +619,12 @@
                 || $isAdminMember
             )
 
-                <a
-                    href="/admin/faq-setting.php"
-                    class="list-group-item list-group-item-action bg-light"
-                >
-                    FAQ
-                </a>
+               <a
+                href="{{ route('admin.faqs.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                FAQ
+            </a>
 
                 <a
                     href="/admin/news.php"
@@ -614,61 +686,7 @@
         Holiday Calendar
     </a>
 </li>
-<a
-    href="{{ route('admin.product-layouts.index') }}"
-    class="list-group-item list-group-item-action bg-light"
->
-    Product Layouts
-</a>
 
-<a
-    href="{{ route('admin.products.index') }}"
-    class="list-group-item list-group-item-action bg-light"
->
-    Products
-</a>
-
-<a
-    href="{{ route('admin.option-groups.index') }}"
-    class="list-group-item list-group-item-action bg-light"
->
-    Option Groups
-</a>
-
-<a
-    href="{{ route('admin.product-options.index') }}"
-    class="list-group-item list-group-item-action bg-light"
->
-    Product Options
-</a>
-
-<a
-    href="{{ route('admin.option-dependencies.index') }}"
-    class="list-group-item list-group-item-action bg-light"
->
-    Option Dependencies
-</a>
-
-<a
-    href="{{ route('admin.option-price-rules.index') }}"
-    class="list-group-item list-group-item-action bg-light"
->
-    Option Price Rules
-</a>
-
-<a
-    href="{{ route('admin.product-price-rules.index') }}"
-    class="list-group-item list-group-item-action bg-light"
->
-    Product Price Rules
-</a>
-
- <a
-                href="{{ route('admin.faqs.index') }}"
-                class="list-group-item list-group-item-action bg-light"
-            >
-                FAQ
-            </a>
 
         @endif
 

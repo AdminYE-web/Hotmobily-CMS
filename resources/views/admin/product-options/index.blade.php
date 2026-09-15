@@ -34,6 +34,7 @@
                                 <th>Option Name</th>
                                 <th>Color</th>
                                 <th>Images</th>
+                                <th>Disabled</th>
                                 <th>Active</th>
                                 <th style="width: 110px;">Action</th>
                             </tr>
@@ -57,11 +58,12 @@
                                         @endif
                                     </td>
                                     <td>{{ count($productOption->option_images ?? []) }}</td>
+                                    <td><span class="badge badge-{{ $productOption->is_disabled ? 'danger' : 'secondary' }}">{{ $productOption->is_disabled ? 'Yes' : 'No' }}</span></td>
                                     <td><span class="badge badge-{{ $productOption->is_active ? 'success' : 'secondary' }}">{{ $productOption->is_active ? 'Active' : 'Inactive' }}</span></td>
                                     <td><a href="{{ route('admin.product-options.edit', $productOption) }}" class="btn btn-sm btn-outline-primary">Edit</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="8" class="text-center text-muted py-4">No Product Options created yet.</td></tr>
+                                <tr><td colspan="9" class="text-center text-muted py-4">No Product Options created yet.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

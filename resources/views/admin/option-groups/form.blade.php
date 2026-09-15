@@ -47,8 +47,9 @@
                             <option value="previous_order" @selected(old('display_type', $optionGroup->display_type) === 'previous_order')>Previous order (いいえ / はい)</option>
                             <option value="radio_list" @selected(old('display_type', $optionGroup->display_type) === 'radio_list')>Radio list</option>
                             <option value="switch" @selected(old('display_type', $optionGroup->display_type) === 'switch')>Switch</option>
+                            <option value="quantity_input" @selected(old('display_type', $optionGroup->display_type) === 'quantity_input')>Quantity input</option>
                         </select>
-                        <small class="form-text text-muted">Button group renders horizontal selectable buttons. Image grid renders selectable images in a grid. Paper preview renders selectable paper-pattern previews. Previous order renders いいえ / はい. Radio list renders a vertical list of radio choices. Switch renders a toggle control.</small>
+                        <small class="form-text text-muted">Button group renders horizontal selectable buttons. Image grid renders selectable images in a grid. Paper preview renders selectable paper-pattern previews. Previous order renders いいえ / はい. Radio list renders a vertical list of radio choices. Switch renders a toggle control. Quantity input renders one product-quantity field and does not need Product Options.</small>
                         @error('display_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
@@ -56,6 +57,13 @@
                         <label for="help_text">Help Text</label>
                         <textarea id="help_text" name="help_text" rows="4" class="form-control @error('help_text') is-invalid @enderror" maxlength="2000">{{ old('help_text', $optionGroup->help_text) }}</textarea>
                         @error('help_text')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="remark_text">Remark Text</label>
+                        <textarea id="remark_text" name="remark_text" rows="2" class="form-control @error('remark_text') is-invalid @enderror" maxlength="2000" placeholder="Example: ※プレミアムは裏面印刷が無料">{{ old('remark_text', $optionGroup->remark_text) }}</textarea>
+                        <small class="form-text text-muted">Displayed below this Option Group's choices in red on the product page.</small>
+                        @error('remark_text')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="form-row mb-4">
@@ -100,9 +108,10 @@
         .ck-editor__editable_inline { min-height: 280px; }
         .ck-content .image-style-align-left { float: left; margin-right: 1.5em; }
         .ck-content .image-style-align-right { float: right; margin-left: 1.5em; }
-        .ck-content figure.horizontal-line { clear: both; margin: 1em 0; }
+        .ck-content figure.horizontal-line { clear: both; width: 100%; box-sizing: border-box; margin: 1em 0; }
+        .ck-content hr { clear: both; width: 100%; box-sizing: border-box; margin: 1em 0; }
         .ck-content figure.horizontal-line hr,
-        .ck-content hr { margin: 0; border: 0; border-top: 1px solid #d0d0d0; }
+        .ck-content hr { margin-left: 0; border: 0; border-top: 1px solid #d0d0d0; }
         .option-group-help-preview img { max-width: 100%; height: auto; }
     </style>
 @endpush

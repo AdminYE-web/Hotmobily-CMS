@@ -1635,7 +1635,7 @@
         </div>
 
         @if (!empty($orderSteps))
-            @include('products.partials.admin-order-form', ['orderSteps' => $orderSteps])
+            @include('products.partials.admin-order-form', ['orderSteps' => $orderSteps, 'orderPricing' => $orderPricing ?? [], 'orderDependencies' => $orderDependencies ?? [], 'pdfSummaryCustomRows' => $pdfSummaryCustomRows ?? []])
         @elseif ($product->slug === 'rubberstrap')
             @include('products.partials.order-form')
         @endif

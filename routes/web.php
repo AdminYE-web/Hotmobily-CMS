@@ -655,6 +655,21 @@ Route::get(
 |
 */
 
+Route::post(
+    '/products/{productPath}/estimate/pdf',
+    [
+        StorefrontProductController::class,
+        'estimatePdf',
+    ]
+)
+    ->where(
+        'productPath',
+        '.+'
+    )
+    ->name(
+        'products.estimate.pdf'
+    );
+
 Route::get(
     '/products/{productPath}',
     [
