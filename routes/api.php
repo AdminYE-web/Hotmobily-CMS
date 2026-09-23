@@ -12,6 +12,10 @@ use App\Http\Controllers\Api\V1\AdminAuthController;
 use App\Http\Controllers\Api\V1\HolidayController;
 
 use App\Http\Controllers\Api\V1\Admin\ProductController;
+use App\Http\Controllers\Api\V1\Admin\ProductDataLayoutController;
+use App\Http\Controllers\Api\V1\Admin\ProductDataPageController;
+use App\Http\Controllers\Api\V1\Admin\CustomPageLayoutController;
+use App\Http\Controllers\Api\V1\Admin\CustomPageController;
 use App\Http\Controllers\Api\V1\Admin\ProductPageController;
 use App\Http\Controllers\Api\V1\Admin\ProductLayoutController;
 use App\Http\Controllers\Api\V1\Admin\FaqController;
@@ -381,6 +385,15 @@ Route::delete(
 
 
                     Route::post(
+                        '/products/{product}/files',
+                        [
+                            ProductPageController::class,
+                            'uploadFile'
+                        ]
+                    );
+
+
+                    Route::post(
                         '/products/{product}/templates',
                         [
                             ProductPageController::class,
@@ -526,6 +539,52 @@ Route::delete(
                             'publish'
                         ]
                     );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Product Data Layout Management
+                    |--------------------------------------------------------------------------
+                    */
+
+                    Route::get('/product-data-layouts', [ProductDataLayoutController::class, 'index']);
+                    Route::post('/product-data-layouts', [ProductDataLayoutController::class, 'store']);
+                    Route::get('/product-data-layouts/{productDataLayout}', [ProductDataLayoutController::class, 'show']);
+                    Route::put('/product-data-layouts/{productDataLayout}', [ProductDataLayoutController::class, 'update']);
+                    Route::delete('/product-data-layouts/{productDataLayout}', [ProductDataLayoutController::class, 'destroy']);
+                    Route::put('/product-data-layouts/{productDataLayout}/layout', [ProductDataLayoutController::class, 'saveLayout']);
+                    Route::post('/product-data-layouts/{productDataLayout}/publish', [ProductDataLayoutController::class, 'publish']);
+
+                    Route::get('/product-data', [ProductDataPageController::class, 'index']);
+                    Route::post('/product-data', [ProductDataPageController::class, 'store']);
+                    Route::get('/product-data/{productDataPage}', [ProductDataPageController::class, 'show']);
+                    Route::put('/product-data/{productDataPage}', [ProductDataPageController::class, 'update']);
+                    Route::delete('/product-data/{productDataPage}', [ProductDataPageController::class, 'destroy']);
+                    Route::get('/product-data/{productDataPage}/content', [ProductDataPageController::class, 'editContent']);
+                    Route::put('/product-data/{productDataPage}/content', [ProductDataPageController::class, 'updateContent']);
+                    Route::post('/product-data/{productDataPage}/content/publish', [ProductDataPageController::class, 'publishContent']);
+                    Route::post('/product-data/{productDataPage}/images', [ProductDataPageController::class, 'uploadImage']);
+                    Route::post('/product-data/{productDataPage}/files', [ProductDataPageController::class, 'uploadFile']);
+                    Route::post('/product-data/{productDataPage}/templates', [ProductDataPageController::class, 'uploadTemplate']);
+
+                    Route::get('/custom-page-layouts', [CustomPageLayoutController::class, 'index']);
+                    Route::post('/custom-page-layouts', [CustomPageLayoutController::class, 'store']);
+                    Route::get('/custom-page-layouts/{customPageLayout}', [CustomPageLayoutController::class, 'show']);
+                    Route::put('/custom-page-layouts/{customPageLayout}', [CustomPageLayoutController::class, 'update']);
+                    Route::delete('/custom-page-layouts/{customPageLayout}', [CustomPageLayoutController::class, 'destroy']);
+                    Route::put('/custom-page-layouts/{customPageLayout}/layout', [CustomPageLayoutController::class, 'saveLayout']);
+                    Route::post('/custom-page-layouts/{customPageLayout}/publish', [CustomPageLayoutController::class, 'publish']);
+
+                    Route::get('/custom-pages', [CustomPageController::class, 'index']);
+                    Route::post('/custom-pages', [CustomPageController::class, 'store']);
+                    Route::get('/custom-pages/{customPage}', [CustomPageController::class, 'show']);
+                    Route::put('/custom-pages/{customPage}', [CustomPageController::class, 'update']);
+                    Route::delete('/custom-pages/{customPage}', [CustomPageController::class, 'destroy']);
+                    Route::get('/custom-pages/{customPage}/content', [CustomPageController::class, 'editContent']);
+                    Route::put('/custom-pages/{customPage}/content', [CustomPageController::class, 'updateContent']);
+                    Route::post('/custom-pages/{customPage}/content/publish', [CustomPageController::class, 'publishContent']);
+                    Route::post('/custom-pages/{customPage}/images', [CustomPageController::class, 'uploadImage']);
+                    Route::post('/custom-pages/{customPage}/files', [CustomPageController::class, 'uploadFile']);
+                    Route::post('/custom-pages/{customPage}/templates', [CustomPageController::class, 'uploadTemplate']);
 
 
                     /*

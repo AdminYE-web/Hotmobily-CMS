@@ -2,13 +2,25 @@
 
 
 @section('head')
+    @php
+        $isProductDataPage = $product instanceof \App\Models\ProductDataPage;
+        $isStandaloneCustomPage = $product instanceof \App\Models\CustomPage;
+    @endphp
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <title>{{ $product->name }}</title>
 
+    @if (filled($product->meta_keywords))
+        <meta name="keywords" content="{{ $product->meta_keywords }}">
+    @endif
+
+    @if (filled($product->meta_description))
+        <meta name="description" content="{{ $product->meta_description }}">
+    @endif
+
     <meta name="robots" content="index,follow">
 
-    <link rel="canonical" href="{{ url('/products/' . $product->slug) }}">
+    <link rel="canonical" href="{{ $isStandaloneCustomPage ? url('/' . $product->slug) : url('/products/' . $product->slug) }}">
 
 
     {{--
@@ -78,7 +90,7 @@
             flex-wrap: nowrap !important;
             align-items: flex-start;
 
-            width: calc(100% + 16px);
+            width: 100%;
 
             /* margin: 0 -8px 15px; */
         }
@@ -410,6 +422,73 @@
         }
 
 
+        .store-heading-data {
+            margin:
+                15px 0 10px;
+        }
+
+
+        .store-heading--data {
+            margin: 0;
+            padding: 6px 10px;
+
+            color: #ffffff;
+
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+
+        .store-heading-date {
+            padding: 4px 8px 0;
+
+            color: #111111;
+
+            font-size: 12px;
+            line-height: 1.3;
+            text-align: right;
+        }
+
+
+        .store-head-section {
+            margin:
+                15px 0 10px;
+
+            padding: 12px 10px 10px;
+
+            background: #f2f2f2;
+
+            border-bottom: 3px solid #f58214;
+
+            color: #111111;
+
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: center;
+        }
+
+
+        .store-head-sub-section {
+            margin:
+                15px 0 10px;
+
+            padding: 7px 14px 6px;
+
+            background: #cccccc;
+
+            border-radius: 5px;
+
+            color: #111111;
+
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: left;
+        }
+
+
         .store-rich-text {
             font-size: 16px;
             line-height: 1.7;
@@ -424,12 +503,20 @@
         }
 
 
+        .store-rich-text .rich-text-file-link {
+            color: #06c !important;
+            cursor: pointer;
+            text-decoration: underline !important;
+        }
+
+
         /* ============================================================
            Image
         ============================================================ */
 
         .store-image {
             width: 100%;
+            text-align: center;
         }
 
 
@@ -438,6 +525,188 @@
 
             max-width: 100%;
             height: auto;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+
+        .store-multi-photo {
+            width: 100%;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+
+        .store-multi-photo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+        }
+
+
+        .store-multi-photo-item {
+            flex: 0 0 auto;
+            width: auto;
+            max-width: none;
+            padding: 0;
+            border: 0;
+            background: transparent;
+        }
+
+
+        .store-multi-photo-item img {
+            display: block;
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+        }
+
+
+        .store-multi-photo-caption {
+            margin-top: 8px;
+            color: #333;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+
+        .store-multi-photo-item.store-image-modal-trigger {
+            width: auto;
+        }
+
+
+        @media (max-width: 768px) {
+            .store-multi-photo-item {
+                flex: 0 1 100%;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .store-multi-photo-item.store-image-modal-trigger {
+                width: 100%;
+            }
+        }
+
+
+        .store-image-modal-trigger {
+            display: block;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: zoom-in;
+            text-align: inherit;
+        }
+
+
+        .store-image-modal-trigger:focus-visible {
+            outline: 2px solid #e67e22;
+            outline-offset: 3px;
+        }
+
+
+        .store-image-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(0, 0, 0, .82);
+        }
+
+
+        .store-image-modal.is-open {
+            display: flex;
+        }
+
+
+        .store-image-modal-dialog {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            width: fit-content;
+            max-width: 94vw;
+            max-height: 92vh;
+            padding: 22px 0 46px;
+            background: #fff;
+            border-radius: 4px;
+        }
+
+
+        .store-image-modal-dialog img {
+            display: block;
+            max-width: min(90vw, 820px);
+            max-height: calc(92vh - 88px);
+            object-fit: contain;
+        }
+
+
+        .store-image-modal-close {
+            position: absolute;
+            top: 4px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #222;
+            font-size: 32px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+
+        .store-image-modal-nav {
+            position: absolute;
+            top: 50%;
+            min-width: 46px;
+            height: 48px;
+            padding: 0 8px;
+            transform: translateY(-50%);
+            border: 0;
+            border-radius: 2px;
+            background: #fff;
+            color: #222;
+            font-size: 18px;
+            line-height: 48px;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .15);
+        }
+
+
+        .store-image-modal-nav:disabled {
+            display: none;
+        }
+
+
+        .store-image-modal-prev {
+            left: 0;
+        }
+
+
+        .store-image-modal-next {
+            right: 0;
+        }
+
+
+        .store-image-modal-counter {
+            position: absolute;
+            right: 0;
+            bottom: 14px;
+            left: 0;
+            color: #333;
+            font-size: 13px;
+            text-align: center;
         }
 
 
@@ -833,6 +1102,26 @@
         /* ============================================================
            YouTube
         ============================================================ */
+        .store-youtube--direct {
+            margin: 15px 0;
+        }
+
+
+        .store-youtube-direct-content {
+            padding: 0;
+        }
+
+
+        .store-youtube-title {
+            margin-bottom: 8px;
+
+            color: #281600;
+
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+
         .store-youtube-player {
             position: relative;
 
@@ -1335,6 +1624,22 @@
         }
 
 
+        .store-template-button--data {
+            box-sizing: border-box;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 100%;
+            min-height: 55px;
+
+            padding: 0 24px;
+
+            font-size: 16px;
+        }
+
+
         /* ============================================================
            Divider / Spacer
         ============================================================ */
@@ -1389,6 +1694,48 @@
             }
 
 
+            .product-data-cms-page .product-layout-container {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+
+            .product-data-cms-page
+            .product-layout-container
+            > .product-layout-row {
+                flex: 0 0 100%;
+                width: 100%;
+            }
+
+
+            .product-data-cms-page
+            .product-layout-container
+            > .product-layout-row--single-template-button {
+                flex: 0 0 50%;
+                width: 50%;
+            }
+
+
+            .product-data-cms-page
+            .product-layout-row:has(.store-template-button--data) {
+                flex-wrap: nowrap !important;
+            }
+
+
+            .product-data-cms-page
+            .product-layout-row:has(.store-template-button--data)
+            .product-layout-column {
+                flex:
+                    0 0 var(--product-column-width) !important;
+
+                width:
+                    var(--product-column-width) !important;
+
+                max-width:
+                    var(--product-column-width) !important;
+            }
+
+
             .store-product-inner {
                 width:
                     100% !important;
@@ -1416,6 +1763,16 @@
 
             .store-template-button {
                 width: 100%;
+            }
+
+
+            .product-data-cms-page .store-template-button--data {
+                min-height: 36px;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                padding: 7px 4px;
+                font-size: 14px;
+                white-space: nowrap;
             }
 
             @media (max-width: 768px) {
@@ -1609,7 +1966,7 @@
 
 
 @section('content')
-    <div class="product-cms-page" data-product-slug="{{ $product->slug }}">
+    <div class="product-cms-page{{ $isProductDataPage ? ' product-data-cms-page' : '' }}" data-product-slug="{{ $product->slug }}">
 
         @php
             $layoutRows = is_array($layout['rows'] ?? null) ? $layout['rows'] : [];
@@ -1635,7 +1992,7 @@
         </div>
 
         @if (!empty($orderSteps))
-            @include('products.partials.admin-order-form', ['orderSteps' => $orderSteps, 'orderPricing' => $orderPricing ?? [], 'orderDependencies' => $orderDependencies ?? [], 'pdfSummaryCustomRows' => $pdfSummaryCustomRows ?? []])
+            @include('products.partials.admin-order-form', ['orderSteps' => $orderSteps, 'orderPricing' => $orderPricing ?? [], 'orderDependencies' => $orderDependencies ?? [], 'pdfSummaryCustomRows' => $pdfSummaryCustomRows ?? [], 'confirmSummaryCustomRows' => $confirmSummaryCustomRows ?? [], 'completeSummaryCustomRows' => $completeSummaryCustomRows ?? []])
         @elseif ($product->slug === 'rubberstrap')
             @include('products.partials.order-form')
         @endif
@@ -1650,6 +2007,59 @@
             </div>
         @endif
 
+    </div>
+
+
+    <div
+        class="store-image-modal"
+        data-store-image-modal
+        aria-hidden="true"
+    >
+        <div
+            class="store-image-modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image preview"
+        >
+            <button
+                type="button"
+                class="store-image-modal-close"
+                data-store-image-modal-close
+                aria-label="Close image preview"
+            >
+                ×
+            </button>
+
+            <button
+                type="button"
+                class="store-image-modal-nav store-image-modal-prev"
+                data-store-image-modal-prev
+                aria-label="Previous image"
+            >
+                戻る
+            </button>
+
+            <img
+                src=""
+                alt=""
+                data-store-image-modal-image
+            >
+
+            <button
+                type="button"
+                class="store-image-modal-nav store-image-modal-next"
+                data-store-image-modal-next
+                aria-label="Next image"
+            >
+                次へ
+            </button>
+
+            <div
+                class="store-image-modal-counter"
+                data-store-image-modal-counter
+                aria-live="polite"
+            ></div>
+        </div>
     </div>
 @endsection
 
@@ -1819,6 +2229,13 @@
 
                                 if (src) main.src = src;
 
+                                const alt = thumbs[index].dataset.galleryAlt;
+
+                                if (alt !== undefined) {
+                                    main.alt = alt;
+                                    if (modalImage) modalImage.alt = alt;
+                                }
+
                                 thumbs.forEach(function(item) {
                                     item.classList.remove('is-active');
                                 });
@@ -1893,6 +2310,10 @@
 
                                         modalImage.src =
                                             main.src;
+
+
+                                        modalImage.alt =
+                                            main.alt;
 
 
                                         modal
@@ -2006,6 +2427,140 @@
 
                         }
                     );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Optional Image Modal Gallery
+                |--------------------------------------------------------------------------
+                */
+                const allImageModalTriggers = Array.from(
+                    document.querySelectorAll(
+                        '[data-store-image-modal-trigger]'
+                    )
+                );
+
+                let imageModalTriggers = allImageModalTriggers;
+
+                const imageModal = document.querySelector(
+                    '[data-store-image-modal]'
+                );
+
+                const imageModalImage = imageModal?.querySelector(
+                    '[data-store-image-modal-image]'
+                );
+
+                const imageModalClose = imageModal?.querySelector(
+                    '[data-store-image-modal-close]'
+                );
+
+                const imageModalPrevious = imageModal?.querySelector(
+                    '[data-store-image-modal-prev]'
+                );
+
+                const imageModalNext = imageModal?.querySelector(
+                    '[data-store-image-modal-next]'
+                );
+
+                const imageModalCounter = imageModal?.querySelector(
+                    '[data-store-image-modal-counter]'
+                );
+
+                let imageModalIndex = 0;
+
+                function updateImageModal(index) {
+                    if (!imageModalImage || !imageModalTriggers.length) {
+                        return;
+                    }
+
+                    imageModalIndex = (
+                        index + imageModalTriggers.length
+                    ) % imageModalTriggers.length;
+
+                    const trigger = imageModalTriggers[imageModalIndex];
+
+                    imageModalImage.src =
+                        trigger.dataset.imageModalSrc || '';
+                    imageModalImage.alt =
+                        trigger.dataset.imageModalAlt || '';
+
+                    if (imageModalCounter) {
+                        imageModalCounter.textContent =
+                            `Image ${imageModalIndex + 1} of ${imageModalTriggers.length}`;
+                    }
+
+                    const hasMultipleImages = imageModalTriggers.length > 1;
+
+                    if (imageModalPrevious) {
+                        imageModalPrevious.disabled = !hasMultipleImages;
+                    }
+
+                    if (imageModalNext) {
+                        imageModalNext.disabled = !hasMultipleImages;
+                    }
+                }
+
+                function closeImageModal() {
+                    imageModal?.classList.remove('is-open');
+                    imageModal?.setAttribute('aria-hidden', 'true');
+                    imageModalTriggers = allImageModalTriggers;
+                    document.body.style.overflow = '';
+                }
+
+                allImageModalTriggers.forEach(function(trigger) {
+                    trigger.addEventListener('click', function() {
+                        const group = trigger.dataset.imageModalGroup || '';
+
+                        imageModalTriggers = group
+                            ? allImageModalTriggers.filter(function(item) {
+                                return item.dataset.imageModalGroup === group;
+                            })
+                            : allImageModalTriggers;
+
+                        const index = Math.max(
+                            0,
+                            imageModalTriggers.indexOf(trigger)
+                        );
+
+                        updateImageModal(index);
+                        imageModal?.classList.add('is-open');
+                        imageModal?.setAttribute('aria-hidden', 'false');
+                        document.body.style.overflow = 'hidden';
+                    });
+                });
+
+                imageModalClose?.addEventListener(
+                    'click',
+                    closeImageModal
+                );
+
+                imageModalPrevious?.addEventListener('click', function() {
+                    updateImageModal(imageModalIndex - 1);
+                });
+
+                imageModalNext?.addEventListener('click', function() {
+                    updateImageModal(imageModalIndex + 1);
+                });
+
+                imageModal?.addEventListener('click', function(event) {
+                    if (event.target === imageModal) {
+                        closeImageModal();
+                    }
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if (!imageModal?.classList.contains('is-open')) {
+                        return;
+                    }
+
+                    if (event.key === 'Escape') {
+                        closeImageModal();
+                    } else if (event.key === 'ArrowLeft') {
+                        updateImageModal(imageModalIndex - 1);
+                    } else if (event.key === 'ArrowRight') {
+                        updateImageModal(imageModalIndex + 1);
+                    }
+                });
 
 
                 /*

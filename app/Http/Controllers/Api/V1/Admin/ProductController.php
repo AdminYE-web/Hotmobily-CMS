@@ -93,6 +93,18 @@ class ProductController extends Controller
                 'exists:product_layouts,id',
             ],
 
+            'meta_keywords' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+
+            'meta_description' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+
             'status' => [
                 'required',
 
@@ -214,6 +226,18 @@ class ProductController extends Controller
                 'nullable',
                 'integer',
                 'exists:product_layouts,id',
+            ],
+
+            'meta_keywords' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+
+            'meta_description' => [
+                'nullable',
+                'string',
+                'max:1000',
             ],
 
             'status' => [

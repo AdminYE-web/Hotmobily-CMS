@@ -1,5 +1,24 @@
 @foreach ($rows as $row)
-    <div class="product-layout-row">
+    @php
+        $templateButtonCount = 0;
+        $otherBlockCount = 0;
+
+        foreach ($row['columns'] ?? [] as $rowColumn) {
+            foreach ($rowColumn['blocks'] ?? [] as $rowBlock) {
+                if (($rowBlock['type'] ?? null) === 'template_button') {
+                    $templateButtonCount++;
+                } else {
+                    $otherBlockCount++;
+                }
+            }
+        }
+
+        $isSingleTemplateButtonRow =
+            $templateButtonCount === 1
+            && $otherBlockCount === 0;
+    @endphp
+
+    <div class="product-layout-row{{ $isSingleTemplateButtonRow ? ' product-layout-row--single-template-button' : '' }}">
 
         @foreach ($row['columns'] ?? [] as $column)
             @php

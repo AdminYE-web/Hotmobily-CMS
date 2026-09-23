@@ -1,10 +1,24 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Product Layout Builder')
+@php
+    $isProductDataBuilder = ($layoutBuilderMode ?? 'product') === 'product_data';
+    $isCustomPageBuilder = ($layoutBuilderMode ?? 'product') === 'custom_page';
+    $isCmsBuilder = $isProductDataBuilder || $isCustomPageBuilder;
+    $layoutBuilderApiBase = $layoutBuilderApiBase ?? '/api/v1/admin/product-layouts';
+    $layoutBuilderIndexUrl = $layoutBuilderIndexUrl ?? route('admin.product-layouts.index');
+    $layoutBuilderTitle = $isCustomPageBuilder
+        ? 'Custom Page Layout Builder'
+        : ($isProductDataBuilder ? 'Product Data Layout Builder' : 'Product Layout Builder');
+    $layoutBuilderListTitle = $isCustomPageBuilder
+        ? 'Custom Page Layouts'
+        : ($isProductDataBuilder ? 'Product Data Layouts' : 'Product Layouts');
+@endphp
+
+@section('title', $layoutBuilderTitle)
 
 @section('content')
 
-<div class="container-fluid">
+<div class="container-fluid {{ $isCmsBuilder ? 'product-data-layout-builder' : '' }}">
 
     {{-- ============================================================
         HEADER
@@ -13,8 +27,8 @@
 
         <div>
 
-            <a href="{{ route('admin.product-layouts.index') }}">
-                ← Product Layouts
+            <a href="{{ $layoutBuilderIndexUrl }}">
+                ← {{ $layoutBuilderListTitle }}
             </a>
 
             <h1 class="h3 mt-2 mb-1">
@@ -22,7 +36,7 @@
             </h1>
 
             <small class="text-muted">
-                Visual Product Layout Builder
+                {{ $isCustomPageBuilder ? 'Visual Custom Page Layout Builder' : ($isProductDataBuilder ? 'Visual Product Data Layout Builder' : 'Visual Product Layout Builder') }}
             </small>
 
         </div>
@@ -86,8 +100,29 @@
                         data-type="heading"
                     >
                         <span>H</span>
-                        Heading
+                        {{ $isProductDataBuilder ? 'Page / Section Heading' : 'Heading' }}
                     </button>
+
+
+                    @if ($isCmsBuilder)
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="head_section"
+                    >
+                        <span>HS</span>
+                        Head Section
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="head_sub_section"
+                    >
+                        Head Sub Section
+                    </button>
+                    @endif
 
 
                     <button
@@ -110,16 +145,29 @@
                     </button>
 
 
+                    @if ($isCustomPageBuilder)
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="multi_photo"
+                    >
+                        <span>MP</span>
+                        Multi Photo
+                    </button>
+                    @endif
+
+
                     <button
                         type="button"
                         class="component-button add-block"
                         data-type="youtube"
                     >
                         <span>▶</span>
-                        YouTube
+                        {{ $isProductDataBuilder ? 'YouTube Video' : 'YouTube' }}
                     </button>
 
 
+                    @unless ($isCmsBuilder)
                     <button
                         type="button"
                         class="component-button add-block"
@@ -128,6 +176,7 @@
                         <span>📰</span>
                         Related Blogs
                     </button>
+                    @endunless
 
 
                     <button
@@ -136,8 +185,20 @@
                         data-type="button"
                     >
                         <span>▣</span>
-                        Button
+                        {{ $isProductDataBuilder ? 'Download / Action Button' : 'Button' }}
                     </button>
+
+
+                    @if ($isCmsBuilder)
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="template_button"
+                    >
+                        <span>DL</span>
+                        Template Button
+                    </button>
+                    @endif
 
 
                     {{-- NEW --}}
@@ -158,7 +219,7 @@
                         data-type="custom_table"
                     >
                         <span>▦</span>
-                        Custom Table
+                        {{ $isProductDataBuilder ? 'Guide Table' : 'Custom Table' }}
                     </button>
 
 
@@ -168,7 +229,7 @@
                         data-type="info_card"
                     >
                         <span>▤</span>
-                        Info Card
+                        {{ $isProductDataBuilder ? 'Title / Notice Box' : 'Info Card' }}
                     </button>
 
 
@@ -178,10 +239,11 @@
                         data-type="accordion"
                     >
                         <span>☰</span>
-                        Accordion
+                        {{ $isProductDataBuilder ? 'Expandable Note' : 'Accordion' }}
                     </button>
 
 
+                    @unless ($isCmsBuilder)
                     <button
                         type="button"
                         class="component-button add-block"
@@ -190,8 +252,10 @@
                         <span>🗂</span>
                         OptionCardGrid
                     </button>
+                    @endunless
 
 
+                    @unless ($isCmsBuilder)
                     <hr>
 
 
@@ -282,6 +346,7 @@
                     >
                         Production Schedule
                     </button>
+                    @endunless
 
 
                     <hr>
@@ -417,7 +482,7 @@
                         <div>
 
                             <strong>
-                                Product Page Preview
+                                {{ $isCustomPageBuilder ? 'Custom Page Preview' : ($isProductDataBuilder ? 'Product Data Page Preview' : 'Product Page Preview') }}
                             </strong>
 
                             <span class="text-muted ml-2">
@@ -476,7 +541,7 @@
                             </div>
 
                             <div class="preview-url">
-                                hotmobily.jp/products/example-product
+                                {{ $isCustomPageBuilder ? 'hotmobily.jp/howtodesign' : ($isProductDataBuilder ? 'hotmobily.jp/products/data' : 'hotmobily.jp/products/example-product') }}
                             </div>
 
                         </div>
@@ -497,7 +562,7 @@
                                 </div>
 
                                 <h5>
-                                    Empty Product Layout
+                                    {{ $isCustomPageBuilder ? 'Empty Custom Page Layout' : ($isProductDataBuilder ? 'Empty Product Data Layout' : 'Empty Product Layout') }}
                                 </h5>
 
                                 <p class="text-muted text-center mb-3">
@@ -516,7 +581,7 @@
 
                             <div
                                 id="preview-order-form"
-                                class="preview-order-form"
+                                class="preview-order-form {{ $isCmsBuilder ? 'd-none' : '' }}"
                             >
 
                                 <div>
@@ -781,6 +846,12 @@
 @push('styles')
 
 <style>
+
+.product-data-layout-builder .row-placement-control,
+.product-data-layout-builder #preview-order-form,
+.product-data-layout-builder #builder-after-order-region {
+    display: none !important;
+}
 
 /* ============================================================
    Sidebar
@@ -1442,6 +1513,33 @@
 }
 
 
+.sim-multi-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+
+.sim-multi-photo-item {
+    min-height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f2f2;
+    border: 1px solid #ddd;
+    color: #999;
+    font-size: 12px;
+}
+
+
+.sim-multi-photo-caption {
+    margin-top: 7px;
+    color: #777;
+    font-size: 11px;
+    text-align: center;
+}
+
+
 /* ============================================================
    Product Details
 ============================================================ */
@@ -1469,6 +1567,38 @@
 
     font-size: 18px;
     font-weight: 700;
+}
+
+
+.sim-head-section {
+    padding: 12px 10px 10px;
+
+    background: #f2f2f2;
+
+    border-bottom: 3px solid #f58214;
+
+    color: #111;
+
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+}
+
+
+.sim-head-sub-section {
+    padding: 7px 14px 6px;
+
+    background: #cccccc;
+
+    border-radius: 5px;
+
+    color: #111;
+
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: left;
 }
 
 
@@ -1723,6 +1853,22 @@
     border-radius: 10px;
 
     font-size: 21px;
+}
+
+
+.sim-youtube-direct {
+    padding: 10px;
+
+    background: #fff;
+
+    border: 1px solid #ddd;
+}
+
+
+.sim-youtube-title {
+    margin-bottom: 8px;
+
+    font-weight: 700;
 }
 
 
@@ -2153,6 +2299,14 @@ document.addEventListener(
             {{ $productLayout->id }};
 
 
+        const layoutApiBase =
+            @json($layoutBuilderApiBase);
+
+
+        const isProductDataBuilder =
+            @json($isCmsBuilder);
+
+
         const csrf =
             document
                 .querySelector(
@@ -2205,6 +2359,162 @@ document.addEventListener(
             [];
 
 
+        let dragScrollFrame =
+            null;
+
+
+        let dragScrollPointerY =
+            null;
+
+
+        function updateDragScrollPointer(
+            event
+        )
+        {
+            dragScrollPointerY =
+                event.clientY
+                ??
+                event.touches?.[0]?.clientY
+                ??
+                null;
+        }
+
+
+        function dragScrollTick()
+        {
+            if (
+                dragScrollPointerY
+                ===
+                null
+            ) {
+                dragScrollFrame =
+                    requestAnimationFrame(
+                        dragScrollTick
+                    );
+
+
+                return;
+            }
+
+
+            const edgeSize =
+                90;
+
+
+            const viewportHeight =
+                window.innerHeight;
+
+
+            let scrollDelta =
+                0;
+
+
+            if (
+                dragScrollPointerY
+                <
+                edgeSize
+            ) {
+                scrollDelta =
+                    -18;
+            } else if (
+                dragScrollPointerY
+                >
+                viewportHeight
+                -
+                edgeSize
+            ) {
+                scrollDelta =
+                    18;
+            }
+
+
+            if (
+                scrollDelta
+                !==
+                0
+            ) {
+                window.scrollBy(
+                    0,
+                    scrollDelta
+                );
+            }
+
+
+            dragScrollFrame =
+                requestAnimationFrame(
+                    dragScrollTick
+                );
+        }
+
+
+        function startDragAutoScroll()
+        {
+            stopDragAutoScroll();
+
+
+            dragScrollPointerY =
+                null;
+
+
+            document.addEventListener(
+                'pointermove',
+                updateDragScrollPointer,
+                {
+                    passive: true,
+                }
+            );
+
+
+            document.addEventListener(
+                'touchmove',
+                updateDragScrollPointer,
+                {
+                    passive: true,
+                }
+            );
+
+
+            dragScrollFrame =
+                requestAnimationFrame(
+                    dragScrollTick
+                );
+        }
+
+
+        function stopDragAutoScroll()
+        {
+            document.removeEventListener(
+                'pointermove',
+                updateDragScrollPointer
+            );
+
+
+            document.removeEventListener(
+                'touchmove',
+                updateDragScrollPointer
+            );
+
+
+            if (
+                dragScrollFrame
+                !==
+                null
+            ) {
+                cancelAnimationFrame(
+                    dragScrollFrame
+                );
+
+
+                dragScrollFrame =
+                    null;
+            }
+
+
+            dragScrollPointerY =
+                null;
+        }
+
+
         /*
         |--------------------------------------------------------------------------
         | Load
@@ -2217,7 +2527,7 @@ document.addEventListener(
 
                 const response =
                     await fetch(
-                        `/api/v1/admin/product-layouts/${layoutId}`,
+                        `${layoutApiBase}/${layoutId}`,
                         {
                             credentials:
                                 'same-origin',
@@ -2705,6 +3015,18 @@ document.addEventListener(
 
 
                 case 'image':
+
+                    return {
+
+                        ...base,
+
+                        alignment:
+                            'center',
+
+                    };
+
+
+                case 'multi_photo':
 
                     return {
 
@@ -3413,6 +3735,34 @@ document.addEventListener(
                     );
 
 
+                case 'head_section':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-head-section">
+                                Head Section
+                            </div>
+
+                        `
+                    );
+
+
+                case 'head_sub_section':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-head-sub-section">
+                                Head Sub Section
+                            </div>
+
+                        `
+                    );
+
+
                 case 'rich_text':
 
                     return contentWrapper(
@@ -3451,7 +3801,58 @@ document.addEventListener(
                     );
 
 
+                case 'multi_photo':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-multi-photo">
+
+                                <div class="sim-multi-photo-grid">
+
+                                    <div class="sim-multi-photo-item">
+                                        PHOTO 1
+                                    </div>
+
+                                    <div class="sim-multi-photo-item">
+                                        PHOTO 2
+                                    </div>
+
+                                </div>
+
+                                <div class="sim-multi-photo-caption">
+                                    Click a photo to view it larger
+                                </div>
+
+                            </div>
+
+                        `
+                    );
+
+
                 case 'youtube':
+
+                    if (isProductDataBuilder) {
+                        return contentWrapper(
+                            block,
+                            `
+
+                                <div class="sim-youtube-direct">
+
+                                    <div class="sim-youtube-title">
+                                        YouTube Title
+                                    </div>
+
+                                    <div class="sim-youtube-preview">
+                                        <span class="sim-youtube-play">▶</span>
+                                    </div>
+
+                                </div>
+
+                            `
+                        );
+                    }
 
                     return contentWrapper(
                         block,
@@ -4692,20 +5093,40 @@ document.addEventListener(
                                     animation:
                                         150,
 
+                                    scroll:
+                                        true,
+
+                                    bubbleScroll:
+                                        true,
+
+                                    scrollSensitivity:
+                                        90,
+
+                                    scrollSpeed:
+                                        18,
+
                                     handle:
                                         '.row-drag-handle',
 
                                     ghostClass:
                                         'sortable-ghost',
 
+                                    onStart:
+                                        startDragAutoScroll,
+
                                     onEnd:
                                         function () {
+
+                                            stopDragAutoScroll();
 
                                             syncStructureFromDom();
 
                                             render();
 
                                         },
+
+                                    onCancel:
+                                        stopDragAutoScroll,
                                 }
                             )
 
@@ -4733,14 +5154,31 @@ document.addEventListener(
                                     animation:
                                         150,
 
+                                    scroll:
+                                        true,
+
+                                    bubbleScroll:
+                                        true,
+
+                                    scrollSensitivity:
+                                        90,
+
+                                    scrollSpeed:
+                                        18,
+
                                     handle:
                                         '.block-drag-handle',
 
                                     ghostClass:
                                         'sortable-ghost',
 
+                                    onStart:
+                                        startDragAutoScroll,
+
                                     onEnd:
                                         function () {
+
+                                            stopDragAutoScroll();
 
                                             syncStructureFromDom();
 
@@ -4751,6 +5189,9 @@ document.addEventListener(
                                             render();
 
                                         },
+
+                                    onCancel:
+                                        stopDragAutoScroll,
                                 }
                             )
 
@@ -4778,20 +5219,40 @@ document.addEventListener(
                                     animation:
                                         150,
 
+                                    scroll:
+                                        true,
+
+                                    bubbleScroll:
+                                        true,
+
+                                    scrollSensitivity:
+                                        90,
+
+                                    scrollSpeed:
+                                        18,
+
                                     handle:
                                         '.block-drag-handle',
 
                                     ghostClass:
                                         'sortable-ghost',
 
+                                    onStart:
+                                        startDragAutoScroll,
+
                                     onEnd:
                                         function () {
+
+                                            stopDragAutoScroll();
 
                                             syncStructureFromDom();
 
                                             render();
 
                                         },
+
+                                    onCancel:
+                                        stopDragAutoScroll,
                                 }
                             )
 
@@ -5303,6 +5764,45 @@ document.addEventListener(
 
                             </select>
 
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'head_section':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+                            The Head Section text is configured in the Product Data Content Editor.
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'head_sub_section':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+                            The Head Sub Section text is configured in the Product Data Content Editor.
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'multi_photo':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+                            Add, upload and edit the photos in the Custom Page Content Editor.
                         </div>
 
                     `;
@@ -6124,7 +6624,7 @@ document.addEventListener(
 
                 const response =
                     await fetch(
-                        `/api/v1/admin/product-layouts/${layoutId}/layout`,
+                        `${layoutApiBase}/${layoutId}/layout`,
                         {
                             method:
                                 'PUT',
@@ -6285,7 +6785,7 @@ document.addEventListener(
 
                         const response =
                             await fetch(
-                                `/api/v1/admin/product-layouts/${layoutId}/publish`,
+                                `${layoutApiBase}/${layoutId}/publish`,
                                 {
                                     method:
                                         'POST',
@@ -6851,11 +7351,20 @@ document.addEventListener(
                 heading:
                     'Heading',
 
+                head_section:
+                    'Head Section',
+
+                head_sub_section:
+                    'Head Sub Section',
+
                 rich_text:
                     'Text',
 
                 image:
                     'Image',
+
+                multi_photo:
+                    'Multi Photo',
 
                 youtube:
                     'YouTube',

@@ -15,6 +15,15 @@ class Product extends Model
         'product_code',
         'product_layout_id',
         'status',
+        'meta_keywords',
+        'meta_description',
+        'show_notice',
+        'notice_text',
+        'complete_head_text',
+    ];
+
+    protected $casts = [
+        'show_notice' => 'boolean',
     ];
 
 
@@ -51,6 +60,20 @@ class Product extends Model
     public function pdfSummaryCustomRows(): HasMany
     {
         return $this->hasMany(ProductPdfSummaryCustomRow::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
+    }
+
+    public function confirmSummaryCustomRows(): HasMany
+    {
+        return $this->hasMany(ProductConfirmSummaryCustomRow::class)
+            ->orderBy('sort_order')
+            ->orderBy('id');
+    }
+
+    public function completeSummaryCustomRows(): HasMany
+    {
+        return $this->hasMany(ProductCompleteSummaryCustomRow::class)
             ->orderBy('sort_order')
             ->orderBy('id');
     }

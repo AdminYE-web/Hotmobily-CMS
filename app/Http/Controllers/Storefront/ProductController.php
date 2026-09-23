@@ -6,11 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Faq;
 use App\Models\OptionDependency;
 use App\Models\OptionPriceRule;
+use App\Models\OrderSubmission;
 use App\Models\Product;
+use App\Models\ProductDataPage;
+use App\Models\ProductCompleteSummaryCustomRow;
+use App\Models\ProductConfirmSummaryCustomRow;
 use App\Models\ProductPriceRule;
 use App\Models\ProductPdfSummaryCustomRow;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 
 class ProductController extends Controller
@@ -48,6 +55,27 @@ class ProductController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | Find Published Product Data Page
+        |--------------------------------------------------------------------------
+        |
+        | Product Data pages use the same public URL namespace as products
+        | (/products/{slug}). Resolve them first so a page such as /products/data
+        | does not fall through to the Product model lookup.
+        |--------------------------------------------------------------------------
+        */
+
+        $productDataPage = ProductDataPage::query()
+            ->with('layout')
+            ->where('slug', $productPath)
+            ->where('status', 'active')
+            ->first();
+
+        if ($productDataPage) {
+            return $this->showProductDataPage($productDataPage);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | Find Product
         |--------------------------------------------------------------------------
         */
@@ -78,6 +106,12 @@ class ProductController extends Controller
         ]);
         if (Schema::hasTable('product_pdf_summary_custom_rows')) {
             $product->load('pdfSummaryCustomRows');
+        }
+        if (Schema::hasTable('product_confirm_summary_custom_rows')) {
+            $product->load('confirmSummaryCustomRows');
+        }
+        if (Schema::hasTable('product_complete_summary_custom_rows')) {
+            $product->load('completeSummaryCustomRows');
         }
 
         /*
@@ -298,6 +332,30 @@ class ProductController extends Controller
                 ->values()
                 ->all()
             : [];
+        $confirmSummaryCustomRows = $product->relationLoaded('confirmSummaryCustomRows')
+            ? $product->confirmSummaryCustomRows
+                ->map(static fn (ProductConfirmSummaryCustomRow $row): array => [
+                    'id' => (int) $row->id,
+                    'key' => 'confirm-custom-'.$row->id,
+                    'label' => $row->label,
+                    'content' => $row->content,
+                    'sort_order' => (int) $row->sort_order,
+                ])
+                ->values()
+                ->all()
+            : [];
+        $completeSummaryCustomRows = $product->relationLoaded('completeSummaryCustomRows')
+            ? $product->completeSummaryCustomRows
+                ->map(static fn (ProductCompleteSummaryCustomRow $row): array => [
+                    'id' => (int) $row->id,
+                    'key' => 'complete-custom-'.$row->id,
+                    'label' => $row->label,
+                    'content' => $row->content,
+                    'sort_order' => (int) $row->sort_order,
+                ])
+                ->values()
+                ->all()
+            : [];
 
         return view(
             'products.show',
@@ -323,10 +381,665 @@ class ProductController extends Controller
 
                 'pdfSummaryCustomRows' => $pdfSummaryCustomRows,
 
+                'confirmSummaryCustomRows' => $confirmSummaryCustomRows,
+
+                'completeSummaryCustomRows' => $completeSummaryCustomRows,
+
                 'orderDependencies' => $this->storefrontOptionDependencies($orderSteps),
 
             ]
         );
+    }
+
+    /**
+     * Render a published Product Data page in the same storefront shell and
+     * CMS block renderer used by regular products.
+     */
+    private function showProductDataPage(ProductDataPage $productDataPage)
+    {
+        if (
+            ! $productDataPage->layout
+            ||
+            empty($productDataPage->layout->published_layout_json)
+            ||
+            empty($productDataPage->published_content_json)
+        ) {
+            abort(404);
+        }
+
+        $layout = $productDataPage->layout->published_layout_json;
+        $content = $productDataPage->published_content_json;
+
+        return view('products.show', [
+            'product' => $productDataPage,
+            'layout' => $layout,
+            'contents' => $content['blocks'] ?? [],
+            'publishedAt' => $productDataPage->published_at,
+            'faqData' => [],
+            'reviewData' => [],
+            'orderSteps' => [],
+            'orderPricing' => [],
+            'orderDependencies' => [],
+            'pdfSummaryCustomRows' => [],
+            'confirmSummaryCustomRows' => [],
+            'completeSummaryCustomRows' => [],
+        ]);
+    }
+
+    /**
+     * Keep the calculated order data in the current session before moving to
+     * the separate customer-information page.
+     */
+    public function storeCustomerOrder(Request $request, string $productPath)
+    {
+        $productPath = trim($productPath, '/');
+
+        $product = Product::query()
+            ->where('slug', $productPath)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'quantity' => ['nullable', 'integer', 'min:1', 'max:1000000000'],
+            'total_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
+            'subtotal_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
+            'discount_amount' => ['nullable', 'integer', 'max:100000000000'],
+            'shipping_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
+            'order_values' => ['nullable', 'json', 'max:100000'],
+            'summary' => ['nullable', 'array', 'max:100'],
+            'summary.*' => ['array'],
+            'summary.*.key' => ['nullable', 'string', 'max:100'],
+            'summary.*.label' => ['required', 'string', 'max:255'],
+            'summary.*.value' => ['nullable', 'string', 'max:2000'],
+            'order_summary' => ['nullable', 'array', 'max:100'],
+            'order_summary.*' => ['array'],
+            'order_summary.*.key' => ['nullable', 'string', 'max:100'],
+            'order_summary.*.label' => ['required', 'string', 'max:255'],
+            'order_summary.*.value' => ['nullable', 'string', 'max:2000'],
+            'confirm_summary' => ['nullable', 'array', 'max:100'],
+            'confirm_summary_present' => ['nullable', 'boolean'],
+            'confirm_summary.*' => ['array'],
+            'confirm_summary.*.key' => ['nullable', 'string', 'max:100'],
+            'confirm_summary.*.label' => ['required', 'string', 'max:255'],
+            'confirm_summary.*.value' => ['nullable', 'string', 'max:5000'],
+            'price_rows' => ['nullable', 'array', 'max:100'],
+            'price_rows.*' => ['array'],
+            'price_rows.*.key' => ['nullable', 'string', 'max:100'],
+            'price_rows.*.label' => ['required', 'string', 'max:255'],
+            'price_rows.*.amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
+            'price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,subtotal,discount,total'],
+            'confirm_price_rows' => ['nullable', 'array', 'max:100'],
+            'confirm_price_rows_present' => ['nullable', 'boolean'],
+            'confirm_price_rows.*' => ['array'],
+            'confirm_price_rows.*.key' => ['nullable', 'string', 'max:100'],
+            'confirm_price_rows.*.label' => ['required', 'string', 'max:255'],
+            'confirm_price_rows.*.amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
+            'confirm_price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,subtotal,discount,total'],
+            'complete_summary' => ['nullable', 'array', 'max:100'],
+            'complete_summary_present' => ['nullable', 'boolean'],
+            'complete_summary.*' => ['array'],
+            'complete_summary.*.key' => ['nullable', 'string', 'max:100'],
+            'complete_summary.*.label' => ['required', 'string', 'max:255'],
+            'complete_summary.*.value' => ['nullable', 'string', 'max:5000'],
+            'complete_price_rows' => ['nullable', 'array', 'max:100'],
+            'complete_price_rows_present' => ['nullable', 'boolean'],
+            'complete_price_rows.*' => ['array'],
+            'complete_price_rows.*.key' => ['nullable', 'string', 'max:100'],
+            'complete_price_rows.*.label' => ['required', 'string', 'max:255'],
+            'complete_price_rows.*.amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
+            'complete_price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,subtotal,discount,total'],
+        ]);
+
+        $orderValues = collect(json_decode((string) ($validated['order_values'] ?? '[]'), true) ?: [])
+            ->filter(static fn ($field): bool => is_array($field))
+            ->map(static fn (array $field): array => [
+                'name' => trim((string) ($field['name'] ?? '')),
+                'value' => (string) ($field['value'] ?? ''),
+            ])
+            ->filter(static fn (array $field): bool => $field['name'] !== '')
+            ->values()
+            ->all();
+
+        $request->session()->put('configured_order_'.$product->getKey(), [
+            'quantity' => (int) ($validated['quantity'] ?? 1),
+            'total_amount' => (int) ($validated['total_amount'] ?? 0),
+            'subtotal_amount' => (int) ($validated['subtotal_amount'] ?? 0),
+            'discount_amount' => (int) ($validated['discount_amount'] ?? 0),
+            'shipping_amount' => (int) ($validated['shipping_amount'] ?? 0),
+            'order_values' => $orderValues,
+            'summary' => $validated['summary'] ?? [],
+            'order_summary' => $validated['order_summary'] ?? [],
+            'confirm_summary' => $validated['confirm_summary'] ?? [],
+            'confirm_summary_present' => filter_var($validated['confirm_summary_present'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'price_rows' => $validated['price_rows'] ?? [],
+            'confirm_price_rows' => $validated['confirm_price_rows'] ?? [],
+            'confirm_price_rows_present' => filter_var($validated['confirm_price_rows_present'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'complete_summary' => $validated['complete_summary'] ?? [],
+            'complete_summary_present' => filter_var($validated['complete_summary_present'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'complete_price_rows' => $validated['complete_price_rows'] ?? [],
+            'complete_price_rows_present' => filter_var($validated['complete_price_rows_present'] ?? false, FILTER_VALIDATE_BOOLEAN),
+        ]);
+
+        return redirect()->route('products.customer', [
+            'productPath' => $productPath,
+        ]);
+    }
+
+    /**
+     * Save the customer-information form alongside the configured order in
+     * the session. The order is intentionally not persisted to the database
+     * until the later checkout/confirmation step.
+     */
+    public function storeCustomerDetails(Request $request, string $productPath)
+    {
+        $productPath = trim($productPath, '/');
+
+        $product = Product::query()
+            ->where('slug', $productPath)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $sessionKey = 'configured_order_'.$product->getKey();
+        $orderPayload = $request->session()->get($sessionKey);
+
+        if (! is_array($orderPayload)) {
+            return redirect()->route('products.show', [
+                'productPath' => $productPath,
+            ]);
+        }
+
+        $validated = $request->validate([
+            'customer' => ['required', 'array'],
+            'customer.email' => ['required', 'email', 'max:250'],
+            'customer.name' => ['required', 'string', 'max:100'],
+            'customer.furigana' => ['required', 'string', 'max:100'],
+            'customer.tel' => ['required', 'string', 'max:30'],
+            'customer.address_method' => ['required', 'in:add_form,none,message_box'],
+            'customer.cstKBN' => ['nullable', 'in:Corp,Personal'],
+            'customer.company' => ['nullable', 'string', 'max:100'],
+            'customer.company_kana' => ['nullable', 'string', 'max:100'],
+            'customer.department' => ['nullable', 'string', 'max:100'],
+            'customer.postal_code' => ['nullable', 'string', 'max:8'],
+            'customer.prefecture' => ['nullable', 'string', 'max:100'],
+            'customer.address' => ['nullable', 'string', 'max:255'],
+            'customer.address_street' => ['nullable', 'string', 'max:255'],
+            'customer.delivery_type' => ['nullable', 'in:same,different'],
+            'customer.delivery_name' => ['nullable', 'string', 'max:100'],
+            'customer.delivery_postal_code' => ['nullable', 'string', 'max:8'],
+            'customer.delivery_prefecture' => ['nullable', 'string', 'max:100'],
+            'customer.delivery_address' => ['nullable', 'string', 'max:255'],
+            'customer.delivery_address_street' => ['nullable', 'string', 'max:255'],
+            'customer.delivery_tel' => ['nullable', 'string', 'max:30'],
+            'customer.contact_detail' => ['nullable', 'string', 'max:10000'],
+            'customer.showcase' => ['nullable', 'in:allow,deny'],
+            'customer.contact_detail_2' => ['nullable', 'string', 'max:10000'],
+            'customer.payment' => ['nullable', 'string', 'max:100'],
+            'customer.newsletter' => ['nullable', 'boolean'],
+            'customer_files' => ['nullable', 'array', 'max:10'],
+            'customer_files.*' => [
+                'file',
+                'max:10240',
+                'extensions:ai,pdf,doc,xls,jpeg,jpg,png,psd,zip,eps',
+            ],
+        ]);
+
+        $storedFiles = [];
+        foreach ((array) $request->file('customer_files', []) as $file) {
+            if (! $file instanceof UploadedFile || ! $file->isValid()) {
+                continue;
+            }
+
+            $storedFiles[] = [
+                'name' => $file->getClientOriginalName(),
+                'path' => $file->store('customer-files/'.$product->getKey()),
+                'size' => (int) $file->getSize(),
+            ];
+        }
+
+        $existingFiles = is_array($orderPayload['customer_files'] ?? null)
+            ? $orderPayload['customer_files']
+            : [];
+
+        $orderPayload['customer'] = $validated['customer'];
+        $orderPayload['customer_files'] = array_values(array_merge($existingFiles, $storedFiles));
+        $orderPayload['customer_saved_at'] = now()->toIso8601String();
+        $request->session()->put($sessionKey, $orderPayload);
+
+        return redirect()->route('products.confirm', [
+            'productPath' => $productPath,
+        ]);
+    }
+
+    /**
+     * Render the customer-information page after the configured order has
+     * been transferred from the product page.
+     */
+    public function customerDetails(Request $request, string $productPath)
+    {
+        $productPath = trim($productPath, '/');
+
+        $product = Product::query()
+            ->where('slug', $productPath)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $orderPayload = $request->session()->get('configured_order_'.$product->getKey());
+
+        if (! is_array($orderPayload)) {
+            return redirect()->route('products.show', [
+                'productPath' => $productPath,
+            ]);
+        }
+
+        return view('products.customer-details', [
+            'product' => $product,
+            'orderPayload' => $orderPayload,
+        ]);
+    }
+
+    /**
+     * Render the final order confirmation page using the configuration and
+     * customer information that have been kept in the session.
+     */
+    public function confirmOrder(Request $request, string $productPath)
+    {
+        $productPath = trim($productPath, '/');
+
+        $product = Product::query()
+            ->where('slug', $productPath)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $orderPayload = $request->session()->get('configured_order_'.$product->getKey());
+
+        if (! is_array($orderPayload)) {
+            return redirect()->route('products.show', [
+                'productPath' => $productPath,
+            ]);
+        }
+
+        $normalizeRows = static function ($rows): array {
+            return collect(is_array($rows) ? $rows : [])
+                ->filter(static fn ($row): bool => is_array($row))
+                ->map(static fn (array $row): array => [
+                    'key' => trim((string) ($row['key'] ?? '')),
+                    'label' => trim((string) ($row['label'] ?? '')),
+                    'value' => (string) ($row['value'] ?? ''),
+                    'amount' => (int) ($row['amount'] ?? 0),
+                    'kind' => (string) ($row['kind'] ?? ''),
+                ])
+                ->filter(static fn (array $row): bool => $row['label'] !== '')
+                ->values()
+                ->all();
+        };
+
+        $summaryRows = array_key_exists('confirm_summary_present', $orderPayload)
+            ? $normalizeRows($orderPayload['confirm_summary'] ?? [])
+            : $normalizeRows($orderPayload['order_summary'] ?? ($orderPayload['summary'] ?? []));
+        $priceRows = array_key_exists('confirm_price_rows_present', $orderPayload)
+            ? $normalizeRows($orderPayload['confirm_price_rows'] ?? [])
+            : $normalizeRows($orderPayload['price_rows'] ?? []);
+        $orderValues = collect(is_array($orderPayload['order_values'] ?? null) ? $orderPayload['order_values'] : [])
+            ->filter(static fn ($field): bool => is_array($field))
+            ->map(static fn (array $field): array => [
+                'name' => trim((string) ($field['name'] ?? '')),
+                'value' => (string) ($field['value'] ?? ''),
+            ])
+            ->filter(static fn (array $field): bool => $field['name'] !== '')
+            ->values()
+            ->all();
+
+        return view('products.order-confirm', [
+            'product' => $product,
+            'orderPayload' => $orderPayload,
+            'summaryRows' => $summaryRows,
+            'priceRows' => $priceRows,
+            'orderValues' => $orderValues,
+        ]);
+    }
+
+    /**
+     * Complete the configured order using the data kept in the session.
+     *
+     * The legacy complete.php builds the email body before sending it. Keep
+     * the same test hook here: pooh receives the rendered body only,
+     * so the email template can be checked without sending an order.
+     */
+    public function completeOrder(Request $request, string $productPath)
+    {
+        $productPath = trim($productPath, '/');
+
+        $product = Product::query()
+            ->where('slug', $productPath)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $sessionKey = 'configured_order_'.$product->getKey();
+        $orderPayload = $request->session()->get($sessionKey);
+
+        if (! is_array($orderPayload)) {
+            return redirect()->route('products.show', [
+                'productPath' => $productPath,
+            ]);
+        }
+
+        $normalizeRows = static function ($rows): array {
+            return collect(is_array($rows) ? $rows : [])
+                ->filter(static fn ($row): bool => is_array($row))
+                ->map(static fn (array $row): array => [
+                    'key' => trim((string) ($row['key'] ?? '')),
+                    'label' => trim((string) ($row['label'] ?? '')),
+                    'value' => (string) ($row['value'] ?? ''),
+                    'amount' => (int) ($row['amount'] ?? 0),
+                    'kind' => (string) ($row['kind'] ?? ''),
+                ])
+                ->filter(static fn (array $row): bool => $row['label'] !== '')
+                ->values()
+                ->all();
+        };
+
+        $summaryRows = array_key_exists('complete_summary_present', $orderPayload)
+            ? $normalizeRows($orderPayload['complete_summary'] ?? [])
+            : (array_key_exists('confirm_summary_present', $orderPayload)
+                ? $normalizeRows($orderPayload['confirm_summary'] ?? [])
+                : $normalizeRows($orderPayload['order_summary'] ?? ($orderPayload['summary'] ?? [])));
+        $priceRows = array_key_exists('complete_price_rows_present', $orderPayload)
+            ? $normalizeRows($orderPayload['complete_price_rows'] ?? [])
+            : (array_key_exists('confirm_price_rows_present', $orderPayload)
+                ? $normalizeRows($orderPayload['confirm_price_rows'] ?? [])
+                : $normalizeRows($orderPayload['price_rows'] ?? []));
+        $orderValues = collect(is_array($orderPayload['order_values'] ?? null) ? $orderPayload['order_values'] : [])
+            ->filter(static fn ($field): bool => is_array($field))
+            ->map(static fn (array $field): array => [
+                'name' => trim((string) ($field['name'] ?? '')),
+                'value' => (string) ($field['value'] ?? ''),
+            ])
+            ->filter(static fn (array $field): bool => $field['name'] !== '')
+            ->values()
+            ->all();
+        $customerFiles = collect(is_array($orderPayload['customer_files'] ?? null) ? $orderPayload['customer_files'] : [])
+            ->filter(static fn ($file): bool => is_array($file))
+            ->map(static fn (array $file): array => [
+                'name' => trim((string) ($file['name'] ?? '')),
+                'path' => (string) ($file['path'] ?? ''),
+            ])
+            ->filter(static fn (array $file): bool => $file['name'] !== '')
+            ->values()
+            ->all();
+
+        $customer = is_array($orderPayload['customer'] ?? null)
+            ? $orderPayload['customer']
+            : [];
+        $totalAmount = (int) ($orderPayload['total_amount'] ?? 0);
+        $subtotalAmount = (int) ($orderPayload['subtotal_amount'] ?? $totalAmount);
+        $discountAmount = (int) ($orderPayload['discount_amount'] ?? 0);
+        $shippingAmount = (int) ($orderPayload['shipping_amount'] ?? 0);
+        $shippingPriceRow = collect($priceRows)->first(static function (array $row): bool {
+            return ($row['kind'] ?? '') === 'shipping'
+                || in_array(trim((string) ($row['label'] ?? '')), ['送料', '送料計'], true);
+        });
+        if ($shippingAmount === 0 && is_array($shippingPriceRow)) {
+            $shippingAmount = (int) ($shippingPriceRow['amount'] ?? 0);
+        }
+        $productPriceRow = collect($priceRows)
+            ->first(static fn (array $row): bool => ($row['kind'] ?? '') === 'product');
+        $productAmount = is_array($productPriceRow)
+            ? (int) ($productPriceRow['amount'] ?? 0)
+            : 0;
+        $orderNumber = trim((string) ($orderPayload['order_number'] ?? ''));
+        if ($orderNumber === '') {
+            $orderNumber = $this->generateOrderNumber();
+        }
+        $vsBodytextOder = view('products.order-email', [
+            'product' => $product,
+            'orderPayload' => $orderPayload,
+            'summaryRows' => $summaryRows,
+            'priceRows' => $priceRows,
+            'orderValues' => $orderValues,
+            'customerFiles' => $customerFiles,
+            'customer' => $customer,
+            'orderNumber' => $orderNumber,
+        ])->render();
+
+        // Equivalent to the legacy `echo $vsBodytextOder; die;` hook.
+        if ((string) $request->cookie('username') === 'pooh') {
+            return response($vsBodytextOder, 200, [
+                'Content-Type' => 'text/html; charset=UTF-8',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            ]);
+        }
+
+        $email = trim((string) ($customer['email'] ?? ''));
+
+        if ($email === '') {
+            return redirect()
+                ->route('products.customer', ['productPath' => $productPath])
+                ->with('error', 'メールアドレスを入力してください。');
+        }
+
+        $orderSuffix = preg_replace('/^ODR_HM_/', '', $orderNumber) ?: $orderNumber;
+        $orderSuffix = preg_replace('/[^A-Za-z0-9]/', '', $orderSuffix) ?: $orderNumber;
+        $legacyCustomerId = trim((string) ($orderPayload['legacy_customer_id'] ?? ''));
+        $legacyCustomerId = $legacyCustomerId !== '' ? $legacyCustomerId : 'cus_'.$orderSuffix;
+        $legacyProductDetailId = trim((string) ($orderPayload['legacy_product_detail_id'] ?? ''));
+        $legacyProductDetailId = $legacyProductDetailId !== '' ? $legacyProductDetailId : 'prd_'.$orderSuffix;
+        $paymentMethod = trim((string) ($customer['payment'] ?? ''));
+        $previousDesignField = collect($orderValues)->first(static fn (array $field): bool => str_contains(
+            $field['name'],
+            'previous_order_number'
+        ));
+        $previousDesignNumber = is_array($previousDesignField)
+            ? trim((string) ($previousDesignField['value'] ?? ''))
+            : '';
+        $customerFileSnapshot = collect(is_array($orderPayload['customer_files'] ?? null) ? $orderPayload['customer_files'] : [])
+            ->filter(static fn ($file): bool => is_array($file))
+            ->map(static fn (array $file): array => [
+                'name' => trim((string) ($file['name'] ?? '')),
+                'path' => (string) ($file['path'] ?? ''),
+                'size' => (int) ($file['size'] ?? 0),
+            ])
+            ->filter(static fn (array $file): bool => $file['name'] !== '' || $file['path'] !== '')
+            ->values()
+            ->all();
+        $payloadSnapshot = $orderPayload;
+        $payloadSnapshot['order_number'] = $orderNumber;
+        $payloadSnapshot['product'] = [
+            'id' => (int) $product->getKey(),
+            'name' => (string) $product->name,
+            'slug' => (string) $product->slug,
+        ];
+
+        $orderPayload['order_number'] = $orderNumber;
+        $orderPayload['legacy_customer_id'] = $legacyCustomerId;
+        $orderPayload['legacy_product_detail_id'] = $legacyProductDetailId;
+        $request->session()->put($sessionKey, $orderPayload);
+
+        $submissionAttributes = [
+            'order_number' => $orderNumber,
+            'product_id' => (int) $product->getKey(),
+            'product_name' => (string) $product->name,
+            'product_slug' => (string) $product->slug,
+            'customer_email' => $email,
+            'legacy_customer_id' => $legacyCustomerId,
+            'legacy_product_detail_id' => $legacyProductDetailId,
+            'quantity' => max(1, (int) ($orderPayload['quantity'] ?? 1)),
+            'total_amount' => $totalAmount,
+            'subtotal_amount' => $subtotalAmount,
+            'discount_amount' => $discountAmount,
+            'shipping_amount' => $shippingAmount,
+            'payment_method' => $paymentMethod !== '' ? $paymentMethod : null,
+            'status' => 'pending',
+            'order_values' => $orderValues,
+            'customer_data' => $customer,
+            'customer_files' => $customerFileSnapshot,
+            'summary_rows' => $summaryRows,
+            'price_rows' => $priceRows,
+            'payload' => $payloadSnapshot,
+            'email_html' => $vsBodytextOder,
+            'email_error' => null,
+        ];
+
+        try {
+            $submission = DB::transaction(function () use (
+                $orderNumber,
+                $submissionAttributes,
+                $legacyCustomerId,
+                $legacyProductDetailId,
+                $product,
+                $orderPayload,
+                $totalAmount,
+                $subtotalAmount,
+                $discountAmount,
+                $shippingAmount,
+                $productAmount,
+                $paymentMethod,
+                $customerFileSnapshot,
+                $previousDesignNumber
+            ): OrderSubmission {
+                $submission = OrderSubmission::query()->firstOrNew([
+                    'order_number' => $orderNumber,
+                ]);
+                $submission->fill($submissionAttributes);
+                $submission->save();
+
+                $this->persistLegacyOrder(
+                    $orderNumber,
+                    $legacyCustomerId,
+                    $legacyProductDetailId,
+                    $product,
+                    max(1, (int) ($orderPayload['quantity'] ?? 1)),
+                    $totalAmount,
+                    $subtotalAmount,
+                    $discountAmount,
+                    $shippingAmount,
+                    $productAmount,
+                    $paymentMethod,
+                    collect($customerFileSnapshot)->pluck('path')->filter()->implode(','),
+                    $previousDesignNumber
+                );
+
+                return $submission;
+            });
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return redirect()
+                ->route('products.confirm', ['productPath' => $productPath])
+                ->with('error', '注文情報を保存できませんでした。時間をおいて再度お試しください。');
+        }
+
+        try {
+            Mail::html($vsBodytextOder, function ($message) use ($email, $product): void {
+                $message
+                    ->to($email)
+                    ->bcc('pooh250841@hotmail.com')
+                    ->subject('ご注文ありがとうございます【'.$product->name.'】');
+            });
+        } catch (\Throwable $exception) {
+            report($exception);
+            $submission->forceFill([
+                'status' => 'email_failed',
+                'email_error' => substr($exception->getMessage(), 0, 2000),
+            ])->save();
+
+            return redirect()
+                ->route('products.confirm', ['productPath' => $productPath])
+                ->with('error', 'メールを送信できませんでした。時間をおいて再度お試しください。');
+        }
+
+        $submission->forceFill([
+            'status' => 'completed',
+            'email_sent_at' => now(),
+            'completed_at' => now(),
+            'email_error' => null,
+        ])->save();
+
+        $request->session()->forget($sessionKey);
+
+        return view('products.order-complete', [
+            'product' => $product,
+            'orderNumber' => $orderNumber,
+            'email' => $email,
+        ]);
+    }
+
+    /**
+     * Generate the same visible order-number format as the legacy site.
+     * The numeric suffix is the Tokyo timestamp plus PHP's Swatch beat
+     * value; a suffix is only added when the same value already exists.
+     */
+    private function generateOrderNumber(): string
+    {
+        $base = 'ODR_HM_'.now('Asia/Tokyo')->format('YmdHisB');
+
+        for ($attempt = 0; $attempt < 100; $attempt++) {
+            $candidate = $base.($attempt === 0 ? '' : (string) $attempt);
+
+            if (! OrderSubmission::query()->where('order_number', $candidate)->exists()) {
+                return $candidate;
+            }
+        }
+
+        return $base.'_'.strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
+    }
+
+    /**
+     * Keep the legacy dashboard/order tables populated when they are present.
+     * The order_submissions snapshot remains the source of the complete
+     * arbitrary option/customer payload.
+     */
+    private function persistLegacyOrder(
+        string $orderNumber,
+        string $legacyCustomerId,
+        string $legacyProductDetailId,
+        Product $product,
+        int $quantity,
+        int $totalAmount,
+        int $subtotalAmount,
+        int $discountAmount,
+        int $shippingAmount,
+        int $productAmount,
+        string $paymentMethod,
+        string $fileUploadCustomer,
+        string $previousDesignNumber
+    ): void {
+        if (Schema::hasTable('hm_ord_product_detail')) {
+            DB::table('hm_ord_product_detail')->updateOrInsert(
+                ['id' => $legacyProductDetailId],
+                [
+                    'qty' => (string) $quantity,
+                    'itemtype' => (string) $product->name,
+                    'itemsize' => (string) ($product->product_code ?? ''),
+                    'spec' => '',
+                    'part_qty' => '',
+                    'total_price' => (string) $totalAmount,
+                    'sub_total_price' => (string) $subtotalAmount,
+                    'product_price' => (string) $productAmount,
+                    'tax' => (string) (int) round($totalAmount * 10 / 110),
+                    'front_side_print_fee' => '',
+                    'discount' => (string) $discountAmount,
+                    'delivery_price' => (string) $shippingAmount,
+                ]
+            );
+        }
+
+        if (Schema::hasTable('hm_ord_setup')) {
+            DB::table('hm_ord_setup')->updateOrInsert(
+                [
+                    'ord_id' => $orderNumber,
+                    'prd_id' => $legacyProductDetailId,
+                ],
+                [
+                    'cus_id' => $legacyCustomerId,
+                    'payment' => $paymentMethod !== '' ? $paymentMethod : null,
+                    'transaction_id' => null,
+                    'date_create' => now('Asia/Tokyo')->toDateString(),
+                    'file_upload_tmp' => '',
+                    'file_upload_cus' => $fileUploadCustomer,
+                    'prv_design' => $previousDesignNumber,
+                ]
+            );
+        }
     }
 
     /**
@@ -348,6 +1061,7 @@ class ProductController extends Controller
             'total_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
             'subtotal_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
             'discount_amount' => ['nullable', 'integer', 'max:100000000000'],
+            'shipping_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
             'estimate_customer' => ['nullable', 'array'],
             'estimate_customer.last_name' => ['nullable', 'string', 'max:100'],
             'estimate_customer.first_name' => ['nullable', 'string', 'max:100'],
@@ -508,12 +1222,26 @@ class ProductController extends Controller
                                  'preview_summary_label' => $item->preview_summary_label,
                                  'preview_summary_sort_order' => (int) $item->preview_summary_sort_order,
                                 'show_in_price_summary' => (bool) $item->show_in_price_summary,
-                                'price_summary_label' => $item->price_summary_label,
-                                'price_summary_sort_order' => (int) $item->price_summary_sort_order,
-                                'price_summary_option_id' => $item->price_summary_option_id === null ? null : (int) $item->price_summary_option_id,
-                                'show_in_pdf_summary' => (bool) $item->show_in_pdf_summary,
-                                'pdf_summary_label' => $item->pdf_summary_label,
-                                'pdf_summary_sort_order' => (int) $item->pdf_summary_sort_order,
+                                 'price_summary_label' => $item->price_summary_label,
+                                 'price_summary_sort_order' => (int) $item->price_summary_sort_order,
+                                 'price_summary_option_id' => $item->price_summary_option_id === null ? null : (int) $item->price_summary_option_id,
+                                 'show_in_confirm_price_summary' => (bool) $item->show_in_confirm_price_summary,
+                                 'confirm_price_summary_label' => $item->confirm_price_summary_label,
+                                 'confirm_price_summary_sort_order' => (int) $item->confirm_price_summary_sort_order,
+                                 'confirm_price_summary_option_id' => $item->confirm_price_summary_option_id === null ? null : (int) $item->confirm_price_summary_option_id,
+                                 'show_in_complete_summary' => (bool) $item->show_in_complete_summary,
+                                 'complete_summary_label' => $item->complete_summary_label,
+                                 'complete_summary_sort_order' => (int) $item->complete_summary_sort_order,
+                                 'show_in_complete_price_summary' => (bool) $item->show_in_complete_price_summary,
+                                 'complete_price_summary_label' => $item->complete_price_summary_label,
+                                 'complete_price_summary_sort_order' => (int) $item->complete_price_summary_sort_order,
+                                 'complete_price_summary_option_id' => $item->complete_price_summary_option_id === null ? null : (int) $item->complete_price_summary_option_id,
+                                  'show_in_pdf_summary' => (bool) $item->show_in_pdf_summary,
+                                 'pdf_summary_label' => $item->pdf_summary_label,
+                                 'pdf_summary_sort_order' => (int) $item->pdf_summary_sort_order,
+                                 'show_in_confirm_summary' => (bool) $item->show_in_confirm_summary,
+                                 'confirm_summary_label' => $item->confirm_summary_label,
+                                 'confirm_summary_sort_order' => (int) $item->confirm_summary_sort_order,
                              ])
                         : $group->productOptions
                             ->filter(static fn ($option): bool => $option->is_active)
@@ -534,9 +1262,23 @@ class ProductController extends Controller
                                  'price_summary_label' => null,
                                  'price_summary_sort_order' => 0,
                                  'price_summary_option_id' => null,
-                                 'show_in_pdf_summary' => false,
+                                 'show_in_confirm_price_summary' => false,
+                                 'confirm_price_summary_label' => null,
+                                 'confirm_price_summary_sort_order' => 0,
+                                 'confirm_price_summary_option_id' => null,
+                                 'show_in_complete_summary' => false,
+                                 'complete_summary_label' => null,
+                                 'complete_summary_sort_order' => 0,
+                                 'show_in_complete_price_summary' => false,
+                                 'complete_price_summary_label' => null,
+                                 'complete_price_summary_sort_order' => 0,
+                                 'complete_price_summary_option_id' => null,
+                                  'show_in_pdf_summary' => false,
                                  'pdf_summary_label' => null,
                                  'pdf_summary_sort_order' => 0,
+                                 'show_in_confirm_summary' => false,
+                                 'confirm_summary_label' => null,
+                                 'confirm_summary_sort_order' => 0,
                              ]);
 
                     $options = $optionRows
@@ -568,12 +1310,26 @@ class ProductController extends Controller
                                  'preview_summary_label' => $row['preview_summary_label'],
                                  'preview_summary_sort_order' => (int) $row['preview_summary_sort_order'],
                                 'show_in_price_summary' => (bool) $row['show_in_price_summary'],
-                                'price_summary_label' => $row['price_summary_label'],
-                                'price_summary_sort_order' => (int) $row['price_summary_sort_order'],
-                                'price_summary_option_id' => $row['price_summary_option_id'] === null ? null : (int) $row['price_summary_option_id'],
-                                'show_in_pdf_summary' => (bool) $row['show_in_pdf_summary'],
-                                'pdf_summary_label' => $row['pdf_summary_label'],
-                                'pdf_summary_sort_order' => (int) $row['pdf_summary_sort_order'],
+                                 'price_summary_label' => $row['price_summary_label'],
+                                 'price_summary_sort_order' => (int) $row['price_summary_sort_order'],
+                                 'price_summary_option_id' => $row['price_summary_option_id'] === null ? null : (int) $row['price_summary_option_id'],
+                                 'show_in_confirm_price_summary' => (bool) $row['show_in_confirm_price_summary'],
+                                 'confirm_price_summary_label' => $row['confirm_price_summary_label'],
+                                 'confirm_price_summary_sort_order' => (int) $row['confirm_price_summary_sort_order'],
+                                 'confirm_price_summary_option_id' => $row['confirm_price_summary_option_id'] === null ? null : (int) $row['confirm_price_summary_option_id'],
+                                 'show_in_complete_summary' => (bool) $row['show_in_complete_summary'],
+                                 'complete_summary_label' => $row['complete_summary_label'],
+                                 'complete_summary_sort_order' => (int) $row['complete_summary_sort_order'],
+                                 'show_in_complete_price_summary' => (bool) $row['show_in_complete_price_summary'],
+                                 'complete_price_summary_label' => $row['complete_price_summary_label'],
+                                 'complete_price_summary_sort_order' => (int) $row['complete_price_summary_sort_order'],
+                                 'complete_price_summary_option_id' => $row['complete_price_summary_option_id'] === null ? null : (int) $row['complete_price_summary_option_id'],
+                                  'show_in_pdf_summary' => (bool) $row['show_in_pdf_summary'],
+                                 'pdf_summary_label' => $row['pdf_summary_label'],
+                                 'pdf_summary_sort_order' => (int) $row['pdf_summary_sort_order'],
+                                 'show_in_confirm_summary' => (bool) $row['show_in_confirm_summary'],
+                                 'confirm_summary_label' => $row['confirm_summary_label'],
+                                 'confirm_summary_sort_order' => (int) $row['confirm_summary_sort_order'],
                              ];
                         })
                         ->values()
@@ -602,9 +1358,23 @@ class ProductController extends Controller
                          'price_summary_label' => $assignment->price_summary_label ?: $group->group_name,
                          'price_summary_sort_order' => (int) $assignment->price_summary_sort_order,
                          'price_summary_option_id' => $assignment->price_summary_option_id === null ? null : (int) $assignment->price_summary_option_id,
-                         'show_in_pdf_summary' => (bool) $assignment->show_in_pdf_summary,
+                         'show_in_confirm_price_summary' => (bool) $assignment->show_in_confirm_price_summary,
+                         'confirm_price_summary_label' => $assignment->confirm_price_summary_label ?: $group->group_name,
+                         'confirm_price_summary_sort_order' => (int) $assignment->confirm_price_summary_sort_order,
+                         'confirm_price_summary_option_id' => $assignment->confirm_price_summary_option_id === null ? null : (int) $assignment->confirm_price_summary_option_id,
+                         'show_in_complete_summary' => (bool) $assignment->show_in_complete_summary,
+                         'complete_summary_label' => $assignment->complete_summary_label ?: $group->group_name,
+                         'complete_summary_sort_order' => (int) $assignment->complete_summary_sort_order,
+                         'show_in_complete_price_summary' => (bool) $assignment->show_in_complete_price_summary,
+                         'complete_price_summary_label' => $assignment->complete_price_summary_label ?: $group->group_name,
+                         'complete_price_summary_sort_order' => (int) $assignment->complete_price_summary_sort_order,
+                         'complete_price_summary_option_id' => $assignment->complete_price_summary_option_id === null ? null : (int) $assignment->complete_price_summary_option_id,
+                          'show_in_pdf_summary' => (bool) $assignment->show_in_pdf_summary,
                          'pdf_summary_label' => $assignment->pdf_summary_label ?: $group->group_name,
                          'pdf_summary_sort_order' => (int) $assignment->pdf_summary_sort_order,
+                         'show_in_confirm_summary' => (bool) $assignment->show_in_confirm_summary,
+                         'confirm_summary_label' => $assignment->confirm_summary_label ?: $group->group_name,
+                         'confirm_summary_sort_order' => (int) $assignment->confirm_summary_sort_order,
                          'options' => $options,
                     ];
                 })

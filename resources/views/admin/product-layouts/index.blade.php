@@ -1,6 +1,16 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Product Layouts')
+@php
+    $layoutManagerTitle = $layoutManagerTitle ?? 'Product Layouts';
+    $layoutManagerDescription = $layoutManagerDescription ?? 'Create and manage reusable product layouts.';
+    $layoutManagerApiBase = $layoutManagerApiBase ?? '/api/v1/admin/product-layouts';
+    $layoutManagerBuilderBase = $layoutManagerBuilderBase ?? '/admin/product-layouts';
+    $layoutManagerUsageLabel = $layoutManagerUsageLabel ?? 'Products';
+    $layoutManagerUsageField = $layoutManagerUsageField ?? 'products_count';
+    $layoutManagerPlaceholder = $layoutManagerPlaceholder ?? 'Default layout for product pages';
+@endphp
+
+@section('title', $layoutManagerTitle)
 
 @section('content')
 
@@ -11,11 +21,11 @@
 
         <div>
             <h1 class="h3 mb-1">
-                Product Layouts
+                {{ $layoutManagerTitle }}
             </h1>
 
             <p class="text-muted mb-0">
-                Create and manage reusable product layouts.
+                {{ $layoutManagerDescription }}
             </p>
         </div>
 
@@ -118,7 +128,7 @@
                             </th>
 
                             <th style="width:120px;">
-                                Products
+                                {{ $layoutManagerUsageLabel }}
                             </th>
 
                             <th style="width:130px;">
@@ -258,7 +268,7 @@
                         class="form-control"
                         rows="4"
                         maxlength="500"
-                        placeholder="Default layout for product pages"
+                        placeholder="{{ $layoutManagerPlaceholder }}"
                     ></textarea>
 
                 </div>
@@ -351,6 +361,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let layouts = [];
 
+    const layoutApiBase = @json($layoutManagerApiBase);
+    const layoutBuilderBase = @json($layoutManagerBuilderBase);
+    const layoutUsageField = @json($layoutManagerUsageField);
+
 
     const modal =
         $('#layoutModal');
@@ -412,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const response =
                 await fetch(
-                    '/api/v1/admin/product-layouts',
+                    layoutApiBase,
                     {
                         credentials: 'same-origin',
 
@@ -534,7 +548,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 <td>
-                    ${layout.products_count ?? 0}
+                    ${layout[layoutUsageField] ?? 0}
                 </td>
 
 
@@ -560,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>
 
                     <a
-                        href="/admin/product-layouts/${layout.id}/builder"
+                        href="${layoutBuilderBase}/${layout.id}/builder"
                         class="btn btn-sm btn-primary"
                     >
                         Builder
@@ -796,8 +810,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const url =
                     id
-                        ? `/api/v1/admin/product-layouts/${id}`
-                        : '/api/v1/admin/product-layouts';
+                        ? `${layoutApiBase}/${id}`
+                        : layoutApiBase;
 
 
                 const method =
@@ -915,7 +929,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const response =
                 await fetch(
-                    `/api/v1/admin/product-layouts/${id}`,
+                    `${layoutApiBase}/${id}`,
                     {
                         method:
                             'DELETE',

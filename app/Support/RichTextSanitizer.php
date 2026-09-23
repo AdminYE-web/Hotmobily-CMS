@@ -66,6 +66,9 @@ class RichTextSanitizer
             'ul',
             'ol',
             'li',
+            'a',
+            'figure',
+            'img',
             'font',
             'span',
         ];
@@ -111,8 +114,28 @@ class RichTextSanitizer
             $styleColor = $tag === 'span'
                 ? $this->colorFromStyle($child->getAttribute('style'))
                 : null;
+            $imageClass = $tag === 'figure'
+                ? $this->normalizeImageClass($child->getAttribute('class'))
+                : null;
+            $imageSource = $tag === 'img'
+                ? $this->normalizeImageSource($child->getAttribute('src'))
+                : null;
+            $imageAlt = $tag === 'img'
+                ? mb_substr(trim(strip_tags($child->getAttribute('alt'))), 0, 500)
+                : '';
+            $linkHref = $tag === 'a'
+                ? $this->normalizeLinkHref($child->getAttribute('href'))
+                : null;
+            $isFileLink = $tag === 'a'
+                && $this->hasFileLinkClass($child->getAttribute('class'));
             $size = $tag === 'font' ? $child->getAttribute('size') : '';
             $face = $tag === 'font' ? $child->getAttribute('face') : '';
+
+            if ($tag === 'img' && $imageSource === null) {
+                $parent->removeChild($child);
+
+                continue;
+            }
 
             while ($child->attributes->length > 0) {
                 $child->removeAttributeNode($child->attributes->item(0));
@@ -126,6 +149,27 @@ class RichTextSanitizer
                 $child->setAttribute('style', 'color:'.$styleColor);
             }
 
+            if ($imageClass !== null) {
+                $child->setAttribute('class', $imageClass);
+            }
+
+            if ($imageSource !== null) {
+                $child->setAttribute('src', $imageSource);
+
+                if ($imageAlt !== '') {
+                    $child->setAttribute('alt', $imageAlt);
+                }
+            }
+
+            if ($linkHref !== null) {
+                $child->setAttribute('href', $linkHref);
+            }
+
+            if ($isFileLink) {
+                $child->setAttribute('class', 'rich-text-file-link');
+                $child->setAttribute('download', '');
+            }
+
             if (preg_match('/^[1-7]$/', $size) === 1) {
                 $child->setAttribute('size', $size);
             }
@@ -136,6 +180,71 @@ class RichTextSanitizer
 
             $this->sanitizeChildren($child);
         }
+    }
+
+    private function normalizeImageClass(string $value): ?string
+    {
+        $classes = preg_split('/\s+/', trim($value)) ?: [];
+        $allowed = [];
+
+        foreach ($classes as $class) {
+            if (preg_match('/^(?:image|image-style-(?:align-left|align-right|side|wrap-text|break-text))$/', $class) === 1) {
+                $allowed[] = $class;
+            }
+        }
+
+        $allowed = array_values(array_unique($allowed));
+
+        return $allowed === [] ? null : implode(' ', $allowed);
+    }
+
+    private function normalizeImageSource(string $value): ?string
+    {
+        $source = trim($value);
+
+        if ($source === '' || mb_strlen($source) > 2000) {
+            return null;
+        }
+
+        if (str_starts_with($source, '/') && ! str_starts_with($source, '//')) {
+            return $source;
+        }
+
+        if (filter_var($source, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        $scheme = strtolower((string) parse_url($source, PHP_URL_SCHEME));
+
+        return in_array($scheme, ['http', 'https'], true) ? $source : null;
+    }
+
+    private function normalizeLinkHref(string $value): ?string
+    {
+        $href = trim($value);
+
+        if ($href === '' || mb_strlen($href) > 2000) {
+            return null;
+        }
+
+        if (str_starts_with($href, '/') && ! str_starts_with($href, '//')) {
+            return $href;
+        }
+
+        if (filter_var($href, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        $scheme = strtolower((string) parse_url($href, PHP_URL_SCHEME));
+
+        return in_array($scheme, ['http', 'https', 'mailto'], true) ? $href : null;
+    }
+
+    private function hasFileLinkClass(string $value): bool
+    {
+        $classes = preg_split('/\s+/', trim($value)) ?: [];
+
+        return in_array('rich-text-file-link', $classes, true);
     }
 
     private function colorFromStyle(string $style): ?string

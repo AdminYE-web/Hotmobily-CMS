@@ -69,6 +69,48 @@ class ProductPageRichTextSanitizerTest extends TestCase
         $this->assertSame('#111111', $invalid['text_color']);
     }
 
+    public function test_copied_span_colors_are_preserved_without_unsafe_styles(): void
+    {
+        $controller = new ProductPageController();
+
+        $sanitize = new ReflectionMethod(
+            ProductPageController::class,
+            'sanitizeRichTextHtml'
+        );
+
+        $html = $sanitize->invoke(
+            $controller,
+            '<span style="color: rgb(255, 0, 0); font-weight: 700">Copied color</span>'
+        );
+
+        $this->assertStringContainsString(
+            'style="color:rgb(255, 0, 0)"',
+            $html
+        );
+        $this->assertStringNotContainsString('font-weight', $html);
+    }
+
+    public function test_download_file_link_keeps_button_marker_and_download_attribute(): void
+    {
+        $controller = new ProductPageController();
+
+        $sanitize = new ReflectionMethod(
+            ProductPageController::class,
+            'sanitizeRichTextHtml'
+        );
+
+        $html = $sanitize->invoke(
+            $controller,
+            '<a class="rich-text-file-link" href="/storage/products/1/content-files/file.pdf" download onclick="alert(1)">Download PDF</a>'
+        );
+
+        $this->assertStringContainsString(
+            '<a href="/storage/products/1/content-files/file.pdf" class="rich-text-file-link" download="">Download PDF</a>',
+            $html
+        );
+        $this->assertStringNotContainsString('onclick', $html);
+    }
+
     public function test_rich_text_size_allows_only_normal_or_small(): void
     {
         $controller = new ProductPageController();

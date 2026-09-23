@@ -126,12 +126,25 @@
     |--------------------------------------------------------------------------
     */
 
+    $defaultAlignment =
+        in_array(
+            $type,
+            [
+                'image',
+                'multi_photo',
+            ],
+            true
+        )
+            ? 'center'
+            : 'left';
+
+
     $alignment =
         (string)
         (
             $settings['alignment']
             ??
-            'left'
+            $defaultAlignment
         );
 
 
@@ -454,6 +467,53 @@
                             )
                             : [];
 
+
+                    $imageAlts =
+                        is_array(
+                            $content['image_alts']
+                            ??
+                            null
+                        )
+                            ? array_values(
+                                $content['image_alts']
+                            )
+                            : [];
+
+
+                    $galleryAlt =
+                        static function (
+                            int $index
+                        ) use (
+                            $imageAlts,
+                            $product
+                        ): string {
+
+                            $alt =
+                                trim(
+                                    (string)
+                                    (
+                                        $imageAlts[
+                                            $index
+                                        ]
+                                        ??
+                                        ''
+                                    )
+                                );
+
+
+                            return $alt !== ''
+                                ? $alt
+                                : trim(
+                                    (string)
+                                    (
+                                        $product->name
+                                        ??
+                                        ''
+                                    )
+                                );
+
+                        };
+
                 @endphp
 
 
@@ -472,7 +532,7 @@
 
                             <img
                                 src="{{ $safeUrl($images[0]) }}"
-                                alt="{{ $product->name }}"
+                                alt="{{ $galleryAlt(0) }}"
                                 data-gallery-main
                             >
 
@@ -507,11 +567,12 @@
                                         "
                                         data-gallery-thumb
                                         data-gallery-src="{{ $safeUrl($image) }}"
+                                        data-gallery-alt="{{ $galleryAlt($index) }}"
                                     >
 
                                         <img
                                             src="{{ $safeUrl($image) }}"
-                                            alt="{{ $product->name }}"
+                                            alt="{{ $galleryAlt($index) }}"
                                             loading="lazy"
                                         >
 
@@ -539,7 +600,7 @@
 
                             <img
                                 src=""
-                                alt="{{ $product->name }}"
+                                alt="{{ $galleryAlt(0) }}"
                                 data-gallery-modal-image
                             >
 
@@ -742,6 +803,36 @@
 
 
             {{-- ============================================================
+                Head Section
+            ============================================================ --}}
+
+            @elseif(
+                $type
+                ===
+                'head_section'
+            )
+
+                <div class="store-head-section">
+                    {{ $content['text'] ?? '' }}
+                </div>
+
+
+            {{-- ============================================================
+                Head Sub Section
+            ============================================================ --}}
+
+            @elseif(
+                $type
+                ===
+                'head_sub_section'
+            )
+
+                <div class="store-head-sub-section">
+                    {{ $content['text'] ?? '' }}
+                </div>
+
+
+            {{-- ============================================================
                 Heading
             ============================================================ --}}
 
@@ -752,6 +843,12 @@
             )
 
                 @php
+
+                    $isProductDataPage =
+                        isset($product)
+                        &&
+                        $product instanceof \App\Models\ProductDataPage;
+
 
                     $headingTag =
                         $settings['tag']
@@ -781,18 +878,44 @@
 
                 @endphp
 
+                @if ($isProductDataPage)
+                    @php
+                        $headingBackgroundColor = strtolower(trim((string) ($content['background_color'] ?? '')));
 
-                <{{ $headingTag }}
-                    class="store-heading"
-                >
+                        if (! preg_match('/^#[0-9a-f]{6}$/', $headingBackgroundColor)) {
+                            $headingBackgroundColor = '#f58214';
+                        }
 
-                    {{
-                        $content['text']
-                        ??
-                        ''
-                    }}
+                        $headingDate = trim((string) ($content['updated_date'] ?? ''));
+                    @endphp
 
-                </{{ $headingTag }}>
+                    <div class="store-heading-data">
+                        <{{ $headingTag }}
+                            class="store-heading store-heading--data"
+                            style="background-color: {{ $headingBackgroundColor }};"
+                        >
+                            {{ $content['text'] ?? '' }}
+                        </{{ $headingTag }}>
+
+                        @if ($headingDate !== '')
+                            <div class="store-heading-date">
+                                © {{ $headingDate }}
+                            </div>
+                        @endif
+                    </div>
+                @else
+                    <{{ $headingTag }}
+                        class="store-heading"
+                    >
+
+                        {{
+                            $content['text']
+                            ??
+                            ''
+                        }}
+
+                    </{{ $headingTag }}>
+                @endif
 
 
             {{-- ============================================================
@@ -884,6 +1007,20 @@
                             ''
                         );
 
+                    $imageAlt =
+                        (string) (
+                            $content['alt']
+                            ??
+                            ''
+                        );
+
+                    $openImageInModal =
+                        (bool) (
+                            $content['open_in_modal']
+                            ??
+                            false
+                        );
+
                 @endphp
 
 
@@ -893,18 +1030,105 @@
 
                     <div class="store-image">
 
-                        <img
-                            src="{{ $imageUrl }}"
-                            alt="{{
-                                $content['alt']
-                                ??
-                                ''
-                            }}"
-                            loading="lazy"
-                        >
+                        @if($openImageInModal)
+                            <button
+                                type="button"
+                                class="store-image-modal-trigger"
+                                data-store-image-modal-trigger
+                                data-image-modal-src="{{ $imageUrl }}"
+                                data-image-modal-alt="{{ $imageAlt }}"
+                                aria-label="Open image"
+                            >
+                                <img
+                                    src="{{ $imageUrl }}"
+                                    alt="{{ $imageAlt }}"
+                                    loading="lazy"
+                                >
+                            </button>
+                        @else
+                            <img
+                                src="{{ $imageUrl }}"
+                                alt="{{ $imageAlt }}"
+                                loading="lazy"
+                            >
+                        @endif
 
                     </div>
 
+                @endif
+
+
+            {{-- ============================================================
+                Multi Photo
+            ============================================================ --}}
+
+            @elseif(
+                $type
+                ===
+                'multi_photo'
+            )
+
+                @php
+                    $multiPhotoItems = [];
+                    $multiPhotoSource = is_array($content['photos'] ?? null)
+                        ? $content['photos']
+                        : [];
+
+                    foreach ($multiPhotoSource as $photo) {
+                        if (! is_array($photo)) {
+                            continue;
+                        }
+
+                        $displayUrl = $safeUrl($photo['image_url'] ?? ($photo['url'] ?? ''));
+                        $zoomUrl = $safeUrl($photo['zoom_url'] ?? ($photo['original_url'] ?? $displayUrl));
+                        $displayUrl = $displayUrl !== '' ? $displayUrl : $zoomUrl;
+                        $zoomUrl = $zoomUrl !== '' ? $zoomUrl : $displayUrl;
+
+                        if ($displayUrl === '' && $zoomUrl === '') {
+                            continue;
+                        }
+
+                        $multiPhotoItems[] = [
+                            'image_url' => $displayUrl,
+                            'zoom_url' => $zoomUrl,
+                            'alt' => trim((string) ($photo['alt'] ?? ($product->name ?? ''))),
+                        ];
+                    }
+
+                    $multiPhotoCaption = trim((string) ($content['caption'] ?? ''));
+                    $multiPhotoGroup = 'multi-photo-'.$effectiveId;
+                @endphp
+
+                @if (count($multiPhotoItems))
+                    <figure class="store-multi-photo">
+
+                        <div class="store-multi-photo-grid">
+                            @foreach ($multiPhotoItems as $photo)
+                                <button
+                                    type="button"
+                                    class="store-image-modal-trigger store-multi-photo-item"
+                                    data-store-image-modal-trigger
+                                    data-image-modal-src="{{ $photo['zoom_url'] }}"
+                                    data-image-modal-alt="{{ $photo['alt'] }}"
+                                    data-image-modal-group="{{ $multiPhotoGroup }}"
+                                    aria-label="Open photo"
+                                >
+                                    <img
+                                        src="{{ $photo['image_url'] }}"
+                                        alt="{{ $photo['alt'] }}"
+                                        loading="lazy"
+                                    >
+                                </button>
+                            @endforeach
+                        </div>
+
+                        @if ($multiPhotoCaption !== '')
+                            <figcaption class="store-multi-photo-caption">
+                                {{ $multiPhotoCaption }}
+                            </figcaption>
+                        @endif
+
+                    </figure>
                 @endif
 
 
@@ -927,6 +1151,33 @@
                             ''
                         );
 
+                    $isProductDataPage =
+                        isset($product)
+                        &&
+                        $product instanceof \App\Models\ProductDataPage;
+
+                    $buttonTextColor = '#ffffff';
+                    $buttonBackgroundColor = '#ff9900';
+                    $buttonBorderRadius = 4;
+
+                    if ($isProductDataPage) {
+                        $buttonTextColor = strtolower(trim((string) ($content['text_color'] ?? '')));
+                        $buttonBackgroundColor = strtolower(trim((string) ($content['background_color'] ?? '')));
+
+                        if (! preg_match('/^#[0-9a-f]{6}$/', $buttonTextColor)) {
+                            $buttonTextColor = '#ffffff';
+                        }
+
+                        if (! preg_match('/^#[0-9a-f]{6}$/', $buttonBackgroundColor)) {
+                            $buttonBackgroundColor = '#ff9900';
+                        }
+
+                        $buttonBorderRadius = max(
+                            0,
+                            min(999, (int) ($content['border_radius'] ?? 4))
+                        );
+                    }
+
                 @endphp
 
 
@@ -936,9 +1187,13 @@
 
                     <a
                         href="{{ $buttonUrl }}"
-                        class="store-button"
+                        class="store-button{{ $isProductDataPage ? ' store-button--data' : '' }}"
+                        @if ($isProductDataPage)
+                            style="background-color: {{ $buttonBackgroundColor }}; color: {{ $buttonTextColor }} !important; border-radius: {{ $buttonBorderRadius }}px;"
+                        @endif
                     >
 
+                        @unless ($isProductDataPage)
                         <svg
                             class="store-button-icon"
                             viewBox="0 0 24 24"
@@ -946,6 +1201,7 @@
                         >
                             <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
                         </svg>
+                        @endunless
 
                         {{
                             $content['text']
@@ -1099,6 +1355,38 @@
                             ''
                         );
 
+
+                    $infoImageAlt =
+                        trim(
+                            (string)
+                            (
+                                $content[
+                                    'image_alt'
+                                ]
+                                ??
+                                ''
+                            )
+                        );
+
+
+                    if (
+                        $infoImageAlt === ''
+                    ) {
+
+                        $infoImageAlt =
+                            trim(
+                                (string)
+                                (
+                                    $content[
+                                        'title'
+                                    ]
+                                    ??
+                                    ''
+                                )
+                            );
+
+                    }
+
                 @endphp
 
 
@@ -1139,11 +1427,7 @@
 
                                 <img
                                     src="{{ $infoImage }}"
-                                    alt="{{
-                                        $content['title']
-                                        ??
-                                        ''
-                                    }}"
+                                    alt="{{ $infoImageAlt }}"
                                     loading="lazy"
                                 >
 
@@ -1155,11 +1439,7 @@
 
                                 <img
                                     src="{{ $infoImage }}"
-                                    alt="{{
-                                        $content['title']
-                                        ??
-                                        ''
-                                    }}"
+                                    alt="{{ $infoImageAlt }}"
                                     loading="lazy"
                                 >
 
@@ -1330,6 +1610,11 @@
             )
 
                 @php
+                    $isProductDataPage =
+                        isset($product)
+                        &&
+                        $product instanceof \App\Models\ProductDataPage;
+
                     $youtubeToggleId =
                         'store-youtube-toggle-'
                         .
@@ -1341,7 +1626,9 @@
 
                     $youtubeTitle = trim((string) (
                         $content['title']
-                        ?? 'ラバーストラップ自社工場のご紹介'
+                        ?? ($isProductDataPage
+                            ? ''
+                            : 'ラバーストラップ自社工場のご紹介')
                     ));
 
                     $youtubeUrl = trim((string) (
@@ -1373,7 +1660,9 @@
 
                     $youtubeLinkText = trim((string) (
                         $content['link_text']
-                        ?? '自社生産の詳細はこちら'
+                        ?? ($isProductDataPage
+                            ? ''
+                            : '自社生産の詳細はこちら')
                     ));
 
                     $youtubeLinkUrl = trim((string) (
@@ -1381,9 +1670,21 @@
                         ?? '/lp/rubber-guide-inhouse.php'
                     ));
 
+                    if ($isProductDataPage) {
+                        if ($youtubeTitle === 'ラバーストラップ自社工場のご紹介') {
+                            $youtubeTitle = '';
+                        }
+
+                        if ($youtubeLinkText === '自社生産の詳細はこちら') {
+                            $youtubeLinkText = '';
+                        }
+                    }
+
                     $youtubeTitle = $youtubeTitle !== ''
                         ? $youtubeTitle
-                        : 'ラバーストラップ自社工場のご紹介';
+                        : ($isProductDataPage
+                            ? ''
+                            : 'ラバーストラップ自社工場のご紹介');
 
                     $youtubeThumbnail = $youtubeThumbnail !== ''
                         ? $youtubeThumbnail
@@ -1391,7 +1692,9 @@
 
                     $youtubeLinkText = $youtubeLinkText !== ''
                         ? $youtubeLinkText
-                        : '自社生産の詳細はこちら';
+                        : ($isProductDataPage
+                            ? ''
+                            : '自社生産の詳細はこちら');
 
                     $isValidYoutubeId = (bool) preg_match(
                         '/^[A-Za-z0-9_-]{11}$/',
@@ -1400,7 +1703,14 @@
                 @endphp
 
                 @if($isValidYoutubeId)
-                    <div class="store-youtube store-accordion">
+                    <div class="store-youtube {{ $isProductDataPage ? 'store-youtube--direct' : 'store-accordion' }}">
+                        @if ($isProductDataPage && $youtubeTitle !== '')
+                            <div class="store-youtube-title">
+                                {{ $youtubeTitle }}
+                            </div>
+                        @endif
+
+                        @unless ($isProductDataPage)
                         <input
                             id="{{ $youtubeToggleId }}"
                             class="store-accordion-input"
@@ -1415,8 +1725,9 @@
                             <span>{{ $youtubeTitle }}</span>
                             <span class="store-accordion-arrow"></span>
                         </label>
+                        @endunless
 
-                        <div class="store-accordion-content">
+                        <div class="{{ $isProductDataPage ? 'store-youtube-direct-content' : 'store-accordion-content' }}">
                             <div class="store-youtube-player">
                                 <button
                                     type="button"
@@ -1433,7 +1744,7 @@
                                 </button>
                             </div>
 
-                            @if($youtubeLinkUrl !== '')
+                            @if($youtubeLinkUrl !== '' && (!$isProductDataPage || $youtubeLinkText !== ''))
                                 <div class="store-youtube-link">
                                     <a href="{{ $youtubeLinkUrl }}">
                                         {{ $youtubeLinkText }}
@@ -2006,6 +2317,11 @@
 
                 @php
 
+                    $isProductDataPage =
+                        isset($product)
+                        &&
+                        $product instanceof \App\Models\ProductDataPage;
+
                     $templateUrl =
                         $safeUrl(
                             $content[
@@ -2014,6 +2330,28 @@
                             ??
                             ''
                         );
+
+                    $templateButtonTextColor = '#000000';
+                    $templateButtonBackgroundColor = '#f79647';
+                    $templateButtonBorderRadius = 6;
+
+                    if ($isProductDataPage) {
+                        $templateButtonTextColor = strtolower(trim((string) ($content['text_color'] ?? '')));
+                        $templateButtonBackgroundColor = strtolower(trim((string) ($content['background_color'] ?? '')));
+
+                        if (! preg_match('/^#[0-9a-f]{6}$/', $templateButtonTextColor)) {
+                            $templateButtonTextColor = '#000000';
+                        }
+
+                        if (! preg_match('/^#[0-9a-f]{6}$/', $templateButtonBackgroundColor)) {
+                            $templateButtonBackgroundColor = '#f79647';
+                        }
+
+                        $templateButtonBorderRadius = max(
+                            0,
+                            min(999, (int) ($content['border_radius'] ?? 6))
+                        );
+                    }
 
                 @endphp
 
@@ -2024,7 +2362,10 @@
 
                     <a
                         href="{{ $templateUrl }}"
-                        class="store-template-button"
+                        class="store-template-button{{ $isProductDataPage ? ' store-template-button--data' : '' }}"
+                        @if ($isProductDataPage)
+                            style="background-color: {{ $templateButtonBackgroundColor }}; color: {{ $templateButtonTextColor }} !important; border-radius: {{ $templateButtonBorderRadius }}px;"
+                        @endif
                         target="_blank"
                         rel="noopener noreferrer"
                         download

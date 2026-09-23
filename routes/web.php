@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\AcrylicGalleryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GalleryPageController;
 use App\Http\Controllers\Admin\OtpController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OptionGroupController;
 use App\Http\Controllers\Admin\OptionDependencyController;
 use App\Http\Controllers\Admin\OptionPriceRuleController;
@@ -11,15 +14,23 @@ use App\Http\Controllers\Admin\ProductOptionManagerController;
 use App\Http\Controllers\Admin\ProductPriceRuleController;
 use App\Http\Controllers\Admin\ReviewAnswerController as AdminReviewAnswerController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\Admin\TemplateProductController as AdminTemplateProductController;
+use App\Http\Controllers\Storefront\CustomPageController as StorefrontCustomPageController;
 use App\Http\Controllers\Storefront\FaqController;
+use App\Http\Controllers\Storefront\GalleryController as StorefrontGalleryController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\LegacyMockController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\ReviewImportController;
+use App\Http\Controllers\Web\TemplateController;
 use App\Models\Product;
+use App\Models\ProductDataLayout;
+use App\Models\ProductDataPage;
 use App\Models\ProductLayout;
+use App\Models\CustomPage;
+use App\Models\CustomPageLayout;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +43,15 @@ Route::get(
     '/',
     HomeController::class
 )->name('home');
+
+/*
+|--------------------------------------------------------------------------
+| Design templates
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/template', TemplateController::class)
+    ->name('template.index');
 
 /*
 |--------------------------------------------------------------------------
@@ -125,6 +145,103 @@ Route::prefix('admin')
                     ]
                 )
                     ->name('dashboard');
+
+                /*
+                |--------------------------------------------------------------------------
+                | HM Orders
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/orders', [OrderController::class, 'index'])
+                    ->name('orders.index');
+
+                Route::get('/orders/export', [OrderController::class, 'export'])
+                    ->name('orders.export');
+
+                Route::get('/orders/{order}', [OrderController::class, 'show'])
+                    ->name('orders.show');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Design template manager
+                |--------------------------------------------------------------------------
+                */
+
+                Route::post('/template-products/import-legacy', [AdminTemplateProductController::class, 'import'])
+                    ->name('template-products.import-legacy');
+
+                Route::post('/template-products/reorder', [AdminTemplateProductController::class, 'reorder'])
+                    ->name('template-products.reorder');
+
+                Route::resource('template-products', AdminTemplateProductController::class)
+                    ->except('show');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product galleries
+                |--------------------------------------------------------------------------
+                */
+
+                Route::resource('gallery-pages', GalleryPageController::class)
+                    ->except('show');
+
+                Route::get('/galleries/{galleryPage}', [AcrylicGalleryController::class, 'index'])
+                    ->name('gallery-items.index');
+
+                Route::get('/galleries/{galleryPage}/create', [AcrylicGalleryController::class, 'create'])
+                    ->name('gallery-items.create');
+
+                Route::post('/galleries/{galleryPage}', [AcrylicGalleryController::class, 'store'])
+                    ->name('gallery-items.store');
+
+                Route::get('/galleries/{galleryPage}/{acrylicGallery}/edit', [AcrylicGalleryController::class, 'edit'])
+                    ->name('gallery-items.edit');
+
+                Route::put('/galleries/{galleryPage}/{acrylicGallery}', [AcrylicGalleryController::class, 'update'])
+                    ->name('gallery-items.update');
+
+                Route::delete('/galleries/{galleryPage}/{acrylicGallery}', [AcrylicGalleryController::class, 'destroy'])
+                    ->name('gallery-items.destroy');
+
+                $registerGalleryRoutes = function (
+                    string $path,
+                    string $galleryPage,
+                    string $routeName
+                ): void {
+                    Route::get('/'.$path, [AcrylicGalleryController::class, 'index'])
+                        ->defaults('galleryPage', $galleryPage)
+                        ->name($routeName.'.index');
+
+                    Route::get('/'.$path.'/create', [AcrylicGalleryController::class, 'create'])
+                        ->defaults('galleryPage', $galleryPage)
+                        ->name($routeName.'.create');
+
+                    Route::post('/'.$path, [AcrylicGalleryController::class, 'store'])
+                        ->defaults('galleryPage', $galleryPage)
+                        ->name($routeName.'.store');
+
+                    Route::get('/'.$path.'/{acrylicGallery}/edit', [AcrylicGalleryController::class, 'edit'])
+                        ->defaults('galleryPage', $galleryPage)
+                        ->name($routeName.'.edit');
+
+                    Route::put('/'.$path.'/{acrylicGallery}', [AcrylicGalleryController::class, 'update'])
+                        ->defaults('galleryPage', $galleryPage)
+                        ->name($routeName.'.update');
+
+                    Route::delete('/'.$path.'/{acrylicGallery}', [AcrylicGalleryController::class, 'destroy'])
+                        ->defaults('galleryPage', $galleryPage)
+                        ->name($routeName.'.destroy');
+                };
+
+                $registerGalleryRoutes('acrylic-gallery', 'acrylic-keyholder', 'acrylic-gallery');
+                $registerGalleryRoutes('acrylic-coaster-gallery', 'acrylic-coaster', 'acrylic-coaster-gallery');
+                $registerGalleryRoutes('acrylic-standee-gallery', 'acrylic-standee', 'acrylic-standee-gallery');
+                $registerGalleryRoutes('acrylic-hair-gallery', 'acrylic-hair', 'acrylic-hair-gallery');
+                $registerGalleryRoutes('acrylic-strap-gallery', 'acrylic-strap', 'acrylic-strap-gallery');
+                $registerGalleryRoutes('rubber-strap-gallery', 'rubber-strap', 'rubber-strap-gallery');
+                $registerGalleryRoutes('rubber-keyholder-gallery', 'rubber-keyholder', 'rubber-keyholder-gallery');
+                $registerGalleryRoutes('rubber-coaster-gallery', 'rubber-coaster', 'rubber-coaster-gallery');
+                $registerGalleryRoutes('wappen-gallery', 'wappen', 'wappen-gallery');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -441,6 +558,127 @@ Route::prefix('admin')
 
                 /*
                 |--------------------------------------------------------------------------
+                | Product Data Layouts
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get(
+                    '/product-data-layouts',
+                    function () {
+                        return view('admin.product-layouts.index', [
+                            'layoutManagerTitle' => 'Product Data Layouts',
+                            'layoutManagerDescription' => 'Create reusable layouts for product data and artwork guides.',
+                            'layoutManagerApiBase' => '/api/v1/admin/product-data-layouts',
+                            'layoutManagerBuilderBase' => '/admin/product-data-layouts',
+                            'layoutManagerUsageLabel' => 'Product Data',
+                            'layoutManagerUsageField' => 'pages_count',
+                            'layoutManagerPlaceholder' => 'Layout for product data guides',
+                        ]);
+                    }
+                )
+                    ->name('product-data-layouts.index');
+
+                Route::get(
+                    '/product-data-layouts/{productDataLayout}/builder',
+                    function (ProductDataLayout $productDataLayout) {
+                        return view('admin.product-layouts.builder', [
+                            'productLayout' => $productDataLayout,
+                            'layoutBuilderMode' => 'product_data',
+                            'layoutBuilderApiBase' => '/api/v1/admin/product-data-layouts',
+                            'layoutBuilderIndexUrl' => route('admin.product-data-layouts.index'),
+                        ]);
+                    }
+                )
+                    ->name('product-data-layouts.builder');
+
+                Route::view(
+                    '/product-data',
+                    'admin.product-data.index'
+                )
+                    ->name('product-data.index');
+
+                Route::get(
+                    '/product-data/{productDataPage}/content',
+                    function (ProductDataPage $productDataPage) {
+                        return view('admin.products.content', [
+                            'product' => $productDataPage,
+                            'contentEditorMode' => 'product_data',
+                            'contentApiBase' => '/api/v1/admin/product-data',
+                            'contentIndexUrl' => route('admin.product-data.index'),
+                        ]);
+                    }
+                )
+                    ->name('product-data.content');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Custom Page Layouts and Pages
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get(
+                    '/custom-page-layouts',
+                    function () {
+                        return view('admin.product-layouts.index', [
+                            'layoutManagerTitle' => 'Custom Page Layouts',
+                            'layoutManagerDescription' => 'Create reusable layouts for standalone custom pages.',
+                            'layoutManagerApiBase' => '/api/v1/admin/custom-page-layouts',
+                            'layoutManagerBuilderBase' => '/admin/custom-page-layouts',
+                            'layoutManagerUsageLabel' => 'Custom Pages',
+                            'layoutManagerUsageField' => 'pages_count',
+                            'layoutManagerPlaceholder' => 'Layout for custom pages',
+                        ]);
+                    }
+                )
+                    ->name('custom-page-layouts.index');
+
+                Route::get(
+                    '/custom-page-layouts/{customPageLayout}/builder',
+                    function (CustomPageLayout $customPageLayout) {
+                        return view('admin.product-layouts.builder', [
+                            'productLayout' => $customPageLayout,
+                            'layoutBuilderMode' => 'custom_page',
+                            'layoutBuilderApiBase' => '/api/v1/admin/custom-page-layouts',
+                            'layoutBuilderIndexUrl' => route('admin.custom-page-layouts.index'),
+                        ]);
+                    }
+                )
+                    ->name('custom-page-layouts.builder');
+
+                Route::view(
+                    '/custom-pages',
+                    'admin.product-data.index',
+                    [
+                        'pageManagerEntity' => 'Custom Page',
+                        'pageManagerEntityPlural' => 'Custom Pages',
+                        'pageManagerTitle' => 'Custom Pages',
+                        'pageManagerDescription' => 'Manage standalone pages and assign a Custom Page Layout.',
+                        'pageManagerApiBase' => '/api/v1/admin/custom-pages',
+                        'pageManagerLayoutApiBase' => '/api/v1/admin/custom-page-layouts',
+                        'pageManagerLayoutBuilderBase' => '/admin/custom-page-layouts',
+                        'pageManagerContentBase' => '/admin/custom-pages',
+                        'pageManagerLayoutField' => 'custom_page_layout_id',
+                        'pageManagerSlugPlaceholder' => '/howtodesign',
+                        'pageManagerSlugHelp' => 'Public path, for example /howtodesign. Leading and trailing slashes are normalized automatically.',
+                    ]
+                )
+                    ->name('custom-pages.index');
+
+                Route::get(
+                    '/custom-pages/{customPage}/content',
+                    function (CustomPage $customPage) {
+                        return view('admin.products.content', [
+                            'product' => $customPage,
+                            'contentEditorMode' => 'custom_page',
+                            'contentApiBase' => '/api/v1/admin/custom-pages',
+                            'contentIndexUrl' => route('admin.custom-pages.index'),
+                        ]);
+                    }
+                )
+                    ->name('custom-pages.content');
+
+                /*
+                |--------------------------------------------------------------------------
                 | Logout
                 |--------------------------------------------------------------------------
                 */
@@ -457,6 +695,10 @@ Route::prefix('admin')
             });
 
     });
+
+Route::get('/gallery/{galleryPage}', [StorefrontGalleryController::class, 'show'])
+    ->where('galleryPage', '[a-z0-9]+(?:[_-][a-z0-9]+)*')
+    ->name('gallery.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -670,6 +912,81 @@ Route::post(
         'products.estimate.pdf'
     );
 
+Route::post(
+    '/products/{productPath}/order/customer',
+    [
+        StorefrontProductController::class,
+        'storeCustomerOrder',
+    ]
+)
+    ->where(
+        'productPath',
+        '.+'
+    )
+    ->name(
+        'products.customer.store'
+    );
+
+Route::post(
+    '/products/{productPath}/order/customer/details',
+    [
+        StorefrontProductController::class,
+        'storeCustomerDetails',
+    ]
+)
+    ->where(
+        'productPath',
+        '.+'
+    )
+    ->name(
+        'products.customer.submit'
+    );
+
+Route::get(
+    '/products/{productPath}/order/customer',
+    [
+        StorefrontProductController::class,
+        'customerDetails',
+    ]
+)
+    ->where(
+        'productPath',
+        '.+'
+    )
+    ->name(
+        'products.customer'
+    );
+
+Route::get(
+    '/products/{productPath}/order/confirm',
+    [
+        StorefrontProductController::class,
+        'confirmOrder',
+    ]
+)
+    ->where(
+        'productPath',
+        '.+'
+    )
+    ->name(
+        'products.confirm'
+    );
+
+Route::post(
+    '/products/{productPath}/order/complete',
+    [
+        StorefrontProductController::class,
+        'completeOrder',
+    ]
+)
+    ->where(
+        'productPath',
+        '.+'
+    )
+    ->name(
+        'products.complete'
+    );
+
 Route::get(
     '/products/{productPath}',
     [
@@ -718,3 +1035,13 @@ Route::get(
     ]
 )
     ->name('faq.product.show');
+
+Route::get(
+    '/{customPagePath}',
+    [
+        StorefrontCustomPageController::class,
+        'show',
+    ]
+)
+    ->where('customPagePath', '[A-Za-z0-9][A-Za-z0-9_.-]*(?:/[A-Za-z0-9][A-Za-z0-9_.-]*)*')
+    ->name('custom-pages.show');

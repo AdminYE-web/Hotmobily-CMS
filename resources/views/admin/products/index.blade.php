@@ -458,6 +458,44 @@
 
                 </div>
 
+                <hr>
+
+                <h6 class="font-weight-bold mb-3">
+                    SEO Meta Settings
+                </h6>
+
+                <div class="form-group">
+                    <label for="product-meta-keywords">
+                        Meta Keywords
+                    </label>
+
+                    <textarea
+                        id="product-meta-keywords"
+                        class="form-control"
+                        rows="2"
+                        maxlength="1000"
+                        placeholder="rubber strap, original goods, custom product"
+                    ></textarea>
+
+                    <small class="form-text text-muted">
+                        Separate keywords with commas.
+                    </small>
+                </div>
+
+                <div class="form-group mb-0">
+                    <label for="product-meta-description">
+                        Meta Description
+                    </label>
+
+                    <textarea
+                        id="product-meta-description"
+                        class="form-control"
+                        rows="3"
+                        maxlength="1000"
+                        placeholder="Description displayed by search engines for this product page."
+                    ></textarea>
+                </div>
+
             </div>
 
 
@@ -1542,6 +1580,24 @@ function encodeProductPath(
 
                 document
                     .getElementById(
+                        'product-meta-keywords'
+                    )
+                    .value =
+                        product.meta_keywords
+                        ?? '';
+
+
+                document
+                    .getElementById(
+                        'product-meta-description'
+                    )
+                    .value =
+                        product.meta_description
+                        ?? '';
+
+
+                document
+                    .getElementById(
                         'product-status'
                     )
                     .value =
@@ -1853,6 +1909,24 @@ function encodeProductPath(
                             document
                                 .getElementById(
                                     'product-code'
+                                )
+                                .value
+                                .trim()
+                            || null,
+
+                        meta_keywords:
+                            document
+                                .getElementById(
+                                    'product-meta-keywords'
+                                )
+                                .value
+                                .trim()
+                            || null,
+
+                        meta_description:
+                            document
+                                .getElementById(
+                                    'product-meta-description'
                                 )
                                 .value
                                 .trim()
@@ -2224,6 +2298,22 @@ function encodeProductPath(
             document
                 .getElementById(
                     'product-code'
+                )
+                .value =
+                    '';
+
+
+            document
+                .getElementById(
+                    'product-meta-keywords'
+                )
+                .value =
+                    '';
+
+
+            document
+                .getElementById(
+                    'product-meta-description'
                 )
                 .value =
                     '';

@@ -19,6 +19,8 @@ return Application::configure(
         function (Middleware $middleware): void {
 
             $middleware->statefulApi();
+            // The legacy order flow reads this plain-text test cookie.
+            $middleware->encryptCookies(['username']);
 
             $middleware->redirectGuestsTo(
                 static function (Request $request): ?string {

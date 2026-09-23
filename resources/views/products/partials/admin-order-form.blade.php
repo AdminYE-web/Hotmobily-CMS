@@ -112,7 +112,7 @@
         #order-form.admin-configured-order-form .configured-option-disable-indicator { animation: none; }
     }
     #order-form.admin-configured-order-form .configured-image-grid--priced .configured-option-shell { box-sizing: border-box; flex: 0 0 20%; max-width: 20%; padding: 0; text-align: center; }
-    #order-form.admin-configured-order-form .configured-image-grid--priced .configured-option-shell .configured-image-choice { padding: 0; }
+    #order-form.admin-configured-order-form .configured-image-grid--priced .configured-option-shell .configured-image-choice { box-sizing: border-box; width: 100%; max-width: 100%; padding: 0; }
     #order-form.admin-configured-order-form .configured-radio-list .part-container { display: block; }
     #order-form.admin-configured-order-form .configured-radio-list .part-content { margin-bottom: 7px; }
     #order-form.admin-configured-order-form .configured-previous-order { margin-top: 14px; }
@@ -135,7 +135,7 @@
     #order-form.admin-configured-order-form .configured-image-grid--priced .configured-image-choice { box-sizing: border-box; flex: 0 0 20%; max-width: 20%; padding: 0; }
     #order-form.admin-configured-order-form .configured-image-grid--priced .configured-image-choice img { box-sizing: border-box; width: 95px; height: 95px; margin: 0 auto 8px; outline: .5px solid #f8f8f8; outline-offset: -1px; box-shadow: 0 1px 5px rgba(0, 0, 0, .14); }
     #order-form.admin-configured-order-form .configured-image-grid--priced .configured-image-choice input:checked + img { outline: 2px solid #1e90ff; outline-offset: -2px; box-shadow: none; }
-    #order-form.admin-configured-order-form .configured-image-grid--priced .configured-option-price { display: block; color: #111; font-size: 14px; line-height: 1.2; text-align: center; }
+    #order-form.admin-configured-order-form .configured-image-grid--priced .configured-option-price { display: block; width: 100%; margin: 0 auto; color: #111; font-size: 14px; line-height: 1.2; text-align: center; white-space: nowrap; }
     /* Match the original scrollable paper-pattern picker. */
     #order-form.admin-configured-order-form .configured-paper-preview { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; max-height: 380px; overflow-y: auto; scroll-behavior: smooth; }
     #order-form.admin-configured-order-form .configured-paper-preview .configured-image-choice { padding: 0; }
@@ -153,6 +153,28 @@
     #order-form.admin-configured-order-form .configured-help-dialog .configured-option-help figure.image.image-style-wrap-text { width: 125px; }
     #order-form.admin-configured-order-form .configured-help-dialog .configured-option-help figure.image.image-style-align-right,
     #order-form.admin-configured-order-form .configured-help-dialog .configured-option-help figure.image.image-style-break-text { width: 125px; }
+    #order-form.admin-configured-order-form .configured-product-notice-dialog { width: min(742px, 100%); padding: 14px 40px 20px; }
+    #order-form.admin-configured-order-form .configured-product-notice-content { max-height: calc(100vh - 150px); overflow-y: auto; color: #111; font-size: 14px; line-height: 1.45; }
+    #order-form.admin-configured-order-form .configured-product-notice-content p { margin: 0 0 8px; }
+    #order-form.admin-configured-order-form .configured-product-notice-content p:last-child { margin-bottom: 0; }
+    #order-form.admin-configured-order-form .configured-product-notice-content figure { max-width: 100%; margin: 10px 0; }
+    #order-form.admin-configured-order-form .configured-product-notice-content img { display: block; max-width: 100%; height: auto; }
+    #order-form.admin-configured-order-form .configured-product-notice-ok { display: block; width: 100px; height: 50px; margin: 10px auto 0; border: 1px solid #111; border-radius: 3px; background: linear-gradient(to bottom, #fff, #e7e7e7); color: #111; cursor: pointer; font: inherit; font-weight: 700; }
+    #order-form.admin-configured-order-form .configured-product-notice-ok:hover { background: #eee; }
+    #order-form.admin-configured-order-form .configured-product-notice-modal.is-open { animation: configured-notice-fade-in .24s ease-out both; }
+    #order-form.admin-configured-order-form .configured-product-notice-modal.is-open .configured-product-notice-dialog { animation: configured-notice-slide-down .3s ease-out both; }
+    @keyframes configured-notice-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes configured-notice-slide-down {
+        from { opacity: 0; transform: translateY(-28px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        #order-form.admin-configured-order-form .configured-product-notice-modal.is-open,
+        #order-form.admin-configured-order-form .configured-product-notice-modal.is-open .configured-product-notice-dialog { animation: none; }
+    }
     body.configured-help-modal-open { overflow: hidden; }
     @media (max-width: 600px) {
         #order-form.admin-configured-order-form .configured-step-list li::after { display: none; }
@@ -192,7 +214,9 @@
                                     'option_id' => $option['id'],
                                     'sort_order' => (int) ($option[$sortKey] ?? 0),
                                     'label' => ($option[$labelKey] ?? '') !== '' ? $option[$labelKey] : $option['name'],
-                                    'price_option_id' => $sourceKey !== null ? (int) $option['id'] : null,
+                                    'price_option_id' => $sourceKey !== null
+                                        ? (($option[$sourceKey] ?? null) !== null ? (int) $option[$sourceKey] : (int) $option['id'])
+                                        : null,
                                 ])
                                 ->values()
                             : collect();
@@ -208,7 +232,9 @@
                                 'option_id' => null,
                                 'sort_order' => (int) ($group[$sortKey] ?? 0),
                                 'label' => ($group[$labelKey] ?? '') !== '' ? $group[$labelKey] : $group['name'],
-                                'price_option_id' => null,
+                                'price_option_id' => $sourceKey !== null && ($group[$sourceKey] ?? null) !== null
+                                    ? (int) $group[$sourceKey]
+                                    : null,
                             ]];
                         }
 
@@ -221,6 +247,10 @@
             $summaryFields = $buildSummaryFields($orderSummaryGroups, 'show_in_order_summary', 'summary_sort_order', 'summary_label');
             $priceSummaryFields = $buildSummaryFields($orderSummaryGroups, 'show_in_price_summary', 'price_summary_sort_order', 'price_summary_label', 'price_summary_option_id');
             $pdfSummaryFields = $buildSummaryFields($orderSummaryGroups, 'show_in_pdf_summary', 'pdf_summary_sort_order', 'pdf_summary_label');
+            $confirmSummaryFields = $buildSummaryFields($orderSummaryGroups, 'show_in_confirm_summary', 'confirm_summary_sort_order', 'confirm_summary_label');
+            $confirmPriceSummaryFields = $buildSummaryFields($orderSummaryGroups, 'show_in_confirm_price_summary', 'confirm_price_summary_sort_order', 'confirm_price_summary_label', 'confirm_price_summary_option_id');
+            $completeSummaryFields = $buildSummaryFields($orderSummaryGroups, 'show_in_complete_summary', 'complete_summary_sort_order', 'complete_summary_label');
+            $completePriceSummaryFields = $buildSummaryFields($orderSummaryGroups, 'show_in_complete_price_summary', 'complete_price_summary_sort_order', 'complete_price_summary_label', 'complete_price_summary_option_id');
             $pdfSummaryCustomRows = collect($pdfSummaryCustomRows ?? []);
             $pdfSummaryFieldRows = $pdfSummaryFields
                 ->map(static fn (array $field): array => [
@@ -240,9 +270,52 @@
                 ]))
                 ->sortBy('sort_order')
                 ->values();
+            $confirmSummaryCustomRows = collect($confirmSummaryCustomRows ?? []);
+            $confirmSummaryFieldRows = $confirmSummaryFields
+                ->map(static fn (array $field): array => [
+                    ...$field,
+                    'is_custom' => false,
+                    'content' => null,
+                ])
+                ->concat($confirmSummaryCustomRows->map(static fn (array $row): array => [
+                    'key' => $row['key'],
+                    'group_id' => null,
+                    'option_id' => null,
+                    'sort_order' => (int) ($row['sort_order'] ?? 0),
+                    'label' => $row['label'],
+                    'price_option_id' => null,
+                    'is_custom' => true,
+                    'content' => $row['content'] ?? '',
+                ]))
+                ->sortBy('sort_order')
+                ->values();
+            $completeSummaryCustomRows = collect($completeSummaryCustomRows ?? []);
+            $completeSummaryFieldRows = $completeSummaryFields
+                ->map(static fn (array $field): array => [
+                    ...$field,
+                    'is_custom' => false,
+                    'content' => null,
+                ])
+                ->concat($completeSummaryCustomRows->map(static fn (array $row): array => [
+                    'key' => $row['key'],
+                    'group_id' => null,
+                    'option_id' => null,
+                    'sort_order' => (int) ($row['sort_order'] ?? 0),
+                    'label' => $row['label'],
+                    'price_option_id' => null,
+                    'is_custom' => true,
+                    'content' => $row['content'] ?? '',
+                ]))
+                ->sortBy('sort_order')
+                ->values();
             $summaryStepIndex = collect($orderSteps)
                 ->search(fn (array $step): bool => !empty($step['is_summary_step']));
             $summaryStepIndex = $summaryStepIndex === false ? 0 : $summaryStepIndex;
+            $productNoticeHtml = '';
+            if ((bool) ($product->show_notice ?? false) && trim((string) ($product->notice_text ?? '')) !== '') {
+                $productNoticeHtml = (string) (app(\App\Support\RichTextSanitizer::class)->sanitize($product->notice_text) ?? '');
+            }
+            $hasProductNotice = trim($productNoticeHtml) !== '';
         @endphp
 
         @if ($pdfSummaryFieldRows->isNotEmpty())
@@ -258,6 +331,74 @@
                             @endif
                         </tr>
                     @endforeach
+                </tbody></table>
+            </div>
+        @endif
+
+        @if ($confirmSummaryFieldRows->isNotEmpty())
+            <div hidden data-configured-confirm-summary-container>
+                <table><tbody>
+                    @foreach ($confirmSummaryFieldRows as $field)
+                        <tr>
+                            <td>{{ $field['label'] }}</td>
+                            @if ($field['is_custom'])
+                                <td data-configured-confirm-summary="{{ $field['key'] }}">{{ $field['content'] }}</td>
+                            @else
+                                <td data-configured-confirm-summary="{{ $field['key'] }}" data-configured-summary-group="{{ $field['group_id'] }}" data-configured-summary-option="{{ $field['option_id'] ?? '' }}">-</td>
+                            @endif
+                        </tr>
+                    @endforeach
+                </tbody></table>
+            </div>
+        @endif
+
+        @if ($completeSummaryFieldRows->isNotEmpty())
+            <div hidden data-configured-complete-summary-container>
+                <table><tbody>
+                    @foreach ($completeSummaryFieldRows as $field)
+                        <tr>
+                            <td>{{ $field['label'] }}</td>
+                            @if ($field['is_custom'])
+                                <td data-configured-complete-summary="{{ $field['key'] }}">{{ $field['content'] }}</td>
+                            @else
+                                <td data-configured-complete-summary="{{ $field['key'] }}" data-configured-summary-group="{{ $field['group_id'] }}" data-configured-summary-option="{{ $field['option_id'] ?? '' }}">-</td>
+                            @endif
+                        </tr>
+                    @endforeach
+                </tbody></table>
+            </div>
+        @endif
+
+        @if ($confirmPriceSummaryFields->isNotEmpty())
+            <div hidden data-configured-confirm-price-container>
+                <table class="configured-confirm-price-table"><tbody>
+                    <tr><td>商品代金</td><td data-configured-price-row="product">0円</td></tr>
+                    @foreach ($confirmPriceSummaryFields as $field)
+                        <tr>
+                            <td>{{ $field['label'] }}</td>
+                            <td data-configured-price-field="{{ $field['key'] }}" @if ($field['price_option_id'] !== null) data-configured-price-option="{{ $field['price_option_id'] }}" @else data-configured-price-group="{{ $field['group_id'] }}" @endif>0円</td>
+                        </tr>
+                    @endforeach
+                    <tr><td>小計(税込)</td><td data-configured-price-row="subtotal">0円</td></tr>
+                    <tr><td>お値引き</td><td data-configured-price-row="discount">0円</td></tr>
+                    <tr><td>合計(税込)</td><td data-configured-price-row="total">0円</td></tr>
+                </tbody></table>
+            </div>
+        @endif
+
+        @if ($completePriceSummaryFields->isNotEmpty())
+            <div hidden data-configured-complete-price-container>
+                <table class="configured-complete-price-table"><tbody>
+                    <tr><td>商品代金</td><td data-configured-price-row="product">0円</td></tr>
+                    @foreach ($completePriceSummaryFields as $field)
+                        <tr>
+                            <td>{{ $field['label'] }}</td>
+                            <td data-configured-price-field="{{ $field['key'] }}" @if ($field['price_option_id'] !== null) data-configured-price-option="{{ $field['price_option_id'] }}" @else data-configured-price-group="{{ $field['group_id'] }}" @endif>0円</td>
+                        </tr>
+                    @endforeach
+                    <tr><td>小計(税込)</td><td data-configured-price-row="subtotal">0円</td></tr>
+                    <tr><td>お値引き</td><td data-configured-price-row="discount">0円</td></tr>
+                    <tr><td>合計(税込)</td><td data-configured-price-row="total">0円</td></tr>
                 </tbody></table>
             </div>
         @endif
@@ -450,7 +591,7 @@
                                         <table class="configured-detail-table configured-price-table"><tbody>
                                             <tr><td>商品代金</td><td data-configured-price-row="product">0円</td></tr>
                                             @foreach ($priceSummaryFields as $field)
-                                                <tr><td>{{ $field['label'] }}</td><td @if ($field['price_option_id'] !== null) data-configured-price-option="{{ $field['price_option_id'] }}" @else data-configured-price-group="{{ $field['group_id'] }}" @endif>0円</td></tr>
+                                                <tr><td>{{ $field['label'] }}</td><td data-configured-price-field="{{ $field['key'] }}" @if ($field['price_option_id'] !== null) data-configured-price-option="{{ $field['price_option_id'] }}" @else data-configured-price-group="{{ $field['group_id'] }}" @endif>0円</td></tr>
                                             @endforeach
                                             <tr><td>小計(税込)</td><td data-configured-price-row="subtotal">0円</td></tr>
                                             <tr><td>お値引き</td><td data-configured-price-row="discount">0円</td></tr>
@@ -473,6 +614,15 @@
                 <button type="button" class="btn configured-final-action configured-final-action--order" data-configured-final-action data-configured-order-info hidden>ご注文情報入力へ</button>
             </div>
         </form>
+        @if ($hasProductNotice)
+            <div id="configured-product-notice-modal" class="configured-help-modal configured-product-notice-modal" data-configured-notice-modal role="dialog" aria-modal="true" aria-label="Product notice">
+                <div class="configured-help-dialog configured-product-notice-dialog">
+                    <button type="button" class="configured-help-close" data-configured-notice-close aria-label="Close">&times;</button>
+                    <div class="configured-product-notice-content">{!! $productNoticeHtml !!}</div>
+                    <button type="button" class="configured-product-notice-ok" data-configured-notice-ok>OK</button>
+                </div>
+            </div>
+        @endif
         <section class="configured-customer-details" data-configured-customer-details hidden>
             <table class="configured-customer-table"><tbody>
                 <tr>
@@ -540,10 +690,41 @@
             const dependencies = @json($orderDependencies ?? []);
             const pricing = @json($orderPricing ?? ['product_rules' => [], 'option_rules' => []]);
             const estimatePdfUrl = @json(route('products.estimate.pdf', ['productPath' => $product->slug]));
+            const customerDetailsStoreUrl = @json(route('products.customer.store', ['productPath' => $product->slug]));
             const estimateCsrfToken = @json(csrf_token());
             const customerDetails = orderForm.querySelector('[data-configured-customer-details]');
+            const orderInfoButton = orderForm.querySelector('[data-configured-order-info]');
+            const noticeModal = orderForm.querySelector('[data-configured-notice-modal]');
             const hideCustomerDetails = function () {
                 if (customerDetails) customerDetails.hidden = true;
+            };
+            const showCustomerDetails = function () {
+                if (!customerDetails) return;
+
+                customerDetails.hidden = false;
+                customerDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                customerDetails.querySelector('input')?.focus({ preventScroll: true });
+            };
+            const closeNoticeModal = function () {
+                if (!noticeModal) return;
+
+                noticeModal.classList.remove('is-open');
+                if (!orderForm.querySelector('[data-configured-help-modal].is-open')) {
+                    document.body.classList.remove('configured-help-modal-open');
+                }
+            };
+            const openNoticeModal = function () {
+                if (!noticeModal) return false;
+
+                noticeModal.classList.add('is-open');
+                document.body.classList.add('configured-help-modal-open');
+                noticeModal.querySelector('[data-configured-notice-ok]')?.focus();
+
+                return true;
+            };
+            const continueToCustomerDetails = function () {
+                closeNoticeModal();
+                goToCustomerDetails();
             };
             let currentStep = 0;
 
@@ -610,7 +791,7 @@
                         .filter(Boolean)
                         .join('\u3001') || '-';
                 };
-                orderForm.querySelectorAll('[data-configured-preview-summary], [data-configured-detail-summary], [data-configured-pdf-summary]').forEach(function (cell) {
+                orderForm.querySelectorAll('[data-configured-preview-summary], [data-configured-detail-summary], [data-configured-pdf-summary], [data-configured-confirm-summary], [data-configured-complete-summary]').forEach(function (cell) {
                     const group = orderForm.querySelector('[data-configured-group="' + cell.dataset.configuredSummaryGroup + '"]');
                     if (!group) return;
 
@@ -628,7 +809,7 @@
                 });
                 orderForm.querySelectorAll('[data-configured-group]').forEach(function (group) {
                     const summaryCells = orderForm.querySelectorAll(
-                        '[data-configured-preview-summary="' + group.dataset.configuredGroup + '"], [data-configured-detail-summary="' + group.dataset.configuredGroup + '"], [data-configured-pdf-summary="group-' + group.dataset.configuredGroup + '"]'
+                        '[data-configured-preview-summary="' + group.dataset.configuredGroup + '"], [data-configured-detail-summary="' + group.dataset.configuredGroup + '"], [data-configured-pdf-summary="group-' + group.dataset.configuredGroup + '"], [data-configured-confirm-summary="group-' + group.dataset.configuredGroup + '"], [data-configured-complete-summary="group-' + group.dataset.configuredGroup + '"]'
                     );
                     const setSummaryValue = function (value) {
                         summaryCells.forEach(function (cell) {
@@ -698,6 +879,123 @@
                     .map(function (input) { return Number(input.dataset.optionId); })
                     .filter(function (id) { return Number.isFinite(id) && id > 0; }));
             };
+            const goToCustomerDetails = function () {
+                const transferForm = document.createElement('form');
+                transferForm.method = 'POST';
+                transferForm.action = customerDetailsStoreUrl;
+                transferForm.style.display = 'none';
+
+                const addField = function (name, value) {
+                    const field = document.createElement('input');
+                    field.type = 'hidden';
+                    field.name = name;
+                    field.value = value == null ? '' : String(value);
+                    transferForm.appendChild(field);
+                };
+                const amountFromText = function (value) {
+                    const amount = Number(String(value || '').replace(/[^0-9.-]/g, ''));
+                    return Number.isFinite(amount) ? Math.round(amount) : 0;
+                };
+                const priceRowKey = function (marker) {
+                    if (marker?.dataset.configuredPriceField) return marker.dataset.configuredPriceField;
+                    if (marker?.dataset.configuredPriceOption) return 'option-' + marker.dataset.configuredPriceOption;
+                    if (marker?.dataset.configuredPriceGroup) return 'group-' + marker.dataset.configuredPriceGroup;
+                    return '';
+                };
+
+                addField('_token', estimateCsrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '');
+                addField('quantity', getOrderQuantity());
+                const totalText = orderForm.querySelector('[data-configured-price-row="total"]')?.textContent
+                    || orderForm.querySelector('.prd_total')?.textContent;
+                const subtotalText = orderForm.querySelector('[data-configured-price-row="subtotal"]')?.textContent || totalText;
+                const discountText = orderForm.querySelector('[data-configured-price-row="discount"]')?.textContent;
+                addField('total_amount', amountFromText(totalText));
+                addField('subtotal_amount', amountFromText(subtotalText));
+                addField('discount_amount', amountFromText(discountText));
+
+                const orderValues = [];
+                orderForm.querySelectorAll('#configured-order-form input, #configured-order-form select, #configured-order-form textarea').forEach(function (control) {
+                    if (!control.name || control.disabled) return;
+                    if ((control.type === 'checkbox' || control.type === 'radio') && !control.checked) return;
+                    orderValues.push({ name: control.name, value: control.value });
+                });
+                addField('order_values', JSON.stringify(orderValues));
+
+                addField('confirm_summary_present', '1');
+                addField('confirm_price_rows_present', '1');
+                addField('complete_summary_present', '1');
+                addField('complete_price_rows_present', '1');
+
+                Array.from(orderForm.querySelectorAll('[data-configured-pdf-summary]')).forEach(function (cell, index) {
+                    const label = cell.closest('tr')?.querySelector('td:first-child')?.textContent.trim() || '';
+                    addField('summary[' + index + '][key]', cell.dataset.configuredPdfSummary || '');
+                    addField('summary[' + index + '][label]', label);
+                    addField('summary[' + index + '][value]', cell.textContent.trim());
+                });
+
+                Array.from(orderForm.querySelectorAll('[data-configured-detail-summary]')).forEach(function (cell, index) {
+                    const label = cell.closest('tr')?.querySelector('td:first-child')?.textContent.trim() || '';
+                    addField('order_summary[' + index + '][key]', cell.dataset.configuredDetailSummary || '');
+                    addField('order_summary[' + index + '][label]', label);
+                    addField('order_summary[' + index + '][value]', cell.textContent.trim());
+                });
+
+                Array.from(orderForm.querySelectorAll('[data-configured-confirm-summary]')).forEach(function (cell, index) {
+                    const label = cell.closest('tr')?.querySelector('td:first-child')?.textContent.trim() || '';
+                    addField('confirm_summary[' + index + '][key]', cell.dataset.configuredConfirmSummary || '');
+                    addField('confirm_summary[' + index + '][label]', label);
+                    addField('confirm_summary[' + index + '][value]', cell.textContent.trim());
+                });
+
+                Array.from(orderForm.querySelectorAll('[data-configured-complete-summary]')).forEach(function (cell, index) {
+                    const label = cell.closest('tr')?.querySelector('td:first-child')?.textContent.trim() || '';
+                    addField('complete_summary[' + index + '][key]', cell.dataset.configuredCompleteSummary || '');
+                    addField('complete_summary[' + index + '][label]', label);
+                    addField('complete_summary[' + index + '][value]', cell.textContent.trim());
+                });
+
+                Array.from(orderForm.querySelectorAll('.configured-confirm-price-table tbody tr')).forEach(function (row, index) {
+                    const cells = Array.from(row.children);
+                    const valueCell = cells[1];
+                    const marker = valueCell?.matches('[data-configured-price-row]')
+                        ? valueCell
+                        : valueCell?.querySelector('[data-configured-price-row]');
+                    addField('confirm_price_rows[' + index + '][key]', priceRowKey(marker));
+                    addField('confirm_price_rows[' + index + '][label]', cells[0]?.textContent.trim() || '');
+                    addField('confirm_price_rows[' + index + '][amount]', amountFromText(valueCell?.textContent));
+                    addField('confirm_price_rows[' + index + '][kind]', marker?.dataset.configuredPriceRow || 'charge');
+                });
+
+                Array.from(orderForm.querySelectorAll('.configured-complete-price-table tbody tr')).forEach(function (row, index) {
+                    const cells = Array.from(row.children);
+                    const valueCell = cells[1];
+                    const marker = valueCell?.matches('[data-configured-price-row]')
+                        ? valueCell
+                        : valueCell?.querySelector('[data-configured-price-row]');
+                    addField('complete_price_rows[' + index + '][key]', priceRowKey(marker));
+                    addField('complete_price_rows[' + index + '][label]', cells[0]?.textContent.trim() || '');
+                    addField('complete_price_rows[' + index + '][amount]', amountFromText(valueCell?.textContent));
+                    addField('complete_price_rows[' + index + '][kind]', marker?.dataset.configuredPriceRow || 'charge');
+                });
+
+                Array.from(orderForm.querySelectorAll('.configured-price-table tbody tr')).forEach(function (row, index) {
+                    const cells = Array.from(row.children);
+                    const valueCell = cells[1];
+                    const marker = valueCell?.matches('[data-configured-price-row]')
+                        ? valueCell
+                        : valueCell?.querySelector('[data-configured-price-row]');
+                    const label = cells[0]?.textContent.trim() || '';
+                    const kind = marker?.dataset.configuredPriceRow || (label === '商品代金' ? 'product' : 'charge');
+                    addField('price_rows[' + index + '][key]', priceRowKey(marker));
+                    addField('price_rows[' + index + '][label]', label);
+                    addField('price_rows[' + index + '][amount]', amountFromText(valueCell?.textContent));
+                    addField('price_rows[' + index + '][kind]', kind);
+                });
+
+                if (orderInfoButton) orderInfoButton.disabled = true;
+                document.body.appendChild(transferForm);
+                transferForm.submit();
+            };
             const matchingTier = function (tiers, quantity) {
                 const usableTiers = (Array.isArray(tiers) ? tiers : [])
                     .filter(function (tier) { return Number(tier.quantity) > 0; });
@@ -733,15 +1031,31 @@
                 const productTotal = productTier ? (Number(productTier.unit_price_with_tax) || 0) * quantity : 0;
                 const chargesByGroup = new Map();
                 const chargesByOption = new Map();
+                const optionDisplayPrices = new Map();
 
                 optionRules.forEach(function (rule) {
                     const targetOptionId = Number(rule.target_option_id);
-                    if (!targetOptionId || !selectedIds.has(targetOptionId) || !ruleMatches(rule, selectedIds)) return;
+                    if (!targetOptionId) return;
 
                     const tier = matchingTier(rule.tiers, quantity);
                     if (!tier) return;
 
                     const tierPrice = Number(tier.additional_price_with_tax) || 0;
+                    // Show each option's unit price as soon as the form loads.
+                    // The option itself is treated as the preview selection so
+                    // conditions that include the target option still match.
+                    const displayConditionIds = new Set(selectedIds);
+                    displayConditionIds.add(targetOptionId);
+                    if (ruleMatches(rule, displayConditionIds)) {
+                        optionDisplayPrices.set(
+                            targetOptionId,
+                            (optionDisplayPrices.get(targetOptionId) || 0) + tierPrice
+                        );
+                    }
+
+                    // Only selected options contribute to the order total.
+                    if (!selectedIds.has(targetOptionId) || !ruleMatches(rule, selectedIds)) return;
+
                     const charge = rule.price_type === 'per_piece' ? tierPrice * quantity : tierPrice;
                     chargesByOption.set(targetOptionId, (chargesByOption.get(targetOptionId) || 0) + charge);
 
@@ -778,7 +1092,7 @@
                     element.textContent = Math.round(total).toLocaleString('ja-JP');
                 });
                 orderForm.querySelectorAll('[data-configured-option-price]').forEach(function (element) {
-                    element.textContent = '+' + formatPrice(chargesByOption.get(Number(element.dataset.configuredOptionPrice)) || 0);
+                    element.textContent = '+' + formatPrice(optionDisplayPrices.get(Number(element.dataset.configuredOptionPrice)) || 0);
                 });
             };
             const applyDependencies = function () {
@@ -894,6 +1208,23 @@
                     customerDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     customerDetails.querySelector('input')?.focus({ preventScroll: true });
                 }
+            });
+            orderInfoButton?.addEventListener('click', function () {
+                if (!currentStepIsValid()) return;
+
+                updateSummary();
+                updatePricing();
+
+                if (openNoticeModal()) return;
+                goToCustomerDetails();
+            });
+            noticeModal?.addEventListener('click', function (event) {
+                if (event.target === noticeModal || event.target.closest('[data-configured-notice-close]')) {
+                    closeNoticeModal();
+                    return;
+                }
+
+                if (event.target.closest('[data-configured-notice-ok]')) continueToCustomerDetails();
             });
             orderForm.querySelector('[data-estimate-address-lookup]')?.addEventListener('click', async function () {
                 const postalInput = orderForm.querySelector('[data-estimate-customer="postal_code"]');
@@ -1016,6 +1347,7 @@
             document.addEventListener('keydown', function (event) {
                 if (event.key !== 'Escape') return;
                 orderForm.querySelectorAll('[data-configured-help-modal].is-open').forEach(closeHelpModal);
+                if (noticeModal?.classList.contains('is-open')) closeNoticeModal();
             });
             orderForm.querySelectorAll('input').forEach(function (input) {
                 input.addEventListener('change', function () {

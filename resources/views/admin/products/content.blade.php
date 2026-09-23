@@ -1,6 +1,17 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Product Content')
+@php
+    $isProductDataContent = ($contentEditorMode ?? 'product') === 'product_data';
+    $isCustomPageContent = ($contentEditorMode ?? 'product') === 'custom_page';
+    $isCmsContent = $isProductDataContent || $isCustomPageContent;
+    $contentApiBase = $contentApiBase ?? '/api/v1/admin/products';
+    $contentIndexUrl = $contentIndexUrl ?? route('admin.products.index');
+    $contentEntityTitle = $isCustomPageContent
+        ? 'Custom Page'
+        : ($isProductDataContent ? 'Product Data' : 'Product');
+@endphp
+
+@section('title', $contentEntityTitle.' Content')
 
 @section('content')
 
@@ -10,8 +21,8 @@
 
         <div>
 
-            <a href="{{ route('admin.products.index') }}">
-                ← Products
+            <a href="{{ $contentIndexUrl }}">
+                ← {{ $isCustomPageContent ? 'Custom Pages' : ($isProductDataContent ? 'Product Data' : 'Products') }}
             </a>
 
             <h1 class="h3 mt-2 mb-1">
@@ -19,7 +30,7 @@
             </h1>
 
             <small class="text-muted">
-                Product Content Editor
+                {{ $isCustomPageContent ? 'Custom Page Content Editor' : ($isProductDataContent ? 'Product Data Content Editor' : 'Product Content Editor') }}
             </small>
 
         </div>
@@ -77,7 +88,7 @@
             <div class="card-header">
 
                 <strong>
-                    Product Page Content
+                    {{ $isCustomPageContent ? 'Custom Page Content' : ($isProductDataContent ? 'Product Data Page Content' : 'Product Page Content') }}
                 </strong>
 
             </div>
@@ -108,6 +119,20 @@
 
 .editor-canvas {
     background: #eef0f3;
+}
+
+
+.product-data-heading-background-color-input {
+    width: 84px;
+    height: 38px;
+    padding: 3px;
+}
+
+
+.product-data-button-color-input {
+    width: 84px;
+    height: 38px;
+    padding: 3px;
 }
 
 
@@ -382,6 +407,13 @@
 }
 
 
+.rich-text-surface .rich-text-file-link {
+    color: #06c !important;
+    cursor: pointer;
+    text-decoration: underline !important;
+}
+
+
 /* ============================================================
    System
 ============================================================ */
@@ -512,6 +544,71 @@
 
 
 .gallery-upload-status {
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   Multi Photo
+============================================================ */
+
+.multi-photo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+.multi-photo-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+.multi-photo-preview {
+    width: 105px;
+    height: 105px;
+    flex: 0 0 105px;
+    overflow: hidden;
+    background: #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+
+.multi-photo-preview img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+
+.multi-photo-fields {
+    flex: 1;
+    min-width: 0;
+}
+
+
+.multi-photo-empty {
+    margin-top: 10px;
+    padding: 24px;
+    color: #999;
+    text-align: center;
+    background: #fafafa;
+    border: 2px dashed #ddd;
+    border-radius: 5px;
+}
+
+
+.multi-photo-upload-status {
+    min-height: 18px;
+    color: #6c757d;
     font-size: 12px;
 }
 
@@ -1413,8 +1510,21 @@
 
 
     .gallery-image-row,
+    .multi-photo-row,
     .info-card-image-preview-wrapper {
         align-items: flex-start;
+    }
+
+
+    .multi-photo-row {
+        flex-direction: column;
+    }
+
+
+    .multi-photo-preview {
+        width: 100%;
+        max-width: 180px;
+        flex-basis: auto;
     }
 
 
@@ -1521,6 +1631,22 @@ document.addEventListener(
             {{ $product->id }};
 
 
+        const contentApiBase =
+            @json($contentApiBase);
+
+
+        const isProductDataContent =
+            @json($isCmsContent);
+
+
+        const contentPageSuffix =
+            @json($isCmsContent ? '/content' : '/page');
+
+
+        const contentPublishSuffix =
+            @json($isCmsContent ? '/content/publish' : '/page/publish');
+
+
         const csrf =
             document
                 .querySelector(
@@ -1571,7 +1697,7 @@ document.addEventListener(
 
                 const response =
                     await fetch(
-                        `/api/v1/admin/products/${productId}/page`,
+                        `${contentApiBase}/${productId}${contentPageSuffix}`,
                         {
                             credentials:
                                 'same-origin',
@@ -1745,6 +1871,108 @@ document.addEventListener(
         |--------------------------------------------------------------------------
         */
 
+        const nonContentBlockFields = new Set([
+            'content_format',
+            'text_size',
+            'open_in_modal',
+            'show_share',
+            'target',
+            'new_tab',
+            'text_color',
+            'background_color',
+            'border_radius',
+        ]);
+
+        const automaticallyFilledBlockTypes = new Set([
+            'price_accordion',
+            'production_schedule',
+            'divider',
+            'spacer',
+        ]);
+
+        function hasMeaningfulBlockValue(
+            value,
+            field = ''
+        )
+        {
+            if (nonContentBlockFields.has(field)) {
+                return false;
+            }
+
+            if (value === null || value === undefined) {
+                return false;
+            }
+
+            if (typeof value === 'string') {
+                const text = value
+                    .replace(/<[^>]*>/g, '')
+                    .replace(/&nbsp;|&#160;/gi, '')
+                    .trim();
+
+                return text !== '';
+            }
+
+            if (typeof value === 'boolean') {
+                return value;
+            }
+
+            if (typeof value === 'number') {
+                return value !== 0;
+            }
+
+            if (Array.isArray(value)) {
+                return value.some(function(item) {
+                    return hasMeaningfulBlockValue(item);
+                });
+            }
+
+            if (typeof value === 'object') {
+                return Object.entries(value).some(function([key, item]) {
+                    return hasMeaningfulBlockValue(item, key);
+                });
+            }
+
+            return false;
+        }
+
+        function blockHasContent(block)
+        {
+            if (!block || typeof block !== 'object') {
+                return false;
+            }
+
+            if (automaticallyFilledBlockTypes.has(block.type)) {
+                return true;
+            }
+
+            if (block.type === 'accordion') {
+                const children = Array.isArray(block.children)
+                    ? block.children
+                    : [];
+
+                if (!children.length) {
+                    return false;
+                }
+
+                const accordionContent =
+                    contents[block.id]
+                    ?? {};
+
+                const accordionTitle =
+                    accordionContent.title
+                    ?? block.settings?.title
+                    ?? '';
+
+                return hasMeaningfulBlockValue(accordionTitle)
+                    && children.every(blockHasContent);
+            }
+
+            return hasMeaningfulBlockValue(
+                contents[block.id]
+                ?? {}
+            );
+        }
+
         function collapseAllContentBlocks(
             layoutData
         )
@@ -1783,6 +2011,8 @@ document.addEventListener(
                                 &&
                                 block.id
                                 !== null
+                                &&
+                                blockHasContent(block)
                             ) {
 
                                 collapsedContentBlockIds.add(
@@ -1947,6 +2177,8 @@ document.addEventListener(
 
             bindGalleryButtons();
 
+            bindMultiPhotoEditors();
+
             bindInfoCardImageUploaders();
 
             bindTemplateFileUploaders();
@@ -2096,6 +2328,17 @@ document.addEventListener(
                     break;
 
 
+                case 'multi_photo':
+
+                    fields =
+                        multiPhotoEditor(
+                            block,
+                            blockContent
+                        );
+
+                    break;
+
+
                 case 'product_details':
 
                     const highlightTitleColor =
@@ -2201,6 +2444,133 @@ document.addEventListener(
 
                     `;
 
+                    if (isProductDataContent) {
+                        const templateButtonTextColor =
+                            normalizeHexColor(
+                                blockContent.text_color,
+                                '#000000'
+                            );
+
+                        const templateButtonBackgroundColor =
+                            normalizeHexColor(
+                                blockContent.background_color,
+                                '#f79647'
+                            );
+
+                        const templateButtonBorderRadiusValue =
+                            Number(
+                                blockContent.border_radius
+                            );
+
+                        const templateButtonBorderRadius =
+                            Number.isFinite(
+                                templateButtonBorderRadiusValue
+                            )
+                                ? Math.max(
+                                    0,
+                                    Math.min(
+                                        999,
+                                        templateButtonBorderRadiusValue
+                                    )
+                                )
+                                : 6;
+
+                        fields += `
+
+                            <div class="form-group">
+
+                                <label>
+                                    Text Color
+                                </label>
+
+                                <input
+                                    type="color"
+                                    class="
+                                        form-control
+                                        product-field
+                                        product-data-button-color-input
+                                    "
+                                    data-block-id="${block.id}"
+                                    data-field="text_color"
+                                    value="${templateButtonTextColor}"
+                                    title="Template button text color"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Background Color
+                                </label>
+
+                                <input
+                                    type="color"
+                                    class="
+                                        form-control
+                                        product-field
+                                        product-data-button-color-input
+                                    "
+                                    data-block-id="${block.id}"
+                                    data-field="background_color"
+                                    value="${templateButtonBackgroundColor}"
+                                    title="Template button background color"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Border Radius (px)
+                                </label>
+
+                                <input
+                                    type="number"
+                                    class="form-control product-field"
+                                    data-block-id="${block.id}"
+                                    data-field="border_radius"
+                                    min="0"
+                                    max="999"
+                                    step="1"
+                                    value="${templateButtonBorderRadius}"
+                                >
+
+                            </div>
+
+                        `;
+                    }
+
+                    break;
+
+
+                case 'head_section':
+
+                    fields =
+                        textInput(
+                            block.id,
+                            'text',
+                            'Head Section',
+                            blockContent.text
+                            ?? ''
+                        );
+
+                    break;
+
+
+                case 'head_sub_section':
+
+                    fields =
+                        textInput(
+                            block.id,
+                            'text',
+                            'Head Sub Section',
+                            blockContent.text
+                            ?? ''
+                        );
+
                     break;
 
 
@@ -2214,6 +2584,47 @@ document.addEventListener(
                             blockContent.text
                             ?? ''
                         );
+
+                    if (isProductDataContent) {
+                        const headingBackgroundColor =
+                            normalizeHexColor(
+                                blockContent.background_color,
+                                '#f58214'
+                            );
+
+                        fields += `
+
+                            <div class="form-group">
+
+                                <label>
+                                    Background Color
+                                </label>
+
+                                <input
+                                    type="color"
+                                    class="
+                                        form-control
+                                        product-field
+                                        product-data-heading-background-color-input
+                                    "
+                                    data-block-id="${block.id}"
+                                    data-field="background_color"
+                                    value="${headingBackgroundColor}"
+                                    title="Heading background color"
+                                >
+
+                            </div>
+
+                        `;
+
+                        fields += textInput(
+                            block.id,
+                            'updated_date',
+                            'Date (e.g. 2025年1月29日)',
+                            blockContent.updated_date
+                            ?? ''
+                        );
+                    }
 
                     break;
 
@@ -2255,6 +2666,27 @@ document.addEventListener(
                             ?? ''
                         )}
 
+
+                        <div class="form-check mb-3">
+
+                            <input
+                                type="checkbox"
+                                class="form-check-input product-field"
+                                data-block-id="${block.id}"
+                                data-field="open_in_modal"
+                                ${blockContent.open_in_modal ? 'checked' : ''}
+                                id="image-modal-${block.id}"
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="image-modal-${block.id}"
+                            >
+                                Open image in modal gallery
+                            </label>
+
+                        </div>
+
                     `;
 
                     break;
@@ -2267,9 +2699,15 @@ document.addEventListener(
                         ${textInput(
                             block.id,
                             'title',
-                            'Accordion Title',
+                            isProductDataContent
+                                ? 'YouTube Title'
+                            : 'Accordion Title',
                             blockContent.title
-                            ?? 'ラバーストラップ自社工場のご紹介'
+                            ?? (
+                                isProductDataContent
+                                    ? ''
+                                    : 'ラバーストラップ自社工場のご紹介'
+                            )
                         )}
 
 
@@ -2300,7 +2738,11 @@ document.addEventListener(
                             'link_text',
                             'Detail Link Text',
                             blockContent.link_text
-                            ?? '自社生産の詳細はこちら'
+                            ?? (
+                                isProductDataContent
+                                    ? ''
+                                    : '自社生産の詳細はこちら'
+                            )
                         )}
 
 
@@ -2551,6 +2993,105 @@ document.addEventListener(
 
                     `;
 
+                    if (isProductDataContent) {
+                        const buttonTextColor =
+                            normalizeHexColor(
+                                blockContent.text_color,
+                                '#ffffff'
+                            );
+
+                        const buttonBackgroundColor =
+                            normalizeHexColor(
+                                blockContent.background_color,
+                                '#ff9900'
+                            );
+
+                        const buttonBorderRadiusValue =
+                            Number(
+                                blockContent.border_radius
+                            );
+
+                        const buttonBorderRadius =
+                            Number.isFinite(
+                                buttonBorderRadiusValue
+                            )
+                                ? Math.max(
+                                    0,
+                                    Math.min(
+                                        999,
+                                        buttonBorderRadiusValue
+                                    )
+                                )
+                                : 4;
+
+                        fields += `
+
+                            <div class="form-group">
+
+                                <label>
+                                    Text Color
+                                </label>
+
+                                <input
+                                    type="color"
+                                    class="
+                                        form-control
+                                        product-field
+                                        product-data-button-color-input
+                                    "
+                                    data-block-id="${block.id}"
+                                    data-field="text_color"
+                                    value="${buttonTextColor}"
+                                    title="Button text color"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Background Color
+                                </label>
+
+                                <input
+                                    type="color"
+                                    class="
+                                        form-control
+                                        product-field
+                                        product-data-button-color-input
+                                    "
+                                    data-block-id="${block.id}"
+                                    data-field="background_color"
+                                    value="${buttonBackgroundColor}"
+                                    title="Button background color"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Border Radius (px)
+                                </label>
+
+                                <input
+                                    type="number"
+                                    class="form-control product-field"
+                                    data-block-id="${block.id}"
+                                    data-field="border_radius"
+                                    min="0"
+                                    max="999"
+                                    step="1"
+                                    value="${buttonBorderRadius}"
+                                >
+
+                            </div>
+
+                        `;
+                    }
+
                     break;
 
 
@@ -2621,6 +3162,8 @@ document.addEventListener(
                         ${infoCardImageUploader(
                             block.id,
                             blockContent.image_url
+                            ?? '',
+                            blockContent.image_alt
                             ?? ''
                         )}
 
@@ -3146,7 +3689,7 @@ document.addEventListener(
             formData.append('image', file);
 
             const response = await fetch(
-                `/api/v1/admin/products/${productId}/images`,
+                `${contentApiBase}/${productId}/images`,
                 {
                     method: 'POST',
                     credentials: 'same-origin',
@@ -3317,7 +3860,7 @@ document.addEventListener(
                                                 </button>
                                             </div>
                                         </div>
-                                        <input type="file" class="d-none part-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif">
+                                        <input type="file" class="d-none part-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml">
                                     </div>
 
                                     <div class="form-group mb-1">
@@ -3343,7 +3886,7 @@ document.addEventListener(
                                                 </button>
                                             </div>
                                         </div>
-                                        <input type="file" class="d-none part-zoom-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif">
+                                        <input type="file" class="d-none part-zoom-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml">
                                     </div>
                                 </div>
                             </div>
@@ -3373,7 +3916,7 @@ document.addEventListener(
                                         </button>
                                     </div>
                                 </div>
-                                <input type="file" class="d-none banner-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" accept="image/jpeg,image/png,image/webp,image/gif">
+                                <input type="file" class="d-none banner-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml">
                             </div>
                             <div class="col-md-6 mb-2">
                                 <label class="small font-weight-bold text-muted">Banner Link URL:</label>
@@ -3429,7 +3972,7 @@ document.addEventListener(
                                                     </button>
                                                 </div>
                                             </div>
-                                            <input type="file" class="d-none card-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif">
+                                            <input type="file" class="d-none card-file-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml">
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -8776,6 +9319,14 @@ document.addEventListener(
                     : [];
 
 
+            const imageAlts =
+                Array.isArray(
+                    content.image_alts
+                )
+                    ? content.image_alts
+                    : [];
+
+
             return `
 
                 <div class="form-group mb-0">
@@ -8792,10 +9343,14 @@ document.addEventListener(
 
                         ${images
                             .map(
-                                image =>
+                                (image, imageIndex) =>
                                     galleryImageRow(
                                         block.id,
-                                        image
+                                        image,
+                                        imageAlts[
+                                            imageIndex
+                                        ]
+                                        ?? ''
                                     )
                             )
                             .join('')
@@ -8839,7 +9394,8 @@ document.addEventListener(
                                 image/jpeg,
                                 image/png,
                                 image/webp,
-                                image/gif
+                                image/gif,
+                                image/svg+xml
                             "
                             multiple
                         >
@@ -8876,9 +9432,437 @@ document.addEventListener(
         }
 
 
+        function multiPhotoEditor(
+            block,
+            content
+        )
+        {
+            const photos =
+                Array.isArray(content.photos)
+                    ? content.photos
+                    : [];
+
+
+            const caption =
+                content.caption
+                ?? 'クリックすると、拡大写真がみられます。';
+
+
+            return `
+
+                <div
+                    class="multi-photo-editor"
+                    data-multi-photo-editor="${escapeHtml(block.id)}"
+                >
+
+                    <label>
+                        Multi Photo
+                    </label>
+
+                    <small class="form-text text-muted mb-2">
+                        Add several photos. Each photo can have a display image and a larger image for the modal viewer.
+                    </small>
+
+
+                    <div
+                        class="multi-photo-list"
+                        data-block-id="${escapeHtml(block.id)}"
+                    >
+
+                        ${photos
+                            .map(
+                                (photo, photoIndex) =>
+                                    multiPhotoRow(
+                                        block.id,
+                                        photoIndex,
+                                        photo
+                                    )
+                            )
+                            .join('')
+                        }
+
+                    </div>
+
+
+                    <div
+                        class="multi-photo-empty ${photos.length ? 'd-none' : ''}"
+                        data-multi-photo-empty="${escapeHtml(block.id)}"
+                    >
+                        No photos added
+                    </div>
+
+
+                    <div class="mt-3">
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-primary add-multi-photo"
+                            data-block-id="${escapeHtml(block.id)}"
+                        >
+                            + Add Photo
+                        </button>
+
+                    </div>
+
+
+                    <div class="form-group mt-3 mb-0">
+
+                        <label>
+                            Caption
+                        </label>
+
+                        <textarea
+                            class="form-control multi-photo-caption"
+                            data-block-id="${escapeHtml(block.id)}"
+                            rows="2"
+                        >${escapeHtml(caption)}</textarea>
+
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+
+        function multiPhotoRow(
+            blockId,
+            photoIndex,
+            photo
+        )
+        {
+            const item =
+                photo
+                && typeof photo === 'object'
+                    ? photo
+                    : {};
+
+
+            const displayUrl =
+                item.image_url
+                ?? item.url
+                ?? '';
+
+
+            const zoomUrl =
+                item.zoom_url
+                ?? item.original_url
+                ?? displayUrl;
+
+
+            const alt =
+                item.alt
+                ?? '';
+
+
+            return `
+
+                <div
+                    class="multi-photo-row"
+                    data-photo-index="${escapeHtml(photoIndex)}"
+                >
+
+                    <div class="multi-photo-preview">
+
+                        <img
+                            src="${escapeHtml(displayUrl || zoomUrl)}"
+                            alt="${escapeHtml(alt)}"
+                        >
+
+                    </div>
+
+
+                    <div class="multi-photo-fields">
+
+                        ${multiPhotoUrlField(
+                            blockId,
+                            'image_url',
+                            'Display Image',
+                            displayUrl
+                        )}
+
+
+                        ${multiPhotoUrlField(
+                            blockId,
+                            'zoom_url',
+                            'Zoom Image',
+                            zoomUrl
+                        )}
+
+
+                        <div class="form-group mb-1">
+
+                            <label class="small mb-1">
+                                Alt Text
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control form-control-sm multi-photo-field"
+                                data-multi-photo-field="alt"
+                                value="${escapeHtml(alt)}"
+                                maxlength="500"
+                                placeholder="Describe the image"
+                            >
+
+                        </div>
+
+                        <div class="multi-photo-upload-status"></div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger remove-multi-photo"
+                        title="Remove photo"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            `;
+        }
+
+
+        function multiPhotoUrlField(
+            blockId,
+            field,
+            label,
+            value
+        )
+        {
+            return `
+
+                <div class="form-group mb-2">
+
+                    <label class="small mb-1">
+                        ${escapeHtml(label)}
+                    </label>
+
+                    <div class="input-group input-group-sm">
+
+                        <input
+                            type="text"
+                            class="form-control multi-photo-field"
+                            data-multi-photo-field="${escapeHtml(field)}"
+                            value="${escapeHtml(value ?? '')}"
+                            placeholder="/storage/... or https://..."
+                        >
+
+                        <div class="input-group-append">
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary btn-upload-multi-photo"
+                                data-field="${escapeHtml(field)}"
+                            >
+                                Upload
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <input
+                        type="file"
+                        class="d-none multi-photo-file-input"
+                        data-block-id="${escapeHtml(blockId)}"
+                        data-field="${escapeHtml(field)}"
+                        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
+                    >
+
+                </div>
+
+            `;
+        }
+
+
+        function bindMultiPhotoEditors()
+        {
+            document
+                .querySelectorAll('.add-multi-photo')
+                .forEach(function (button) {
+                    button.onclick = function () {
+                        const blockId = this.dataset.blockId;
+                        const list = document.querySelector(
+                            `.multi-photo-list[data-block-id="${blockId}"]`
+                        );
+
+                        if (!list) {
+                            return;
+                        }
+
+                        const rowKey = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+                        list.insertAdjacentHTML(
+                            'beforeend',
+                            multiPhotoRow(blockId, rowKey, {})
+                        );
+
+                        updateMultiPhotoEmptyState(blockId);
+                        bindMultiPhotoEditors();
+                    };
+                });
+
+
+            document
+                .querySelectorAll('.remove-multi-photo')
+                .forEach(function (button) {
+                    button.onclick = function () {
+                        const row = this.closest('.multi-photo-row');
+                        const list = row?.closest('.multi-photo-list');
+
+                        if (!row || !list) {
+                            return;
+                        }
+
+                        const blockId = list.dataset.blockId;
+                        row.remove();
+                        updateMultiPhotoEmptyState(blockId);
+                    };
+                });
+
+
+            document
+                .querySelectorAll('.multi-photo-field')
+                .forEach(function (input) {
+                    input.oninput = function () {
+                        updateMultiPhotoPreview(this.closest('.multi-photo-row'));
+                    };
+                });
+
+
+            document
+                .querySelectorAll('.btn-upload-multi-photo')
+                .forEach(function (button) {
+                    button.onclick = function () {
+                        const row = this.closest('.multi-photo-row');
+                        const field = this.dataset.field;
+
+                        row
+                            ?.querySelector(`.multi-photo-file-input[data-field="${field}"]`)
+                            ?.click();
+                    };
+                });
+
+
+            document
+                .querySelectorAll('.multi-photo-file-input')
+                .forEach(function (input) {
+                    input.onchange = async function () {
+                        const file = this.files?.[0];
+                        const row = this.closest('.multi-photo-row');
+                        const status = row?.querySelector('.multi-photo-upload-status');
+                        const button = row?.querySelector(
+                            `.btn-upload-multi-photo[data-field="${this.dataset.field}"]`
+                        );
+
+                        if (!file || !row) {
+                            return;
+                        }
+
+                        try {
+                            validateImageFile(file);
+
+                            if (status) {
+                                status.textContent = 'Uploading...';
+                                status.className = 'multi-photo-upload-status text-warning';
+                            }
+
+                            if (button) {
+                                button.disabled = true;
+                            }
+
+                            const url = await uploadSingleImageFile(file);
+                            const target = row.querySelector(
+                                `.multi-photo-field[data-multi-photo-field="${this.dataset.field}"]`
+                            );
+
+                            if (target) {
+                                target.value = url;
+                                target.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+
+                            if (status) {
+                                status.textContent = 'Uploaded';
+                                status.className = 'multi-photo-upload-status text-success';
+                            }
+                        } catch (error) {
+                            alert(formatError(error));
+
+                            if (status) {
+                                status.textContent = 'Upload failed';
+                                status.className = 'multi-photo-upload-status text-danger';
+                            }
+                        } finally {
+                            if (button) {
+                                button.disabled = false;
+                            }
+
+                            this.value = '';
+                        }
+                    };
+                });
+
+
+            document
+                .querySelectorAll('.multi-photo-row')
+                .forEach(updateMultiPhotoPreview);
+        }
+
+
+        function updateMultiPhotoPreview(row)
+        {
+            if (!row) {
+                return;
+            }
+
+            const displayUrl = row
+                .querySelector('[data-multi-photo-field="image_url"]')
+                ?.value
+                ?.trim()
+                ?? '';
+
+            const zoomUrl = row
+                .querySelector('[data-multi-photo-field="zoom_url"]')
+                ?.value
+                ?.trim()
+                ?? '';
+
+            const image = row.querySelector('.multi-photo-preview img');
+
+            if (image) {
+                image.src = displayUrl || zoomUrl || '';
+            }
+        }
+
+
+        function updateMultiPhotoEmptyState(blockId)
+        {
+            const list = document.querySelector(
+                `.multi-photo-list[data-block-id="${blockId}"]`
+            );
+
+            const empty = document.querySelector(
+                `[data-multi-photo-empty="${blockId}"]`
+            );
+
+            if (!list || !empty) {
+                return;
+            }
+
+            empty.classList.toggle(
+                'd-none',
+                list.querySelectorAll('.multi-photo-row').length > 0
+            );
+        }
+
+
         function galleryImageRow(
             blockId,
-            url
+            url,
+            alt
         )
         {
             return `
@@ -8891,7 +9875,10 @@ document.addEventListener(
                             src="${escapeHtml(
                                 url
                             )}"
-                            alt=""
+                            alt="${escapeHtml(
+                                alt
+                                ?? ''
+                            )}"
                         >
 
                     </div>
@@ -8925,6 +9912,22 @@ document.addEventListener(
                             value="${escapeHtml(
                                 url
                             )}"
+                        >
+
+
+                        <label class="small text-muted mb-1 mt-2 d-block">
+                            Image Alt Text
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control form-control-sm gallery-image-alt"
+                            value="${escapeHtml(
+                                alt
+                                ?? ''
+                            )}"
+                            maxlength="500"
+                            placeholder="Describe the image"
                         >
 
                     </div>
@@ -9049,6 +10052,37 @@ document.addEventListener(
 
                     }
                 );
+
+
+            document
+                .querySelectorAll(
+                    '.gallery-image-alt'
+                )
+                .forEach(
+                    function (input) {
+
+                        input.oninput =
+                            function () {
+
+                                const row =
+                                    this.closest(
+                                        '.gallery-image-row'
+                                    );
+
+
+                                row
+                                    ?.querySelector(
+                                        '.gallery-image-preview img'
+                                    )
+                                    ?.setAttribute(
+                                        'alt',
+                                        this.value
+                                    );
+
+                            };
+
+                    }
+                );
         }
 
 
@@ -9107,7 +10141,7 @@ document.addEventListener(
 
                     const response =
                         await fetch(
-                            `/api/v1/admin/products/${productId}/images`,
+                            `${contentApiBase}/${productId}/images`,
                             {
                                 method:
                                     'POST',
@@ -9150,7 +10184,8 @@ document.addEventListener(
 
                         galleryImageRow(
                             blockId,
-                            result.data.url
+                            result.data.url,
+                            ''
                         )
 
                     );
@@ -9560,7 +10595,7 @@ document.addEventListener(
 
                 const response =
                     await fetch(
-                        `/api/v1/admin/products/${productId}/templates`,
+                        `${contentApiBase}/${productId}/templates`,
                         {
                             method:
                                 'POST',
@@ -9764,7 +10799,8 @@ document.addEventListener(
 
         function infoCardImageUploader(
             blockId,
-            url
+            url,
+            alt
         )
         {
             const hasImage =
@@ -9822,7 +10858,10 @@ document.addEventListener(
                                 src="${escapeHtml(
                                     url
                                 )}"
-                                alt=""
+                                alt="${escapeHtml(
+                                    alt
+                                    ?? ''
+                                )}"
                             >
 
                         </div>
@@ -9873,6 +10912,36 @@ document.addEventListener(
                     </div>
 
 
+                    <div class="form-group mt-2 mb-2">
+
+                        <label>
+                            Image Alt Text
+                        </label>
+
+                        <input
+                            type="text"
+                            class="
+                                form-control
+                                product-field
+                                info-card-image-alt
+                            "
+                            data-block-id="${blockId}"
+                            data-field="image_alt"
+                            value="${escapeHtml(
+                                alt
+                                ?? ''
+                            )}"
+                            maxlength="255"
+                            placeholder="Describe the image"
+                        >
+
+                        <small class="form-text text-muted">
+                            Text used for accessibility and SEO.
+                        </small>
+
+                    </div>
+
+
                     <div
                         class="
                             info-card-image-empty
@@ -9904,7 +10973,8 @@ document.addEventListener(
                             image/jpeg,
                             image/png,
                             image/webp,
-                            image/gif
+                            image/gif,
+                            image/svg+xml
                         "
                     >
 
@@ -10105,7 +11175,7 @@ document.addEventListener(
 
                 const response =
                     await fetch(
-                        `/api/v1/admin/products/${productId}/images`,
+                        `${contentApiBase}/${productId}/images`,
                         {
                             method:
                                 'POST',
@@ -10159,7 +11229,20 @@ document.addEventListener(
                         '.info-card-image-preview img'
                     )
                     .src =
-                        imageUrl;
+                    imageUrl;
+
+
+                uploader
+                    .querySelector(
+                        '.info-card-image-preview img'
+                    )
+                    .alt =
+                        uploader
+                            .querySelector(
+                                '.info-card-image-alt'
+                            )
+                            ?.value
+                            ?? '';
 
 
                 uploader
@@ -10242,14 +11325,35 @@ document.addEventListener(
                 'image/png',
                 'image/webp',
                 'image/gif',
+                'image/svg+xml',
 
             ];
+
+
+            const extension =
+                String(file.name || '')
+                    .split('.')
+                    .pop()
+                    ?.toLowerCase();
+
+            const isSvg =
+                extension === 'svg'
+                &&
+                [
+                    '',
+                    'image/svg+xml',
+                    'application/xml',
+                    'text/xml',
+                    'text/plain',
+                ].includes(file.type);
 
 
             if (
                 !allowed.includes(
                     file.type
                 )
+                &&
+                !isSvg
             ) {
 
                 throw new Error(
@@ -12773,7 +13877,7 @@ document.addEventListener(
                         type="file"
                         class="d-none single-image-file-input"
                         data-block-id="${blockId}"
-                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
                     >
                 </div>
             `;
@@ -13002,6 +14106,43 @@ document.addEventListener(
                             </button>
 
 
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-light rich-text-link-command"
+                                title="Add link to selected text"
+                            >
+                                🔗 Link
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-light rich-text-unlink-command"
+                                title="Remove link from selected text"
+                            >
+                                Unlink
+                            </button>
+
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-light rich-text-file-upload"
+                                title="Upload a file and insert its link"
+                            >
+                                📎 File
+                            </button>
+
+
+                            <input
+                                type="file"
+                                class="d-none rich-text-file-input"
+                                accept=".pdf,.zip,.rar,.7z,.ai,.psd,.eps,.svg,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.jpg,.jpeg,.png,.webp,.gif"
+                            >
+
+
+                            <span class="small text-muted rich-text-file-status"></span>
+
+
                             <select
                                 class="form-control form-control-sm rich-text-font"
                                 title="Font"
@@ -13109,6 +14250,178 @@ document.addEventListener(
         }
 
 
+        function normalizeRichTextLinkUrl(
+            value
+        )
+        {
+            const href =
+                String(
+                    value
+                    ?? ''
+                )
+                .trim();
+
+
+            if (
+                href === ''
+                ||
+                href.length > 2000
+            ) {
+
+                return null;
+
+            }
+
+
+            if (
+                href.startsWith('/')
+                &&
+                !href.startsWith('//')
+            ) {
+
+                return href;
+
+            }
+
+
+            try {
+
+                const parsed =
+                    new URL(
+                        href,
+                        window.location.origin
+                    );
+
+
+                if (
+                    ![
+                        'http:',
+                        'https:',
+                        'mailto:',
+                    ].includes(
+                        parsed.protocol
+                    )
+                ) {
+
+                    return null;
+
+                }
+
+            } catch (error) {
+
+                return null;
+
+            }
+
+
+            return href;
+        }
+
+
+        function normalizeRichTextColor(
+            value
+        )
+        {
+            const color =
+                String(
+                    value
+                    ?? ''
+                )
+                .trim()
+                .toLowerCase();
+
+
+            if (
+                /^#[0-9a-f]{3}$/.test(
+                    color
+                )
+            ) {
+
+                return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`;
+
+            }
+
+
+            if (
+                /^#[0-9a-f]{6}$/.test(
+                    color
+                )
+                ||
+                /^rgba?\(\s*(?:\d{1,3}%?|\d*\.\d+%?)\s*,\s*(?:\d{1,3}%?|\d*\.\d+%?)\s*,\s*(?:\d{1,3}%?|\d*\.\d+%?)(?:\s*,\s*(?:0|1|0?\.\d+|\d{1,3}%))?\s*\)$/.test(
+                    color
+                )
+                ||
+                /^hsla?\(\s*-?\d*\.?\d+\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%(?:\s*,\s*(?:0|1|0?\.\d+|\d{1,3}%))?\s*\)$/.test(
+                    color
+                )
+            ) {
+
+                return color;
+
+            }
+
+
+            return null;
+        }
+
+
+        function richTextColorFromStyle(
+            style
+        )
+        {
+            for (
+                const declaration
+                of String(
+                    style
+                    ?? ''
+                ).split(';')
+            ) {
+
+                const separator =
+                    declaration.indexOf(':');
+
+
+                if (
+                    separator === -1
+                ) {
+
+                    continue;
+
+                }
+
+
+                const property =
+                    declaration
+                        .slice(
+                            0,
+                            separator
+                        )
+                        .trim()
+                        .toLowerCase();
+
+
+                if (
+                    property !== 'color'
+                ) {
+
+                    continue;
+
+                }
+
+
+                return normalizeRichTextColor(
+                    declaration.slice(
+                        separator + 1
+                    )
+                );
+
+            }
+
+
+            return null;
+        }
+
+
         function sanitizeRichTextEditorHtml(
             html
         )
@@ -13140,6 +14453,8 @@ document.addEventListener(
                     'OL',
                     'LI',
                     'FONT',
+                    'A',
+                    'SPAN',
                 ]);
 
 
@@ -13187,7 +14502,17 @@ document.addEventListener(
 
                         const fontColor =
                             element.tagName === 'FONT'
-                                ? element.getAttribute('color')
+                                ? normalizeRichTextColor(
+                                    element.getAttribute('color')
+                                )
+                                : null;
+
+
+                        const spanColor =
+                            element.tagName === 'SPAN'
+                                ? richTextColorFromStyle(
+                                    element.getAttribute('style')
+                                )
                                 : null;
 
 
@@ -13203,6 +14528,36 @@ document.addEventListener(
                                 : null;
 
 
+                        const linkHref =
+                            element.tagName === 'A'
+                                ? normalizeRichTextLinkUrl(
+                                    element.getAttribute('href')
+                                )
+                                : null;
+
+
+                        const isFileLink =
+                            element.tagName === 'A'
+                            && element.classList.contains(
+                                'rich-text-file-link'
+                            );
+
+
+                        if (
+                            element.tagName === 'A'
+                            &&
+                            linkHref === null
+                        ) {
+
+                            element.replaceWith(
+                                ...element.childNodes
+                            );
+
+                            return;
+
+                        }
+
+
                         Array
                             .from(
                                 element.attributes
@@ -13216,16 +14571,24 @@ document.addEventListener(
 
 
                         if (
-                            fontColor
-                            &&
-                            /^#[0-9a-fA-F]{6}$/.test(
-                                fontColor
-                            )
+                            fontColor !== null
                         ) {
 
                             element.setAttribute(
                                 'color',
                                 fontColor.toLowerCase()
+                            );
+
+                        }
+
+
+                        if (
+                            spanColor !== null
+                        ) {
+
+                            element.setAttribute(
+                                'style',
+                                `color:${spanColor}`
                             );
 
                         }
@@ -13262,6 +14625,34 @@ document.addEventListener(
                             element.setAttribute(
                                 'face',
                                 fontFace
+                            );
+
+                        }
+
+
+                        if (
+                            linkHref !== null
+                        ) {
+
+                            element.setAttribute(
+                                'href',
+                                linkHref
+                            );
+
+                        }
+
+
+                        if (
+                            isFileLink
+                        ) {
+
+                            element.classList.add(
+                                'rich-text-file-link'
+                            );
+
+                            element.setAttribute(
+                                'download',
+                                ''
                             );
 
                         }
@@ -13491,6 +14882,375 @@ document.addEventListener(
 
                                 }
                             );
+
+
+                        wrapper
+                            .querySelectorAll(
+                                '.rich-text-link-command'
+                            )
+                            .forEach(
+                                function (button) {
+
+                                    button.addEventListener(
+                                        'mousedown',
+                                        function (event) {
+                                            event.preventDefault();
+                                            saveSelection();
+                                        }
+                                    );
+
+
+                                    button.addEventListener(
+                                        'click',
+                                        function () {
+
+                                            if (
+                                                !savedRange
+                                                ||
+                                                savedRange.collapsed
+                                            ) {
+
+                                                alert(
+                                                    'Select the text you want to link first.'
+                                                );
+
+                                                return;
+
+                                            }
+
+
+                                            const value =
+                                                window.prompt(
+                                                    'Enter link URL',
+                                                    'https://'
+                                                );
+
+
+                                            if (
+                                                value === null
+                                            ) {
+
+                                                return;
+
+                                            }
+
+
+                                            const url =
+                                                normalizeRichTextLinkUrl(
+                                                    value
+                                                );
+
+
+                                            if (
+                                                !url
+                                            ) {
+
+                                                alert(
+                                                    'Please enter a valid http, https, mailto, or site-relative URL.'
+                                                );
+
+                                                return;
+
+                                            }
+
+
+                                            runCommand(
+                                                'createLink',
+                                                url
+                                            );
+
+                                        }
+                                    );
+
+                                }
+                            );
+
+
+                        wrapper
+                            .querySelectorAll(
+                                '.rich-text-unlink-command'
+                            )
+                            .forEach(
+                                function (button) {
+
+                                    button.addEventListener(
+                                        'mousedown',
+                                        function (event) {
+                                            event.preventDefault();
+                                            saveSelection();
+                                        }
+                                    );
+
+
+                                    button.addEventListener(
+                                        'click',
+                                        function () {
+                                            runCommand('unlink');
+                                        }
+                                    );
+
+                                }
+                            );
+
+
+                        const fileButton =
+                            wrapper.querySelector(
+                                '.rich-text-file-upload'
+                            );
+
+
+                        const fileInput =
+                            wrapper.querySelector(
+                                '.rich-text-file-input'
+                            );
+
+
+                        const fileStatus =
+                            wrapper.querySelector(
+                                '.rich-text-file-status'
+                            );
+
+
+                        const insertRichTextFileLink =
+                            function (
+                                url,
+                                label
+                            ) {
+
+                                const safeUrl =
+                                    normalizeRichTextLinkUrl(
+                                        url
+                                    );
+
+
+                                if (
+                                    !safeUrl
+                                ) {
+
+                                    throw new Error(
+                                        'The uploaded file URL is invalid.'
+                                    );
+
+                                }
+
+
+                                editor.focus();
+
+
+                                const selection =
+                                    window.getSelection();
+
+
+                                const range =
+                                    savedRange
+                                        ? savedRange.cloneRange()
+                                        : document.createRange();
+
+
+                                if (
+                                    !savedRange
+                                ) {
+
+                                    range.selectNodeContents(
+                                        editor
+                                    );
+
+                                    range.collapse(
+                                        false
+                                    );
+
+                                }
+
+
+                                const link =
+                                    document.createElement(
+                                        'a'
+                                    );
+
+
+                                link.href =
+                                    safeUrl;
+
+                                link.className =
+                                    'rich-text-file-link';
+
+                                link.setAttribute(
+                                    'download',
+                                    ''
+                                );
+
+                                const selectedText =
+                                    range.toString();
+
+
+                                if (
+                                    selectedText.trim() !== ''
+                                ) {
+
+                                    link.appendChild(
+                                        range.extractContents()
+                                    );
+
+                                } else {
+
+                                    range.deleteContents();
+
+                                    link.textContent =
+                                        String(
+                                            label
+                                            || 'Download file'
+                                        );
+
+                                }
+
+
+                                range.insertNode(link);
+                                range.setStartAfter(link);
+                                range.collapse(true);
+
+
+                                selection.removeAllRanges();
+                                selection.addRange(range);
+                                savedRange = range.cloneRange();
+
+
+                                sync();
+                            };
+
+
+                        const uploadRichTextFile =
+                            async function (file) {
+
+                                if (
+                                    !file
+                                ) {
+
+                                    return;
+
+                                }
+
+
+                                if (
+                                    fileStatus
+                                ) {
+
+                                    fileStatus.textContent =
+                                        'Uploading...';
+
+                                }
+
+
+                                try {
+
+                                    const formData =
+                                        new FormData();
+
+
+                                    formData.append(
+                                        'file',
+                                        file
+                                    );
+
+
+                                    const response =
+                                        await fetch(
+                                            `${contentApiBase}/${productId}/files`,
+                                            {
+                                                method: 'POST',
+                                                credentials: 'same-origin',
+                                                headers: {
+                                                    'Accept': 'application/json',
+                                                    'X-CSRF-TOKEN': csrf,
+                                                },
+                                                body: formData,
+                                            }
+                                        );
+
+
+                                    const result =
+                                        await response.json();
+
+
+                                    if (
+                                        !response.ok
+                                    ) {
+
+                                        throw result;
+
+                                    }
+
+
+                                    insertRichTextFileLink(
+                                        result.data.url,
+                                        result.data.original_name
+                                        || file.name
+                                    );
+
+
+                                    if (
+                                        fileStatus
+                                    ) {
+
+                                        fileStatus.textContent =
+                                            'Uploaded';
+
+                                    }
+
+                                } catch (error) {
+
+                                    console.error(
+                                        error
+                                    );
+
+
+                                    if (
+                                        fileStatus
+                                    ) {
+
+                                        fileStatus.textContent =
+                                            'Upload failed';
+
+                                    }
+
+
+                                    alert(
+                                        formatError(
+                                            error
+                                        )
+                                    );
+
+                                }
+                            };
+
+
+                        fileButton?.addEventListener(
+                            'mousedown',
+                            function (event) {
+                                event.preventDefault();
+                                saveSelection();
+                            }
+                        );
+
+
+                        fileButton?.addEventListener(
+                            'click',
+                            function () {
+                                fileInput?.click();
+                            }
+                        );
+
+
+                        fileInput?.addEventListener(
+                            'change',
+                            async function () {
+                                await uploadRichTextFile(
+                                    this.files?.[0]
+                                );
+
+                                this.value =
+                                    '';
+                            }
+                        );
 
 
                         const font =
@@ -13955,23 +15715,134 @@ document.addEventListener(
                             {};
 
 
-                        result[
-                            blockId
-                        ].images =
+                        const galleryItems =
                             Array
                                 .from(
                                     list.querySelectorAll(
-                                        '.gallery-image'
+                                        '.gallery-image-row'
                                     )
                                 )
                                 .map(
-                                    input =>
-                                        input.value
-                                            .trim()
+                                    row => ({
+                                        url:
+                                            row
+                                                .querySelector(
+                                                    '.gallery-image'
+                                                )
+                                                ?.value
+                                                ?.trim()
+                                            ?? '',
+                                        alt:
+                                            row
+                                                .querySelector(
+                                                    '.gallery-image-alt'
+                                                )
+                                                ?.value
+                                                ?.trim()
+                                            ?? '',
+                                    })
                                 )
                                 .filter(
-                                    Boolean
+                                    item => item.url
                                 );
+
+
+                        result[
+                            blockId
+                        ].images =
+                            galleryItems.map(
+                                item => item.url
+                            );
+
+
+                        result[
+                            blockId
+                        ].image_alts =
+                            galleryItems.map(
+                                item => item.alt
+                            );
+
+                    }
+                );
+
+
+            /*
+             * Multi Photo
+             */
+            document
+                .querySelectorAll(
+                    '.multi-photo-editor'
+                )
+                .forEach(
+                    function (editor) {
+
+                        const blockId =
+                            editor.dataset
+                                .multiPhotoEditor;
+
+
+                        result[
+                            blockId
+                        ] ??=
+                            {};
+
+
+                        const photos =
+                            Array
+                                .from(
+                                    editor.querySelectorAll(
+                                        '.multi-photo-row'
+                                    )
+                                )
+                                .map(
+                                    row => ({
+                                        image_url:
+                                            row
+                                                .querySelector(
+                                                    '[data-multi-photo-field="image_url"]'
+                                                )
+                                                ?.value
+                                                ?.trim()
+                                            ?? '',
+                                        zoom_url:
+                                            row
+                                                .querySelector(
+                                                    '[data-multi-photo-field="zoom_url"]'
+                                                )
+                                                ?.value
+                                                ?.trim()
+                                            ?? '',
+                                        alt:
+                                            row
+                                                .querySelector(
+                                                    '[data-multi-photo-field="alt"]'
+                                                )
+                                                ?.value
+                                                ?.trim()
+                                            ?? '',
+                                    })
+                                )
+                                .filter(
+                                    photo => photo.image_url || photo.zoom_url
+                                );
+
+
+                        result[
+                            blockId
+                        ].photos =
+                            photos;
+
+
+                        result[
+                            blockId
+                        ].caption =
+                            editor
+                                .querySelector(
+                                    '.multi-photo-caption'
+                                )
+                                ?.value
+                                ?.trim()
+                            ?? '';
 
                     }
                 );
@@ -14223,7 +16094,7 @@ document.addEventListener(
 
                 const response =
                     await fetch(
-                        `/api/v1/admin/products/${productId}/page`,
+                        `${contentApiBase}/${productId}${contentPageSuffix}`,
                         {
                             method:
                                 'PUT',
@@ -14377,7 +16248,7 @@ document.addEventListener(
 
                         const response =
                             await fetch(
-                                `/api/v1/admin/products/${productId}/page/publish`,
+                                `${contentApiBase}/${productId}${contentPublishSuffix}`,
                                 {
                                     method:
                                         'POST',
@@ -15001,6 +16872,12 @@ document.addEventListener(
 
                 heading:
                     'Heading',
+
+                head_section:
+                    'Head Section',
+
+                head_sub_section:
+                    'Head Sub Section',
 
                 rich_text:
                     'Text',

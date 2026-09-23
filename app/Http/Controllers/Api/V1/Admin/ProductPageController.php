@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Faq;
 use App\Models\Product;
 use App\Models\Review;
+use App\Support\UploadedImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -698,6 +699,12 @@ class ProductPageController extends Controller
                     ?? []
                 ),
 
+                'image_alts' => $this->stringArrayPreservingEmpty(
+                    $content['image_alts']
+                    ?? [],
+                    500
+                ),
+
             ],
 
             /*
@@ -813,6 +820,11 @@ class ProductPageController extends Controller
                     $content['alt']
                     ?? null,
                     500
+                ),
+
+                'open_in_modal' => (bool) (
+                    $content['open_in_modal']
+                    ?? false
                 ),
 
             ],
@@ -2368,6 +2380,8 @@ class ProductPageController extends Controller
             'ol',
             'li',
             'font',
+            'a',
+            'span',
         ];
 
         $dangerousTags = [
@@ -2450,12 +2464,17 @@ class ProductPageController extends Controller
 
             $color =
                 $tag === 'font'
-                    ? strtolower(
-                        $child->getAttribute(
-                            'color'
-                        )
+                    ? $this->normalizeRichTextColor(
+                        $child->getAttribute('color')
                     )
-                    : '';
+                    : null;
+
+            $styleColor =
+                $tag === 'span'
+                    ? $this->richTextColorFromStyle(
+                        $child->getAttribute('style')
+                    )
+                    : null;
 
             $size =
                 $tag === 'font'
@@ -2471,6 +2490,40 @@ class ProductPageController extends Controller
                     )
                     : '';
 
+            $linkHref =
+                $tag === 'a'
+                    ? $this->normalizeRichTextLinkHref(
+                        $child->getAttribute('href')
+                    )
+                    : null;
+
+            $isFileLink =
+                $tag === 'a'
+                && $this->hasRichTextFileLinkClass(
+                    $child->getAttribute('class')
+                );
+
+            if (
+                $tag === 'a'
+                &&
+                $linkHref === null
+            ) {
+                $this->sanitizeRichTextChildren($child);
+
+                while (
+                    $child->firstChild
+                ) {
+                    $parent->insertBefore(
+                        $child->firstChild,
+                        $child
+                    );
+                }
+
+                $parent->removeChild($child);
+
+                continue;
+            }
+
             while (
                 $child->attributes->length
                 > 0
@@ -2482,18 +2535,20 @@ class ProductPageController extends Controller
 
             }
 
-            if (
-                preg_match(
-                    '/^#[0-9a-f]{6}$/',
-                    $color
-                ) === 1
-            ) {
+            if ($color !== null) {
 
                 $child->setAttribute(
                     'color',
                     $color
                 );
 
+            }
+
+            if ($styleColor !== null) {
+                $child->setAttribute(
+                    'style',
+                    'color:'.$styleColor
+                );
             }
 
             if (
@@ -2530,11 +2585,105 @@ class ProductPageController extends Controller
 
             }
 
+            if (
+                $linkHref !== null
+            ) {
+                $child->setAttribute(
+                    'href',
+                    $linkHref
+                );
+            }
+
+            if ($isFileLink) {
+                $child->setAttribute(
+                    'class',
+                    'rich-text-file-link'
+                );
+                $child->setAttribute(
+                    'download',
+                    ''
+                );
+            }
+
             $this->sanitizeRichTextChildren(
                 $child
             );
 
         }
+    }
+
+    private function richTextColorFromStyle(string $style): ?string
+    {
+        foreach (explode(';', $style) as $declaration) {
+            [$property, $value] = array_pad(explode(':', $declaration, 2), 2, null);
+
+            if (strtolower(trim((string) $property)) !== 'color') {
+                continue;
+            }
+
+            return $this->normalizeRichTextColor($value);
+        }
+
+        return null;
+    }
+
+    private function normalizeRichTextColor(mixed $value): ?string
+    {
+        $color = strtolower(trim((string) $value));
+
+        if (preg_match('/^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/', $color) === 1) {
+            if (strlen($color) === 4) {
+                return '#'.$color[1].$color[1].$color[2].$color[2].$color[3].$color[3];
+            }
+
+            return $color;
+        }
+
+        if (preg_match(
+            '/^rgba?\(\s*(?:\d{1,3}%?|\d*\.\d+%?)\s*,\s*(?:\d{1,3}%?|\d*\.\d+%?)\s*,\s*(?:\d{1,3}%?|\d*\.\d+%?)(?:\s*,\s*(?:0|1|0?\.\d+|\d{1,3}%))?\s*\)$/',
+            $color
+        ) === 1) {
+            return $color;
+        }
+
+        if (preg_match(
+            '/^hsla?\(\s*-?\d*\.?\d+\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%(?:\s*,\s*(?:0|1|0?\.\d+|\d{1,3}%))?\s*\)$/',
+            $color
+        ) === 1) {
+            return $color;
+        }
+
+        return null;
+    }
+
+    private function normalizeRichTextLinkHref(string $value): ?string
+    {
+        $href = trim($value);
+
+        if ($href === '' || mb_strlen($href) > 2000) {
+            return null;
+        }
+
+        if (str_starts_with($href, '/') && ! str_starts_with($href, '//')) {
+            return $href;
+        }
+
+        if (filter_var($href, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        $scheme = strtolower((string) parse_url($href, PHP_URL_SCHEME));
+
+        return in_array($scheme, ['http', 'https', 'mailto'], true)
+            ? $href
+            : null;
+    }
+
+    private function hasRichTextFileLinkClass(string $value): bool
+    {
+        $classes = preg_split('/\s+/', trim($value)) ?: [];
+
+        return in_array('rich-text-file-link', $classes, true);
     }
 
     private function stringValue(
@@ -2593,6 +2742,35 @@ class ProductPageController extends Controller
             ->all();
     }
 
+    private function stringArrayPreservingEmpty(
+        mixed $values,
+        int $maxLength
+    ): array {
+        if (
+            ! is_array(
+                $values
+            )
+        ) {
+
+            return [];
+
+        }
+
+        return array_values(
+            array_map(
+                fn ($value): ?string => $this->stringValue(
+                    $value,
+                    $maxLength
+                ),
+                array_slice(
+                    $values,
+                    0,
+                    20
+                )
+            )
+        );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Upload Product Image
@@ -2608,8 +2786,6 @@ class ProductPageController extends Controller
             'image' => [
                 'required',
                 'file',
-                'image',
-                'mimes:jpg,jpeg,png,webp,gif',
                 'max:10240',
             ],
 
@@ -2620,54 +2796,18 @@ class ProductPageController extends Controller
                 'image'
             );
 
-        /*
-         * Verify actual image
-         */
-        if (
-            @getimagesize(
-                $file->getRealPath()
-            )
-            === false
-        ) {
-
-            return response()->json([
-
-                'success' => false,
-
-                'message' => 'The uploaded file is not a valid image.',
-
-            ], 422);
-
-        }
-
         $mime =
             $file->getMimeType();
 
-        $extensionMap = [
+        $extension = UploadedImage::detectExtension($file);
 
-            'image/jpeg' => 'jpg',
-
-            'image/png' => 'png',
-
-            'image/webp' => 'webp',
-
-            'image/gif' => 'gif',
-
-        ];
-
-        if (
-            ! isset(
-                $extensionMap[
-                    $mime
-                ]
-            )
-        ) {
+        if ($extension === null) {
 
             return response()->json([
 
                 'success' => false,
 
-                'message' => 'Unsupported image type.',
+                'message' => 'The uploaded file is not a valid supported image.',
 
             ], 422);
 
@@ -2678,9 +2818,7 @@ class ProductPageController extends Controller
             .
             '.'
             .
-            $extensionMap[
-                $mime
-            ];
+            $extension;
 
         $path =
             $file->storeAs(
@@ -2722,6 +2860,46 @@ class ProductPageController extends Controller
 
             ],
 
+        ], 201);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Upload Product Content File
+    |--------------------------------------------------------------------------
+    */
+
+    public function uploadFile(
+        Request $request,
+        Product $product
+    ) {
+        $request->validate([
+            'file' => [
+                'required',
+                'file',
+                'mimes:pdf,zip,rar,7z,ai,psd,eps,svg,doc,docx,xls,xlsx,ppt,pptx,txt,csv,jpg,jpeg,png,webp,gif',
+                'max:51200',
+            ],
+        ]);
+
+        $file = $request->file('file');
+        $extension = strtolower($file->getClientOriginalExtension());
+        $filename = Str::uuid().($extension !== '' ? '.'.$extension : '');
+        $path = $file->storeAs(
+            'products/'.$product->id.'/content-files',
+            $filename,
+            'public'
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'path' => $path,
+                'url' => Storage::disk('public')->url($path),
+                'filename' => $filename,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+            ],
         ], 201);
     }
 

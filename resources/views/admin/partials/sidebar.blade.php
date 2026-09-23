@@ -205,7 +205,7 @@
 
                     <li>
                         <a
-                            href="/admin/orders.php"
+                            href="{{ route('admin.orders.index') }}"
                             class="list-group-item list-group-item-action bg-light"
                         >
                             HMご注文
@@ -371,81 +371,36 @@
 
                         <li>
                             <a
-                                href="/admin/acrylic_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
+                                href="{{ route('admin.gallery-pages.index') }}"
+                                class="list-group-item list-group-item-action bg-light font-weight-bold"
                             >
-                                Acrylic Keyholder Gallery
+                                Gallery Page Settings
                             </a>
                         </li>
 
-                        <li>
-                            <a
-                                href="/admin/acrylic_coaster_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
-                            >
-                                Acrylic Coaster Gallery
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="/admin/acrylic_standee_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
-                            >
-                                Acrylic Standee Gallery
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="/admin/acrylic_hair_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
-                            >
-                                Acrylic Hair Gallery
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="/admin/rubber_strap_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
-                            >
-                                Rubber Strap Gallery
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="/admin/rubber_keyholder_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
-                            >
-                                Rubber Keyholder Gallery
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="/admin/rubber_coaster_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
-                            >
-                                Rubber Coaster Gallery
-                            </a>
-                        </li>
-
-                        <li>
-                            <a
-                                href="/admin/wappen_gallery.php"
-                                class="list-group-item list-group-item-action bg-light"
-                            >
-                                Wappen Gallery
-                            </a>
-                        </li>
+                        @foreach ($adminGalleryPages ?? collect() as $galleryPage)
+                            <li>
+                                <a
+                                    href="{{ route('admin.gallery-items.index', $galleryPage) }}"
+                                    class="list-group-item list-group-item-action bg-light"
+                                >
+                                    {{ $galleryPage->name }}
+                                </a>
+                            </li>
+                        @endforeach
 
                     @endif
 
                 </ul>
 
             </div>
+            <a
+                href="{{ route('admin.template-products.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Template Management
+            </a>
+
             <div class="list-group-item list-group-item-action bg-light">
 
     Product Settings
@@ -512,6 +467,62 @@
                 class="list-group-item list-group-item-action bg-light"
             >
                 Product Price Rules
+            </a>
+        </li>
+
+    </ul>
+
+</div>
+
+<div class="list-group-item list-group-item-action bg-light">
+
+    Product data setting
+
+    <ul class="submenu">
+
+        <li>
+            <a
+                href="{{ route('admin.product-data-layouts.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Product Data Layouts
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.product-data.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Product Data
+            </a>
+        </li>
+
+    </ul>
+
+</div>
+
+<div class="list-group-item list-group-item-action bg-light">
+
+    Custom Page Setting
+
+    <ul class="submenu">
+
+        <li>
+            <a
+                href="{{ route('admin.custom-page-layouts.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Custom Page Layouts
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.custom-pages.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Custom Pages
             </a>
         </li>
 
