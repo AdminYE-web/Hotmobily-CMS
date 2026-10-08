@@ -360,6 +360,54 @@
 
 
 
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="product-shipping-fee">Shipping Fee (Without Tax)</label>
+                        <input id="product-shipping-fee" type="number" min="0" step="1" value="800" class="form-control">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="product-shipping-fee-with-tax">Shipping Fee (With Tax)</label>
+                        <input id="product-shipping-fee-with-tax" type="number" min="0" step="1" value="880" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-shipping-free-minimum">Free Shipping Minimum (Product Amount With Tax)</label>
+                    <input id="product-shipping-free-minimum" type="number" min="0" step="1" value="11000" class="form-control" placeholder="Leave blank to always charge shipping">
+                    <small class="form-text text-muted">Product price only, excluding options and shipping. 0 means always free.</small>
+                </div>
+
+                {{-- Price Display --}}
+                <div class="form-group">
+
+                    <label for="product-price-display-type">
+                        Price Display
+                    </label>
+
+
+                    <select
+                        id="product-price-display-type"
+                        class="form-control"
+                    >
+
+                        <option value="with_tax">
+                            With Tax
+                        </option>
+
+                        <option value="without_tax">
+                            Without Tax
+                        </option>
+
+                    </select>
+
+
+                    <small class="form-text text-muted">
+                        Choose which product and option prices are shown on the storefront.
+                    </small>
+
+                </div>
+
+
+
                 {{-- ====================================================
                     Product Layout
                 ==================================================== --}}
@@ -711,6 +759,9 @@
 document.addEventListener(
     'DOMContentLoaded',
     function () {
+        document.getElementById('product-shipping-fee').addEventListener('input', function () {
+            document.getElementById('product-shipping-fee-with-tax').value = Math.round((Number(this.value) || 0) * 1.1);
+        });
 
         /*
         |--------------------------------------------------------------------------
@@ -1090,6 +1141,8 @@ document.addEventListener(
                      */
                     let contentButton = '';
 
+                    let draftButton = '';
+
 
                     if (
                         product.product_layout_id
@@ -1111,6 +1164,25 @@ document.addEventListener(
 
                         `;
 
+                        draftButton = `
+
+                            <a
+                                href="/products/${encodeProductPath(product.slug)}?draft=1"
+                                target="_blank"
+                                rel="noopener"
+                                class="
+                                    btn
+                                    btn-sm
+                                    btn-outline-warning
+                                    btn-content
+                                "
+                                title="Open the current draft in a new tab"
+                            >
+                                Draft
+                            </a>
+
+                        `;
+
                     } else {
 
                         contentButton = `
@@ -1127,6 +1199,24 @@ document.addEventListener(
                                 title="Select a Product Layout first"
                             >
                                 Content
+                            </button>
+
+                        `;
+
+                        draftButton = `
+
+                            <button
+                                type="button"
+                                class="
+                                    btn
+                                    btn-sm
+                                    btn-outline-secondary
+                                    btn-content
+                                "
+                                disabled
+                                title="Select a Product Layout first"
+                            >
+                                Draft
                             </button>
 
                         `;
@@ -1205,6 +1295,8 @@ document.addEventListener(
                             <div class="product-actions">
 
                                 ${contentButton}
+
+                                ${draftButton}
 
 
                                 <a
@@ -1605,6 +1697,19 @@ function encodeProductPath(
                         ?? 'draft';
 
 
+                document
+                    .getElementById(
+                        'product-price-display-type'
+                    )
+                    .value =
+                        product.price_display_type
+                        ?? 'with_tax';
+
+                document.getElementById('product-shipping-fee').value = product.shipping_fee ?? 800;
+                document.getElementById('product-shipping-fee-with-tax').value = Math.round((product.shipping_fee ?? 800) * 1.1);
+                document.getElementById('product-shipping-free-minimum').value = product.shipping_free_minimum ?? '';
+
+
                 layoutSelect.value =
                     product.product_layout_id
                     ?? '';
@@ -1943,6 +2048,17 @@ function encodeProductPath(
                             document
                                 .getElementById(
                                     'product-status'
+                                )
+                                .value,
+
+                        shipping_fee: Number(document.getElementById('product-shipping-fee').value),
+                        shipping_free_minimum: document.getElementById('product-shipping-free-minimum').value === ''
+                            ? null : Number(document.getElementById('product-shipping-free-minimum').value),
+
+                        price_display_type:
+                            document
+                                .getElementById(
+                                    'product-price-display-type'
                                 )
                                 .value,
 
@@ -2325,6 +2441,18 @@ function encodeProductPath(
                 )
                 .value =
                     'draft';
+
+
+            document
+                .getElementById(
+                    'product-price-display-type'
+                )
+                .value =
+                    'with_tax';
+
+            document.getElementById('product-shipping-fee').value = 800;
+            document.getElementById('product-shipping-fee-with-tax').value = 880;
+            document.getElementById('product-shipping-free-minimum').value = 11000;
 
 
             layoutSelect.value =

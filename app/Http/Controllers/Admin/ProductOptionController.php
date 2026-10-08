@@ -8,7 +8,9 @@ use App\Models\ProductOption;
 use App\Support\RichTextSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -72,6 +74,39 @@ class ProductOptionController extends Controller
         return redirect()
             ->route('admin.product-options.index')
             ->with('status', "Product Option {$productOption->option_code} was updated.");
+    }
+
+    public function destroy(ProductOption $productOption): RedirectResponse
+    {
+        $references = [
+            'product_option_group_items' => ['product_option_id', 'price_summary_option_id', 'confirm_price_summary_option_id', 'complete_price_summary_option_id'],
+            'product_option_groups' => ['price_summary_option_id', 'confirm_price_summary_option_id', 'complete_price_summary_option_id'],
+            'option_dependencies' => ['trigger_product_option_id', 'target_product_option_id'],
+            'option_price_rules' => ['target_product_option_id'],
+            'option_price_rule_conditions' => ['product_option_id'],
+            'product_price_rule_conditions' => ['product_option_id'],
+        ];
+
+        foreach ($references as $table => $columns) {
+            if (! Schema::hasTable($table)) {
+                continue;
+            }
+
+            foreach ($columns as $column) {
+                if (Schema::hasColumn($table, $column) && DB::table($table)->where($column, $productOption->id)->exists()) {
+                    return redirect()->route('admin.product-options.index')
+                        ->with('error', 'Cannot delete this option because it is used by a product, dependency, or price rule. Remove those references first.');
+                }
+            }
+        }
+
+        $images = $productOption->option_images ?? [];
+        $optionCode = $productOption->option_code;
+        $productOption->delete();
+        $this->deleteStoredImages($images);
+
+        return redirect()->route('admin.product-options.index')
+            ->with('status', "Product Option {$optionCode} was deleted.");
     }
 
     /** @return \Illuminate\Support\Collection<int, OptionGroup> */

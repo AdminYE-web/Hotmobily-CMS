@@ -1,0 +1,9 @@
+[data-editor-block-id] { position: relative; outline: 1px solid var(--ve-color, #4285ed); outline-offset: 2px; border-radius: 5px; margin-bottom: 12px; padding-top: 38px; cursor: pointer; }
+[data-editor-block-id].ve-preview-selected { outline-width: 3px; }
+.ve-edit-button { position: absolute; top: 4px; left: 5px; z-index: 20; border: 0; border-radius: 7px; color: #fff; background: var(--ve-color, #4285ed); box-shadow: 0 3px 8px #24374e22; padding: 7px 12px; font: 700 12px/1.3 Arial, sans-serif; cursor: pointer; }
+.ve-edit-button:focus-visible { outline: 3px solid #16283f; outline-offset: 3px; }
+.ve-product-only > *:not(#wrapper):not(script):not(style):not(link) { display: none !important; }
+.ve-product-only #sidemenu { display: none !important; }
+.ve-product-only #wrapper { width: 100% !important; max-width: 100% !important; min-width: 0 !important; margin: 0 !important; padding: 12px !important; box-sizing: border-box; }
+.ve-product-only #content_wrapper { width: 100% !important; max-width: 100% !important; min-width: 0 !important; margin: 0 !important; padding: 0 !important; float: none !important; }
+.ve-product-only { min-width: 0 !important; background: #eef6ff !important; }

@@ -115,6 +115,18 @@ class ProductController extends Controller
                 ]),
             ],
 
+            'shipping_fee' => ['sometimes', 'required', 'integer', 'min:0', 'max:100000000'],
+            'shipping_free_minimum' => ['nullable', 'integer', 'min:0', 'max:100000000'],
+
+            'price_display_type' => [
+                'sometimes',
+                'required',
+                Rule::in([
+                    'with_tax',
+                    'without_tax',
+                ]),
+            ],
+
         ]);
 
 
@@ -247,6 +259,18 @@ class ProductController extends Controller
                     'draft',
                     'active',
                     'inactive',
+                ]),
+            ],
+
+            'shipping_fee' => ['sometimes', 'required', 'integer', 'min:0', 'max:100000000'],
+            'shipping_free_minimum' => ['nullable', 'integer', 'min:0', 'max:100000000'],
+
+            'price_display_type' => [
+                'sometimes',
+                'required',
+                Rule::in([
+                    'with_tax',
+                    'without_tax',
                 ]),
             ],
 

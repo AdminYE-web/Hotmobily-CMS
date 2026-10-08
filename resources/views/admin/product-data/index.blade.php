@@ -9,6 +9,7 @@
     $pageManagerLayoutApiBase = $pageManagerLayoutApiBase ?? '/api/v1/admin/product-data-layouts';
     $pageManagerLayoutBuilderBase = $pageManagerLayoutBuilderBase ?? '/admin/product-data-layouts';
     $pageManagerContentBase = $pageManagerContentBase ?? '/admin/product-data';
+    $pageManagerPreviewBase = $pageManagerPreviewBase ?? '/products';
     $pageManagerLayoutField = $pageManagerLayoutField ?? 'product_data_layout_id';
     $pageManagerSlugPlaceholder = $pageManagerSlugPlaceholder ?? 'data.html';
     $pageManagerSlugHelp = $pageManagerSlugHelp ?? 'Path after /products/, for example data.html or rubberstrap/data.';
@@ -190,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const layoutApiBase = @json($pageManagerLayoutApiBase);
     const layoutBuilderBase = @json($pageManagerLayoutBuilderBase);
     const contentBase = @json($pageManagerContentBase);
+    const previewBase = @json($pageManagerPreviewBase);
     const layoutField = @json($pageManagerLayoutField);
     const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
     const modal = $('#productDataModal');
@@ -265,6 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pages.forEach(function (page) {
             const tr = document.createElement('tr');
             const status = ['active', 'inactive'].includes(page.status) ? page.status : 'draft';
+            const hasLayout = Boolean(page[layoutField]);
             tr.innerHTML = `
                 <td>${page.id}</td>
                 <td>
@@ -275,7 +278,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${page.layout ? escapeHtml(page.layout.name) : '<span class="text-muted">Not selected</span>'}</td>
                 <td><span class="product-data-status product-data-status--${status}">${escapeHtml(page.status)}</span></td>
                 <td>
-                    ${page[layoutField] ? `<a href="${contentBase}/${page.id}/content" class="btn btn-sm btn-primary">Content</a>` : `<button type="button" class="btn btn-sm btn-secondary" disabled title="Select a ${pageEntityLabel} Layout first">Content</button>`}
+                    ${hasLayout ? `<a href="${contentBase}/${page.id}/content" class="btn btn-sm btn-primary">Content</a>` : `<button type="button" class="btn btn-sm btn-secondary" disabled title="Select a ${pageEntityLabel} Layout first">Content</button>`}
+                    ${hasLayout ? `<a href="${previewUrl(page.slug)}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-warning" title="Open the current draft in a new tab">Draft</a>` : `<button type="button" class="btn btn-sm btn-outline-secondary" disabled title="Select a ${pageEntityLabel} Layout first">Draft</button>`}
                     <button type="button" class="btn btn-sm btn-warning btn-edit-product-data" data-id="${page.id}">Edit</button>
                     <button type="button" class="btn btn-sm btn-danger btn-delete-product-data" data-id="${page.id}">Delete</button>
                 </td>
@@ -389,6 +393,18 @@ document.addEventListener('DOMContentLoaded', function () {
             return Object.values(error.errors).flat().join('\n');
         }
         return error?.message || 'Something went wrong.';
+    }
+
+    function encodeProductPath(slug) {
+        return String(slug || '')
+            .split('/')
+            .map(segment => encodeURIComponent(segment))
+            .join('/');
+    }
+
+    function previewUrl(slug) {
+        const prefix = String(previewBase || '').replace(/\/+$/, '');
+        return `${prefix}/${encodeProductPath(slug)}?draft=1`;
     }
 
     function escapeHtml(value) {

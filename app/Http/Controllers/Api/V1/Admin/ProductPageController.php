@@ -558,6 +558,18 @@ class ProductPageController extends Controller
     |--------------------------------------------------------------------------
     */
 
+    public function sanitizePreviewContent(array $layout, array $incoming): array
+    {
+        $clean = [];
+        foreach ($this->collectLayoutBlocks($layout) as $blockId => $type) {
+            if (array_key_exists($blockId, $incoming)) {
+                $clean[$blockId] = $this->sanitizeBlockContent($type, $incoming[$blockId]);
+            }
+        }
+
+        return $clean;
+    }
+
     private function collectLayoutBlocks(
         array $layout
     ): array {
@@ -1355,6 +1367,11 @@ class ProductPageController extends Controller
                                 'price' => $this->stringValue(
                                     $item['price'] ?? null,
                                     100
+                                ),
+
+                                'description' => $this->stringValue(
+                                    $item['description'] ?? null,
+                                    5000
                                 ),
 
                                 'zoom_url' => $this->stringValue(

@@ -16,6 +16,9 @@ use App\Http\Controllers\Api\V1\Admin\ProductDataLayoutController;
 use App\Http\Controllers\Api\V1\Admin\ProductDataPageController;
 use App\Http\Controllers\Api\V1\Admin\CustomPageLayoutController;
 use App\Http\Controllers\Api\V1\Admin\CustomPageController;
+use App\Http\Controllers\Api\V1\Admin\GuideLayoutController;
+use App\Http\Controllers\Api\V1\Admin\GuideMainController;
+use App\Http\Controllers\Api\V1\Admin\GuidePageController;
 use App\Http\Controllers\Api\V1\Admin\ProductPageController;
 use App\Http\Controllers\Api\V1\Admin\ProductLayoutController;
 use App\Http\Controllers\Api\V1\Admin\FaqController;
@@ -585,6 +588,30 @@ Route::delete(
                     Route::post('/custom-pages/{customPage}/images', [CustomPageController::class, 'uploadImage']);
                     Route::post('/custom-pages/{customPage}/files', [CustomPageController::class, 'uploadFile']);
                     Route::post('/custom-pages/{customPage}/templates', [CustomPageController::class, 'uploadTemplate']);
+
+                    Route::get('/guide-main', [GuideMainController::class, 'show']);
+                    Route::put('/guide-main', [GuideMainController::class, 'update']);
+                    Route::post('/guide-main/images', [GuideMainController::class, 'uploadImage']);
+
+                    Route::get('/guide-layouts', [GuideLayoutController::class, 'index']);
+                    Route::post('/guide-layouts', [GuideLayoutController::class, 'store']);
+                    Route::get('/guide-layouts/{guideLayout}', [GuideLayoutController::class, 'show']);
+                    Route::put('/guide-layouts/{guideLayout}', [GuideLayoutController::class, 'update']);
+                    Route::delete('/guide-layouts/{guideLayout}', [GuideLayoutController::class, 'destroy']);
+                    Route::put('/guide-layouts/{guideLayout}/layout', [GuideLayoutController::class, 'saveLayout']);
+                    Route::post('/guide-layouts/{guideLayout}/publish', [GuideLayoutController::class, 'publish']);
+
+                    Route::get('/guides', [GuidePageController::class, 'index']);
+                    Route::post('/guides', [GuidePageController::class, 'store']);
+                    Route::get('/guides/{guidePage}', [GuidePageController::class, 'show']);
+                    Route::put('/guides/{guidePage}', [GuidePageController::class, 'update']);
+                    Route::delete('/guides/{guidePage}', [GuidePageController::class, 'destroy']);
+                    Route::get('/guides/{guidePage}/content', [GuidePageController::class, 'editContent']);
+                    Route::put('/guides/{guidePage}/content', [GuidePageController::class, 'updateContent']);
+                    Route::post('/guides/{guidePage}/content/publish', [GuidePageController::class, 'publishContent']);
+                    Route::post('/guides/{guidePage}/images', [GuidePageController::class, 'uploadImage']);
+                    Route::post('/guides/{guidePage}/files', [GuidePageController::class, 'uploadFile']);
+                    Route::post('/guides/{guidePage}/templates', [GuidePageController::class, 'uploadTemplate']);
 
 
                     /*

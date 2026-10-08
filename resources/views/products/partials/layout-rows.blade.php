@@ -35,6 +35,8 @@
                             'block' => $block,
                             'contents' => $contents,
                             'product' => $product,
+                            'guideMain' => $guideMain ?? null,
+                            'guideItems' => $guideItems ?? collect(),
                             'publishedAt' => $publishedAt,
                             'faqData' => $faqData ?? [],
                             'reviewData' => $reviewData ?? [],

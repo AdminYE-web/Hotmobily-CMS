@@ -55,7 +55,7 @@
                                     </td>
                                     <td>
                                         @forelse ($rule->conditions as $condition)
-                                            <span class="badge badge-light border mr-1 mb-1">{{ $condition->productOption?->option_name ?? '-' }}</span>
+                                            <span class="badge badge-light border mr-1 mb-1 option-rule-condition">{{ $condition->productOption?->option_name ?? '-' }}</span>
                                         @empty
                                             <span class="text-muted">Any</span>
                                         @endforelse
@@ -76,7 +76,19 @@
         </div>
 
         @if ($rules->hasPages())
-            <div class="mt-3">{{ $rules->links() }}</div>
+            <div class="mt-3">{{ $rules->links('pagination::bootstrap-4') }}</div>
         @endif
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        .option-rule-condition {
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+            text-align: left;
+        }
+    </style>
+@endpush

@@ -3,12 +3,22 @@
 @php
     $isProductDataContent = ($contentEditorMode ?? 'product') === 'product_data';
     $isCustomPageContent = ($contentEditorMode ?? 'product') === 'custom_page';
-    $isCmsContent = $isProductDataContent || $isCustomPageContent;
+    $isGuideContent = ($contentEditorMode ?? 'product') === 'guide';
+    $isCmsContent = $isProductDataContent || $isCustomPageContent || $isGuideContent;
+    $hasVisualEditor = true;
+    $visualEditorPreviewRoute = match ($contentEditorMode ?? 'product') {
+        'guide' => 'admin.guides.content.preview',
+        'custom_page' => 'admin.custom-pages.content.preview',
+        'product_data' => 'admin.product-data.content.preview',
+        default => 'admin.products.content.preview',
+    };
     $contentApiBase = $contentApiBase ?? '/api/v1/admin/products';
     $contentIndexUrl = $contentIndexUrl ?? route('admin.products.index');
-    $contentEntityTitle = $isCustomPageContent
+    $contentEntityTitle = $isGuideContent
+        ? 'Guide'
+        : ($isCustomPageContent
         ? 'Custom Page'
-        : ($isProductDataContent ? 'Product Data' : 'Product');
+        : ($isProductDataContent ? 'Product Data' : 'Product'));
 @endphp
 
 @section('title', $contentEntityTitle.' Content')
@@ -22,7 +32,7 @@
         <div>
 
             <a href="{{ $contentIndexUrl }}">
-                ← {{ $isCustomPageContent ? 'Custom Pages' : ($isProductDataContent ? 'Product Data' : 'Products') }}
+                ← {{ $isGuideContent ? 'Guides' : ($isCustomPageContent ? 'Custom Pages' : ($isProductDataContent ? 'Product Data' : 'Products')) }}
             </a>
 
             <h1 class="h3 mt-2 mb-1">
@@ -30,7 +40,7 @@
             </h1>
 
             <small class="text-muted">
-                {{ $isCustomPageContent ? 'Custom Page Content Editor' : ($isProductDataContent ? 'Product Data Content Editor' : 'Product Content Editor') }}
+                {{ $isGuideContent ? 'Guide Content Editor' : ($isCustomPageContent ? 'Custom Page Content Editor' : ($isProductDataContent ? 'Product Data Content Editor' : 'Product Content Editor')) }}
             </small>
 
         </div>
@@ -83,12 +93,16 @@
         class="d-none"
     >
 
+        @if ($hasVisualEditor)
+            @include('admin.products.partials.visual-editor')
+        @endif
+
         <div class="card shadow-sm">
 
             <div class="card-header">
 
                 <strong>
-                    {{ $isCustomPageContent ? 'Custom Page Content' : ($isProductDataContent ? 'Product Data Page Content' : 'Product Page Content') }}
+                    {{ $isGuideContent ? 'Guide Content' : ($isCustomPageContent ? 'Custom Page Content' : ($isProductDataContent ? 'Product Data Page Content' : 'Product Page Content')) }}
                 </strong>
 
             </div>
@@ -110,6 +124,10 @@
 
 
 @push('styles')
+
+@if ($hasVisualEditor)
+    <link rel="stylesheet" href="{{ asset('admin/css/product-content-visual-editor.css') }}">
+@endif
 
 <style>
 
@@ -398,6 +416,17 @@
 
 .rich-text-surface:focus {
     box-shadow: inset 0 0 0 2px rgba(0, 123, 255, .15);
+}
+
+.rich-text-surface img {
+    max-width: 100%;
+    height: auto;
+}
+
+.rich-text-surface.is-image-drop-target {
+    outline: 2px dashed #007bff;
+    outline-offset: -2px;
+    background-color: #eef6ff;
 }
 
 
@@ -853,6 +882,38 @@
     font-size: 11px;
     padding: 4px 10px;
     white-space: nowrap;
+}
+
+.link-block-dropdown {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+.link-block-dropdown summary {
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+.link-block-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+}
+.link-block-dropdown-menu select {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
 }
 
 
@@ -1605,6 +1666,10 @@
 
 @push('scripts')
 
+@if ($hasVisualEditor)
+    <script src="{{ asset('admin/js/product-content-visual-editor.js') }}"></script>
+@endif
+
 <script>
 
 document.addEventListener(
@@ -1873,6 +1938,7 @@ document.addEventListener(
 
         const nonContentBlockFields = new Set([
             'content_format',
+            'text_format',
             'text_size',
             'open_in_modal',
             'show_share',
@@ -1886,6 +1952,7 @@ document.addEventListener(
         const automaticallyFilledBlockTypes = new Set([
             'price_accordion',
             'production_schedule',
+            'guide_main',
             'divider',
             'spacer',
         ]);
@@ -2645,6 +2712,45 @@ document.addEventListener(
                     break;
 
 
+                case 'step_information':
+
+                    fields = `
+
+                        ${imageUploaderInput(
+                            block.id,
+                            'image_url',
+                            'Step Image',
+                            blockContent.image_url
+                            ?? ''
+                        )}
+
+
+                        ${textInput(
+                            block.id,
+                            'image_alt',
+                            'Image Alt Text',
+                            blockContent.image_alt
+                            ?? ''
+                        )}
+
+
+                        ${richTextEditor(
+                            block.id,
+                            blockContent.text
+                            ?? '',
+                            blockContent.text_format
+                            ?? blockContent.content_format
+                            ?? 'plain',
+                            blockContent.text_size
+                            ?? 'normal',
+                            'text'
+                        )}
+
+                    `;
+
+                    break;
+
+
                 case 'image':
 
                     fields = `
@@ -2764,6 +2870,15 @@ document.addEventListener(
                     fields = relatedBlogsEditor(
                         block,
                         blockContent
+                    );
+
+                    break;
+
+
+                case 'guide_main':
+
+                    fields = systemMessage(
+                        'Guide Main is configured in the Guide Main settings page.'
                     );
 
                     break;
@@ -3873,6 +3988,11 @@ document.addEventListener(
                                         <input type="text" class="form-control form-control-sm part-field-price" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.price)}" placeholder="+0円 or +11円">
                                     </div>
 
+                                    <div class="form-group mb-1">
+                                        <label class="small text-muted mb-0 font-weight-bold">รายละเอียด (Description):</label>
+                                        <textarea class="form-control form-control-sm part-field-description" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" rows="3" placeholder="รายละเอียดพาร์ทสินค้า...">${escapeHtml(item.description ?? '')}</textarea>
+                                    </div>
+
                                     <div class="form-group mb-0 mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
                                             <label class="small text-muted mb-0 font-weight-bold">Zoom URL (รูปภาพตอนขยาย):</label>
@@ -4187,6 +4307,16 @@ document.addEventListener(
                     const itemIdx = Number(this.dataset.itemIndex);
                     if (data.tabs[tabIdx]?.items?.[itemIdx]) {
                         data.tabs[tabIdx].items[itemIdx].price = this.value;
+                    }
+                });
+            });
+
+            container.querySelectorAll('.part-field-description').forEach(input => {
+                input.addEventListener('input', function () {
+                    const tabIdx = Number(this.dataset.tabIndex);
+                    const itemIdx = Number(this.dataset.itemIndex);
+                    if (data.tabs[tabIdx]?.items?.[itemIdx]) {
+                        data.tabs[tabIdx].items[itemIdx].description = this.value;
                     }
                 });
             });
@@ -13989,7 +14119,8 @@ document.addEventListener(
             blockId,
             value,
             contentFormat = 'plain',
-            textSize = 'normal'
+            textSize = 'normal',
+            valueField = 'content'
         )
         {
             const normalizedTextSize =
@@ -14142,6 +14273,11 @@ document.addEventListener(
 
                             <span class="small text-muted rich-text-file-status"></span>
 
+                            <button type="button" class="btn btn-sm btn-light rich-text-image-upload" title="Upload an image, or drag image files into the text area">Image</button>
+                            <input type="file" class="d-none rich-text-image-input" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml">
+                            <button type="button" class="btn btn-sm btn-light rich-text-image-url" title="Insert an image from a URL">Image URL</button>
+                            <span class="small text-muted rich-text-image-status" role="status" aria-live="polite"></span>
+
 
                             <select
                                 class="form-control form-control-sm rich-text-font"
@@ -14226,7 +14362,9 @@ document.addEventListener(
                             data-block-id="${escapeHtml(
                                 blockId
                             )}"
-                            data-field="content"
+                            data-field="${escapeHtml(
+                                valueField
+                            )}"
                         >${escapeHtml(
                             value
                         )}</textarea>
@@ -14318,6 +14456,19 @@ document.addEventListener(
         }
 
 
+        function normalizeRichTextImageUrl(value)
+        {
+            const source = String(value ?? '').trim();
+            if (!source || source.length > 2000) return null;
+            if (source.startsWith('/') && !source.startsWith('//')) return source;
+            try {
+                const parsed = new URL(source);
+                return ['http:', 'https:'].includes(parsed.protocol) ? source : null;
+            } catch {
+                return null;
+            }
+        }
+
         function normalizeRichTextColor(
             value
         )
@@ -14365,60 +14516,181 @@ document.addEventListener(
         }
 
 
-        function richTextColorFromStyle(
+        function normalizeRichTextInlineStyle(
             style
         )
         {
-            for (
-                const declaration
-                of String(
-                    style
-                    ?? ''
-                ).split(';')
-            ) {
+            const normalized = [];
 
-                const separator =
-                    declaration.indexOf(':');
+            String(
+                style
+                ?? ''
+            )
+            .split(';')
+            .forEach(
+                function (declaration) {
 
-
-                if (
-                    separator === -1
-                ) {
-
-                    continue;
-
-                }
+                    const separator =
+                        declaration.indexOf(':');
 
 
-                const property =
-                    declaration
-                        .slice(
-                            0,
-                            separator
+                    if (
+                        separator === -1
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const property =
+                        declaration
+                            .slice(
+                                0,
+                                separator
+                            )
+                            .trim()
+                            .toLowerCase();
+
+
+                    const value =
+                        declaration
+                            .slice(
+                                separator + 1
+                            )
+                            .trim();
+
+                    const normalizedValue =
+                        value
+                            .replace(
+                                /\s*!important\s*$/i,
+                                ''
+                            )
+                            .trim();
+
+
+                    if (
+                        property === 'color'
+                    ) {
+
+                        const color =
+                            normalizeRichTextColor(
+                                normalizedValue
+                            );
+
+
+                        if (
+                            color !== null
+                        ) {
+
+                            normalized.push(
+                                `color:${color}`
+                            );
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    if (
+                        property === 'font-weight'
+                        &&
+                        (
+                            [
+                                'normal',
+                                'bold',
+                                'bolder',
+                                'lighter',
+                            ]
+                            .includes(
+                                normalizedValue.toLowerCase()
+                            )
+                            ||
+                            /^[1-9]00$/.test(
+                                normalizedValue
+                            )
                         )
-                        .trim()
-                        .toLowerCase();
+                    ) {
+
+                        normalized.push(
+                            `font-weight:${normalizedValue.toLowerCase()}`
+                        );
 
 
-                if (
-                    property !== 'color'
-                ) {
+                        return;
 
-                    continue;
+                    }
+
+
+                    if (
+                        property === 'font-style'
+                        &&
+                        [
+                            'normal',
+                            'italic',
+                            'oblique',
+                        ]
+                        .includes(
+                            normalizedValue.toLowerCase()
+                        )
+                    ) {
+
+                        normalized.push(
+                            `font-style:${normalizedValue.toLowerCase()}`
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    if (
+                        property === 'text-decoration'
+                    ) {
+
+                        const allowed = [
+                            'none',
+                            'underline',
+                            'overline',
+                            'line-through',
+                        ];
+
+                        const decorations =
+                            value
+                                .replace(
+                                    /\s*!important\s*$/i,
+                                    ''
+                                )
+                                .toLowerCase()
+                                .split(/\s+/)
+                                .filter(
+                                    token => allowed.includes(token)
+                                );
+
+
+                        if (
+                            decorations.length > 0
+                        ) {
+
+                            normalized.push(
+                                `text-decoration:${[...new Set(decorations)].join(' ')}`
+                            );
+
+                        }
+
+                    }
 
                 }
+            );
 
 
-                return normalizeRichTextColor(
-                    declaration.slice(
-                        separator + 1
-                    )
-                );
-
-            }
-
-
-            return null;
+            return normalized.length > 0
+                ? [...new Set(normalized)].join(';')
+                : null;
         }
 
 
@@ -14452,9 +14724,16 @@ document.addEventListener(
                     'UL',
                     'OL',
                     'LI',
+                    'H1',
+                    'H2',
+                    'H3',
+                    'H4',
+                    'H5',
+                    'H6',
                     'FONT',
                     'A',
                     'SPAN',
+                    'IMG',
                 ]);
 
 
@@ -14508,12 +14787,10 @@ document.addEventListener(
                                 : null;
 
 
-                        const spanColor =
-                            element.tagName === 'SPAN'
-                                ? richTextColorFromStyle(
-                                    element.getAttribute('style')
-                                )
-                                : null;
+                        const inlineStyle =
+                            normalizeRichTextInlineStyle(
+                                element.getAttribute('style')
+                            );
 
 
                         const fontSize =
@@ -14535,6 +14812,18 @@ document.addEventListener(
                                 )
                                 : null;
 
+
+                        const imageSource = element.tagName === 'IMG'
+                            ? normalizeRichTextImageUrl(element.getAttribute('src'))
+                            : null;
+                        const imageAlt = element.tagName === 'IMG'
+                            ? (element.getAttribute('alt') || '').slice(0, 500)
+                            : '';
+
+                        if (element.tagName === 'IMG' && imageSource === null) {
+                            element.remove();
+                            return;
+                        }
 
                         const isFileLink =
                             element.tagName === 'A'
@@ -14570,6 +14859,11 @@ document.addEventListener(
                             );
 
 
+                        if (imageSource !== null) {
+                            element.setAttribute('src', imageSource);
+                            if (imageAlt) element.setAttribute('alt', imageAlt);
+                        }
+
                         if (
                             fontColor !== null
                         ) {
@@ -14583,12 +14877,12 @@ document.addEventListener(
 
 
                         if (
-                            spanColor !== null
+                            inlineStyle !== null
                         ) {
 
                             element.setAttribute(
                                 'style',
-                                `color:${spanColor}`
+                                inlineStyle
                             );
 
                         }
@@ -15252,6 +15546,126 @@ document.addEventListener(
                             }
                         );
 
+
+                        const imageButton = wrapper.querySelector('.rich-text-image-upload');
+                        const imageInput = wrapper.querySelector('.rich-text-image-input');
+                        const imageUrlButton = wrapper.querySelector('.rich-text-image-url');
+                        const imageStatus = wrapper.querySelector('.rich-text-image-status');
+
+                        const insertImage = function (url, alt = '', insertionRange = savedRange) {
+                            const source = normalizeRichTextImageUrl(url);
+                            if (!source) throw new Error('Please use a valid HTTP(S) image URL or a local image path.');
+                            editor.focus();
+                            const range = insertionRange && editor.contains(insertionRange.commonAncestorContainer)
+                                ? insertionRange.cloneRange()
+                                : document.createRange();
+                            if (!insertionRange || !editor.contains(insertionRange.commonAncestorContainer)) {
+                                range.selectNodeContents(editor);
+                                range.collapse(false);
+                            }
+                            const image = document.createElement('img');
+                            image.setAttribute('src', source);
+                            image.setAttribute('alt', String(alt).slice(0, 500));
+                            range.deleteContents();
+                            range.insertNode(image);
+                            range.setStartAfter(image);
+                            range.collapse(true);
+                            const lineBreak = document.createElement('br');
+                            range.insertNode(lineBreak);
+                            range.setStartAfter(lineBreak);
+                            range.collapse(true);
+                            const selection = window.getSelection();
+                            selection.removeAllRanges();
+                            selection.addRange(range);
+                            savedRange = range.cloneRange();
+                            sync();
+                            editor.dispatchEvent(new Event('input', {bubbles: true}));
+                        };
+
+                        [imageButton, imageUrlButton].forEach(function (button) {
+                            button?.addEventListener('mousedown', function (event) {
+                                event.preventDefault();
+                                saveSelection();
+                            });
+                        });
+                        imageButton?.addEventListener('click', () => imageInput?.click());
+                        imageUrlButton?.addEventListener('click', function () {
+                            const url = prompt('Image URL (https://… or /storage/…)');
+                            if (!url) return;
+                            try {
+                                insertImage(url);
+                                imageStatus.textContent = 'Image inserted';
+                            } catch (error) {
+                                imageStatus.textContent = error.message;
+                            }
+                        });
+                        let uploadingImages = false;
+                        const uploadRichTextImages = async function (files, insertionRange = savedRange?.cloneRange() || null) {
+                            if (!files.length || uploadingImages) return;
+                            uploadingImages = true;
+                            imageButton.disabled = true;
+                            imageUrlButton.disabled = true;
+                            let inserted = 0;
+                            try {
+                                files.forEach(validateImageFile);
+                                for (const file of files) {
+                                    imageStatus.textContent = `Uploading ${inserted + 1}/${files.length}…`;
+                                    const url = await uploadSingleImageFile(file);
+                                    insertImage(url, file.name, insertionRange);
+                                    insertionRange = savedRange.cloneRange();
+                                    inserted++;
+                                }
+                                imageStatus.textContent = inserted === 1 ? 'Image inserted' : `${inserted} images inserted`;
+                            } catch (error) {
+                                const message = error?.message || 'Image upload failed';
+                                imageStatus.textContent = inserted ? `${inserted} image(s) inserted. ${message}` : message;
+                            } finally {
+                                uploadingImages = false;
+                                imageButton.disabled = false;
+                                imageUrlButton.disabled = false;
+                            }
+                        };
+                        imageInput?.addEventListener('change', async function () {
+                            await uploadRichTextImages(Array.from(this.files || []));
+                            this.value = '';
+                        });
+
+                        editor.addEventListener('dragover', function (event) {
+                            if (!Array.from(event.dataTransfer?.types || []).includes('Files')) return;
+                            event.preventDefault();
+                            event.dataTransfer.dropEffect = uploadingImages ? 'none' : 'copy';
+                            if (!uploadingImages) editor.classList.add('is-image-drop-target');
+                        });
+                        editor.addEventListener('dragleave', function (event) {
+                            if (!editor.contains(event.relatedTarget)) editor.classList.remove('is-image-drop-target');
+                        });
+                        editor.addEventListener('drop', async function (event) {
+                            const files = Array.from(event.dataTransfer?.files || []);
+                            if (!files.length) return;
+                            event.preventDefault();
+                            event.stopPropagation();
+                            editor.classList.remove('is-image-drop-target');
+                            if (uploadingImages) return;
+
+                            let range = null;
+                            if (document.caretRangeFromPoint) {
+                                range = document.caretRangeFromPoint(event.clientX, event.clientY);
+                            } else if (document.caretPositionFromPoint) {
+                                const position = document.caretPositionFromPoint(event.clientX, event.clientY);
+                                if (position) {
+                                    range = document.createRange();
+                                    range.setStart(position.offsetNode, position.offset);
+                                    range.collapse(true);
+                                }
+                            }
+                            if (!range || !editor.contains(range.commonAncestorContainer)) {
+                                range = document.createRange();
+                                range.selectNodeContents(editor);
+                                range.collapse(false);
+                            }
+                            range.collapse(true);
+                            await uploadRichTextImages(files, range);
+                        });
 
                         const font =
                             wrapper.querySelector(
@@ -16541,8 +16955,21 @@ document.addEventListener(
                     </div>
 
                     <div class="link-url-block-picker">
+                        <details class="link-block-dropdown">
+                            <summary>${escapeHtml(currentValue.startsWith('#') ? currentValue : '— Select Block ID —')}</summary>
+                            <div class="link-block-dropdown-menu">
+                    <input
+                        type="search"
+                        class="form-control form-control-sm"
+                        data-link-picker-search
+                        placeholder="Search Block ID or block name..."
+                        aria-label="Search Block ID or block name"
+                        autocomplete="off"
+                    >
 
                         <select
+                            size="8"
+                            aria-label="Block ID options"
                             data-link-picker-for="${blockId}"
                             data-link-picker-field="${field}"
                         >
@@ -16554,6 +16981,8 @@ document.addEventListener(
                             ${options}
 
                         </select>
+                            </div>
+                        </details>
 
                         <button
                             type="button"
@@ -16697,6 +17126,62 @@ document.addEventListener(
 
         function bindLinkUrlPickers()
         {
+            document.querySelectorAll('[data-link-picker-search]').forEach(function (search) {
+                if (search.dataset.searchBound === '1') return;
+
+                const select = search.closest('.link-url-group').querySelector('[data-link-picker-for]');
+                if (!select) return;
+
+                search.dataset.searchBound = '1';
+                const options = Array.from(select.options).map(function (option) {
+                    return option.cloneNode(true);
+                });
+                const dropdown = search.closest('.link-block-dropdown');
+                dropdown.addEventListener('toggle', function () {
+                    if (dropdown.open) {
+                        document.querySelectorAll('.link-block-dropdown[open]').forEach(function (other) {
+                            if (other !== dropdown) other.open = false;
+                        });
+                        search.value = '';
+                        search.dispatchEvent(new Event('input'));
+                        search.focus();
+                    }
+                });
+                dropdown.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape') {
+                        dropdown.open = false;
+                        dropdown.querySelector('summary').focus();
+                    }
+                });
+                select.addEventListener('change', function () {
+                    dropdown.querySelector('summary').textContent = select.selectedOptions[0]?.textContent.trim() || '— Select Block ID —';
+                    dropdown.open = false;
+                });
+
+                search.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') event.preventDefault();
+                });
+
+                search.addEventListener('input', function () {
+                    const query = search.value.trim().toLocaleLowerCase();
+                    const selectedValue = select.value;
+                    const matches = options.filter(function (option) {
+                        return !option.value || option.textContent.toLocaleLowerCase().includes(query);
+                    });
+
+                    select.replaceChildren(...matches.map(function (option) {
+                        return option.cloneNode(true);
+                    }));
+                    select.value = matches.some(function (option) {
+                        return option.value === selectedValue;
+                    }) ? selectedValue : '';
+
+                    if (matches.length === 1) {
+                        select.options[0].textContent = 'No matching blocks';
+                    }
+                });
+            });
+
             // Apply button click
             document
                 .querySelectorAll(
@@ -16885,11 +17370,17 @@ document.addEventListener(
                 image:
                     'Image',
 
+                step_information:
+                    'Step Information',
+
                 youtube:
                     'YouTube',
 
                 related_blogs:
                     'Related Blogs',
+
+                guide_main:
+                    'Guide Main',
 
                 button:
                     'Button',
@@ -17066,6 +17557,23 @@ document.addEventListener(
         | Start
         |--------------------------------------------------------------------------
         */
+
+        @if ($hasVisualEditor)
+            window.ProductContentVisualEditor.init({
+                previewUrl: @json(route($visualEditorPreviewRoute, $product)),
+                csrf: csrf,
+                getLayout: () => layout,
+                collectContent: collectContent,
+                getBlockName: getBlockName,
+                collapsedIds: collapsedContentBlockIds,
+                sharedSections: [
+                    {key: 'shared:header', label: 'Header Banner', url: @json(route('admin.banner.edit'))},
+                    {key: 'shared:sidebar', label: 'Sidebar Products', url: @json(route('admin.side-menu.products.index'))},
+                    {key: 'shared:links', label: 'Sidebar Links', url: @json(route('admin.side-menu.links.index'))},
+                    {key: 'shared:navigation', label: 'Navigation', url: null}
+                ]
+            });
+        @endif
 
         loadEditor();
 

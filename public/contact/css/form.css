@@ -1,0 +1,176 @@
+@media screen and (max-width: 768px){
+  #area2{
+    display: none;
+  }
+  #area3{
+    display: none;
+  }
+  #area7{
+    display: none;
+  }
+  #menu2{
+    display: none;
+  }
+}
+input[type=checkbox]{
+  width: 17px;
+  height: 17px;
+}
+input[type=radio]{
+  width: 17px;
+  height: 17px;
+}
+@keyframes animate {
+  0%   {box-shadow: none;}
+  100% {box-shadow: 0px 0px 7px 2px red;}
+}
+input[type=text]:focus, input[type=number]:focus, input[type=tel]:focus, select:focus {
+  border: 1px solid #555;
+  border-radius: 3px;
+}
+input[type=text], input[type=number], input[type=tel], select {
+  border: 1px solid #ccc;
+  padding: 10px 10px;
+  border-radius: 3px;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  outline: none;
+  margin: 3px 0;
+  width: 96%;
+}
+input[type=text]:required:valid,input[type=number]:required:valid,input[type=tel]:required:valid, select:required:valid{
+  background: white;
+  color: black;
+}
+input[type=text]:required:invalid,input[type=number]:required:invalid,input[type=tel]:required:invalid, select:required:invalid{
+  background: #FFFFE5;
+  color: #757575;
+}
+input[type=number],input[type=tel],#zip, .setwid60, #zip2{
+  width: 70% !important;
+}
+
+.TableAllL {
+  width: 100% !important;
+  padding: 0px;
+  border: 1px solid lightgray;
+}
+
+.TableAllL .TableLeft {
+  background: unset;
+  color: black;
+}
+
+.TableAllL .TableRight {
+  border-bottom: unset;
+  padding-left: 5px;
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button,
+input[type=tel]::-webkit-inner-spin-button, 
+input[type=tel]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.inputtext{
+  position: relative;
+  width: 100%;
+}
+.inputnum{
+  position: relative;
+  width: 70%;
+}
+.inputtext-label,.inputtext-label2,.inputtext-label3{
+  background: #EE4D4D;
+  position: absolute;
+  top: 8px;
+  right: 2%;
+  display: block;
+  padding: 5px 5px 6px 5px;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+}
+.inputtext-label2{
+  right: 27%;
+}
+.inputtext-label3{
+  right: 8%;
+}
+label.error{
+  display: none !important;
+}
+.error{
+  background: #FFE5E5 !important;
+  padding: 10px!important;
+}
+textarea {
+  width: 98.5%!important;
+  border: 2px solid #f0f0f0;
+  border-radius: 5px;
+}
+@media only screen and (max-width: 841px) and (min-device-width: 320px){
+  textarea {width: 100% !important;}
+  .est_ord{margin:0;}
+  .TableLeft {display: none;}
+  .TableRight{border-bottom:unset;}
+  .title1{display: block;}
+  .inputtext-label2{
+    right: 0%;
+  }
+  input[type=number],input[type=tel], #zip, .setwid60, #zip2 {
+    width: 96% !important;
+  }
+  .inputnum {
+    position: relative;
+    width: 90%;
+  }
+  .TableAllL{
+    width:100%;
+    display: inline-table;
+  }
+  .TableAllL .TableLeft,.TableAllL .TableRight {
+    display:inline-block;
+    width: 94%;
+  }
+  .TableLeft.comment_left{
+    display: none;
+  }
+}
+.btn.btn-next {
+  padding: 15px;
+  transition: all .3s ease;
+  border: 1px solid #1e6077;
+  cursor: pointer;
+}
+input[type=number],input[type=tel] {
+  padding: 10px!important;
+  font-size: unset!important;
+  margin-left: 0!important;
+}
+.part-content {
+  display: flex;
+}
+
+.flex-item.textContactCenter{
+  max-width: 100%
+}
+.flex-item .btn{
+  line-height: 1;
+}
+.title_payment, .message_box,.add_form{
+  display: none;
+}
+
+label.part-name.texth3{
+  text-align: left;
+  padding-left: 15px;
+  background: #f0f0f0;
+  margin-right: 5px;
+  width: 25%;
+}
+.select-name{
+  padding: 10px;
+  display: block;
+  width: 70%;
+}

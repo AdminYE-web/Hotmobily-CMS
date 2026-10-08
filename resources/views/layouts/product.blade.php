@@ -34,6 +34,10 @@
     <!--フッター ここまで-->
 
     @stack('scripts')
+    @if ($visualEditorPreview ?? false)
+        <link rel="stylesheet" href="{{ asset('admin/css/product-content-visual-preview.css') }}">
+        <script src="{{ asset('admin/js/product-content-visual-preview.js') }}"></script>
+    @endif
 </body>
 
 </html>

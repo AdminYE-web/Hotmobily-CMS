@@ -3,15 +3,20 @@
 @php
     $isProductDataBuilder = ($layoutBuilderMode ?? 'product') === 'product_data';
     $isCustomPageBuilder = ($layoutBuilderMode ?? 'product') === 'custom_page';
-    $isCmsBuilder = $isProductDataBuilder || $isCustomPageBuilder;
+    $isGuideBuilder = ($layoutBuilderMode ?? 'product') === 'guide';
+    $isCmsBuilder = $isProductDataBuilder || $isCustomPageBuilder || $isGuideBuilder;
     $layoutBuilderApiBase = $layoutBuilderApiBase ?? '/api/v1/admin/product-layouts';
     $layoutBuilderIndexUrl = $layoutBuilderIndexUrl ?? route('admin.product-layouts.index');
-    $layoutBuilderTitle = $isCustomPageBuilder
+    $layoutBuilderTitle = $isGuideBuilder
+        ? 'Guide Layout Builder'
+        : ($isCustomPageBuilder
         ? 'Custom Page Layout Builder'
-        : ($isProductDataBuilder ? 'Product Data Layout Builder' : 'Product Layout Builder');
-    $layoutBuilderListTitle = $isCustomPageBuilder
+        : ($isProductDataBuilder ? 'Product Data Layout Builder' : 'Product Layout Builder'));
+    $layoutBuilderListTitle = $isGuideBuilder
+        ? 'Guide Layouts'
+        : ($isCustomPageBuilder
         ? 'Custom Page Layouts'
-        : ($isProductDataBuilder ? 'Product Data Layouts' : 'Product Layouts');
+        : ($isProductDataBuilder ? 'Product Data Layouts' : 'Product Layouts'));
 @endphp
 
 @section('title', $layoutBuilderTitle)
@@ -36,7 +41,7 @@
             </h1>
 
             <small class="text-muted">
-                {{ $isCustomPageBuilder ? 'Visual Custom Page Layout Builder' : ($isProductDataBuilder ? 'Visual Product Data Layout Builder' : 'Visual Product Layout Builder') }}
+                {{ $isGuideBuilder ? 'Visual Guide Layout Builder' : ($isCustomPageBuilder ? 'Visual Custom Page Layout Builder' : ($isProductDataBuilder ? 'Visual Product Data Layout Builder' : 'Visual Product Layout Builder')) }}
             </small>
 
         </div>
@@ -125,6 +130,18 @@
                     @endif
 
 
+                    @if ($isGuideBuilder)
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="guide_main"
+                    >
+                        <span>GM</span>
+                        Guide Main
+                    </button>
+                    @endif
+
+
                     <button
                         type="button"
                         class="component-button add-block"
@@ -143,6 +160,18 @@
                         <span>🖼</span>
                         Image
                     </button>
+
+
+                    @if ($isGuideBuilder)
+                    <button
+                        type="button"
+                        class="component-button add-block"
+                        data-type="step_information"
+                    >
+                        <span>STEP</span>
+                        Step Information
+                    </button>
+                    @endif
 
 
                     @if ($isCustomPageBuilder)
@@ -167,7 +196,7 @@
                     </button>
 
 
-                    @unless ($isCmsBuilder)
+                    @if ($isGuideBuilder || ! $isCmsBuilder)
                     <button
                         type="button"
                         class="component-button add-block"
@@ -176,7 +205,7 @@
                         <span>📰</span>
                         Related Blogs
                     </button>
-                    @endunless
+                    @endif
 
 
                     <button
@@ -541,7 +570,7 @@
                             </div>
 
                             <div class="preview-url">
-                                {{ $isCustomPageBuilder ? 'hotmobily.jp/howtodesign' : ($isProductDataBuilder ? 'hotmobily.jp/products/data' : 'hotmobily.jp/products/example-product') }}
+                                    {{ $isGuideBuilder ? 'hotmobily.jp/guide/how-to-design' : ($isCustomPageBuilder ? 'hotmobily.jp/howtodesign' : ($isProductDataBuilder ? 'hotmobily.jp/products/data' : 'hotmobily.jp/products/example-product')) }}
                             </div>
 
                         </div>
@@ -562,7 +591,7 @@
                                 </div>
 
                                 <h5>
-                                    {{ $isCustomPageBuilder ? 'Empty Custom Page Layout' : ($isProductDataBuilder ? 'Empty Product Data Layout' : 'Empty Product Layout') }}
+                                    {{ $isGuideBuilder ? 'Empty Guide Layout' : ($isCustomPageBuilder ? 'Empty Custom Page Layout' : ($isProductDataBuilder ? 'Empty Product Data Layout' : 'Empty Product Layout')) }}
                                 </h5>
 
                                 <p class="text-muted text-center mb-3">
@@ -1735,6 +1764,48 @@
 
 
 /* ============================================================
+   Guide Step Information
+============================================================ */
+
+.sim-step-information {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 10px;
+    border-top: 2px solid #ccc;
+    padding-top: 8px;
+}
+
+
+.sim-step-image {
+    flex: 0 0 20%;
+    min-height: 105px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eee;
+    border: 1px solid #ddd;
+    color: #999;
+    font-size: 10px;
+}
+
+
+.sim-step-text {
+    flex: 1 1 0;
+    min-width: 0;
+    color: #281600;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+
+.sim-step-text h4 {
+    margin: 4px 0 7px;
+    font-size: 15px;
+}
+
+
+/* ============================================================
    Text Link
 ============================================================ */
 
@@ -1894,6 +1965,52 @@
     background: #f1f3f5;
 
     color: #6c757d;
+}
+
+
+/* ============================================================
+   Guide Main
+============================================================ */
+
+.sim-guide-main-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+
+.sim-guide-main-card {
+    min-height: 130px;
+    padding: 8px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: linear-gradient(to bottom left, #e6e6e6 10%, #ebefee 35%, #fefefe 100%);
+    color: #111;
+    text-align: center;
+}
+
+
+.sim-guide-main-icon {
+    width: 58%;
+    height: 58px;
+    margin: 0 auto 7px;
+    border-radius: 50%;
+    background: #55bdb8;
+}
+
+
+.sim-guide-main-card strong {
+    display: block;
+    color: #e85d3d;
+    font-size: 10px;
+}
+
+
+.sim-guide-main-card small {
+    display: block;
+    margin-top: 5px;
+    font-size: 9px;
+    line-height: 1.3;
 }
 
 
@@ -3801,6 +3918,40 @@ document.addEventListener(
                     );
 
 
+                case 'step_information':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-step-information">
+
+                                <div class="sim-step-image">
+                                    STEP IMAGE
+                                </div>
+
+                                <div class="sim-step-text">
+
+                                    <h4>
+                                        Step Information
+                                    </h4>
+
+                                    <p>
+                                        Upload a step image and enter the complete step description in one rich-text editor.
+                                    </p>
+
+                                    <p>
+                                        You can use headings, paragraphs, lists and links in the text area.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        `
+                    );
+
+
                 case 'multi_photo':
 
                     return contentWrapper(
@@ -3909,6 +4060,38 @@ document.addEventListener(
                                         <div>データトレースサービスとは？</div>
                                     </div>
 
+                                </div>
+
+                            </div>
+
+                        `
+                    );
+
+
+                case 'guide_main':
+
+                    return contentWrapper(
+                        block,
+                        `
+
+                            <div class="sim-guide-main-grid">
+
+                                <div class="sim-guide-main-card">
+                                    <div class="sim-guide-main-icon"></div>
+                                    <strong>Guide Main Item</strong>
+                                    <small>Configured in Guide Main settings</small>
+                                </div>
+
+                                <div class="sim-guide-main-card">
+                                    <div class="sim-guide-main-icon"></div>
+                                    <strong>Guide Main Item</strong>
+                                    <small>Configured in Guide Main settings</small>
+                                </div>
+
+                                <div class="sim-guide-main-card">
+                                    <div class="sim-guide-main-icon"></div>
+                                    <strong>Guide Main Item</strong>
+                                    <small>Configured in Guide Main settings</small>
                                 </div>
 
                             </div>
@@ -5797,6 +5980,21 @@ document.addEventListener(
                     break;
 
 
+                case 'step_information':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+
+                            The step image and the complete step text are configured in the Guide Content Editor.
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
                 case 'multi_photo':
 
                     container.innerHTML = `
@@ -5841,6 +6039,21 @@ document.addEventListener(
                             <strong>
                                 Product Content Editor
                             </strong>
+
+                        </div>
+
+                    `;
+
+                    break;
+
+
+                case 'guide_main':
+
+                    container.innerHTML = `
+
+                        <div class="alert alert-light border mb-0">
+
+                            Guide Main items are configured in the Guide Main settings page.
 
                         </div>
 
@@ -7332,6 +7545,7 @@ document.addEventListener(
                 'product_gallery',
                 'product_details',
                 'template_button',
+                'guide_main',
                 'price_accordion',
                 'shipping_schedule',
                 'production_schedule',
@@ -7363,6 +7577,9 @@ document.addEventListener(
                 image:
                     'Image',
 
+                step_information:
+                    'Step Information',
+
                 multi_photo:
                     'Multi Photo',
 
@@ -7371,6 +7588,9 @@ document.addEventListener(
 
                 related_blogs:
                     'Related Blogs',
+
+                guide_main:
+                    'Guide Main',
 
                 button:
                     'Button',

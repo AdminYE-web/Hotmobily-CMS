@@ -10,7 +10,7 @@ class RichTextSanitizer
             return null;
         }
 
-        $html = mb_substr(trim((string) $value), 0, 20000);
+        $html = trim((string) $value);
 
         if ($html === '') {
             return '';
@@ -66,11 +66,36 @@ class RichTextSanitizer
             'ul',
             'ol',
             'li',
+            'h1',
+            'h2',
+            'h3',
+            'h4',
+            'h5',
+            'h6',
             'a',
             'figure',
             'img',
             'font',
             'span',
+            'blockquote',
+            'hr',
+            'pre',
+            'code',
+            's',
+            'del',
+            'ins',
+            'sub',
+            'sup',
+            'table',
+            'caption',
+            'colgroup',
+            'col',
+            'thead',
+            'tbody',
+            'tfoot',
+            'tr',
+            'th',
+            'td',
         ];
 
         $dangerousTags = [
@@ -89,6 +114,40 @@ class RichTextSanitizer
             }
 
             $tag = strtolower($child->tagName);
+
+            if ($tag === 'figure' && $this->hasClass($child->getAttribute('class'), 'media')) {
+                $embedUrl = $this->youtubeEmbedUrlFromFigure($child);
+
+                if ($embedUrl !== null && $child->ownerDocument instanceof \DOMDocument) {
+                    $wrapper = $this->createYouTubeEmbedWrapper($child->ownerDocument, $embedUrl);
+                    $parent->replaceChild($wrapper, $child);
+                } else {
+                    $parent->removeChild($child);
+                }
+
+                continue;
+            }
+
+            if ($tag === 'iframe') {
+                $embedUrl = $this->normalizeYouTubeEmbedUrl($child->getAttribute('src'));
+
+                if ($embedUrl === null) {
+                    $parent->removeChild($child);
+                } else {
+                    while ($child->attributes->length > 0) {
+                        $child->removeAttributeNode($child->attributes->item(0));
+                    }
+
+                    $child->setAttribute('src', $embedUrl);
+                    $child->setAttribute('title', 'YouTube video');
+                    $child->setAttribute('loading', 'lazy');
+                    $child->setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+                    $child->setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+                    $child->setAttribute('allowfullscreen', 'allowfullscreen');
+                }
+
+                continue;
+            }
 
             if (in_array($tag, $dangerousTags, true)) {
                 $parent->removeChild($child);
@@ -111,12 +170,14 @@ class RichTextSanitizer
             $fontColor = $tag === 'font'
                 ? $this->normalizeColor($child->getAttribute('color'))
                 : null;
-            $styleColor = $tag === 'span'
-                ? $this->colorFromStyle($child->getAttribute('style'))
-                : null;
+            $inlineStyle = $this->normalizeInlineStyle($child->getAttribute('style'));
             $imageClass = $tag === 'figure'
                 ? $this->normalizeImageClass($child->getAttribute('class'))
                 : null;
+            $mediaEmbedClass = $tag === 'div'
+                && $this->hasClass($child->getAttribute('class'), 'rich-text-media-embed')
+                    ? 'rich-text-media-embed'
+                    : null;
             $imageSource = $tag === 'img'
                 ? $this->normalizeImageSource($child->getAttribute('src'))
                 : null;
@@ -145,12 +206,16 @@ class RichTextSanitizer
                 $child->setAttribute('color', $fontColor);
             }
 
-            if ($styleColor !== null) {
-                $child->setAttribute('style', 'color:'.$styleColor);
+            if ($inlineStyle !== null) {
+                $child->setAttribute('style', $inlineStyle);
             }
 
             if ($imageClass !== null) {
                 $child->setAttribute('class', $imageClass);
+            }
+
+            if ($mediaEmbedClass !== null) {
+                $child->setAttribute('class', $mediaEmbedClass);
             }
 
             if ($imageSource !== null) {
@@ -182,6 +247,104 @@ class RichTextSanitizer
         }
     }
 
+    private function createYouTubeEmbedWrapper(\DOMDocument $document, string $url): \DOMElement
+    {
+        $wrapper = $document->createElement('div');
+        $wrapper->setAttribute('class', 'rich-text-media-embed');
+
+        $iframe = $document->createElement('iframe');
+        $iframe->setAttribute('src', $url);
+        $iframe->setAttribute('title', 'YouTube video');
+        $iframe->setAttribute('loading', 'lazy');
+        $iframe->setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+        $iframe->setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        $iframe->setAttribute('allowfullscreen', 'allowfullscreen');
+
+        $wrapper->appendChild($iframe);
+
+        return $wrapper;
+    }
+
+    private function youtubeEmbedUrlFromFigure(\DOMElement $figure): ?string
+    {
+        $oembeds = $figure->getElementsByTagName('oembed');
+
+        if ($oembeds->length > 0 && $oembeds->item(0) instanceof \DOMElement) {
+            $url = $oembeds->item(0)->getAttribute('url');
+
+            if ($embedUrl = $this->normalizeYouTubeEmbedUrl($url)) {
+                return $embedUrl;
+            }
+        }
+
+        foreach ($figure->getElementsByTagName('div') as $container) {
+            if ($container instanceof \DOMElement && $container->hasAttribute('data-oembed-url')) {
+                $embedUrl = $this->normalizeYouTubeEmbedUrl($container->getAttribute('data-oembed-url'));
+
+                if ($embedUrl !== null) {
+                    return $embedUrl;
+                }
+            }
+        }
+
+        $iframes = $figure->getElementsByTagName('iframe');
+
+        if ($iframes->length > 0 && $iframes->item(0) instanceof \DOMElement) {
+            return $this->normalizeYouTubeEmbedUrl($iframes->item(0)->getAttribute('src'));
+        }
+
+        return null;
+    }
+
+    private function normalizeYouTubeEmbedUrl(string $url): ?string
+    {
+        $parts = parse_url(trim($url));
+
+        if (! is_array($parts)
+            || ! in_array(strtolower((string) ($parts['scheme'] ?? '')), ['http', 'https'], true)) {
+            return null;
+        }
+
+        $host = strtolower((string) ($parts['host'] ?? ''));
+        $allowedHosts = [
+            'youtube.com',
+            'www.youtube.com',
+            'm.youtube.com',
+            'youtu.be',
+            'youtube-nocookie.com',
+            'www.youtube-nocookie.com',
+        ];
+
+        if (! in_array($host, $allowedHosts, true)) {
+            return null;
+        }
+
+        $path = (string) ($parts['path'] ?? '');
+        $videoId = null;
+
+        if ($host === 'youtu.be') {
+            $videoId = trim($path, '/');
+        } elseif ($path === '/watch') {
+            parse_str((string) ($parts['query'] ?? ''), $query);
+            $videoId = $query['v'] ?? null;
+        } elseif (preg_match('~^/(?:embed|shorts|live)/([A-Za-z0-9_-]{11})(?:/.*)?$~', $path, $matches) === 1) {
+            $videoId = $matches[1];
+        }
+
+        if (! is_string($videoId) || preg_match('/^[A-Za-z0-9_-]{11}$/', $videoId) !== 1) {
+            return null;
+        }
+
+        return 'https://www.youtube-nocookie.com/embed/'.$videoId;
+    }
+
+    private function hasClass(string $classList, string $expected): bool
+    {
+        $classes = preg_split('/\s+/', trim($classList)) ?: [];
+
+        return in_array($expected, $classes, true);
+    }
+
     private function normalizeImageClass(string $value): ?string
     {
         $classes = preg_split('/\s+/', trim($value)) ?: [];
@@ -206,6 +369,15 @@ class RichTextSanitizer
             return null;
         }
 
+        $sourcePath = parse_url($source, PHP_URL_PATH);
+        $localUploadSource = $this->localNewsUploadSource(
+            is_string($sourcePath) ? $sourcePath : $source
+        );
+
+        if ($localUploadSource !== null) {
+            return $localUploadSource;
+        }
+
         if (str_starts_with($source, '/') && ! str_starts_with($source, '//')) {
             return $source;
         }
@@ -217,6 +389,26 @@ class RichTextSanitizer
         $scheme = strtolower((string) parse_url($source, PHP_URL_SCHEME));
 
         return in_array($scheme, ['http', 'https'], true) ? $source : null;
+    }
+
+    private function localNewsUploadSource(string $path): ?string
+    {
+        $path = str_replace('\\', '/', rawurldecode($path));
+        $path = '/'.ltrim($path, '/');
+        $marker = '/uploads-news/';
+        $position = strripos($path, $marker);
+
+        if ($position === false) {
+            return null;
+        }
+
+        $filename = substr($path, $position + strlen($marker));
+
+        if (preg_match('/^[A-Za-z0-9._-]+$/', $filename) !== 1 || in_array($filename, ['.', '..'], true)) {
+            return null;
+        }
+
+        return '/uploads-news/'.rawurlencode($filename);
     }
 
     private function normalizeLinkHref(string $value): ?string
@@ -247,19 +439,65 @@ class RichTextSanitizer
         return in_array('rich-text-file-link', $classes, true);
     }
 
-    private function colorFromStyle(string $style): ?string
+    private function normalizeInlineStyle(string $style): ?string
     {
+        $normalized = [];
+
         foreach (explode(';', $style) as $declaration) {
             [$property, $value] = array_pad(explode(':', $declaration, 2), 2, null);
+            $property = strtolower(trim((string) $property));
+            $value = trim((string) $value);
+            $value = preg_replace('/\s*!important\s*$/i', '', $value) ?? $value;
 
-            if (strtolower(trim((string) $property)) !== 'color') {
+            if ($property === 'color') {
+                $color = $this->normalizeColor($value);
+
+                if ($color !== null) {
+                    $normalized[] = 'color:'.$color;
+                }
+
                 continue;
             }
 
-            return $this->normalizeColor($value);
+            if ($property === 'font-weight' && $this->isSafeFontWeight($value)) {
+                $normalized[] = 'font-weight:'.strtolower($value);
+
+                continue;
+            }
+
+            if ($property === 'font-style' && in_array(strtolower($value), ['normal', 'italic', 'oblique'], true)) {
+                $normalized[] = 'font-style:'.strtolower($value);
+
+                continue;
+            }
+
+            if ($property === 'text-decoration') {
+                $decoration = $this->normalizeTextDecoration($value);
+
+                if ($decoration !== null) {
+                    $normalized[] = 'text-decoration:'.$decoration;
+                }
+            }
         }
 
-        return null;
+        return $normalized === [] ? null : implode(';', array_unique($normalized));
+    }
+
+    private function isSafeFontWeight(string $value): bool
+    {
+        $value = strtolower(trim($value));
+
+        return in_array($value, ['normal', 'bold', 'bolder', 'lighter'], true)
+            || preg_match('/^[1-9]00$/', $value) === 1;
+    }
+
+    private function normalizeTextDecoration(string $value): ?string
+    {
+        $allowed = ['none', 'underline', 'overline', 'line-through'];
+        $tokens = preg_split('/\s+/', strtolower(trim($value))) ?: [];
+        $tokens = array_values(array_unique(array_intersect($tokens, $allowed)));
+
+        return $tokens === [] ? null : implode(' ', $tokens);
     }
 
     private function normalizeColor(mixed $value): ?string

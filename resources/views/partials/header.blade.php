@@ -129,15 +129,29 @@
 	}
 
 </style>
+@php
+    $headerBanner = $headerBanner ?? null;
+    $contactBanner = $contactBanner ?? null;
+    $headerBannerImage = $headerBanner?->image_url ?: asset('img/banner_hm_20250211.webp');
+    $headerBannerAlt = $headerBanner?->alt_text ?: 'Hotmobily header banner';
+    $headerBannerLink = filled($headerBanner?->link_url)
+        ? $headerBanner->link_url
+        : '//hotmobily.jp/';
+    $contactBannerImage = $contactBanner?->image_url ?: asset('img/contact-2025.webp');
+    $contactBannerAlt = $contactBanner?->alt_text ?: 'Contact Hotmobily';
+    $contactBannerLink = filled($contactBanner?->link_url)
+        ? $contactBanner->link_url
+        : 'tel:05068655591';
+@endphp
 <div id="header">
 	<table width="100%" border="0" cellpadding="0" style="border-collapse:collapse; margin-bottom:5px;top: -5px;">
 		<tbody>
 			<tr>
-				<td><a href="//hotmobily.jp/" class="svg"><img src="/img/banner_hm_20250211.webp" class="w-100"
-							style="position: unset;display: block;"></a></td>
+			<td><a href="{{ $headerBannerLink }}" class="svg"><img src="{{ $headerBannerImage }}" class="w-100"
+							alt="{{ $headerBannerAlt }}" style="position: unset;display: block;"></a></td>
 				<td class="ct-position" style="text-align: center;">
-					<a href="tel:05068655591"><img src="/img/contact-2025.webp" class="w-100 contact_img"
-							style="height: auto;"></a><br>
+					<a href="{{ $contactBannerLink }}"><img src="{{ $contactBannerImage }}" class="w-100 contact_img"
+							alt="{{ $contactBannerAlt }}" style="height: auto;"></a><br>
 					<!-- <div class="email_support">
 						<div class="contact-container">
 							<div class="lang-link">
@@ -161,4 +175,3 @@
 <script type="text/javascript">
 	$.get("/getLang", function (data, status) { $('.lang-link').find('.lang-' + data).addClass('lang_active'); });
 </script>
-

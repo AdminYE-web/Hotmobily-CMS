@@ -91,7 +91,7 @@
         </div>
 
         @if ($galleries->hasPages())
-            <div class="mt-3">{{ $galleries->links() }}</div>
+            <div class="mt-3">{{ $galleries->links('pagination::bootstrap-4') }}</div>
         @endif
     </div>
 @endsection

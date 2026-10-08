@@ -65,7 +65,7 @@
         </div>
 
         @if ($rules->hasPages())
-            <div class="mt-3">{{ $rules->links() }}</div>
+            <div class="mt-3">{{ $rules->links('pagination::bootstrap-4') }}</div>
         @endif
     </div>
 @endsection

@@ -8,11 +8,6 @@ use Illuminate\Http\Response;
 
 class LegacyMockController extends Controller
 {
-    public function info(): View
-    {
-        return view('mocks.legacy-info');
-    }
-
     public function reviews(): View
     {
         return view('mocks.legacy-reviews');

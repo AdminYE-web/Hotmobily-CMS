@@ -1596,7 +1596,10 @@ HTML;
                             <button type="button" class="btn btn-sm btn-outline-danger btn-remove-group" data-group-id="${group.id}">remove</button>
                         </div>
                     </header>
-                    <div class="option-group-options">${optionRows(group)}</div>
+                    <div class="option-group-options">
+                        ${group.display_type !== 'quantity_input' && group.options.length ? `<div class="mb-2"><button type="button" class="btn btn-sm btn-outline-primary btn-select-all-options" data-group-id="${group.id}">Select all</button></div>` : ''}
+                        ${optionRows(group)}
+                    </div>
                 </section>`;
             };
 
@@ -1622,6 +1625,17 @@ HTML;
 
                 assigned.querySelectorAll('.option-group-card').forEach(bindDragEvents);
                 assigned.querySelectorAll('.option-row').forEach(bindOptionDragEvents);
+                assigned.querySelectorAll('.btn-select-all-options').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        captureFormState();
+                        const group = groupById(Number(button.dataset.groupId));
+                        if (!group) return;
+                        group.options.forEach(function (option) {
+                            option.is_selected = true;
+                        });
+                        render();
+                    });
+                });
                 assigned.querySelectorAll('.btn-remove-group').forEach(function (button) {
                     button.addEventListener('click', function () {
                         captureFormState();

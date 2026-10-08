@@ -17,6 +17,10 @@
             <div class="alert alert-success">{{ session('status') }}</div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <strong>Option list</strong>
@@ -36,7 +40,7 @@
                                 <th>Images</th>
                                 <th>Disabled</th>
                                 <th>Active</th>
-                                <th style="width: 110px;">Action</th>
+                                <th style="width: 160px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,7 +64,14 @@
                                     <td>{{ count($productOption->option_images ?? []) }}</td>
                                     <td><span class="badge badge-{{ $productOption->is_disabled ? 'danger' : 'secondary' }}">{{ $productOption->is_disabled ? 'Yes' : 'No' }}</span></td>
                                     <td><span class="badge badge-{{ $productOption->is_active ? 'success' : 'secondary' }}">{{ $productOption->is_active ? 'Active' : 'Inactive' }}</span></td>
-                                    <td><a href="{{ route('admin.product-options.edit', $productOption) }}" class="btn btn-sm btn-outline-primary">Edit</a></td>
+                                    <td class="text-nowrap">
+                                        <a href="{{ route('admin.product-options.edit', $productOption) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <form action="{{ route('admin.product-options.destroy', $productOption) }}" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบตัวเลือกนี้?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr><td colspan="9" class="text-center text-muted py-4">No Product Options created yet.</td></tr>
@@ -72,7 +83,7 @@
         </div>
 
         @if ($productOptions->hasPages())
-            <div class="mt-3">{{ $productOptions->links() }}</div>
+            <div class="mt-3">{{ $productOptions->links('pagination::bootstrap-4') }}</div>
         @endif
     </div>
 @endsection

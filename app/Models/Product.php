@@ -15,6 +15,9 @@ class Product extends Model
         'product_code',
         'product_layout_id',
         'status',
+        'price_display_type',
+        'shipping_fee',
+        'shipping_free_minimum',
         'meta_keywords',
         'meta_description',
         'show_notice',
@@ -24,6 +27,8 @@ class Product extends Model
 
     protected $casts = [
         'show_notice' => 'boolean',
+        'shipping_fee' => 'integer',
+        'shipping_free_minimum' => 'integer',
     ];
 
 
@@ -41,6 +46,11 @@ class Product extends Model
         return $this->hasOne(
             ProductPage::class
         );
+    }
+
+    public function sideMenuItem(): HasOne
+    {
+        return $this->hasOne(ProductSideMenuItem::class);
     }
 
     public function optionGroupAssignments(): HasMany

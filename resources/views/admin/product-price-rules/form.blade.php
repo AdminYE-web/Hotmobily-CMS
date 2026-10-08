@@ -93,7 +93,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h2 class="mb-1">Price Tiers</h2>
-                        <p class="text-muted small mb-0">Unit price with tax is calculated automatically and remains editable.</p>
+                        <p class="text-muted small mb-0">Enter either unit price and the other value will be calculated automatically.</p>
                     </div>
                     <div class="form-inline">
                         <label for="tax_rate" class="mr-2 mb-0">Auto Tax</label>
@@ -217,6 +217,7 @@
                         quantity: row.querySelector('[data-field="quantity"]').value,
                         unit_price: row.querySelector('[data-field="unit_price"]').value,
                         unit_price_with_tax: row.querySelector('[data-field="unit_price_with_tax"]').value,
+                        unit_price_with_tax_manual: row.querySelector('[data-field="unit_price_with_tax"]').dataset.manual === '1',
                     };
                 });
             };
@@ -230,13 +231,24 @@
                 }
             };
 
+            const recalculatePrice = function (row) {
+                const withTax = parseFloat(row.querySelector('[data-field="unit_price_with_tax"]').value);
+                const price = row.querySelector('[data-field="unit_price"]');
+                const rate = parseFloat(taxRate.value) || 0;
+                const divisor = 1 + rate / 100;
+
+                price.value = Number.isFinite(withTax) && divisor > 0
+                    ? (withTax / divisor).toFixed(2)
+                    : '';
+            };
+
             const renderTiers = function () {
                 if (displayTierIndex >= tiers.length) displayTierIndex = 0;
                 tierRows.innerHTML = tiers.map(function (tier, index) {
                     return `<tr>
                         <td><input name="tiers[${index}][quantity]" data-field="quantity" type="number" min="1" step="1" value="${escapeHtml(tier.quantity)}" class="form-control" required></td>
                         <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">&#165;</span></div><input name="tiers[${index}][unit_price]" data-field="unit_price" type="number" min="0" step="0.01" value="${escapeHtml(tier.unit_price)}" class="form-control" required></div></td>
-                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">&#165;</span></div><input name="tiers[${index}][unit_price_with_tax]" data-field="unit_price_with_tax" type="number" min="0" step="0.01" value="${escapeHtml(tier.unit_price_with_tax)}" class="form-control" required></div></td>
+                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">&#165;</span></div><input name="tiers[${index}][unit_price_with_tax]" data-field="unit_price_with_tax" data-manual="${tier.unit_price_with_tax_manual ? '1' : ''}" type="number" min="0" step="0.01" value="${escapeHtml(tier.unit_price_with_tax)}" class="form-control" required></div></td>
                         <td class="text-center"><input type="radio" name="display_tier_index" value="${index}" ${index === displayTierIndex ? 'checked' : ''} aria-label="Display this tier"></td>
                         <td><button type="button" class="btn btn-sm remove-tier">Remove</button></td>
                     </tr>`;
@@ -246,7 +258,27 @@
                     const price = row.querySelector('[data-field="unit_price"]');
                     const withTax = row.querySelector('[data-field="unit_price_with_tax"]');
                     price.addEventListener('input', function () { recalculateTax(row, false); });
-                    withTax.addEventListener('input', function () { withTax.dataset.manual = '1'; });
+                    withTax.addEventListener('input', function () {
+                        withTax.dataset.manual = '1';
+                        recalculatePrice(row);
+                    });
+                    row.querySelectorAll('[data-field]').forEach(function (input) {
+                        input.addEventListener('keydown', function (event) {
+                            if (event.key !== 'Enter' || event.isComposing) return;
+
+                            event.preventDefault();
+                            const field = input.dataset.field;
+                            const nextRow = row.nextElementSibling;
+                            const nextInput = nextRow && nextRow.querySelector(`[data-field="${field}"]`);
+
+                            if (nextInput) {
+                                nextInput.focus();
+                                return;
+                            }
+
+                            appendTier(field);
+                        });
+                    });
                     row.querySelector('input[name="display_tier_index"]').addEventListener('change', function (event) {
                         displayTierIndex = Number(event.target.value);
                     });
@@ -265,17 +297,32 @@
                 });
             };
 
+            const appendTier = function (focusField) {
+                captureTiers();
+                tiers.push({ quantity: '', unit_price: '', unit_price_with_tax: '' });
+                renderTiers();
+
+                if (focusField) {
+                    tierRows.lastElementChild.querySelector(`[data-field="${focusField}"]`).focus();
+                }
+            };
+
             productSelect.addEventListener('change', function () {
                 conditionIds = [];
                 renderConditions();
             });
             taxRate.addEventListener('input', function () {
-                tierRows.querySelectorAll('tr').forEach(function (row) { recalculateTax(row, false); });
+                tierRows.querySelectorAll('tr').forEach(function (row) {
+                    const withTax = row.querySelector('[data-field="unit_price_with_tax"]');
+                    if (withTax.dataset.manual === '1') {
+                        recalculatePrice(row);
+                    } else {
+                        recalculateTax(row, false);
+                    }
+                });
             });
             document.getElementById('add-tier').addEventListener('click', function () {
-                captureTiers();
-                tiers.push({ quantity: '', unit_price: '', unit_price_with_tax: '' });
-                renderTiers();
+                appendTier();
             });
 
             renderConditions();

@@ -285,44 +285,32 @@
 		<li class="">
 			<a class="button button_link" onmouseover="subm('s5')" onmouseout="subm('s4')">データ作成ガイド</a>
 			<ul>
-				<li><a class="button_s3 button_link" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data.html">ラバー製品</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 34px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic.php">アクリルキーホルダー</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 68px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic-figure.php">アクリルフィギュアスタンド</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 102px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic-stand.php">アクリルスマホスタンド</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 136px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic-umbrella.php">アクリルアンブレラマーカー</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 170px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic-badge.php">アクリルバッジ</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 204px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic-coaster.php">アクリルコースター</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 238px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic-hairbunch.php">アクリルヘアバンド</a></li>
-				<li><a class="button_s3 button_link" style="margin-top: 272px;" onmouseover="subm('s5')" onmouseout="subm('s4')" href="/products/data-acrylic-griptok.php">アクリルグリップホルダー</a></li>
+				@foreach (($productDataNavigationItems ?? collect()) as $item)
+					<li>
+						<a
+							class="button_s3 button_link"
+							@if (! $loop->first) style="margin-top: {{ ($loop->iteration - 1) * 34 }}px;" @endif
+							onmouseover="subm('s5')"
+							onmouseout="subm('s4')"
+							href="{{ url('/products/'.trim($item->productDataPage->slug, '/')) }}"
+						>{{ $item->name }}</a>
+					</li>
+				@endforeach
 			</ul>
 		</li>
 		<li class="">
 			<a class="button button_link" onmouseover="subm('s9')" onmouseout="subm('s8')">製作実績</a>
 			<ul class="">
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/rubberstrap">ラバーストラップ</a>
-				</li>
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/rubberkeyholder" style="margin-top: 36px;">ラバーキーホルダー</a>
-				</li>
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/rubbercoaster" style="margin-top: 72px;">ラバーコースター</a>
-				</li>
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/acrylic_key" style="margin-top: 108px;">アクリルキーホルダー</a>
-				</li>
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/acrylic_standee" style="margin-top: 142px;">アクリルフィギュアスタンド</a>
-				</li>
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/acrylic_hair" style="margin-top: 178px;">アクリルヘアバンド</a>
-				</li>
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/cableholder.php" style="margin-top: 212px;">ラバーイヤホンホルダー</a>
-				</li>
-				<li onmouseover="subm('s9')" onmouseout="subm('s8')">
-					<a class="button_s5 button_link" href="/gallery/wappen.php" style="margin-top: 248px;">オリジナルワッペン</a>
-				</li>
+				@foreach (($galleryNavigationItems ?? collect()) as $item)
+					@php($galleryPage = $item->galleryPage)
+					<li onmouseover="subm('s9')" onmouseout="subm('s8')">
+						<a
+							class="button_s5 button_link"
+							@if (! $loop->first) style="margin-top: {{ ($loop->iteration - 1) * 36 }}px;" @endif
+							href="{{ route('gallery.show', $galleryPage->public_slug) }}"
+						>{{ $item->name }}</a>
+					</li>
+				@endforeach
 			</ul>
 		</li>
 
@@ -330,15 +318,18 @@
 		<li class="">
 			<a class="button button_link" onmouseover="subm('s7')" onmouseout="subm('s6')">製作詳細</a>
 			<ul>
-				<li><a class="button_s4 button_link" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/howtodesign/">デザインの壺（ラバー製品）</a></li>
-				<li><a class="button_s4 button_link" style="margin-top: 34px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/blog-content/howtomake-originalgoods">グッズの作り方</a></li>
-				<li><a class="button_s4 button_link" style="margin-top: 68px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/blog-content/originalgoods-aiservices">AI画像生成の活用</a></li>
-				<li><a class="button_s4 button_link" style="margin-top: 102px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/products/daishi.html">台紙製作</a></li>
-				<li><a class="button_s4 button_link" style="margin-top: 136px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/lp/rubber-guide-structure.php">立体加工（ラバー製品）</a></li>
-				<li><a class="button_s4 button_link" style="margin-top: 170px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/products/attachment.html">アタッチメント</a></li>
-				<li><a class="button_s4 button_link" style="margin-top: 204px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/products/quality.html">製品品質（ラバー製品）</a></li>
-				<li><a class="button_s4 button_link" style="margin-top: 238px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/lp/rubber-guide.php">ラバーストラップ完全ガイド</a></li>
-                <li><a class="button_s4 button_link" style="margin-top: 272px;" onmouseover="subm('s7')" onmouseout="subm('s6')" href="/blog-content/originalkeyholder-delivery">キーホルダーの納期</a></li>
+				@foreach (($customPageNavigationItems ?? collect()) as $item)
+					@php($customPage = $item->customPage)
+					<li>
+						<a
+							class="button_s4 button_link"
+							@if (! $loop->first) style="margin-top: {{ ($loop->iteration - 1) * 34 }}px;" @endif
+							onmouseover="subm('s7')"
+							onmouseout="subm('s6')"
+							href="{{ url('/'.trim($customPage->slug, '/')) }}"
+						>{{ $item->name }}</a>
+					</li>
+				@endforeach
 			</ul>
 		</li>
 
@@ -346,9 +337,18 @@
 			<a class="button button_link" onmouseover="subm('s19')" onmouseout="subm('s18')" style="padding: 0; height: 50px;">ご利用ガイド</a>
 			<ul>
 				<li><a class="button_s19 button_link" onmouseover="subm('s19')" onmouseout="subm('s18')" href="/guide/">ご利用ガイド</a></li>
-				<li><a class="button_s19 button_link" style="margin-top: 34px;" onmouseover="subm('s19')" onmouseout="subm('s18')" href='/lp/school-01.php'>学校・塾向けノベルティ</a></li>
-				<li><a class="button_s19 button_link" style="margin-top: 68px;" onmouseover="subm('s19')" onmouseout="subm('s18')"href='/lp/museam-01.php'>博物館・水族館向けノベルティ</a></li>
-				<li><a class="button_s19 button_link" style="margin-top: 102px;" onmouseover="subm('s19')" onmouseout="subm('s18')"href='/lp/school-commemorative-gift.php'>卒業・入学記念品</a></li> 
+				@foreach (($userManualNavigationItems ?? collect()) as $item)
+					@php($customPage = $item->customPage)
+					<li>
+						<a
+							class="button_s19 button_link"
+							style="margin-top: {{ $loop->iteration * 34 }}px;"
+							onmouseover="subm('s19')"
+							onmouseout="subm('s18')"
+							href="{{ url('/'.trim($customPage->slug, '/')) }}"
+						>{{ $item->name }}</a>
+					</li>
+				@endforeach
 			</ul>
 		</li>
 
@@ -488,15 +488,9 @@
 			<a href="javascript:void(0)" class="li-mb-css li-mb-main" id="ex-link">データ作成ガイド</a>
 			<div class="sub-menu">
 				<ul>
-					<li><a href="/products/data" class="dotline">ラバー製品</a></li>
-					<li><a href="/products/data-acrylic.php" class="dotline">アクリルキーホルダー</a></li>
-					<li><a href="/products/data-acrylic-figure.php" class="dotline">アクリルフィギュアスタンド</a></li>
-					<li><a href="/products/data-acrylic-stand.php" class="dotline">アクリルスマホスタンド</a></li>
-					<li><a href="/products/data-acrylic-umbrella.php" class="dotline">アクリルアンブレラマーカー</a></li>
-					<li><a href="/products/data-acrylic-badge.php" class="dotline">アクリルバッジ</a></li>
-					<li><a href="/products/data-acrylic-coaster.php" class="dotline">アクリルコースター</a></li>
-					<li><a href="/products/data-acrylic-hairbunch.php" class="dotline">アクリルヘアバンド</a></li>
-					<li><a href="/products/data-acrylic-griptok.php" class="dotline">アクリルグリップホルダー</a></li>
+					@foreach (($productDataNavigationItems ?? collect()) as $item)
+						<li><a href="{{ url('/products/'.trim($item->productDataPage->slug, '/')) }}" class="dotline">{{ $item->name }}</a></li>
+					@endforeach
 				</ul>
 			</div>
 		</li>
@@ -504,14 +498,24 @@
 			<a href="javascript:void(0)" class="li-mb-css li-mb-main" id="ex-link">製作実績</a>
 			<div class="sub-menu">
 				<ul>
-					<li><a href="/gallery/rubberstrap" class="dotline"><img src="/img/2022_sidemenu/35x35-strap.webp" alt="ラバーストラップ">&nbsp;ラバーストラップ</a></li>
-					<li><a href="/gallery/rubberkeyholder" class="dotline"><img src="/img/2022_sidemenu/rubber-keyhold-s.webp" alt="ラバーキーホルダー">&nbsp;ラバーキーホルダー</a></li>
-					<li><a href="/gallery/rubbercoaster" class="dotline"><img src="/img/2019_sidemenu/smenu03.webp" alt="ラバーコースター">&nbsp;ラバーコースター</a></li>
-					<li><a href="/gallery/acrylic_key" class="dotline"><img src="/img/2019_sidemenu/smenu22.webp?v=1.01" alt="アクリルキーホルダー">&nbsp;アクリルキーホルダー</a></li>
-					<li><a href="/gallery/acrylic_standee" class="dotline">アクリルフィギュアスタンド</a></li>
-					<li><a href="/gallery/acrylic_hair" class="dotline">アクリルヘアバンド</a></li>
-					<li><a href="/gallery/cableholder" class="dotline"><img src="/img/2019_sidemenu/smenu06.webp" alt="ラバーイヤホンホルダー">&nbsp;ラバーイヤホンホルダー</a></li>
-					<li><a href="/gallery/wappen" class="dotline">オリジナルワッペン</a></li>
+					@php($galleryNavigationIcons = [
+						'rubberstrap' => '/img/2022_sidemenu/35x35-strap.webp',
+						'rubberkeyholder' => '/img/2022_sidemenu/rubber-keyhold-s.webp',
+						'rubbercoaster' => '/img/2019_sidemenu/smenu03.webp',
+						'acrylic_key' => '/img/2019_sidemenu/smenu22.webp?v=1.01',
+						'cableholder' => '/img/2019_sidemenu/smenu06.webp',
+					])
+					@foreach (($galleryNavigationItems ?? collect()) as $item)
+						@php($galleryPage = $item->galleryPage)
+						<li>
+							<a href="{{ route('gallery.show', $galleryPage->public_slug) }}" class="dotline">
+								@if (isset($galleryNavigationIcons[$galleryPage->public_slug]))
+									<img src="{{ $galleryNavigationIcons[$galleryPage->public_slug] }}" alt="{{ $item->name }}">&nbsp;
+								@endif
+								{{ $item->name }}
+							</a>
+						</li>
+					@endforeach
 				</ul>
 			</div>
 		</li>
@@ -522,15 +526,10 @@
 			<a href="javascript:void(0)" class="li-mb-css li-mb-main" id="ex-link">製作詳細</a>
 			<div class="sub-menu">
 				<ul>
-					<li><a href="/howtodesign/" class="dotline">デザインの壺（ラバー製品）</a></li>
-					<li><a href="/blog-content/howtomake-originalgoods" class="dotline">グッズの作り方</a></li>
-					<li><a href="/blog-content/originalgoods-aiservices" class="dotline">AI画像生成の活用</a></li>
-					<li><a href="/products/daishi.html" class="dotline">台紙製作</a></li>
-					<li><a href="/lp/rubber-guide-structure.php" class="dotline">立体加工（ラバー製品）</a></li>
-					<li><a href="/products/attachment.html" class="dotline">アタッチメント</a></li>
-					<li><a href="/products/quality.html" class="dotline">製品品質（ラバー製品）</a></li>
-					<li><a href="/lp/rubber-guide.php" class="dotline">ラバーストラップ完全ガイド</a></li>
-					<li><a href="/blog-content/originalkeyholder-delivery" class="dotline">キーホルダーの納期</a></li>
+					@foreach (($customPageNavigationItems ?? collect()) as $item)
+						@php($customPage = $item->customPage)
+						<li><a href="{{ url('/'.trim($customPage->slug, '/')) }}" class="dotline">{{ $item->name }}</a></li>
+					@endforeach
 				</ul>
 			</div>
 		</li>
@@ -540,9 +539,10 @@
 			<div class="sub-menu">
 				<ul>
 					<li><a href="/guide/" class="dotline">ご利用ガイド</a></li>
-					<li><a href="/lp/school-01.php" class="dotline">学校・塾向けノベルティ</a></li>
-					<li><a href="/lp/museam-01.php" class="dotline">博物館・水族館向けノベルティ</a></li>
-					<li><a href="/lp/school-commemorative-gift.php" class="dotline">卒業・入学記念品</a></li>
+					@foreach (($userManualNavigationItems ?? collect()) as $item)
+						@php($customPage = $item->customPage)
+						<li><a href="{{ url('/'.trim($customPage->slug, '/')) }}" class="dotline">{{ $item->name }}</a></li>
+					@endforeach
 				</ul>
 			</div>
 		</li>
@@ -571,4 +571,3 @@
 		</li>
 	</ul>
 </div>
-

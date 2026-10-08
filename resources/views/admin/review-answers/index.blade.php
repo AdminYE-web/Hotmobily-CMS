@@ -62,7 +62,7 @@
         </div>
 
         @if ($answers->hasPages())
-            <div class="mt-3">{{ $answers->links() }}</div>
+            <div class="mt-3">{{ $answers->links('pagination::bootstrap-4') }}</div>
         @endif
     </div>
 @endsection

@@ -401,6 +401,43 @@
                 Template Management
             </a>
 
+            <a
+                href="{{ route('admin.banner.edit') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Banner Settings
+            </a>
+
+            <div class="list-group-item list-group-item-action bg-light">
+                Home Setting
+                <ul class="submenu">
+                    <li>
+                        <a
+                            href="{{ route('admin.home-settings.products.index') }}"
+                            class="list-group-item list-group-item-action bg-light"
+                        >
+                            Product
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="{{ route('admin.home-settings.banners.index') }}"
+                            class="list-group-item list-group-item-action bg-light"
+                        >
+                            Home Banner
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="{{ route('admin.home-settings.notification.edit') }}"
+                            class="list-group-item list-group-item-action bg-light"
+                        >
+                            Home Notification
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <div class="list-group-item list-group-item-action bg-light">
 
     Product Settings
@@ -504,6 +541,77 @@
 
 <div class="list-group-item list-group-item-action bg-light">
 
+    Side Menu Setting
+
+    <ul class="submenu">
+        <li>
+            <a
+                href="{{ route('admin.side-menu.products.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Product
+            </a>
+        </li>
+        <li>
+            <a
+                href="{{ route('admin.side-menu.links.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Links / Banners
+            </a>
+        </li>
+    </ul>
+
+</div>
+
+<div class="list-group-item list-group-item-action bg-light">
+
+    Menu Setting
+
+    <ul class="submenu">
+
+        <li>
+            <a
+                href="{{ route('admin.product-data-menu.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Product Data
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.gallery-menu.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Gallery
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.custom-page-menu.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Production Details
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.user-manual-menu.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                User Manual
+            </a>
+        </li>
+
+    </ul>
+
+</div>
+
+<div class="list-group-item list-group-item-action bg-light">
+
     Custom Page Setting
 
     <ul class="submenu">
@@ -530,12 +638,56 @@
 
 </div>
 
+<div class="list-group-item list-group-item-action bg-light">
+
+    Guide Setting
+
+    <ul class="submenu">
+
+        <li>
+            <a
+                href="{{ route('admin.guide-main.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Guide Main
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.guide-layouts.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Guide Layouts
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="{{ route('admin.guides.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Guides
+            </a>
+        </li>
+
+    </ul>
+
+</div>
+
 
             <a
-                href="/admin/contact.php"
+                href="{{ route('admin.contact.index') }}"
                 class="list-group-item list-group-item-action bg-light"
             >
                 Contact/Inquire
+            </a>
+
+            <a
+                href="{{ route('admin.meeting-date.index') }}"
+                class="list-group-item list-group-item-action bg-light"
+            >
+                Meeting Date
             </a>
 
             <a
@@ -638,7 +790,7 @@
             </a>
 
                 <a
-                    href="/admin/news.php"
+                    href="{{ route('admin.news.index') }}"
                     class="list-group-item list-group-item-action bg-light"
                 >
                     News

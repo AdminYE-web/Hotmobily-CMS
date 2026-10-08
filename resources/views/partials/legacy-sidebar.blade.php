@@ -87,17 +87,23 @@
     <ul>
       <li><a href="/" style="padding: 5px 0;"><img src="/img/2019_sidemenu/smenu04.webp" width="35" height="35" /><span class="side_link" style="font-size: 17px;font-family: IwaUDGoDspPro-Bd,sans-serif!important;">商品一覧</span></a>
       </li>
-      <li><a href="/products/keychains-ranking"><img src="/products/img/ranking/04.webp?v=1.01" width="35" height="35" /><span class="side_link">オリジナルキーホルダー</span></a></li>
-      <li class="smenu01"><a href="/products/rubberstrap/"><img src="/img/2022_sidemenu/35x35-strap.webp" width="35" height="35" /><span class="side_link">ラバーストラップ</span></a></li>
-      <li><a href="/products/rubberkeyholder/"><img src="/img/2022_sidemenu/rubber-keyhold-s.webp" width="35" height="35" /><span class="side_link">ラバーキーホルダー</span></a></li>
-      <li><a href="/products/rubbercoaster/"><img src="/img/2019_sidemenu/smenu03.webp" width="35" height="35" /><span class="side_link">ラバーコースター</span></a></li>
-      <li><a href="/all-acrylic-products.php"><img src="/img/all_acrylic_20260126.webp" width="35" height="35" /><span class="side_link">アクリル製品一覧</span></a></li>
-      <li><a href="/products/acrylic/"><img src="/img/2019_sidemenu/smenu22.webp" width="35" height="35" /><span class="side_link">アクリルキーホルダー</span></a></li>
-      <li><a href="/products/acrylic/figure"><img src="/img/2019_sidemenu/smenu22_2.webp?v=1.01" width="35" height="35" /><span class="side_link">アクリルスタンド</span></a></li>
-      <li><a href="/products/reflecter.php"><img src="/img/2019_sidemenu/smenu11.webp" width="35" height="35" /><span class="side_link">リフレクター（反射）チャーム</span></a></li>
-      <li><a href="/products/wappen"><img src="/products/images/W_-07 - white.webp" width="35" height="35" /><span class="side_link">オリジナルワッペン</span></a></li>
-      <li><a href="/products/microfibers.php"><img src="/img/2019_sidemenu/smenu14.webp" width="35" height="35" /><span class="side_link">メガネクロス・マイクロファイバーポーチ</span></a></li>
-      <li><a href="/products/carabiner/"><img src="/img/2019_sidemenu/smenu30.webp" width="35" height="35" /><span class="side_link">カラビナリング</span></a></li>
+      @if ($hasConfiguredSideMenuProducts)
+        @foreach ($sideMenuProductItems as $item)
+          <li><a href="{{ url('/products/' . trim($item->product->slug, '/')) }}"><img src="{{ Storage::disk('public')->url($item->image_path) }}" width="35" height="35" alt="{{ $item->name }}" /><span class="side_link">{{ $item->name }}</span></a></li>
+        @endforeach
+      @else
+        <li><a href="/all-marker-products.php"><img src="/img/markers-on-side.webp" width="35" height="35" /><span class="side_link">めじるしキーホルダー</span></a></li>
+        <li class="smenu01"><a href="/products/rubberstrap/"><img src="/img/2022_sidemenu/35x35-strap.webp" width="35" height="35" /><span class="side_link">ラバーストラップ</span></a></li>
+        <li><a href="/products/rubberkeyholder/"><img src="/img/2022_sidemenu/rubber-keyhold-s.webp" width="35" height="35" /><span class="side_link">ラバーキーホルダー</span></a></li>
+        <li><a href="/products/rubbercoaster/"><img src="/img/2019_sidemenu/smenu03.webp" width="35" height="35" /><span class="side_link">ラバーコースター</span></a></li>
+        <li><a href="/all-acrylic-products.php"><img src="/img/all_acrylic_20260126.webp" width="35" height="35" /><span class="side_link">アクリル製品一覧</span></a></li>
+        <li><a href="/products/acrylic/"><img src="/img/2019_sidemenu/smenu22.webp" width="35" height="35" /><span class="side_link">アクリルキーホルダー</span></a></li>
+        <li><a href="/products/acrylic/figure"><img src="/img/2019_sidemenu/smenu22_2.webp?v=1.01" width="35" height="35" /><span class="side_link">アクリルスタンド</span></a></li>
+        <li><a href="/products/reflecter.php"><img src="/img/2019_sidemenu/smenu11.webp" width="35" height="35" /><span class="side_link">リフレクター（反射）チャーム</span></a></li>
+        <li><a href="/products/wappen"><img src="/products/images/W_-07 - white.webp" width="35" height="35" /><span class="side_link">オリジナルワッペン</span></a></li>
+        <li><a href="/products/microfibers.php"><img src="/img/2019_sidemenu/smenu14.webp" width="35" height="35" /><span class="side_link">メガネクロス・マイクロファイバーポーチ</span></a></li>
+        <li><a href="/products/carabiner/"><img src="/img/2019_sidemenu/smenu30.webp" width="35" height="35" /><span class="side_link">カラビナリング</span></a></li>
+      @endif
     </ul>
   </nav>
   <div style="margin-top: 10px;padding: 5px 10px;text-align: left;display: flex;justify-content: space-between;">
@@ -108,10 +114,17 @@
   </div>
   <hr /><br />
   <h3 style="text-align: center;"><a href="//x.com/search?q=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC">ホットモバイリーに関するツイート</a>
-  </h3><br />
-  <h3><a href="/contact/index.php" title="今すぐサンプル請求！"><img src="/img/btn_sample02_new.webp?v=1.04" width="225" height="225"></a>
   </h3>
-  <br /><br />
+  {{-- <br /> --}}
+  {{-- <h3><a href="/contact/index.php" title="今すぐサンプル請求！"><img src="/img/btn_sample02_new.webp?v=1.04" width="225" height="225"></a>
+  </h3> --}}
+  
+  <br />
+  @if ($hasConfiguredSideMenuLinks)
+    @foreach ($sideMenuLinkItems as $item)
+      <h3 style="text-align:center;margin:0"><a href="{{ $item->url }}" title="{{ $item->name }}"><img src="{{ Storage::disk('public')->url($item->image_path) }}" alt="{{ $item->name }}" style="display:block;width:225px;max-width:100%;height:auto;margin:0 auto"></a></h3><br />
+    @endforeach
+  @else
   <h3><a href="/meeting_date/" title="ノベルティー営業担当呼び出しフォーム"><img src="/img/btn_meetingdate_new.webp?v=1.03" width="225" height="225"></a></h3><br /><br />
   <h3><a href="/blog-content/lists" title=""><img src="/img/blog_content_button.webp?v=1.03" width="225" height="225"></a></h3><br />
   <!-- <h3><a href="/campaign/acrylic/2026/04.php" title=""><img src="/img/acrylic_campaign_April2026_side.webp?v=1.03"></a></h3><br /><br /> -->
@@ -121,6 +134,7 @@
   <img data-src="/img/HM_new.webp" class="lazy" width="225" height="140"><br />
   <br>
   <a href="https://www.google.com/search?q=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC&oq=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg9MgYIAhBFGD0yBggDEEUYPTIGCAQQRRhB0gEIMjg5OWowajGoAgCwAgA&sourceid=chrome&ie=UTF-8"><img data-src="/img/hm_qr.webp" class="lazy" width="225" height="auto"></a><br />
+  @endif
   <table id="calendar">
     <thead>
       <tr>

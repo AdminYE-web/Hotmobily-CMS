@@ -3,78 +3,84 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\HomeBanner;
+use App\Models\HomeProductCard;
+use App\Models\News;
 use App\Models\Review;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 class HomeController extends Controller
 {
     public function __invoke(): View
     {
-        // Temporary data until the legacy news table is migrated.
-        $news = collect([
-            [
-                'id' => 1,
-                'published_at' => Carbon::parse('2026-09-01'),
-                'title' => '【モック】ホームページのリニューアル準備を進めています。',
-            ],
-            [
-                'id' => 2,
-                'published_at' => Carbon::parse('2026-08-25'),
-                'title' => '【モック】商品情報は順次、新しいサイトへ移行予定です。',
-            ],
-            [
-                'id' => 3,
-                'published_at' => Carbon::parse('2026-08-18'),
-                'title' => '【モック】オリジナルグッズ製作のご相談を受付中です。',
-            ],
-        ]);
+        $homeBanners = Schema::hasTable('home_banners')
+            ? HomeBanner::query()
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get()
+            : HomeBanner::legacyDefaults();
 
-        // Fallback data keeps the page renderable before the reviews
-        // migration is run. Once the table exists, imported reviews are used.
-        $fallbackReviews = [
-            [
-                'id' => 1,
-                'comment' => '',
-                'service' => 4,
-                'product' => 4,
-                'sale_name' => '竹村',
-                'product_type' => '刺繍キーホルダー',
-                'date' => '2026年08月31日 06:47:00',
-            ],
-            [
-                'id' => 2,
-                'comment' => '',
-                'service' => 5,
-                'product' => 5,
-                'sale_name' => 'ビビアン',
-                'product_type' => 'アクリルキーホルダー',
-                'date' => '2026年08月28日 11:11:00',
-            ],
-            [
-                'id' => 3,
-                'comment' => '',
-                'service' => 4,
-                'product' => 4,
-                'sale_name' => '原',
-                'product_type' => 'アクリルキーホルダー',
-                'date' => '2026年08月25日 09:30:00',
-            ],
-        ];
+        $hasConfiguredHomeProductCards = Schema::hasTable('home_product_cards')
+            && HomeProductCard::query()->exists();
+        $homeProductCards = collect();
 
-        $reviews = $this->loadReviews($fallbackReviews);
+        if (Schema::hasTable('home_product_cards')
+            && Schema::hasTable('products')
+            && Schema::hasTable('product_layouts')
+            && Schema::hasTable('product_pages')) {
+            $homeProductCards = HomeProductCard::query()
+                ->with(['product:id,name,slug,status,product_layout_id', 'product.layout', 'product.page'])
+                ->whereHas('product', function ($query): void {
+                    $query
+                        ->where('status', 'active')
+                        ->whereHas('layout', fn ($layoutQuery) => $layoutQuery->whereNotNull('published_layout_json'))
+                        ->whereHas('page', fn ($pageQuery) => $pageQuery->whereNotNull('published_content_json'));
+                })
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get()
+                ->filter(static function (HomeProductCard $card): bool {
+                    $product = $card->product;
 
-        return view('home', compact('news', 'reviews'));
+                    return $product !== null
+                        && $product->layout !== null
+                        && ! empty($product->layout->published_layout_json)
+                        && $product->page !== null
+                        && ! empty($product->page->published_content_json);
+                })
+                ->values();
+        }
+
+        $news = News::tableExists()
+            ? News::query()
+                ->activeInCategory('top')
+                ->orderByDesc('published_at')
+                ->orderByDesc('id')
+                ->limit(3)
+                ->get()
+            : collect();
+
+        $reviews = $this->loadReviews();
+
+        return view('home', compact(
+            'news',
+            'reviews',
+            'homeBanners',
+            'homeProductCards',
+            'hasConfiguredHomeProductCards'
+        ));
     }
 
-    private function loadReviews(array $fallbackReviews): array
+    private function loadReviews(): array
     {
-        try {
-            if (! Review::tableExists()) {
-                return $fallbackReviews;
-            }
+        if (! Review::tableExists()) {
+            return [];
+        }
 
+        try {
             return Review::query()
                 ->orderByDesc('date_reviews')
                 ->orderByDesc('id')
@@ -83,7 +89,7 @@ class HomeController extends Controller
                 ->map(static fn (Review $review): array => $review->toDisplayArray())
                 ->all();
         } catch (Throwable) {
-            return $fallbackReviews;
+            return [];
         }
     }
 }

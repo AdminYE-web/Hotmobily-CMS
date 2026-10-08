@@ -1,3 +1,11 @@
+@php
+    $previousSelectedOptionIds = old('selected_option_ids');
+    $hasPreviousSelectedOptionIds = is_array($previousSelectedOptionIds);
+    $previousSelectedOptionIds = collect($previousSelectedOptionIds ?? [])
+        ->map(static fn ($id): int => (int) $id)
+        ->all();
+@endphp
+
 <style>
     /* Keep the legacy order-form structure; only option values come from Admin. */
     #order-form.admin-configured-order-form { margin-top: 24px; }
@@ -66,6 +74,8 @@
     #order-form.admin-configured-order-form .configured-quantity-input .part-content { margin: 0; }
     #order-form.admin-configured-order-form .configured-quantity-input .part-name { padding-left: 12px; }
     #order-form.admin-configured-order-form .configured-quantity-input input[type="number"] { width: 210px; margin-left: 12px; text-align: right; }
+    #order-form.admin-configured-order-form .configured-quantity-input input[type="number"]:read-only { background-color: #f3f4f6; color: #555; cursor: not-allowed; }
+    #order-form.admin-configured-order-form .configured-quantity-error { display: block; margin: 5px 0 0 12px; color: #c00; }
     #order-form.admin-configured-order-form .configured-option-heading h3 { margin: 0 0 5px; }
     #order-form.admin-configured-order-form .configured-help-button { display: block; min-width: 58px; padding: 3px 10px; border: 1px solid #c8c8c8; border-radius: 3px; background: #fff; color: #333; font-size: 13px; line-height: 1.35; cursor: pointer; }
     #order-form.admin-configured-order-form .configured-help-button:hover { border-color: #999; background: #f5f5f5; }
@@ -381,6 +391,7 @@
                     @endforeach
                     <tr><td>小計(税込)</td><td data-configured-price-row="subtotal">0円</td></tr>
                     <tr><td>お値引き</td><td data-configured-price-row="discount">0円</td></tr>
+                    <tr><td>送料(税込)</td><td data-configured-price-row="shipping">0円</td></tr>
                     <tr><td>合計(税込)</td><td data-configured-price-row="total">0円</td></tr>
                 </tbody></table>
             </div>
@@ -398,6 +409,7 @@
                     @endforeach
                     <tr><td>小計(税込)</td><td data-configured-price-row="subtotal">0円</td></tr>
                     <tr><td>お値引き</td><td data-configured-price-row="discount">0円</td></tr>
+                    <tr><td>送料(税込)</td><td data-configured-price-row="shipping">0円</td></tr>
                     <tr><td>合計(税込)</td><td data-configured-price-row="total">0円</td></tr>
                 </tbody></table>
             </div>
@@ -460,20 +472,21 @@
                                     <div class="part-content">
                                         <label class="part-name" for="configured-quantity-{{ $group['id'] }}">
                                             ご注文・御見積数量
-                                            <input id="configured-quantity-{{ $group['id'] }}" type="number" name="quantity" value="100" min="1" step="1" inputmode="numeric" @if ($group['is_required']) required @endif>
+                                            <input id="configured-quantity-{{ $group['id'] }}" type="number" name="quantity" value="{{ old('quantity', 100) }}" min="1" step="1" inputmode="numeric" @if ($group['is_required']) required @endif>
                                         </label>
+                                        @error('quantity')<span class="configured-quantity-error">{{ $message }}</span>@enderror
                                     </div>
                                 </div>
                             @elseif ($displayType === 'switch')
                                 <div class="part-container">
                                     @foreach ($group['options'] as $option)
                                         @php $inputId = 'configured-option-'.$group['id'].'-'.$option['id']; @endphp
-                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}">
+                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}" data-quantity-rule="{{ $option['quantity_rule'] ?? 'no_limit' }}" data-min-qty="{{ $option['min_qty'] ?? '' }}" data-max-qty="{{ $option['max_qty'] ?? '' }}" data-exact-qty="{{ $option['exact_qty'] ?? '' }}">
                                             <div class="part-content">
                                                 <label class="part-name configured-switch-row" for="{{ $inputId }}">
                                                     <div class="switch_off_button b2 switch_off">
                                                         <input type="hidden" name="{{ $inputName }}" value="なし">
-                                                        <input id="{{ $inputId }}" type="checkbox" class="checkbox" name="{{ $inputName }}" value="あり" @checked($option['is_default']) data-option-id="{{ $option['id'] }}" data-option-name="{{ $option['name'] }}" data-option-image="{{ $option['images'][0] ?? '' }}" data-option-disabled="{{ !empty($option['is_disabled']) ? '1' : '0' }}">
+                                                        <input id="{{ $inputId }}" type="checkbox" class="checkbox" name="{{ $inputName }}" value="あり" @checked($hasPreviousSelectedOptionIds ? in_array((int) $option['id'], $previousSelectedOptionIds, true) : $option['is_default']) data-option-id="{{ $option['id'] }}" data-option-name="{{ $option['name'] }}" data-option-image="{{ $option['images'][0] ?? '' }}" data-option-disabled="{{ !empty($option['is_disabled']) ? '1' : '0' }}">
                                                         <div class="knobs" aria-hidden="true"><span></span></div><div class="layer" aria-hidden="true"></div>
                                                     </div>
                                                     {{ $option['name'] }}
@@ -490,9 +503,11 @@
                                         @php
                                             $inputId = 'configured-option-'.$group['id'].'-'.$option['id'];
                                             $image = $option['images'][0] ?? null;
-                                            $isChecked = $defaultOptionId !== null && $defaultOptionId === $option['id'];
+                                            $isChecked = $hasPreviousSelectedOptionIds
+                                                ? in_array((int) $option['id'], $previousSelectedOptionIds, true)
+                                                : ($defaultOptionId !== null && $defaultOptionId === $option['id']);
                                         @endphp
-                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}">
+                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}" data-quantity-rule="{{ $option['quantity_rule'] ?? 'no_limit' }}" data-min-qty="{{ $option['min_qty'] ?? '' }}" data-max-qty="{{ $option['max_qty'] ?? '' }}" data-exact-qty="{{ $option['exact_qty'] ?? '' }}">
                                             <label class="configured-image-choice" for="{{ $inputId }}">
                                                 <input id="{{ $inputId }}" type="radio" name="{{ $inputName }}" value="{{ $option['id'] }}" @checked($isChecked) @if ($group['is_required'] && $optionIndex === 0) required @endif data-option-id="{{ $option['id'] }}" data-option-name="{{ $option['name'] }}" data-option-image="{{ $image ?? '' }}" data-option-disabled="{{ !empty($option['is_disabled']) ? '1' : '0' }}">
                                                 @if ($image !== null)<img src="{{ asset('product-options/'.rawurlencode($image)) }}" alt="{{ $option['name'] }}" loading="lazy">@endif
@@ -512,9 +527,11 @@
                                     @foreach ($group['options'] as $optionIndex => $option)
                                         @php
                                             $inputId = 'configured-option-'.$group['id'].'-'.$option['id'];
-                                            $isChecked = $defaultOptionId !== null && $defaultOptionId === $option['id'];
+                                            $isChecked = $hasPreviousSelectedOptionIds
+                                                ? in_array((int) $option['id'], $previousSelectedOptionIds, true)
+                                                : ($defaultOptionId !== null && $defaultOptionId === $option['id']);
                                         @endphp
-                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}">
+                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}" data-quantity-rule="{{ $option['quantity_rule'] ?? 'no_limit' }}" data-min-qty="{{ $option['min_qty'] ?? '' }}" data-max-qty="{{ $option['max_qty'] ?? '' }}" data-exact-qty="{{ $option['exact_qty'] ?? '' }}">
                                             <label class="configured-button-choice" for="{{ $inputId }}">
                                                 <input id="{{ $inputId }}" type="radio" name="{{ $inputName }}" value="{{ $option['id'] }}" @checked($isChecked) @if ($group['is_required'] && $optionIndex === 0) required @endif data-option-id="{{ $option['id'] }}" data-option-name="{{ $option['name'] }}" data-option-image="{{ $option['images'][0] ?? '' }}" data-option-disabled="{{ !empty($option['is_disabled']) ? '1' : '0' }}">
                                                 <span>@if ($option['color_code'])<i class="configured-color" style="background-color: {{ $option['color_code'] }}"></i>@endif{{ $option['name'] }}</span>
@@ -528,11 +545,13 @@
                                     @foreach ($group['options'] as $optionIndex => $option)
                                         @php
                                             $inputId = 'configured-option-'.$group['id'].'-'.$option['id'];
-                                            $isChecked = $defaultOptionId !== null && $defaultOptionId === $option['id'];
+                                            $isChecked = $hasPreviousSelectedOptionIds
+                                                ? in_array((int) $option['id'], $previousSelectedOptionIds, true)
+                                                : ($defaultOptionId !== null && $defaultOptionId === $option['id']);
                                             $isPreviousOrderYes = $displayType === 'previous_order'
                                                 && ($option['name'] === 'はい' || strtolower($option['name']) === 'yes');
                                         @endphp
-                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}">
+                                        <div class="configured-option-shell" data-configured-option="{{ $option['id'] }}" data-quantity-rule="{{ $option['quantity_rule'] ?? 'no_limit' }}" data-min-qty="{{ $option['min_qty'] ?? '' }}" data-max-qty="{{ $option['max_qty'] ?? '' }}" data-exact-qty="{{ $option['exact_qty'] ?? '' }}">
                                             <div class="part-content">
                                                 <label class="part-name" for="{{ $inputId }}">
                                                     <input id="{{ $inputId }}" type="radio" name="{{ $inputName }}" value="{{ $option['id'] }}" @checked($isChecked) @if ($group['is_required'] && $optionIndex === 0) required @endif data-option-id="{{ $option['id'] }}" data-option-name="{{ $option['name'] }}" data-option-image="{{ $option['images'][0] ?? '' }}" data-option-disabled="{{ !empty($option['is_disabled']) ? '1' : '0' }}" data-previous-order-yes="{{ $isPreviousOrderYes ? '1' : '0' }}">
@@ -593,8 +612,9 @@
                                             @foreach ($priceSummaryFields as $field)
                                                 <tr><td>{{ $field['label'] }}</td><td data-configured-price-field="{{ $field['key'] }}" @if ($field['price_option_id'] !== null) data-configured-price-option="{{ $field['price_option_id'] }}" @else data-configured-price-group="{{ $field['group_id'] }}" @endif>0円</td></tr>
                                             @endforeach
-                                            <tr><td>小計(税込)</td><td data-configured-price-row="subtotal">0円</td></tr>
-                                            <tr><td>お値引き</td><td data-configured-price-row="discount">0円</td></tr>
+                    <tr><td>小計(税込)</td><td data-configured-price-row="subtotal">0円</td></tr>
+                    <tr><td>お値引き</td><td data-configured-price-row="discount">0円</td></tr>
+                    <tr><td>送料(税込)</td><td data-configured-price-row="shipping">0円</td></tr>
                                             <tr><td>合計(税込)</td><td data-configured-price-row="total">0円</td></tr>
                                         </tbody></table>
                                     </div>
@@ -689,11 +709,16 @@
             const finalActionButtons = Array.from(orderForm.querySelectorAll('[data-configured-final-action]'));
             const dependencies = @json($orderDependencies ?? []);
             const pricing = @json($orderPricing ?? ['product_rules' => [], 'option_rules' => []]);
+            const productPriceField = pricing.price_display_type === 'without_tax' ? 'unit_price' : 'unit_price_with_tax';
+            const optionPriceField = pricing.price_display_type === 'without_tax' ? 'additional_price' : 'additional_price_with_tax';
+            // Summary rows are tax-inclusive even when option labels use pre-tax prices.
+            const summaryTaxMultiplier = pricing.price_display_type === 'without_tax' ? 1.1 : 1;
             const estimatePdfUrl = @json(route('products.estimate.pdf', ['productPath' => $product->slug]));
             const customerDetailsStoreUrl = @json(route('products.customer.store', ['productPath' => $product->slug]));
             const estimateCsrfToken = @json(csrf_token());
             const customerDetails = orderForm.querySelector('[data-configured-customer-details]');
             const orderInfoButton = orderForm.querySelector('[data-configured-order-info]');
+            const quantityInput = orderForm.querySelector('input[name="quantity"]');
             const noticeModal = orderForm.querySelector('[data-configured-notice-modal]');
             const hideCustomerDetails = function () {
                 if (customerDetails) customerDetails.hidden = true;
@@ -870,7 +895,7 @@
                 return Math.round(Number(amount) || 0).toLocaleString('ja-JP') + '円';
             };
             const getOrderQuantity = function () {
-                const input = orderForm.querySelector('input[type="number"]:not(:disabled)');
+                const input = quantityInput;
                 const quantity = Number(input?.value || 1);
                 return Number.isFinite(quantity) && quantity > 0 ? Math.floor(quantity) : 1;
             };
@@ -878,6 +903,60 @@
                 return new Set(Array.from(orderForm.querySelectorAll('input:checked:not(:disabled)[data-option-id]'))
                     .map(function (input) { return Number(input.dataset.optionId); })
                     .filter(function (id) { return Number.isFinite(id) && id > 0; }));
+            };
+            const applyQuantityRules = function () {
+                if (!quantityInput) return { min: 1, max: null, hasRule: false, conflict: false };
+
+                let min = 1;
+                let max = null;
+                let hasRule = false;
+                let exactQuantity = null;
+                let hasConflictingExactValues = false;
+
+                Array.from(orderForm.querySelectorAll('input:checked:not(:disabled)[data-option-id]')).forEach(function (input) {
+                    const option = input.closest('[data-configured-option]');
+                    if (!option) return;
+
+                    const rule = option.dataset.quantityRule || 'no_limit';
+                    const configuredMin = Number.parseInt(option.dataset.minQty, 10);
+                    const configuredMax = Number.parseInt(option.dataset.maxQty, 10);
+                    const exact = Number.parseInt(option.dataset.exactQty, 10);
+
+                    if (rule === 'minimum_only' || rule === 'min_max_range') {
+                        if (Number.isFinite(configuredMin)) {
+                            min = Math.max(min, configuredMin);
+                            hasRule = true;
+                        }
+                    }
+                    if (rule === 'maximum_only' || rule === 'min_max_range') {
+                        if (Number.isFinite(configuredMax)) {
+                            max = max === null ? configuredMax : Math.min(max, configuredMax);
+                            hasRule = true;
+                        }
+                    }
+                    if (rule === 'exact_quantity_only' && Number.isFinite(exact)) {
+                        if (exactQuantity !== null && exactQuantity !== exact) {
+                            hasConflictingExactValues = true;
+                        } else {
+                            exactQuantity = exact;
+                        }
+                        min = Math.max(min, exact);
+                        max = max === null ? exact : Math.min(max, exact);
+                        hasRule = true;
+                    }
+                });
+
+                const conflict = hasConflictingExactValues || (max !== null && min > max);
+                const lockToExactQuantity = exactQuantity !== null && !hasConflictingExactValues;
+                quantityInput.min = String(min);
+                if (max === null) quantityInput.removeAttribute('max');
+                else quantityInput.max = String(max);
+                quantityInput.readOnly = lockToExactQuantity;
+                quantityInput.setAttribute('aria-readonly', lockToExactQuantity ? 'true' : 'false');
+                if (lockToExactQuantity) quantityInput.value = String(exactQuantity);
+                quantityInput.setCustomValidity(conflict ? '選択したオプションの数量条件が一致しません。' : '');
+
+                return { min: min, max: max, hasRule: hasRule, conflict: conflict };
             };
             const goToCustomerDetails = function () {
                 const transferForm = document.createElement('form');
@@ -905,12 +984,16 @@
 
                 addField('_token', estimateCsrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '');
                 addField('quantity', getOrderQuantity());
+                selectedOptionIds().forEach(function (id) {
+                    addField('selected_option_ids[]', id);
+                });
                 const totalText = orderForm.querySelector('[data-configured-price-row="total"]')?.textContent
                     || orderForm.querySelector('.prd_total')?.textContent;
                 const subtotalText = orderForm.querySelector('[data-configured-price-row="subtotal"]')?.textContent || totalText;
                 const discountText = orderForm.querySelector('[data-configured-price-row="discount"]')?.textContent;
                 addField('total_amount', amountFromText(totalText));
                 addField('subtotal_amount', amountFromText(subtotalText));
+                addField('shipping_amount', amountFromText(orderForm.querySelector('[data-configured-price-row="shipping"]')?.textContent));
                 addField('discount_amount', amountFromText(discountText));
 
                 const orderValues = [];
@@ -1028,7 +1111,9 @@
                         return (right.conditions?.length || 0) - (left.conditions?.length || 0);
                     })[0];
                 const productTier = matchingProductRule ? matchingTier(matchingProductRule.tiers, quantity) : null;
-                const productTotal = productTier ? (Number(productTier.unit_price_with_tax) || 0) * quantity : 0;
+                const productTotal = productTier
+                    ? Math.round((Number(productTier[productPriceField]) || 0) * quantity * summaryTaxMultiplier)
+                    : 0;
                 const chargesByGroup = new Map();
                 const chargesByOption = new Map();
                 const optionDisplayPrices = new Map();
@@ -1040,7 +1125,7 @@
                     const tier = matchingTier(rule.tiers, quantity);
                     if (!tier) return;
 
-                    const tierPrice = Number(tier.additional_price_with_tax) || 0;
+                    const tierPrice = Number(tier[optionPriceField]) || 0;
                     // Show each option's unit price as soon as the form loads.
                     // The option itself is treated as the preview selection so
                     // conditions that include the target option still match.
@@ -1056,7 +1141,9 @@
                     // Only selected options contribute to the order total.
                     if (!selectedIds.has(targetOptionId) || !ruleMatches(rule, selectedIds)) return;
 
-                    const charge = rule.price_type === 'per_piece' ? tierPrice * quantity : tierPrice;
+                    const charge = Math.round(
+                        (rule.price_type === 'per_piece' ? tierPrice * quantity : tierPrice) * summaryTaxMultiplier
+                    );
                     chargesByOption.set(targetOptionId, (chargesByOption.get(targetOptionId) || 0) + charge);
 
                     const groupId = Number(rule.target_group_id);
@@ -1068,7 +1155,14 @@
                 }, 0);
                 const subtotal = productTotal + optionChargeTotal;
                 const discount = 0;
-                const total = subtotal - discount;
+                const freeMinimum = pricing.shipping_free_minimum;
+                const shipping = freeMinimum !== null && freeMinimum !== undefined && productTotal >= Number(freeMinimum)
+                    ? 0 : Math.round((Number(pricing.shipping_fee ?? 800) || 0) * 1.1);
+                const total = subtotal - discount + shipping;
+
+                orderForm.querySelectorAll('[data-configured-price-row="shipping"]').forEach(function (cell) {
+                    cell.textContent = formatPrice(shipping);
+                });
 
                 orderForm.querySelectorAll('[data-configured-price-row="product"]').forEach(function (cell) {
                     cell.textContent = formatPrice(productTotal);
@@ -1150,6 +1244,30 @@
                     return false;
                 }
 
+                const quantityIsInThisStep = quantityInput && !quantityInput.disabled && step.contains(quantityInput);
+                const isFinalStep = currentStep === stepLinks.length - 1;
+                if (quantityInput && !quantityInput.disabled && (quantityIsInThisStep || isFinalStep)) {
+                    const bounds = applyQuantityRules();
+                    const submittedQuantity = quantityInput.value.trim() === '' ? 1 : Number(quantityInput.value);
+                    const isOutsideConfiguredBounds = bounds.hasRule
+                        && (submittedQuantity < bounds.min || (bounds.max !== null && submittedQuantity > bounds.max));
+
+                    if (isOutsideConfiguredBounds && !bounds.conflict) {
+                        const message = bounds.min === bounds.max
+                            ? 'ご注文数量は' + bounds.min + '個で入力してください。'
+                            : (submittedQuantity < bounds.min
+                                ? 'ご注文数量は' + bounds.min + '個以上で入力してください。'
+                                : 'ご注文数量は' + bounds.max + '個以下で入力してください。');
+                        quantityInput.setCustomValidity(message);
+                    }
+
+                    if (!quantityInput.checkValidity()) {
+                        quantityInput.reportValidity();
+                        quantityInput.focus();
+                        return false;
+                    }
+                }
+
                 const requiredInputs = Array.from(step.querySelectorAll('input[required]:not(:disabled), select[required]:not(:disabled), textarea[required]:not(:disabled)'));
                 for (const input of requiredInputs) {
                     if (input.type === 'radio') {
@@ -1190,6 +1308,7 @@
                 customerDetails?.querySelectorAll('input').forEach(function (input) { input.value = ''; });
                 hideCustomerDetails();
                 applyDependencies();
+                applyQuantityRules();
                 updateDisabledOptionMessages();
                 updateSummary();
                 updatePricing();
@@ -1287,12 +1406,16 @@
 
                 addField('_token', estimateCsrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '');
                 addField('quantity', getOrderQuantity());
+                selectedOptionIds().forEach(function (id) {
+                    addField('selected_option_ids[]', id);
+                });
                 const totalText = orderForm.querySelector('[data-configured-price-row="total"]')?.textContent
                     || orderForm.querySelector('.prd_total')?.textContent;
                 const subtotalText = orderForm.querySelector('[data-configured-price-row="subtotal"]')?.textContent || totalText;
                 const discountText = orderForm.querySelector('[data-configured-price-row="discount"]')?.textContent;
                 addField('total_amount', amountFromText(totalText));
                 addField('subtotal_amount', amountFromText(subtotalText));
+                addField('shipping_amount', amountFromText(orderForm.querySelector('[data-configured-price-row="shipping"]')?.textContent));
                 addField('discount_amount', amountFromText(discountText));
 
                 orderForm.querySelectorAll('[data-estimate-customer]').forEach(function (input) {
@@ -1352,17 +1475,20 @@
             orderForm.querySelectorAll('input').forEach(function (input) {
                 input.addEventListener('change', function () {
                     applyDependencies();
+                    applyQuantityRules();
                     updateDisabledOptionMessages();
                     updateSummary();
                     updatePricing();
                     updateStepActions();
                 });
                 if (input.type === 'number') input.addEventListener('input', function () {
+                    if (input === quantityInput) applyQuantityRules();
                     updateSummary();
                     updatePricing();
                 });
             });
             applyDependencies();
+            applyQuantityRules();
             updateDisabledOptionMessages();
             updateSummary();
             updatePricing();

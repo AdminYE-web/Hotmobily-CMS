@@ -1,0 +1,969 @@
+- generic [active] [ref=f1e1]:
+  - table [ref=f1e3]:
+    - rowgroup [ref=f1e4]:
+      - row [ref=f1e5]:
+        - cell [ref=f1e6]:
+          - link [ref=f1e7] [cursor=pointer]:
+            - /url: //hotmobily.jp/
+        - cell [ref=f1e9]:
+          - link [ref=f1e10] [cursor=pointer]:
+            - /url: tel:05068655591
+  - generic [ref=f1e12]:
+    - list:
+      - listitem [ref=f1e13]:
+        - generic [ref=f1e14] [cursor=pointer]: データ作成ガイド
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=f1e15]:
+        - generic [ref=f1e16] [cursor=pointer]: 製作実績
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=f1e17]:
+        - link "テンプレート" [ref=f1e18] [cursor=pointer]:
+          - /url: /template/
+      - listitem [ref=f1e19]:
+        - generic [ref=f1e20] [cursor=pointer]: 製作詳細
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=f1e21]:
+        - generic [ref=f1e22] [cursor=pointer]: ご利用ガイド
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=f1e23]:
+        - generic [ref=f1e24] [cursor=pointer]: FAQ・口コミ求人
+        - list:
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=f1e25]:
+        - generic [ref=f1e26] [cursor=pointer]: 問合せサンプル請求営業呼び出し
+        - list:
+          - listitem
+          - listitem
+  - text:                     
+  - generic [ref=f1e27]:
+    - generic [ref=f1e28]:
+      - navigation [ref=f1e29]:
+        - list [ref=f1e30]:
+          - listitem [ref=f1e31]:
+            - link "商品一覧" [ref=f1e32] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f1e35]:
+            - link "オリジナルキーホルダー" [ref=f1e36] [cursor=pointer]:
+              - /url: /products/keychains-ranking
+          - listitem [ref=f1e39]:
+            - link "ラバーストラップ" [ref=f1e40] [cursor=pointer]:
+              - /url: /products/rubberstrap/
+          - listitem [ref=f1e43]:
+            - link "ラバーキーホルダー" [ref=f1e44] [cursor=pointer]:
+              - /url: /products/rubberkeyholder/
+          - listitem [ref=f1e47]:
+            - link "ラバーコースター" [ref=f1e48] [cursor=pointer]:
+              - /url: /products/rubbercoaster/
+          - listitem [ref=f1e51]:
+            - link "アクリル製品一覧" [ref=f1e52] [cursor=pointer]:
+              - /url: /all-acrylic-products.php
+          - listitem [ref=f1e55]:
+            - link "アクリルキーホルダー" [ref=f1e56] [cursor=pointer]:
+              - /url: /products/acrylic/
+          - listitem [ref=f1e59]:
+            - link "アクリルスタンド" [ref=f1e60] [cursor=pointer]:
+              - /url: /products/acrylic/figure
+          - listitem [ref=f1e63]:
+            - link "リフレクター（反射）チャーム" [ref=f1e64] [cursor=pointer]:
+              - /url: /products/reflecter.php
+          - listitem [ref=f1e67]:
+            - link "オリジナルワッペン" [ref=f1e68] [cursor=pointer]:
+              - /url: /products/wappen
+          - listitem [ref=f1e71]:
+            - link "メガネクロス・マイクロファイバーポーチ" [ref=f1e72] [cursor=pointer]:
+              - /url: /products/microfibers.php
+          - listitem [ref=f1e75]:
+            - link "カラビナリング" [ref=f1e76] [cursor=pointer]:
+              - /url: /products/carabiner/
+      - generic [ref=f1e79]:
+        - link [ref=f1e80] [cursor=pointer]:
+          - /url: //x.com/GoodsYe
+        - link [ref=f1e82] [cursor=pointer]:
+          - /url: //www.facebook.com/Hotmobily_jp-%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC-171871399585893
+        - link [ref=f1e84] [cursor=pointer]:
+          - /url: //www.youtube.com/channel/UCCAbieM95Kd0ay_nk5Fa9lA/
+        - link [ref=f1e86] [cursor=pointer]:
+          - /url: https://www.instagram.com/hot.mobily/?hl=ja
+      - separator [ref=f1e88]
+      - heading [level=3] [ref=f1e89]:
+        - link "ホットモバイリーに関するツイート" [ref=f1e90] [cursor=pointer]:
+          - /url: //x.com/search?q=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC
+      - heading [level=3] [ref=f1e91]:
+        - link "今すぐサンプル請求！" [ref=f1e92] [cursor=pointer]:
+          - /url: /contact/index.php
+      - heading [level=3] [ref=f1e94]:
+        - link "ノベルティー営業担当呼び出しフォーム" [ref=f1e95] [cursor=pointer]:
+          - /url: /meeting_date/
+      - heading [level=3] [ref=f1e97]:
+        - link [ref=f1e98] [cursor=pointer]:
+          - /url: /blog-content/lists
+      - paragraph [ref=f1e100]:
+        - link [ref=f1e101] [cursor=pointer]:
+          - /url: /production/
+      - heading [level=3] [ref=f1e102]:
+        - link "?" [ref=f1e103] [cursor=pointer]:
+          - /url: //www.hotstrap.jp/
+      - link [ref=f1e104] [cursor=pointer]:
+        - /url: https://www.google.com/search?q=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC&oq=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg9MgYIAhBFGD0yBggDEEUYPTIGCAQQRRhB0gEIMjg5OWowajGoAgCwAgA&sourceid=chrome&ie=UTF-8
+      - table [ref=f1e105]:
+        - rowgroup [ref=f1e106]:
+          - row [ref=f1e107]:
+            - columnheader [ref=f1e108]
+          - row [ref=f1e109]:
+            - columnheader "日" [ref=f1e110]
+            - columnheader "月" [ref=f1e111]
+            - columnheader "火" [ref=f1e112]
+            - columnheader "水" [ref=f1e113]
+            - columnheader "木" [ref=f1e114]
+            - columnheader "金" [ref=f1e115]
+            - columnheader "土" [ref=f1e116]
+        - rowgroup
+      - generic [ref=f1e117]:
+        - generic [ref=f1e118]:
+          - paragraph [ref=f1e119]: ①
+          - text: 営業+生産休業日
+        - generic [ref=f1e120]:
+          - paragraph [ref=f1e121]: ②
+          - text: 営業休業日（生産はあり）
+        - generic [ref=f1e122]:
+          - paragraph [ref=f1e123]: ③
+          - text: 生産休業日（営業はあり）
+        - generic [ref=f1e124]:
+          - text: 営業日：
+          - paragraph [ref=f1e125]: ①
+          - paragraph [ref=f1e126]: ②
+          - text: を除く日
+        - generic [ref=f1e127]:
+          - text: 生産日：
+          - paragraph [ref=f1e128]: ①
+          - paragraph [ref=f1e129]: ③
+          - text: を除く日
+    - generic [ref=f1e131]:
+      - generic [ref=f1e132]:
+        - generic [ref=f1e139]:
+          - heading "オリジナルラバーストラップ（2026年版）" [level=1] [ref=f1e140]
+          - generic [ref=f1e141]:
+            - paragraph [ref=f1e142]: シェアする
+            - link [ref=f1e143] [cursor=pointer]:
+              - /url: https://x.com/GoodsYe
+              - img "X" [ref=f1e144]
+            - link [ref=f1e145] [cursor=pointer]:
+              - /url: https://www.facebook.com/Hotmobily_jp-%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC-171871399585893
+              - img "Facebook" [ref=f1e146]
+            - link [ref=f1e147] [cursor=pointer]:
+              - /url: https://www.instagram.com/hot.mobily/?hl=ja
+              - img "Instagram" [ref=f1e148]
+            - paragraph [ref=f1e149]: 更新日：2026年8月3日
+        - generic [ref=f1e150]:
+          - generic [ref=f1e152]:
+            - generic [ref=f1e156]:
+              - img "ラバーストラップ" [ref=f1e158]
+              - generic [ref=f1e159]:
+                - button [ref=f1e160] [cursor=pointer]:
+                  - img "ラバーストラップ" [ref=f1e161]
+                - button [ref=f1e162] [cursor=pointer]:
+                  - img "ラバーストラップ" [ref=f1e163]
+                - button [ref=f1e164] [cursor=pointer]:
+                  - img "ラバーストラップ" [ref=f1e165]
+                - button [ref=f1e166] [cursor=pointer]:
+                  - img "ラバーストラップ" [ref=f1e167]
+                - button [ref=f1e168] [cursor=pointer]:
+                  - img "ラバーストラップ" [ref=f1e169]
+                - button [ref=f1e170] [cursor=pointer]:
+                  - img "ラバーストラップ" [ref=f1e171]
+            - link "この商品を見積・注文する" [ref=f1e175] [cursor=pointer]:
+              - /url: https://www.google.com/
+          - generic [ref=f1e179]:
+            - generic [ref=f1e183]:
+              - paragraph [ref=f1e185]: 参考単価： 1個480円～
+              - paragraph [ref=f1e187]: 100個合計金額： 48,000円
+              - paragraph [ref=f1e189]: 出荷目安（通常納期）： 読み込み中...
+              - generic [ref=f1e190]: ※出荷目安は本日原稿が確定した場合の日付です。 ※出荷目安は注文個数やプランによって異なります。詳しくはこちらをご確認ください。
+              - heading "業界最速・最安級！自社生産だからできる高品質ラバスト製作" [level=2] [ref=f1e191]
+            - generic [ref=f1e195]:
+              - heading "1個からラバストを作りたいなら印刷タイプ！" [level=3] [ref=f1e196]
+              - link [ref=f1e197] [cursor=pointer]:
+                - /url: "#head"
+                - img "1個からラバストを作りたいなら印刷タイプ！" [ref=f1e198]
+              - generic [ref=f1e199]: 1個からのラバスト製作なら印刷ラバーストラップ！フルカラーでデザインを印刷可能です！
+              - link "印刷ラバーストラップはこちら" [ref=f1e201] [cursor=pointer]:
+                - /url: "#head"
+            - generic [ref=f1e205]:
+              - heading "業界最短！７日のスピード出荷" [level=3] [ref=f1e206]
+              - img "業界最短！７日のスピード出荷" [ref=f1e208]
+              - generic [ref=f1e209]: お急ぎでも安心。自社生産により、ご注文から最短7営業日での出荷を実現！
+            - generic [ref=f1e213]:
+              - heading "直販ならではの業界最安値" [level=3] [ref=f1e214]
+              - img "直販ならではの業界最安値" [ref=f1e216]
+              - generic [ref=f1e217]: 100個48,000円（@480円）の業界最安値！中間代理店のマージンを削減した直販ならではの激安価格。10個9,900円の小ロットプランもご用意。初心者でも気軽に作成可能です。
+            - generic [ref=f1e221]:
+              - heading "汚れ防止オプションあり" [level=3] [ref=f1e222]
+              - img "汚れ防止オプションあり" [ref=f1e224]
+              - generic [ref=f1e225]: ラバーストラップについた汚れを水洗いだけで落とせる！当店だけの汚れ防止加工でラバストをきれいに保てます！単価99円（税込）！
+            - generic [ref=f1e229]:
+              - heading "ラバーストラップ完全ガイド" [level=3] [ref=f1e230]
+              - img "ラバーストラップ完全ガイド" [ref=f1e232]
+              - generic [ref=f1e233]: 「ラバーストラップ製作の基本を知りたい！」「より良いラバストを作りたい！」という方向けの完全ガイドをご用意しております。ぜひご確認ください。
+        - generic [ref=f1e240]:
+          - generic [ref=f1e241] [cursor=pointer]: 価格・制作料金について
+          - generic [ref=f1e244]:
+            - generic [ref=f1e248]:
+              - heading "スタンダードプラン" [level=3] [ref=f1e249]
+              - table [ref=f1e250]:
+                - rowgroup [ref=f1e253]:
+                  - row [ref=f1e254]:
+                    - cell "数量" [ref=f1e255]
+                    - cell "100" [ref=f1e256]
+                    - cell "200" [ref=f1e257]
+                    - cell "300" [ref=f1e258]
+                    - cell "500" [ref=f1e259]
+                    - cell "1000" [ref=f1e260]
+                    - cell "3000" [ref=f1e261]
+                    - cell "5000" [ref=f1e262]
+                  - row [ref=f1e263]:
+                    - cell "3mm厚" [ref=f1e264]
+                    - cell "¥48,000 @¥480" [ref=f1e265]
+                    - cell "¥78,600 @¥393" [ref=f1e266]
+                    - cell "¥91,800 @¥306" [ref=f1e267]
+                    - cell "¥126,500 @¥253" [ref=f1e268]
+                    - cell "¥201,000 @¥201" [ref=f1e269]
+                    - cell "¥438,000 @¥146" [ref=f1e270]
+                    - cell "¥630,000 @¥126" [ref=f1e271]
+                  - row [ref=f1e272]:
+                    - cell "@¥126" [ref=f1e273]
+                    - cell "¥57,600 @¥576" [ref=f1e274]
+                    - cell "¥94,200 @¥471" [ref=f1e275]
+                    - cell "¥110,100 @¥367" [ref=f1e276]
+                    - cell "¥151,500 @¥303" [ref=f1e277]
+                    - cell "¥240,000 @¥240" [ref=f1e278]
+                    - cell "¥522,000 @¥174" [ref=f1e279]
+                    - cell "¥755,000 @¥151" [ref=f1e280]
+            - generic [ref=f1e281]: ※スタンダードには表面印刷代、トレース代は含まれておりません。※試作込みの製作日数には、試作品配送日数として1日加算しております。
+            - generic [ref=f1e292]:
+              - heading "プレミアムプラン" [level=3] [ref=f1e293]
+              - table [ref=f1e294]:
+                - rowgroup [ref=f1e297]:
+                  - row [ref=f1e298]:
+                    - cell "数量" [ref=f1e299]
+                    - cell "100" [ref=f1e300]
+                    - cell "200" [ref=f1e301]
+                    - cell "300" [ref=f1e302]
+                    - cell "500" [ref=f1e303]
+                    - cell "1000" [ref=f1e304]
+                    - cell "3000" [ref=f1e305]
+                    - cell "5000" [ref=f1e306]
+                  - row [ref=f1e307]:
+                    - cell "3mm厚" [ref=f1e308]
+                    - cell "¥66,000 @¥660" [ref=f1e309]
+                    - cell "¥88,000 @¥440" [ref=f1e310]
+                    - cell "¥120,300 @¥401" [ref=f1e311]
+                    - cell "¥184,000 @¥368" [ref=f1e312]
+                    - cell "¥282,000 @¥282" [ref=f1e313]
+                    - cell "¥606,000 @¥202" [ref=f1e314]
+                    - cell "¥770,000 @¥154" [ref=f1e315]
+                  - row [ref=f1e316]:
+                    - cell "5mm厚" [ref=f1e317]
+                    - cell "¥72,600 @¥726" [ref=f1e318]
+                    - cell "¥96,800 @¥484" [ref=f1e319]
+                    - cell "¥132,300 @¥441" [ref=f1e320]
+                    - cell "¥202,000 @¥404" [ref=f1e321]
+                    - cell "¥310,000 @¥310" [ref=f1e322]
+                    - cell "¥660,000 @¥222" [ref=f1e323]
+                    - cell "¥845,000 @¥169" [ref=f1e324]
+            - generic [ref=f1e325]: ※プレミアムでは、試作品、裏面印刷、トレース代金は無料です。※試作込みの製作日数には、試作品配送日数として1日加算しております。
+            - generic [ref=f1e336]:
+              - heading "スタンダード（スピード発送）" [level=3] [ref=f1e337]
+              - table [ref=f1e338]:
+                - rowgroup [ref=f1e341]:
+                  - row [ref=f1e342]:
+                    - cell "数量" [ref=f1e343]
+                    - cell "100" [ref=f1e344]
+                    - cell "200" [ref=f1e345]
+                    - cell "300" [ref=f1e346]
+                  - row [ref=f1e347]:
+                    - cell "3mm厚" [ref=f1e348]
+                    - cell "¥54,300 @¥543" [ref=f1e349]
+                    - cell "¥88,400 @¥442" [ref=f1e350]
+                    - cell "¥101,700 @¥339" [ref=f1e351]
+                  - row [ref=f1e352]:
+                    - cell "5mm厚" [ref=f1e353]
+                    - cell "¥65,100 @¥651" [ref=f1e354]
+                    - cell "¥106,000 @¥530" [ref=f1e355]
+                    - cell "¥122,100 @¥407" [ref=f1e356]
+            - generic [ref=f1e357]: ※スピード発送の場合、最大ロットは300個となります。※裏面印刷代金、トレース代金は含まれておりません。 ※汚れ防止加工は、スピード発送の対象外です。
+            - generic [ref=f1e368]:
+              - heading "各種オプション料金（税込）" [level=3] [ref=f1e369]
+              - table [ref=f1e370]:
+                - rowgroup [ref=f1e373]:
+                  - row [ref=f1e374]:
+                    - cell "汚れ防止加工" [ref=f1e375]
+                    - cell "@99円" [ref=f1e376]
+                  - row [ref=f1e377]:
+                    - cell "裏面印刷" [ref=f1e378]
+                    - cell "@33円" [ref=f1e379]
+                  - row [ref=f1e380]:
+                    - cell "特殊素材" [ref=f1e381]
+                    - cell "@33円" [ref=f1e382]
+            - generic [ref=f1e390]:
+              - heading "■1個から製作可能な印刷タイプ" [level=3] [ref=f1e391]
+              - table [ref=f1e392]:
+                - rowgroup [ref=f1e395]:
+                  - row [ref=f1e396]:
+                    - cell "数量" [ref=f1e397]
+                    - cell "1" [ref=f1e398]
+                    - cell "10" [ref=f1e399]
+                    - cell "30" [ref=f1e400]
+                    - cell "50" [ref=f1e401]
+                    - cell "100" [ref=f1e402]
+                    - cell "300" [ref=f1e403]
+                    - cell "500" [ref=f1e404]
+                    - cell "1000" [ref=f1e405]
+                  - row [ref=f1e406]:
+                    - cell "価格" [ref=f1e407]
+                    - cell "¥316 @¥316" [ref=f1e408]
+                    - cell "¥3,000 @300" [ref=f1e409]
+                    - cell "¥8,550 @¥285" [ref=f1e410]
+                    - cell "¥13,650 @¥273" [ref=f1e411]
+                    - cell "¥25,000 @¥250" [ref=f1e412]
+                    - cell "¥62,400 @¥208" [ref=f1e413]
+                    - cell "¥92,000 @¥184" [ref=f1e414]
+                    - cell "¥1,740,000 @¥174" [ref=f1e415]
+            - link "印刷ラバーストラップの注文フォームはこちら" [ref=f1e419] [cursor=pointer]:
+              - /url: https://hotmobily.jp/products/printedrubberstrap_keyholder/
+            - generic [ref=f1e424]: スタンダードプラン・プレミアムプランとは？当店では、お客様の目的・ニーズに合わせて選べる「スタンダード」「プレミアム」の2つのプランをご用意しています！・スタンダードプラン満足度90％以上を維持しつつ、コストを抑えたお得なプランです。ノベルティや配布用などコスパを意識しつつ、良品を製作したい方はスタンダードがおすすめ。・プレミアムプラン海外と日本でダブル検品を行う最高品質プラン！日本の厳しい基準でわずかな色の干渉も排除し、非常に品質の高い製品をお届けします。
+            - link "スタンダード、プレミアムプランについて詳しくはこちら" [ref=f1e435] [cursor=pointer]:
+              - /url: https://hotmobily.jp/products/printedrubberstrap_keyholder/
+            - link "全てのプランの詳細について詳しくはこちら" [ref=f1e439] [cursor=pointer]:
+              - /url: https://hotmobily.jp/products/product-difference.php?data=3
+        - generic [ref=f1e446]:
+          - generic [ref=f1e447] [cursor=pointer]: 出荷目安・納期について
+          - generic [ref=f1e450]:
+            - generic [ref=f1e454]:
+              - heading "オリジナルラバーストラップ製作の出荷日目安日です。出荷目安日は、現時点でご注文確定（デザイン確定、お支払い完了）の場合です。" [level=3] [ref=f1e455]
+              - table [ref=f1e456]:
+                - rowgroup [ref=f1e459]:
+                  - row [ref=f1e460]:
+                    - cell [ref=f1e461]
+                    - cell "スタンダード" [ref=f1e462]
+                    - cell "プレミアム" [ref=f1e463]
+                  - row [ref=f1e464]:
+                    - cell "数量" [ref=f1e465]
+                    - cell "当店からの出荷日目安" [ref=f1e466]
+                    - cell "当店からの出荷日目安" [ref=f1e467]
+                  - row [ref=f1e468]:
+                    - cell "量産のみ" [ref=f1e469]
+                    - cell "試作込み最短" [ref=f1e470]
+                    - cell "量産のみ" [ref=f1e471]
+                    - cell "試作込み最短" [ref=f1e472]
+                  - row [ref=f1e473]:
+                    - cell "100" [ref=f1e474]
+                    - cell "09/18(金)" [ref=f1e475]
+                    - cell "09/29(火)" [ref=f1e476]
+                    - cell "09/29(火)" [ref=f1e477]
+                    - cell "10/05(月)" [ref=f1e478]
+                  - row [ref=f1e479]:
+                    - cell "200" [ref=f1e480]
+                    - cell "09/18(金)" [ref=f1e481]
+                    - cell "09/29(火)" [ref=f1e482]
+                    - cell "09/29(火)" [ref=f1e483]
+                    - cell "10/05(月)" [ref=f1e484]
+                  - row [ref=f1e485]:
+                    - cell "300" [ref=f1e486]
+                    - cell "09/18(金)" [ref=f1e487]
+                    - cell "09/29(火)" [ref=f1e488]
+                    - cell "09/29(火)" [ref=f1e489]
+                    - cell "10/05(月)" [ref=f1e490]
+                  - row [ref=f1e491]:
+                    - cell "500" [ref=f1e492]
+                    - cell "09/23(水)" [ref=f1e493]
+                    - cell "10/02(金)" [ref=f1e494]
+                    - cell "10/02(金)" [ref=f1e495]
+                    - cell "10/13(火)" [ref=f1e496]
+                  - row [ref=f1e497]:
+                    - cell "1000" [ref=f1e498]
+                    - cell "09/23(水)" [ref=f1e499]
+                    - cell "10/02(金)" [ref=f1e500]
+                    - cell "10/02(金)" [ref=f1e501]
+                    - cell "10/13(火)" [ref=f1e502]
+                  - row [ref=f1e503]:
+                    - cell "3000" [ref=f1e504]
+                    - cell "10/06(火)" [ref=f1e505]
+                    - cell "10/12(月)" [ref=f1e506]
+                    - cell "10/12(月)" [ref=f1e507]
+                    - cell "10/20(火)" [ref=f1e508]
+                  - row [ref=f1e509]:
+                    - cell "5000" [ref=f1e510]
+                    - cell "10/06(火)" [ref=f1e511]
+                    - cell "10/12(月)" [ref=f1e512]
+                    - cell "10/12(月)" [ref=f1e513]
+                    - cell "10/20(火)" [ref=f1e514]
+            - generic [ref=f1e515]: ※スタンダードには裏面印刷代金、トレース代金は含まれておりません。※プレミアムでは、試作品、裏面印刷、トレース代金は無料です。※試作込みの製作日数には、試作品配送日数として1日加算しております。
+            - table [ref=f1e528]:
+              - rowgroup [ref=f1e531]:
+                - row [ref=f1e532]:
+                  - cell "スタンダード（スピード発送）" [ref=f1e533]
+                - row [ref=f1e534]:
+                  - cell "数量" [ref=f1e535]
+                  - cell "当店からの出荷日目安" [ref=f1e536]
+                - row [ref=f1e537]:
+                  - cell "量産のみ" [ref=f1e538]
+                  - cell "試作込み最短" [ref=f1e539]
+                - row [ref=f1e540]:
+                  - cell "100" [ref=f1e541]
+                  - cell "09/15(火)" [ref=f1e542]
+                  - cell "09/22(火)" [ref=f1e543]
+                - row [ref=f1e544]:
+                  - cell "200" [ref=f1e545]
+                  - cell "09/15(火)" [ref=f1e546]
+                  - cell "09/22(火)" [ref=f1e547]
+                - row [ref=f1e548]:
+                  - cell "300" [ref=f1e549]
+                  - cell "09/15(火)" [ref=f1e550]
+                  - cell "09/22(火)" [ref=f1e551]
+            - generic [ref=f1e552]: ※スピード発送の場合、最大ロットは300個となります。※裏面印刷代金、トレース代金は含まれておりません。※汚れ防止加工は、スピード発送の対象外です。
+            - generic [ref=f1e561]: 本生産（通常納期10営業日後、スピード発送納期7営業日後）の場合の出荷予定日、試作品（6営業日後出荷）の場合の出荷予定日は以下です。 ※本日原稿確定（最終デザイン確定・生産開始）の場合の出荷予定日です。
+            - generic [ref=f1e568]:
+              - generic [ref=f1e569]:
+                - generic [ref=f1e570]:
+                  - generic [ref=f1e571]: 通常納期
+                  - strong [ref=f1e574]: 10営業日後出荷
+                - table [ref=f1e575]:
+                  - rowgroup [ref=f1e576]:
+                    - row [ref=f1e577]:
+                      - cell "今、この製品を製作開始した場合の出荷日を表示中" [ref=f1e578]
+                    - row [ref=f1e579]:
+                      - columnheader "原稿確定日" [ref=f1e580]
+                      - columnheader "出荷予定" [ref=f1e581]
+                    - row [ref=f1e582]:
+                      - cell "-" [ref=f1e583]
+                      - cell [ref=f1e584]:
+                        - strong [ref=f1e585]: "-"
+              - generic [ref=f1e586]:
+                - generic [ref=f1e587]:
+                  - generic [ref=f1e588]: スピード納期
+                  - strong [ref=f1e591]: 7営業日後出荷
+                - table [ref=f1e592]:
+                  - rowgroup [ref=f1e593]:
+                    - row [ref=f1e594]:
+                      - cell "今、この製品を製作開始した場合の出荷日を表示中" [ref=f1e595]
+                    - row [ref=f1e596]:
+                      - columnheader "原稿確定日" [ref=f1e597]
+                      - columnheader "出荷予定" [ref=f1e598]
+                    - row [ref=f1e599]:
+                      - cell "-" [ref=f1e600]
+                      - cell [ref=f1e601]:
+                        - strong [ref=f1e602]: "-"
+              - generic [ref=f1e603]:
+                - generic [ref=f1e604]:
+                  - generic [ref=f1e605]: 試作納期
+                  - strong [ref=f1e608]: 6営業日後出荷
+                - table [ref=f1e609]:
+                  - rowgroup [ref=f1e610]:
+                    - row [ref=f1e611]:
+                      - cell "今、この製品をご注文頂いた場合の出荷予定日を表示中" [ref=f1e612]
+                    - row [ref=f1e613]:
+                      - columnheader "原稿確定日" [ref=f1e614]
+                      - columnheader "出荷予定" [ref=f1e615]
+                    - row [ref=f1e616]:
+                      - cell "-" [ref=f1e617]
+                      - cell [ref=f1e618]:
+                        - strong [ref=f1e619]: "-"
+            - generic [ref=f1e620]: ※お急ぎの場合、営業担当にご相談下さい。出来る限りお客様のご希望に沿うよう対応させていただきます。※営業日には、土日祝日を含みません。
+        - generic [ref=f1e631]:
+          - generic [ref=f1e632] [cursor=pointer]: 製作日数
+          - generic [ref=f1e635]:
+            - generic [ref=f1e636]: 各種条件での製作日数の目安は以下になります。
+            - generic [ref=f1e643]:
+              - heading "◆スタンダード製作期間（単位：営業日。配送日数は含まず）" [level=3] [ref=f1e644]
+              - table [ref=f1e645]:
+                - rowgroup [ref=f1e648]:
+                  - row [ref=f1e649]:
+                    - cell [ref=f1e650]
+                    - cell "300個以下" [ref=f1e651]
+                    - cell "1,000個以下" [ref=f1e652]
+                    - cell "3,000個程度まで" [ref=f1e653]
+                  - row [ref=f1e654]:
+                    - cell "試作品製作日数" [ref=f1e655]
+                    - cell "6" [ref=f1e656]
+                    - cell "6" [ref=f1e657]
+                    - cell "6" [ref=f1e658]
+                  - row [ref=f1e659]:
+                    - cell "量産品製作日数 (試作あり)" [ref=f1e660]
+                    - cell "16" [ref=f1e661]
+                    - cell "21" [ref=f1e662]
+                    - cell "29〜" [ref=f1e663]
+                  - row [ref=f1e664]:
+                    - cell "量産のみの製作日数 (試作なし)" [ref=f1e665]
+                    - cell "10" [ref=f1e666]
+                    - cell "14" [ref=f1e667]
+                    - cell "22〜" [ref=f1e668]
+            - generic [ref=f1e672]:
+              - heading "◆スタンダード (スピード発送) 製作期間 (単位：営業日。配送日数は含まず)" [level=3] [ref=f1e673]
+              - table [ref=f1e674]:
+                - rowgroup [ref=f1e677]:
+                  - row [ref=f1e678]:
+                    - cell [ref=f1e679]
+                    - cell "300個以下" [ref=f1e680]
+                  - row [ref=f1e681]:
+                    - cell "試作品製作日数" [ref=f1e682]
+                    - cell "6" [ref=f1e683]
+                  - row [ref=f1e684]:
+                    - cell "量産品製作日数 (試作あり)" [ref=f1e685]
+                    - cell "13" [ref=f1e686]
+                  - row [ref=f1e687]:
+                    - cell "量産のみの製作日数 (試作なし)" [ref=f1e688]
+                    - cell "7" [ref=f1e689]
+            - generic [ref=f1e693]:
+              - heading "◆プレミアム製作期間 (単位：営業日。配送日数は含まず)" [level=3] [ref=f1e694]
+              - table [ref=f1e695]:
+                - rowgroup [ref=f1e698]:
+                  - row [ref=f1e699]:
+                    - cell [ref=f1e700]
+                    - cell "300個以下" [ref=f1e701]
+                    - cell "1,000個以下" [ref=f1e702]
+                    - cell "3,000個程度まで" [ref=f1e703]
+                  - row [ref=f1e704]:
+                    - cell "試作品製作日数" [ref=f1e705]
+                    - cell "6" [ref=f1e706]
+                    - cell "6" [ref=f1e707]
+                    - cell "6" [ref=f1e708]
+                  - row [ref=f1e709]:
+                    - cell "量産品製作日数 (試作あり)" [ref=f1e710]
+                    - cell "23" [ref=f1e711]
+                    - cell "28" [ref=f1e712]
+                    - cell "36〜" [ref=f1e713]
+                  - row [ref=f1e714]:
+                    - cell "量産のみの製作日数 (試作なし)" [ref=f1e715]
+                    - cell "16" [ref=f1e716]
+                    - cell "21" [ref=f1e717]
+                    - cell "29〜" [ref=f1e718]
+            - generic [ref=f1e722]:
+              - generic [ref=f1e723]:
+                - text: ◆下記の制作条件の場合、上記に加えてプラス日数がかかります。
+                - paragraph [ref=f1e724]: ・汚れ防止加工をオプションで付ける場合、+3～5営業日。
+                - paragraph [ref=f1e725]: ・シルク印刷ありでのご注文の場合、+1営業日。
+                - paragraph [ref=f1e726]: ・色味指定を印刷紙で行う場合、+3営業日。
+              - generic [ref=f1e727]:
+                - text: ◆製作後の配送日数
+                - paragraph [ref=f1e728]: 北海道、九州、沖縄は2日。その他地域は1日。（離島等に関しては、別途お問い合わせください。）配送日数は、営業日でなく土日祝も含めた日数となります。
+              - generic [ref=f1e729]:
+                - text: ◆お客様の元へ製品が到着するまでの日数の計算例
+                - paragraph [ref=f1e730]: 北海道、九州、沖縄は2日。その他地域は1日。（離島等に関しては、別途お問い合わせください。）配送日数は、営業日でなく土日祝も含めた日数となります。
+                - paragraph [ref=f1e731]: スタンダード仕様にて、300個、試作品なしでご注文の場合、
+                - paragraph [ref=f1e732]: ・製作期間：10営業日
+                - paragraph [ref=f1e733]: ・配送期間：1-2日（配送地域により異なります）となります。
+        - generic [ref=f1e740]:
+          - generic [ref=f1e741] [cursor=pointer]: 入稿データについて
+          - generic [ref=f1e744]:
+            - generic [ref=f1e745]: 「デザインデータ作成のためのツール（adobe illustrator）を持っていない」「データの作り方がわからない」という方向けに、データ作成代行サービス（税込8,800円）をご提供しております。 「データ作成ツールを持っていて使い方もわかるので自分でデータを作成したい」という方向けに、テンプレートをご用意しております。
+            - link "テンプレートダウンロード" [ref=f1e752] [cursor=pointer]:
+              - /url: http://new-hotmobily.test/storage/products/3/templates/9890272e-1f41-4705-921a-8d554d4ffc8e.zip
+            - link "詳細はこちら" [ref=f1e756] [cursor=pointer]:
+              - /url: https://hotmobily.jp/lp/rubber-guide-data.php
+        - generic [ref=f1e763]:
+          - generic [ref=f1e764] [cursor=pointer]: 自社生産だからこその高品質・低価格
+          - generic [ref=f1e767]:
+            - generic [ref=f1e768]: 当店では、こだわりの自社生産によって、高品質・低価格を実現しています。
+            - generic [ref=f1e775]:
+              - heading "機械と職人の手で高いクオリティを実現" [level=3] [ref=f1e776]
+              - link [ref=f1e777] [cursor=pointer]:
+                - /url: https://hotmobily.jp/lp/rubber-guide-production.php
+                - img "機械と職人の手で高いクオリティを実現" [ref=f1e778]
+              - generic [ref=f1e779]: 最高のラバーストラップの製作のためには、最新技術と人の手の両方が不可欠です。当店は工程ごとに最適な手法（機械か、人か）を使い分け、理想のクオリティを実現しています。
+              - link "生産工程の詳細はこちら" [ref=f1e781] [cursor=pointer]:
+                - /url: https://hotmobily.jp/lp/rubber-guide-production.php
+            - generic [ref=f1e785]:
+              - heading "金具以上にちぎれにくい耐久性" [level=3] [ref=f1e786]
+              - link [ref=f1e787] [cursor=pointer]:
+                - /url: https://hotmobily.jp/lp/rubber-guide-production.php?sec=durability02
+                - img "金具以上にちぎれにくい耐久性" [ref=f1e788]
+              - generic [ref=f1e789]: ラバーストラップ製作においてよく懸念されるのが「金具との接続穴（通し穴）の強度」です。 「使っているうちにゴムが千切れて、ストラップを落としてしまった……」 といった事故を防ぐため、ホットモバイリーでは徹底した強度テストを行っています。
+              - link "耐久性の詳細はこちら" [ref=f1e791] [cursor=pointer]:
+                - /url: https://hotmobily.jp/lp/rubber-guide-production.php?sec=durability02
+            - generic [ref=f1e795]:
+              - heading "強化段ボール＋3重梱包で安全にお届け" [level=3] [ref=f1e796]
+              - link [ref=f1e797] [cursor=pointer]:
+                - /url: https://hotmobily.jp/lp/rubber-guide-production.php?sec=packing
+                - img "強化段ボール＋3重梱包で安全にお届け" [ref=f1e798]
+              - generic [ref=f1e799]: ラバーストラップはゴムの塊であるため、まとまるとかなりの重量になります。一般的な段ボールや簡易的な梱包では、配送中の振動や自重に耐えられず、ダメージを受けてしまうことも。当店では最高品質を保つため、梱包方法にもこだわっています。
+              - link "梱包の詳細はこちら" [ref=f1e801] [cursor=pointer]:
+                - /url: https://hotmobily.jp/lp/rubber-guide-production.php?sec=packing
+      - generic [ref=f1e802]:
+        - heading "ご注文・見積書作成" [level=2] [ref=f1e803]
+        - generic [ref=f1e804]:
+          - generic [ref=f1e805]:
+            - heading "【ラバーストラップ】" [level=3] [ref=f1e806]
+            - generic [ref=f1e807]: 110,000円（税込）
+          - generic [ref=f1e808]:
+            - table [ref=f1e810]:
+              - rowgroup [ref=f1e811]:
+                - row [ref=f1e812]:
+                  - cell "ご注文タイプ" [ref=f1e813]
+                  - cell "-" [ref=f1e814]
+                - row [ref=f1e815]:
+                  - cell "サイズ" [ref=f1e816]
+                  - cell "-" [ref=f1e817]
+                - row [ref=f1e818]:
+                  - cell "裏面印刷" [ref=f1e819]
+                  - cell "-" [ref=f1e820]
+                - row [ref=f1e821]:
+                  - cell "汚れ防止加工" [ref=f1e822]
+                  - cell "-" [ref=f1e823]
+                - row [ref=f1e824]:
+                  - cell "数量" [ref=f1e825]
+                  - cell "100" [ref=f1e826]
+                - row [ref=f1e827]:
+                  - cell "試作品" [ref=f1e828]
+                  - cell "なし" [ref=f1e829]
+                - row [ref=f1e830]:
+                  - cell "データトレース" [ref=f1e831]
+                  - cell "なし" [ref=f1e832]
+            - generic [ref=f1e833]: "-"
+            - generic [ref=f1e834]: 台紙:なし
+          - list [ref=f1e837]:
+            - listitem [ref=f1e838] [cursor=pointer]:
+              - generic [ref=f1e839]: "1"
+              - generic [ref=f1e840]: ご注文タイプ・裏面印刷
+            - listitem [ref=f1e841] [cursor=pointer]:
+              - generic [ref=f1e842]: "2"
+              - generic [ref=f1e843]: アタッチメント・台紙等
+            - listitem [ref=f1e844] [cursor=pointer]:
+              - generic [ref=f1e845]: "3"
+              - generic [ref=f1e846]: 製品仕様・製作料金
+          - generic [ref=f1e847]:
+            - generic [ref=f1e848]:
+              - generic [ref=f1e849]:
+                - generic [ref=f1e850]:
+                  - heading "以前のご注文と同じデザインでの製作ですか？必須" [level=3] [ref=f1e851]
+                  - button "詳細" [ref=f1e852] [cursor=pointer]
+                - generic [ref=f1e853]:
+                  - generic [ref=f1e856] [cursor=pointer]:
+                    - radio "いいえ" [checked]
+                    - text: いいえ
+                  - generic [ref=f1e860] [cursor=pointer]:
+                    - radio "はい"
+                    - text: はい
+              - generic [ref=f1e862]:
+                - generic [ref=f1e863]:
+                  - heading "ご注文タイプ必須" [level=3] [ref=f1e864]
+                  - button "詳細" [ref=f1e865] [cursor=pointer]
+                - generic [ref=f1e866]:
+                  - generic [ref=f1e869] [cursor=pointer]:
+                    - radio "スタンダード"
+                    - text: スタンダード
+                  - generic [ref=f1e873] [cursor=pointer]:
+                    - radio "スタンダード（スピード7営業日発送）"
+                    - text: スタンダード（スピード7営業日発送）
+                  - generic [ref=f1e877] [cursor=pointer]:
+                    - radio "プレミアム"
+                    - text: プレミアム
+                  - generic [ref=f1e881] [cursor=pointer]:
+                    - radio "ホットモバイリーファン（10個 9,900円税込）"
+                    - text: ホットモバイリーファン（10個 9,900円税込）
+              - generic [ref=f1e883]:
+                - heading "ベース厚さ必須" [level=3] [ref=f1e885]
+                - generic [ref=f1e886]:
+                  - generic [ref=f1e889] [cursor=pointer]:
+                    - radio "ハイインパクト（5mm厚）"
+                    - text: ハイインパクト（5mm厚）
+                  - generic [ref=f1e893] [cursor=pointer]:
+                    - radio "通常（3mm厚）"
+                    - text: 通常（3mm厚）
+              - generic [ref=f1e895]:
+                - heading "特殊素材（蓄光／蛍光／ラメ／金色銀色）必須" [level=3] [ref=f1e897]
+                - generic [ref=f1e898]:
+                  - generic [ref=f1e901] [cursor=pointer]:
+                    - radio "特殊素材あり"
+                    - text: 特殊素材あり
+                  - generic [ref=f1e905] [cursor=pointer]:
+                    - radio "特殊素材なし"
+                    - text: 特殊素材なし
+              - generic [ref=f1e907]:
+                - heading "裏面印刷必須" [level=3] [ref=f1e909]
+                - generic [ref=f1e910]:
+                  - generic [ref=f1e913] [cursor=pointer]:
+                    - radio "印刷なし"
+                    - text: 印刷なし
+                  - generic [ref=f1e917] [cursor=pointer]:
+                    - radio "単色（シルク）印刷"
+                    - text: 単色（シルク）印刷
+                  - generic [ref=f1e921] [cursor=pointer]:
+                    - radio "フルカラー印刷"
+                    - text: フルカラー印刷
+                - generic [ref=f1e923]: ※プレミアムは裏面印刷が無料
+              - generic [ref=f1e924]:
+                - heading "汚れ防止加工必須" [level=3] [ref=f1e926]
+                - generic [ref=f1e927]:
+                  - generic [ref=f1e930] [cursor=pointer]:
+                    - radio "汚れ防止加工あり（納期+3〜5営業日）"
+                    - text: 汚れ防止加工あり（納期+3〜5営業日）
+                  - generic [ref=f1e934] [cursor=pointer]:
+                    - radio "汚れ防止加工なし"
+                    - text: 汚れ防止加工なし
+              - generic [ref=f1e936]:
+                - heading "カラーバリエーション必須" [level=3] [ref=f1e938]
+                - generic [ref=f1e939]:
+                  - generic [ref=f1e941] [cursor=pointer]:
+                    - radio "1種類"
+                    - generic [ref=f1e942]: 1種類
+                  - generic [ref=f1e944] [cursor=pointer]:
+                    - radio "2種類"
+                    - generic [ref=f1e945]: 2種類
+                  - generic [ref=f1e947] [cursor=pointer]:
+                    - radio "3種類"
+                    - generic [ref=f1e948]: 3種類
+                  - generic [ref=f1e950] [cursor=pointer]:
+                    - radio "4種類"
+                    - generic [ref=f1e951]: 4種類
+              - generic [ref=f1e952]:
+                - heading "ご注文本数必須" [level=3] [ref=f1e954]
+                - generic [ref=f1e957] [cursor=pointer]:
+                  - text: ご注文・御見積数量
+                  - spinbutton "ご注文・御見積数量" [ref=f1e958]: "100"
+            - text: あり なし あり なし あり なし
+            - button "アタッチメント・台紙等へ" [ref=f1e960] [cursor=pointer]
+      - generic [ref=f1e964]:
+        - generic [ref=f1e968]:
+          - generic [ref=f1e969] [cursor=pointer]: Accordion Title
+          - generic [ref=f1e976]:
+            - heading "アタッチメント・加工・オプション" [level=3] [ref=f1e977]
+            - paragraph [ref=f1e978]: 当店ラバーストラップのアタッチメント・加工・オプションのご紹介です。
+            - generic [ref=f1e979]:
+              - generic [ref=f1e980]:
+                - button "アタッチメント" [ref=f1e981] [cursor=pointer]
+                - button "加工方法" [ref=f1e982] [cursor=pointer]
+                - button "オプション" [ref=f1e983] [cursor=pointer]
+              - generic [ref=f1e987]:
+                - generic [ref=f1e988]:
+                  - link [ref=f1e989] [cursor=pointer]:
+                    - /url: /products/images/HM_part1.webp
+                    - img "通常松葉+カニカン" [ref=f1e990]
+                  - generic [ref=f1e991]: +0円
+                  - link "📷クリックすると拡大します" [ref=f1e992] [cursor=pointer]:
+                    - /url: /products/images/HM_part1.webp
+                - generic [ref=f1e993]:
+                  - link [ref=f1e994] [cursor=pointer]:
+                    - /url: /products/images/HM_part2.webp
+                    - img "ゴム松葉+カニカン" [ref=f1e995]
+                  - generic [ref=f1e996]: +0円
+                  - link "📷クリックすると拡大します" [ref=f1e997] [cursor=pointer]:
+                    - /url: /products/images/HM_part2.webp
+                - generic [ref=f1e998]:
+                  - link [ref=f1e999] [cursor=pointer]:
+                    - /url: /products/images/HM_part14.webp
+                    - img "ボールチェーンシルバー" [ref=f1e1000]
+                  - generic [ref=f1e1001]: +0円
+                  - link "📷クリックすると拡大します" [ref=f1e1002] [cursor=pointer]:
+                    - /url: /products/images/HM_part14.webp
+                - generic [ref=f1e1003]:
+                  - link [ref=f1e1004] [cursor=pointer]:
+                    - /url: /products/images/HM_part3.webp
+                    - img "通常松葉+カニカン+スマホプラグ" [ref=f1e1005]
+                  - generic [ref=f1e1006]: +11円
+                  - link "📷クリックすると拡大します" [ref=f1e1007] [cursor=pointer]:
+                    - /url: /products/images/HM_part3.webp
+                - generic [ref=f1e1008]:
+                  - link [ref=f1e1009] [cursor=pointer]:
+                    - /url: /products/images/HM_part9.webp
+                    - img "ボールチェーン黄色" [ref=f1e1010]
+                  - generic [ref=f1e1011]: +11円
+                  - link "📷クリックすると拡大します" [ref=f1e1012] [cursor=pointer]:
+                    - /url: /products/images/HM_part9.webp
+                - generic [ref=f1e1013]:
+                  - link [ref=f1e1014] [cursor=pointer]:
+                    - /url: /products/images/HM_part10.webp
+                    - img "ボールチェーン赤色" [ref=f1e1015]
+                  - generic [ref=f1e1016]: +11円
+                  - link "📷クリックすると拡大します" [ref=f1e1017] [cursor=pointer]:
+                    - /url: /products/images/HM_part10.webp
+                - generic [ref=f1e1018]:
+                  - link [ref=f1e1019] [cursor=pointer]:
+                    - /url: /products/images/HM_part11.webp
+                    - img "ボールチェーン青色" [ref=f1e1020]
+                  - generic [ref=f1e1021]: +11円
+                  - link "📷クリックすると拡大します" [ref=f1e1022] [cursor=pointer]:
+                    - /url: /products/images/HM_part11.webp
+                - generic [ref=f1e1023]:
+                  - link [ref=f1e1024] [cursor=pointer]:
+                    - /url: /products/images/HM_part12.webp
+                    - img "ボールチェーンピンク色" [ref=f1e1025]
+                  - generic [ref=f1e1026]: +11円
+                  - link "📷クリックすると拡大します" [ref=f1e1027] [cursor=pointer]:
+                    - /url: /products/images/HM_part12.webp
+                - generic [ref=f1e1028]:
+                  - link [ref=f1e1029] [cursor=pointer]:
+                    - /url: /products/images/HM_part13.webp
+                    - img "ボールチェーン緑色" [ref=f1e1030]
+                  - generic [ref=f1e1031]: +11円
+                  - link "📷クリックすると拡大します" [ref=f1e1032] [cursor=pointer]:
+                    - /url: /products/images/HM_part13.webp
+                - link [ref=f1e1034] [cursor=pointer]:
+                  - /url: /products/rubberkeyholder/#part_keyholder
+                  - img "アタッチメント" [ref=f1e1035]
+        - generic [ref=f1e1036]: Accordion Title
+        - generic [ref=f1e1047]: Accordion Title
+        - generic [ref=f1e1058]: Accordion Title
+        - generic [ref=f1e1069]: Accordion Title
+        - generic [ref=f1e1080]: Accordion Title
+        - generic [ref=f1e1088]: Accordion Title
+        - generic [ref=f1e1099]:
+          - generic [ref=f1e1100] [cursor=pointer]: Accordion Title
+          - table [ref=f1e1108]:
+            - rowgroup [ref=f1e1111]:
+              - row [ref=f1e1112]:
+                - cell [ref=f1e1113]
+                - cell [ref=f1e1114]
+        - generic [ref=f1e1118]:
+          - generic [ref=f1e1119] [cursor=pointer]: ラバーストラップ自社工場のご紹介
+          - generic [ref=f1e1122]:
+            - button "Play ラバーストラップ自社工場のご紹介" [ref=f1e1124] [cursor=pointer]:
+              - img "ラバーストラップ自社工場のご紹介" [ref=f1e1125]
+              - generic [ref=f1e1126]: ▶
+            - link "自社生産の詳細はこちら" [ref=f1e1128] [cursor=pointer]:
+              - /url: /lp/rubber-guide-inhouse.php
+        - generic [ref=f1e1132]:
+          - generic [ref=f1e1133] [cursor=pointer]: 関連記事
+          - generic [ref=f1e1136]:
+            - generic [ref=f1e1137]:
+              - generic [ref=f1e1138]:
+                - link "ラバーストラップを安く作るコツと価格を抑えるポイント":
+                  - /url: /blog-content/howtomake-cheaper
+                  - img "ラバーストラップを安く作るコツと価格を抑えるポイント"
+              - link "ラバーストラップを安く作るコツと価格を抑えるポイント" [ref=f1e1140] [cursor=pointer]:
+                - /url: /blog-content/howtomake-cheaper
+            - generic [ref=f1e1142]:
+              - generic [ref=f1e1143]:
+                - link "データトレースサービスとは？画像1枚からグッズを作る方法":
+                  - /url: /blog-content/about-trace
+                  - img "データトレースサービスとは？画像1枚からグッズを作る方法"
+              - link "データトレースサービスとは？画像1枚からグッズを作る方法" [ref=f1e1145] [cursor=pointer]:
+                - /url: /blog-content/about-trace
+        - generic [ref=f1e1150]:
+          - generic [ref=f1e1151] [cursor=pointer]: FAQ
+          - generic [ref=f1e1158]:
+            - generic [ref=f1e1159]:
+              - paragraph [ref=f1e1161]: Q1. オリジナルデザインのラバーストラップを製作できますか？
+              - generic [ref=f1e1163]:
+                - generic [ref=f1e1164]: A1.
+                - paragraph [ref=f1e1166]: はい、可能です。お客様のデザインデータを元にオリジナルのラバーストラップを製作いたします。デザインデータの修正が必要な場合があります。ご自身で修正できない場合、当店で修正が可能です。追加料金がかかる場合があります。
+            - generic [ref=f1e1167]:
+              - paragraph [ref=f1e1169]: Q2. 最低注文数は何個からですか？
+              - generic [ref=f1e1171]:
+                - generic [ref=f1e1172]: A2.
+                - paragraph [ref=f1e1174]: 最小ロットは100個から。ただし、ホットモバイリーファンとして10個9,900円（税込）で製作できるプランもございます。ホットモバイリーファンは工場の稼働状況によりお受けできない場合があります。商品紹介ページのご注文タイプにて、『ホットモバイリーファン』を選択してください。赤色のボタンが点滅している場合、ご注文を停止しております。
+            - link "ラバーストラップについてFAQページへ" [ref=f1e1176] [cursor=pointer]:
+              - /url: http://new-hotmobily.test/faq/product/rubberstrap
+        - generic [ref=f1e1180]:
+          - generic [ref=f1e1183]:
+            - paragraph [ref=f1e1184]: ・対応に関して：他社はメールでのやり取りだけの対応が多い中で、御社は電話連絡で直接相談できるのでとても安心でした。また急な注文変更に対してもスピーディにご対応いただきとても感謝しています。支払いに関しても柔軟に対応いただき助かりました。 ・最終製品に対して：アクリル部分にセロハンのカバーがされていたのは素晴らしいです。表裏のデザインで制作していただきましたが、間の白おさえの白色が薄いのか、かざすと反対側が透けて見えるのは少し残念でした。
+            - separator [ref=f1e1185]
+            - paragraph [ref=f1e1186]:
+              - generic [ref=f1e1187]:
+                - text: "お客様対応:"
+                - generic [ref=f1e1188]: ★★★★☆
+              - generic [ref=f1e1189]:
+                - text: "製品の満足度:"
+                - generic [ref=f1e1190]: ★★★★☆
+              - generic [ref=f1e1191]: 営業担当：竹村
+              - generic [ref=f1e1192]: 製品：アクリルアンブレラマーカー
+            - paragraph [ref=f1e1193]: 2026年08月03日 08:46:00
+          - generic [ref=f1e1196]:
+            - paragraph [ref=f1e1197]: 試作品も複数対応いただき、イメージ通りのものができあがりました。
+            - separator [ref=f1e1198]
+            - paragraph [ref=f1e1199]:
+              - generic [ref=f1e1200]:
+                - text: "お客様対応:"
+                - generic [ref=f1e1201]: ★★★☆☆
+              - generic [ref=f1e1202]:
+                - text: "製品の満足度:"
+                - generic [ref=f1e1203]: ★★★★☆
+              - generic [ref=f1e1204]: 営業担当：原
+              - generic [ref=f1e1205]: 製品：アクリルアンブレラマーカー
+            - paragraph [ref=f1e1206]: 2026年06月30日 13:27:00
+          - generic [ref=f1e1209]:
+            - paragraph [ref=f1e1210]: 全てにおいて問題なく、非常に良い対応でした
+            - separator [ref=f1e1211]
+            - paragraph [ref=f1e1212]:
+              - generic [ref=f1e1213]:
+                - text: "お客様対応:"
+                - generic [ref=f1e1214]: ★★★★★
+              - generic [ref=f1e1215]:
+                - text: "製品の満足度:"
+                - generic [ref=f1e1216]: ★★★★★
+              - generic [ref=f1e1217]: 営業担当：ビビアン
+              - generic [ref=f1e1218]: 製品：アクリルアンブレラマーカー
+            - paragraph [ref=f1e1219]: 2026年01月24日 09:36:00
+          - link "レビュー一覧ページへ" [ref=f1e1221] [cursor=pointer]:
+            - /url: http://new-hotmobily.test/reviews
+  - generic [ref=f1e1223]:
+    - generic [ref=f1e1224]: 商品情報
+    - generic [ref=f1e1225]:
+      - link "全商品一覧" [ref=f1e1227] [cursor=pointer]:
+        - /url: /
+      - link "ラバーストラップ" [ref=f1e1229] [cursor=pointer]:
+        - /url: /products/rubberstrap/
+      - link "ラバーコースター" [ref=f1e1231] [cursor=pointer]:
+        - /url: /products/rubbercoaster/
+      - link "アクリルキーホルダー" [ref=f1e1233] [cursor=pointer]:
+        - /url: /products/acrylic/
+      - link "リフレクター（反射）チャーム" [ref=f1e1235] [cursor=pointer]:
+        - /url: /products/reflecter.php
+      - link "メガネクロス・マイクロファイバーポーチ" [ref=f1e1237] [cursor=pointer]:
+        - /url: /products/microfibers.php
+      - link "カラビナ" [ref=f1e1239] [cursor=pointer]:
+        - /url: /products/carabiner/
+      - link "オリジナルキーホルダー" [ref=f1e1241] [cursor=pointer]:
+        - /url: /products/keychains-ranking
+    - generic [ref=f1e1242]:
+      - link "キャンペーン一覧" [ref=f1e1244] [cursor=pointer]:
+        - /url: /campaign/
+      - link "個人情報保護方針" [ref=f1e1246] [cursor=pointer]:
+        - /url: /privacy/index.html
+      - link "運営会社" [ref=f1e1248] [cursor=pointer]:
+        - /url: /company/index.html
+      - link "ご利用規約" [ref=f1e1250] [cursor=pointer]:
+        - /url: /sitepolicy/index.html
+      - link "問い合わせサンプル請求" [ref=f1e1252] [cursor=pointer]:
+        - /url: /contact/index.php
+      - link "ホットストラップ" [ref=f1e1254] [cursor=pointer]:
+        - /url: //hotstrap.jp/
+      - link "お役立ち情報" [ref=f1e1256] [cursor=pointer]:
+        - /url: //hotmobily.jp/blog-content/lists
+      - link "シリコンリストバンドスタジオ" [ref=f1e1258] [cursor=pointer]:
+        - /url: https://silicone-wristband-studio.jp/
+      - link "Custom pvc keychains YG" [ref=f1e1260] [cursor=pointer]:
+        - /url: https://you-goods.com/
+    - paragraph [ref=f1e1261]: Copyright © 2023-2028 ホットモバイリーオリジナルグッズ. Powered by YOU AND EARTH Co.,ltd. ホットモバイリー、ホットストラップはユー・アンド・アース株式会社の登録商標です。
+  - text: "> > >"

@@ -285,6 +285,18 @@ class CustomPageController extends Controller
         ], 201);
     }
 
+    public function sanitizePreviewContent(array $layout, array $incoming): array
+    {
+        $clean = [];
+        foreach ($this->collectLayoutBlocks($layout) as $blockId => $type) {
+            if (array_key_exists($blockId, $incoming)) {
+                $clean[$blockId] = $this->sanitizeBlockContent($type, $incoming[$blockId]);
+            }
+        }
+
+        return $clean;
+    }
+
     private function collectLayoutBlocks(array $layout): array
     {
         $blocks = [];

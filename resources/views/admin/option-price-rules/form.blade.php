@@ -107,7 +107,7 @@
                         <div id="condition-options" class="condition-panel"></div>
                     </div>
                 </div>
-                <div id="no-product-message" class="alert alert-warning mt-3 mb-0">Select a Product to load its Main Price Group and Product Options.</div>
+                <div id="no-product-message" class="alert alert-warning mt-3 mb-0">Select a Product to load all its assigned Product Options.</div>
                 @error('target_product_option_id')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
                 @error('condition_product_option_ids')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
             </section>
@@ -233,9 +233,8 @@
                 }
 
                 noProductMessage.classList.add('d-none');
-                const mainGroups = product.groups.filter(function (group) { return group.is_main_price_group; });
-                targetOptions.innerHTML = mainGroups.map(function (group) { return groupMarkup(group, 'target'); }).join('')
-                    || '<div class="text-danger small">This Product has no active Main Price Group assigned.</div>';
+                targetOptions.innerHTML = product.groups.map(function (group) { return groupMarkup(group, 'target'); }).join('')
+                    || '<div class="text-danger small">This Product has no active Option Group assigned.</div>';
                 conditionOptions.innerHTML = product.groups.map(function (group) { return groupMarkup(group, 'condition'); }).join('')
                     || '<div class="text-muted small">This Product has no active Option Group assigned.</div>';
 
@@ -258,6 +257,7 @@
                         quantity: row.querySelector('[data-field="quantity"]').value,
                         additional_price: row.querySelector('[data-field="additional_price"]').value,
                         additional_price_with_tax: row.querySelector('[data-field="additional_price_with_tax"]').value,
+                        additional_price_with_tax_manual: row.querySelector('[data-field="additional_price_with_tax"]').dataset.manual === '1',
                     };
                 });
             };
@@ -271,12 +271,23 @@
                 }
             };
 
+            const recalculatePrice = function (row) {
+                const withTax = parseFloat(row.querySelector('[data-field="additional_price_with_tax"]').value);
+                const price = row.querySelector('[data-field="additional_price"]');
+                const rate = parseFloat(taxRate.value) || 0;
+                const divisor = 1 + rate / 100;
+
+                price.value = Number.isFinite(withTax) && divisor > 0
+                    ? (withTax / divisor).toFixed(2)
+                    : '';
+            };
+
             const renderTiers = function () {
                 tierRows.innerHTML = tiers.map(function (tier, index) {
                     return `<tr>
                         <td><input name="tiers[${index}][quantity]" data-field="quantity" type="number" min="1" step="1" value="${escapeHtml(tier.quantity)}" class="form-control" required></td>
                         <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">¥</span></div><input name="tiers[${index}][additional_price]" data-field="additional_price" type="number" min="0" step="0.01" value="${escapeHtml(tier.additional_price)}" class="form-control" required></div></td>
-                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">¥</span></div><input name="tiers[${index}][additional_price_with_tax]" data-field="additional_price_with_tax" type="number" min="0" step="0.01" value="${escapeHtml(tier.additional_price_with_tax)}" class="form-control" required></div></td>
+                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">¥</span></div><input name="tiers[${index}][additional_price_with_tax]" data-field="additional_price_with_tax" data-manual="${tier.additional_price_with_tax_manual ? '1' : ''}" type="number" min="0" step="0.01" value="${escapeHtml(tier.additional_price_with_tax)}" class="form-control" required></div></td>
                         <td><button type="button" class="btn btn-sm remove-tier">Remove</button></td>
                     </tr>`;
                 }).join('');
@@ -285,7 +296,27 @@
                     const price = row.querySelector('[data-field="additional_price"]');
                     const withTax = row.querySelector('[data-field="additional_price_with_tax"]');
                     price.addEventListener('input', function () { recalculateTax(row, false); });
-                    withTax.addEventListener('input', function () { withTax.dataset.manual = '1'; });
+                    withTax.addEventListener('input', function () {
+                        withTax.dataset.manual = '1';
+                        recalculatePrice(row);
+                    });
+                    row.querySelectorAll('[data-field]').forEach(function (input) {
+                        input.addEventListener('keydown', function (event) {
+                            if (event.key !== 'Enter' || event.isComposing) return;
+
+                            event.preventDefault();
+                            const field = input.dataset.field;
+                            const nextRow = row.nextElementSibling;
+                            const nextInput = nextRow && nextRow.querySelector(`[data-field="${field}"]`);
+
+                            if (nextInput) {
+                                nextInput.focus();
+                                return;
+                            }
+
+                            appendTier(field);
+                        });
+                    });
                     row.querySelector('.remove-tier').addEventListener('click', function () {
                         captureTiers();
                         if (tiers.length > 1) tiers.splice(Array.from(tierRows.children).indexOf(row), 1);
@@ -295,18 +326,33 @@
                 });
             };
 
+            const appendTier = function (focusField) {
+                captureTiers();
+                tiers.push({ quantity: '', additional_price: '', additional_price_with_tax: '' });
+                renderTiers();
+
+                if (focusField) {
+                    tierRows.lastElementChild.querySelector(`[data-field="${focusField}"]`).focus();
+                }
+            };
+
             productSelect.addEventListener('change', function () {
                 targetId = 0;
                 conditionIds = [];
                 renderConditions();
             });
             taxRate.addEventListener('input', function () {
-                tierRows.querySelectorAll('tr').forEach(function (row) { recalculateTax(row, false); });
+                tierRows.querySelectorAll('tr').forEach(function (row) {
+                    const withTax = row.querySelector('[data-field="additional_price_with_tax"]');
+                    if (withTax.dataset.manual === '1') {
+                        recalculatePrice(row);
+                    } else {
+                        recalculateTax(row, false);
+                    }
+                });
             });
             document.getElementById('add-tier').addEventListener('click', function () {
-                captureTiers();
-                tiers.push({ quantity: '', additional_price: '', additional_price_with_tax: '' });
-                renderTiers();
+                appendTier();
             });
 
             renderConditions();

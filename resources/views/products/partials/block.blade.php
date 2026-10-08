@@ -268,6 +268,10 @@
 
 <div
     id="{{ $effectiveId }}"
+    @if ($visualEditorPreview ?? false)
+        data-editor-block-id="{{ $blockId }}"
+        data-editor-block-type="{{ $type }}"
+    @endif
     class="
         store-product-block
         store-product-block-{{ $type }}
@@ -1059,6 +1063,84 @@
 
 
             {{-- ============================================================
+                Guide Step Information
+            ============================================================ --}}
+
+            @elseif(
+                $type
+                ===
+                'step_information'
+            )
+
+                @php
+
+                    $stepImageUrl =
+                        $safeUrl(
+                            $content['image_url']
+                            ??
+                            $content['url']
+                            ??
+                            ''
+                        );
+
+                    $stepImageAlt = trim((string) (
+                        $content['image_alt']
+                        ??
+                        $content['alt']
+                        ??
+                        ($product->name ?? '')
+                    ));
+
+                    $stepText = (string) (
+                        $content['text']
+                        ??
+                        $content['content']
+                        ??
+                        ''
+                    );
+
+                    $stepTextFormat =
+                        ($content['text_format']
+                        ??
+                        $content['content_format']
+                        ??
+                        'plain') === 'html'
+                            ? 'html'
+                            : 'plain';
+
+                    $stepTextSize =
+                        ($content['text_size'] ?? 'normal') === 'small'
+                            ? 'small'
+                            : 'normal';
+
+                @endphp
+
+                @if($stepImageUrl !== '' || trim(strip_tags($stepText)) !== '')
+                    <div class="store-step-information">
+
+                        @if($stepImageUrl !== '')
+                            <div class="store-step-information-image">
+                                <img
+                                    src="{{ $stepImageUrl }}"
+                                    alt="{{ $stepImageAlt }}"
+                                    loading="lazy"
+                                >
+                            </div>
+                        @endif
+
+                        <div class="store-step-information-text{{ $stepImageUrl === '' ? ' store-step-information-text-full' : '' }}{{ $stepTextSize === 'small' ? ' store-step-information-text-small' : '' }}">
+                            @if($stepTextFormat === 'html')
+                                {!! $stepText !!}
+                            @else
+                                {!! nl2br(e($stepText)) !!}
+                            @endif
+                        </div>
+
+                    </div>
+                @endif
+
+
+            {{-- ============================================================
                 Multi Photo
             ============================================================ --}}
 
@@ -1582,6 +1664,12 @@
                                     'product' =>
                                         $product,
 
+                                    'guideMain' =>
+                                        $guideMain ?? null,
+
+                                    'guideItems' =>
+                                        $guideItems ?? collect(),
+
                                     'publishedAt' =>
                                         $publishedAt,
 
@@ -1892,9 +1980,95 @@
 
                                 <div class="store-related-blog-spacer">&nbsp;</div>
                             @endif
-                        @endforeach
+                @endforeach
                     </div>
                 </div>
+
+
+            {{-- ============================================================
+                Guide Main
+            ============================================================ --}}
+            @elseif(
+                $type
+                ===
+                'guide_main'
+            )
+
+                @php
+                    $guideMainCards = collect($guideItems ?? [])
+                        ->filter(fn ($item): bool => $item?->guidePage?->status === 'active')
+                        ->values();
+                @endphp
+
+                @if ($guideMainCards->isNotEmpty())
+                    <section class="store-guide-main">
+                        <div class="store-guide-main-grid">
+                            @foreach ($guideMainCards as $guideItem)
+                                @php
+                                    $guidePage = $guideItem->guidePage;
+                                    $guideTitle = trim((string) ($guideItem->title ?? ''));
+                                    $guideImagePath = trim((string) ($guideItem->image_path ?? ''));
+                                    $guideImageUrl = $guideImagePath === ''
+                                        ? ''
+                                        : $safeUrl(
+                                            str_starts_with($guideImagePath, 'http://')
+                                                || str_starts_with($guideImagePath, 'https://')
+                                                || str_starts_with($guideImagePath, '/')
+                                                ? $guideImagePath
+                                                : \Illuminate\Support\Facades\Storage::disk('public')->url($guideImagePath)
+                                        );
+                                    $guideTitleColor = strtolower(trim((string) ($guideItem->title_color ?? '')));
+
+                                    if (! preg_match('/^#[0-9a-f]{6}$/', $guideTitleColor)) {
+                                        $guideTitleColor = '#000000';
+                                    }
+                                @endphp
+
+                                @if ($guidePage)
+                                    <a
+                                        href="{{ route('guides.show', ['guidePath' => $guidePage->slug]) }}"
+                                        class="store-guide-main-card"
+                                    >
+                                        <div class="store-guide-main-card-inner">
+                                            @if ($guideImageUrl !== '')
+                                                <img
+                                                    src="{{ $guideImageUrl }}"
+                                                    alt="{{ $guideItem->image_alt ?: $guideTitle }}"
+                                                    loading="lazy"
+                                                >
+                                            @endif
+
+                                            @if ($guideTitle !== '')
+                                                <div
+                                                    class="store-guide-main-card-title"
+                                                    style="color: {{ $guideTitleColor }};"
+                                                >
+                                                    {{ $guideTitle }}
+                                                </div>
+                                            @endif
+
+                                            @if (filled($guideItem->description))
+                                                <div class="store-guide-main-card-description">
+                                                    {!! $guideItem->description !!}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </a>
+                                @endif
+                            @endforeach
+                        </div>
+
+                        <div class="store-guide-main-other">
+                            <a href="/sitepolicy/">ご利用規約</a>
+                            <span>　　</span>
+                            <a href="/tokusho.html">特定商取引について</a>
+                            <span>　　</span>
+                            <a href="/privacy/">プライバシーポリシー</a>
+                            <span>　　</span>
+                            <a href="/campaign/">過去のキャンペーン一覧</a>
+                        </div>
+                    </section>
+                @endif
 
 
             {{-- ============================================================
@@ -2992,7 +3166,12 @@
                                                         @endphp
                                                         <div class="mt-10-part-4">
                                                             @if(!empty($itemZoom))
-                                                                <a href="{{ $itemZoom }}" target="_blank" rel="noopener">
+                                                                <a href="{{ $itemZoom }}"
+                                                                   data-store-image-modal-trigger
+                                                                   data-image-modal-src="{{ $itemZoom }}"
+                                                                   data-image-modal-alt="{{ $itemTitle }}"
+                                                                   data-image-modal-description="{{ $item['description'] ?? '' }}"
+                                                                   data-image-modal-group="parts_{{ $tabTargetId }}">
                                                                     <img class="picpro" src="{{ $itemImg }}" alt="{{ $itemTitle }}" width="160" height="160" loading="lazy">
                                                                 </a>
                                                             @else

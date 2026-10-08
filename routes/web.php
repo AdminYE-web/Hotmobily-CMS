@@ -2,8 +2,17 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AcrylicGalleryController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\CustomPageMenuController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\GalleryPageController;
+use App\Http\Controllers\Admin\GalleryMenuController;
+use App\Http\Controllers\Admin\HomeBannerSettingController;
+use App\Http\Controllers\Admin\HomeNotificationSettingController;
+use App\Http\Controllers\Admin\HomeProductSettingController;
+use App\Http\Controllers\Admin\MeetingDateController as AdminMeetingDateController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\OtpController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\OptionGroupController;
@@ -12,15 +21,24 @@ use App\Http\Controllers\Admin\OptionPriceRuleController;
 use App\Http\Controllers\Admin\ProductOptionController;
 use App\Http\Controllers\Admin\ProductOptionManagerController;
 use App\Http\Controllers\Admin\ProductPriceRuleController;
+use App\Http\Controllers\Admin\ProductDataMenuController;
+use App\Http\Controllers\Admin\ProductSideMenuController;
+use App\Http\Controllers\Admin\SideMenuLinkController;
+use App\Http\Controllers\Admin\UserManualMenuController;
 use App\Http\Controllers\Admin\ReviewAnswerController as AdminReviewAnswerController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\TemplateProductController as AdminTemplateProductController;
 use App\Http\Controllers\Storefront\CustomPageController as StorefrontCustomPageController;
+use App\Http\Controllers\Storefront\ContactController as StorefrontContactController;
+use App\Http\Controllers\Storefront\GuideController as StorefrontGuideController;
+use App\Http\Controllers\Storefront\MeetingDateController as StorefrontMeetingDateController;
 use App\Http\Controllers\Storefront\FaqController;
 use App\Http\Controllers\Storefront\GalleryController as StorefrontGalleryController;
 use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\HomeNotificationController;
 use App\Http\Controllers\Web\LegacyMockController;
+use App\Http\Controllers\Web\NewsController as StorefrontNewsController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\ReviewImportController;
@@ -31,6 +49,8 @@ use App\Models\ProductDataPage;
 use App\Models\ProductLayout;
 use App\Models\CustomPage;
 use App\Models\CustomPageLayout;
+use App\Models\GuideLayout;
+use App\Models\GuidePage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -163,6 +183,58 @@ Route::prefix('admin')
 
                 /*
                 |--------------------------------------------------------------------------
+                | HM Contact / Inquire
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/contact', [ContactController::class, 'index'])
+                    ->name('contact.index');
+
+                Route::get('/contact.php', [ContactController::class, 'index'])
+                    ->name('contact.legacy.index');
+
+                Route::get('/contact_details.php', [ContactController::class, 'legacyShow'])
+                    ->name('contact.legacy.show');
+
+                Route::get('/contact/{contact}/attachments/{filename}', [ContactController::class, 'downloadAttachment'])
+                    ->where('filename', '[^/]+')
+                    ->name('contact.attachment');
+
+                Route::post('/contact/{contact}/reply/confirm', [ContactController::class, 'replyConfirm'])
+                    ->name('contact.reply.confirm');
+
+                Route::post('/contact/{contact}/reply/send', [ContactController::class, 'replySend'])
+                    ->name('contact.reply.send');
+
+                Route::put('/contact/{contact}/status', [ContactController::class, 'updateStatus'])
+                    ->name('contact.status.update');
+
+                Route::get('/contact/{contact}', [ContactController::class, 'show'])
+                    ->name('contact.show');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Meeting Date requests
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/meeting-date', [AdminMeetingDateController::class, 'index'])
+                    ->name('meeting-date.index');
+
+                Route::get('/meeting_date', [AdminMeetingDateController::class, 'index'])
+                    ->name('meeting-date.legacy.index');
+
+                Route::get('/meeting_date/index.php', [AdminMeetingDateController::class, 'index'])
+                    ->name('meeting-date.legacy.php');
+
+                Route::get('/meeting-date/{meetingDate}', [AdminMeetingDateController::class, 'show'])
+                    ->name('meeting-date.show');
+
+                Route::put('/meeting-date/{meetingDate}/status', [AdminMeetingDateController::class, 'updateStatus'])
+                    ->name('meeting-date.status.update');
+
+                /*
+                |--------------------------------------------------------------------------
                 | Design template manager
                 |--------------------------------------------------------------------------
                 */
@@ -175,6 +247,18 @@ Route::prefix('admin')
 
                 Route::resource('template-products', AdminTemplateProductController::class)
                     ->except('show');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Banner Settings
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/banner', [BannerController::class, 'edit'])
+                    ->name('banner.edit');
+
+                Route::put('/banner', [BannerController::class, 'update'])
+                    ->name('banner.update');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -266,6 +350,43 @@ Route::prefix('admin')
                     'admin.faqs.index'
                 )
                     ->name('faqs.index');
+
+                /*
+                |--------------------------------------------------------------------------
+                | News Management
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get('/news', [AdminNewsController::class, 'index'])
+                    ->name('news.index');
+
+                Route::get('/news/create', [AdminNewsController::class, 'create'])
+                    ->name('news.create');
+
+                Route::post('/news', [AdminNewsController::class, 'store'])
+                    ->name('news.store');
+
+                Route::post('/news/upload-image', [AdminNewsController::class, 'uploadImage'])
+                    ->name('news.upload-image');
+
+                Route::get('/news/{news}/edit', [AdminNewsController::class, 'edit'])
+                    ->name('news.edit');
+
+                Route::put('/news/{news}', [AdminNewsController::class, 'update'])
+                    ->name('news.update');
+
+                Route::delete('/news/{news}', [AdminNewsController::class, 'destroy'])
+                    ->name('news.destroy');
+
+                // Preserve the paths used by the old PHP admin menu and edit links.
+                Route::get('/news.php', fn () => redirect()->route('admin.news.index'))
+                    ->name('news.legacy.index');
+
+                Route::get('/news-create.php', [AdminNewsController::class, 'legacyEdit'])
+                    ->name('news.legacy.create');
+
+                Route::get('/news-create', [AdminNewsController::class, 'legacyEdit'])
+                    ->name('news.legacy.edit');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -399,6 +520,9 @@ Route::prefix('admin')
                 Route::put('/product-options/{productOption}', [ProductOptionController::class, 'update'])
                     ->name('product-options.update');
 
+                Route::delete('/product-options/{productOption}', [ProductOptionController::class, 'destroy'])
+                    ->name('product-options.destroy');
+
                 /*
                 |--------------------------------------------------------------------------
                 | Option Dependencies
@@ -516,6 +640,9 @@ Route::prefix('admin')
                 )
                     ->name('products.content');
 
+                Route::post('/products/{product}/content/preview', \App\Http\Controllers\Admin\ProductContentPreviewController::class)
+                    ->name('products.content.preview');
+
                 /*
                 |--------------------------------------------------------------------------
                 | Product Layouts
@@ -597,6 +724,180 @@ Route::prefix('admin')
                 )
                     ->name('product-data.index');
 
+                Route::get('/product-data-menu', [ProductDataMenuController::class, 'index'])
+                    ->name('product-data-menu.index');
+
+                Route::get('/product-data-menu/create', [ProductDataMenuController::class, 'create'])
+                    ->name('product-data-menu.create');
+
+                Route::post('/product-data-menu', [ProductDataMenuController::class, 'store'])
+                    ->name('product-data-menu.store');
+
+                Route::post('/product-data-menu/reorder', [ProductDataMenuController::class, 'reorder'])
+                    ->name('product-data-menu.reorder');
+
+                Route::get('/product-data-menu/{productDataMenuItem}/edit', [ProductDataMenuController::class, 'edit'])
+                    ->name('product-data-menu.edit');
+
+                Route::put('/product-data-menu/{productDataMenuItem}', [ProductDataMenuController::class, 'update'])
+                    ->name('product-data-menu.update');
+
+                Route::delete('/product-data-menu/{productDataMenuItem}', [ProductDataMenuController::class, 'destroy'])
+                    ->name('product-data-menu.destroy');
+
+                Route::get('/gallery-menu', [GalleryMenuController::class, 'index'])
+                    ->name('gallery-menu.index');
+
+                Route::get('/gallery-menu/create', [GalleryMenuController::class, 'create'])
+                    ->name('gallery-menu.create');
+
+                Route::post('/gallery-menu', [GalleryMenuController::class, 'store'])
+                    ->name('gallery-menu.store');
+
+                Route::post('/gallery-menu/reorder', [GalleryMenuController::class, 'reorder'])
+                    ->name('gallery-menu.reorder');
+
+                Route::get('/gallery-menu/{galleryMenuItem}/edit', [GalleryMenuController::class, 'edit'])
+                    ->name('gallery-menu.edit');
+
+                Route::put('/gallery-menu/{galleryMenuItem}', [GalleryMenuController::class, 'update'])
+                    ->name('gallery-menu.update');
+
+                Route::delete('/gallery-menu/{galleryMenuItem}', [GalleryMenuController::class, 'destroy'])
+                    ->name('gallery-menu.destroy');
+
+                Route::get('/custom-page-menu', [CustomPageMenuController::class, 'index'])
+                    ->name('custom-page-menu.index');
+
+                Route::get('/custom-page-menu/create', [CustomPageMenuController::class, 'create'])
+                    ->name('custom-page-menu.create');
+
+                Route::post('/custom-page-menu', [CustomPageMenuController::class, 'store'])
+                    ->name('custom-page-menu.store');
+
+                Route::post('/custom-page-menu/reorder', [CustomPageMenuController::class, 'reorder'])
+                    ->name('custom-page-menu.reorder');
+
+                Route::get('/custom-page-menu/{customPageMenuItem}/edit', [CustomPageMenuController::class, 'edit'])
+                    ->name('custom-page-menu.edit');
+
+                Route::put('/custom-page-menu/{customPageMenuItem}', [CustomPageMenuController::class, 'update'])
+                    ->name('custom-page-menu.update');
+
+                Route::delete('/custom-page-menu/{customPageMenuItem}', [CustomPageMenuController::class, 'destroy'])
+                    ->name('custom-page-menu.destroy');
+
+                Route::get('/user-manual-menu', [UserManualMenuController::class, 'index'])
+                    ->name('user-manual-menu.index');
+
+                Route::get('/user-manual-menu/create', [UserManualMenuController::class, 'create'])
+                    ->name('user-manual-menu.create');
+
+                Route::post('/user-manual-menu', [UserManualMenuController::class, 'store'])
+                    ->name('user-manual-menu.store');
+
+                Route::post('/user-manual-menu/reorder', [UserManualMenuController::class, 'reorder'])
+                    ->name('user-manual-menu.reorder');
+
+                Route::get('/user-manual-menu/{userManualMenuItem}/edit', [UserManualMenuController::class, 'edit'])
+                    ->name('user-manual-menu.edit');
+
+                Route::put('/user-manual-menu/{userManualMenuItem}', [UserManualMenuController::class, 'update'])
+                    ->name('user-manual-menu.update');
+
+                Route::delete('/user-manual-menu/{userManualMenuItem}', [UserManualMenuController::class, 'destroy'])
+                    ->name('user-manual-menu.destroy');
+
+                Route::get('/side-menu/products', [ProductSideMenuController::class, 'index'])
+                    ->name('side-menu.products.index');
+
+                Route::get('/side-menu/products/create', [ProductSideMenuController::class, 'create'])
+                    ->name('side-menu.products.create');
+
+                Route::post('/side-menu/products', [ProductSideMenuController::class, 'store'])
+                    ->name('side-menu.products.store');
+
+                Route::post('/side-menu/products/reorder', [ProductSideMenuController::class, 'reorder'])
+                    ->name('side-menu.products.reorder');
+
+                Route::get('/side-menu/products/{productSideMenuItem}/edit', [ProductSideMenuController::class, 'edit'])
+                    ->name('side-menu.products.edit');
+
+                Route::put('/side-menu/products/{productSideMenuItem}', [ProductSideMenuController::class, 'update'])
+                    ->name('side-menu.products.update');
+
+                Route::delete('/side-menu/products/{productSideMenuItem}', [ProductSideMenuController::class, 'destroy'])
+                    ->name('side-menu.products.destroy');
+
+                Route::get('/side-menu/links', [SideMenuLinkController::class, 'index'])
+                    ->name('side-menu.links.index');
+
+                Route::get('/side-menu/links/create', [SideMenuLinkController::class, 'create'])
+                    ->name('side-menu.links.create');
+
+                Route::post('/side-menu/links', [SideMenuLinkController::class, 'store'])
+                    ->name('side-menu.links.store');
+
+                Route::post('/side-menu/links/reorder', [SideMenuLinkController::class, 'reorder'])
+                    ->name('side-menu.links.reorder');
+
+                Route::get('/side-menu/links/{sideMenuLink}/edit', [SideMenuLinkController::class, 'edit'])
+                    ->name('side-menu.links.edit');
+
+                Route::put('/side-menu/links/{sideMenuLink}', [SideMenuLinkController::class, 'update'])
+                    ->name('side-menu.links.update');
+
+                Route::delete('/side-menu/links/{sideMenuLink}', [SideMenuLinkController::class, 'destroy'])
+                    ->name('side-menu.links.destroy');
+
+                Route::get('/home-settings/products', [HomeProductSettingController::class, 'index'])
+                    ->name('home-settings.products.index');
+
+                Route::get('/home-settings/products/create', [HomeProductSettingController::class, 'create'])
+                    ->name('home-settings.products.create');
+
+                Route::post('/home-settings/products', [HomeProductSettingController::class, 'store'])
+                    ->name('home-settings.products.store');
+
+                Route::post('/home-settings/products/reorder', [HomeProductSettingController::class, 'reorder'])
+                    ->name('home-settings.products.reorder');
+
+                Route::get('/home-settings/products/{homeProductCard}/edit', [HomeProductSettingController::class, 'edit'])
+                    ->name('home-settings.products.edit');
+
+                Route::put('/home-settings/products/{homeProductCard}', [HomeProductSettingController::class, 'update'])
+                    ->name('home-settings.products.update');
+
+                Route::delete('/home-settings/products/{homeProductCard}', [HomeProductSettingController::class, 'destroy'])
+                    ->name('home-settings.products.destroy');
+
+                Route::get('/home-settings/banners', [HomeBannerSettingController::class, 'index'])
+                    ->name('home-settings.banners.index');
+
+                Route::get('/home-settings/banners/create', [HomeBannerSettingController::class, 'create'])
+                    ->name('home-settings.banners.create');
+
+                Route::post('/home-settings/banners', [HomeBannerSettingController::class, 'store'])
+                    ->name('home-settings.banners.store');
+
+                Route::post('/home-settings/banners/reorder', [HomeBannerSettingController::class, 'reorder'])
+                    ->name('home-settings.banners.reorder');
+
+                Route::get('/home-settings/banners/{homeBanner}/edit', [HomeBannerSettingController::class, 'edit'])
+                    ->name('home-settings.banners.edit');
+
+                Route::put('/home-settings/banners/{homeBanner}', [HomeBannerSettingController::class, 'update'])
+                    ->name('home-settings.banners.update');
+
+                Route::delete('/home-settings/banners/{homeBanner}', [HomeBannerSettingController::class, 'destroy'])
+                    ->name('home-settings.banners.destroy');
+
+                Route::get('/home-settings/notification', [HomeNotificationSettingController::class, 'edit'])
+                    ->name('home-settings.notification.edit');
+
+                Route::put('/home-settings/notification', [HomeNotificationSettingController::class, 'update'])
+                    ->name('home-settings.notification.update');
+
                 Route::get(
                     '/product-data/{productDataPage}/content',
                     function (ProductDataPage $productDataPage) {
@@ -609,6 +910,9 @@ Route::prefix('admin')
                     }
                 )
                     ->name('product-data.content');
+
+                Route::post('/product-data/{productDataPage}/content/preview', \App\Http\Controllers\Admin\ProductDataContentPreviewController::class)
+                    ->name('product-data.content.preview');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -657,6 +961,7 @@ Route::prefix('admin')
                         'pageManagerLayoutApiBase' => '/api/v1/admin/custom-page-layouts',
                         'pageManagerLayoutBuilderBase' => '/admin/custom-page-layouts',
                         'pageManagerContentBase' => '/admin/custom-pages',
+                        'pageManagerPreviewBase' => '',
                         'pageManagerLayoutField' => 'custom_page_layout_id',
                         'pageManagerSlugPlaceholder' => '/howtodesign',
                         'pageManagerSlugHelp' => 'Public path, for example /howtodesign. Leading and trailing slashes are normalized automatically.',
@@ -676,6 +981,88 @@ Route::prefix('admin')
                     }
                 )
                     ->name('custom-pages.content');
+
+                Route::post('/custom-pages/{customPage}/content/preview', \App\Http\Controllers\Admin\CustomPageContentPreviewController::class)
+                    ->name('custom-pages.content.preview');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Guide Layouts and Pages
+                |--------------------------------------------------------------------------
+                */
+
+                Route::get(
+                    '/guide-main',
+                    function () {
+                        return view('admin.guides.main');
+                    }
+                )
+                    ->name('guide-main.index');
+
+                Route::get(
+                    '/guide-layouts',
+                    function () {
+                        return view('admin.product-layouts.index', [
+                            'layoutManagerTitle' => 'Guide Layouts',
+                            'layoutManagerDescription' => 'Create reusable layouts for guide pages.',
+                            'layoutManagerApiBase' => '/api/v1/admin/guide-layouts',
+                            'layoutManagerBuilderBase' => '/admin/guide-layouts',
+                            'layoutManagerUsageLabel' => 'Guides',
+                            'layoutManagerUsageField' => 'pages_count',
+                            'layoutManagerPlaceholder' => 'Layout for guide pages',
+                        ]);
+                    }
+                )
+                    ->name('guide-layouts.index');
+
+                Route::get(
+                    '/guide-layouts/{guideLayout}/builder',
+                    function (GuideLayout $guideLayout) {
+                        return view('admin.product-layouts.builder', [
+                            'productLayout' => $guideLayout,
+                            'layoutBuilderMode' => 'guide',
+                            'layoutBuilderApiBase' => '/api/v1/admin/guide-layouts',
+                            'layoutBuilderIndexUrl' => route('admin.guide-layouts.index'),
+                        ]);
+                    }
+                )
+                    ->name('guide-layouts.builder');
+
+                Route::view(
+                    '/guides',
+                    'admin.product-data.index',
+                    [
+                        'pageManagerEntity' => 'Guide',
+                        'pageManagerEntityPlural' => 'Guides',
+                        'pageManagerTitle' => 'Guides',
+                        'pageManagerDescription' => 'Manage guide pages and assign a Guide Layout.',
+                        'pageManagerApiBase' => '/api/v1/admin/guides',
+                        'pageManagerLayoutApiBase' => '/api/v1/admin/guide-layouts',
+                        'pageManagerLayoutBuilderBase' => '/admin/guide-layouts',
+                        'pageManagerContentBase' => '/admin/guides',
+                        'pageManagerPreviewBase' => '/guide',
+                        'pageManagerLayoutField' => 'guide_layout_id',
+                        'pageManagerSlugPlaceholder' => 'how-to-design',
+                        'pageManagerSlugHelp' => 'Public path: /guide/{slug}. Leading and trailing slashes are normalized automatically.',
+                    ]
+                )
+                    ->name('guides.index');
+
+                Route::get(
+                    '/guides/{guidePage}/content',
+                    function (GuidePage $guidePage) {
+                        return view('admin.products.content', [
+                            'product' => $guidePage,
+                            'contentEditorMode' => 'guide',
+                            'contentApiBase' => '/api/v1/admin/guides',
+                            'contentIndexUrl' => route('admin.guides.index'),
+                        ]);
+                    }
+                )
+                    ->name('guides.content');
+
+                Route::post('/guides/{guidePage}/content/preview', \App\Http\Controllers\Admin\GuideContentPreviewController::class)
+                    ->name('guides.content.preview');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -818,12 +1205,9 @@ Route::get(
 
 Route::get(
     '/info/index.php',
-    [
-        LegacyMockController::class,
-        'info',
-    ]
+    [HomeNotificationController::class, 'show']
 )
-    ->name('legacy-mock.info');
+    ->name('home-notification.show');
 
 Route::get(
     '/get_data_review.php',
@@ -1035,6 +1419,110 @@ Route::get(
     ]
 )
     ->name('faq.product.show');
+
+Route::get(
+    '/guide',
+    [
+        StorefrontGuideController::class,
+        'index',
+    ]
+)
+    ->name('guides.index');
+
+Route::get('/news', [StorefrontNewsController::class, 'index'])
+    ->name('news.index');
+
+Route::get('/news.php', [StorefrontNewsController::class, 'index'])
+    ->name('news.legacy.index');
+
+Route::get('/acrylic_news.php', [StorefrontNewsController::class, 'acrylicIndex'])
+    ->name('news.acrylic.legacy');
+
+Route::get('/news-detail.php', [StorefrontNewsController::class, 'legacyShow'])
+    ->name('news.legacy.show');
+
+Route::get('/news/{news}', [StorefrontNewsController::class, 'show'])
+    ->whereNumber('news')
+    ->name('news.show');
+
+Route::get(
+    '/meeting_date',
+    [StorefrontMeetingDateController::class, 'index']
+)
+    ->name('meeting-date.index');
+
+Route::get(
+    '/meeting_date/index.php',
+    [StorefrontMeetingDateController::class, 'index']
+)
+    ->name('meeting-date.legacy.index');
+
+Route::post(
+    '/meeting_date/confirm',
+    [StorefrontMeetingDateController::class, 'confirm']
+)
+    ->name('meeting-date.confirm');
+
+Route::post(
+    '/meeting_date/complete',
+    [StorefrontMeetingDateController::class, 'complete']
+)
+    ->name('meeting-date.complete');
+
+Route::get(
+    '/contact',
+    [
+        StorefrontContactController::class,
+        'index',
+    ]
+)
+    ->name('contact.index');
+
+Route::get(
+    '/contact/index.php',
+    [
+        StorefrontContactController::class,
+        'index',
+    ]
+)
+    ->name('contact.legacy.index');
+
+Route::get(
+    '/contact.php',
+    [
+        StorefrontContactController::class,
+        'index',
+    ]
+)
+    ->name('contact.legacy');
+
+Route::post(
+    '/contact/confirm',
+    [
+        StorefrontContactController::class,
+        'confirm',
+    ]
+)
+    ->name('contact.confirm');
+
+Route::post(
+    '/contact/complete',
+    [
+        StorefrontContactController::class,
+        'complete',
+    ]
+)
+    ->name('contact.complete');
+
+Route::get(
+    '/guide/{guidePath}',
+    [
+        StorefrontGuideController::class,
+        'show',
+    ]
+)
+    ->where('guidePath', '[A-Za-z0-9][A-Za-z0-9_.-]*(?:/[A-Za-z0-9][A-Za-z0-9_.-]*)*')
+    ->name('guides.show');
 
 Route::get(
     '/{customPagePath}',

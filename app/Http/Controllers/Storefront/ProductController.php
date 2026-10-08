@@ -19,6 +19,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
@@ -38,6 +39,7 @@ class ProductController extends Controller
     */
 
     public function show(
+        Request $request,
         string $productPath
     ) {
 
@@ -53,6 +55,10 @@ class ProductController extends Controller
                 '/'
             );
 
+        $previewDraft =
+            $request->boolean('draft')
+            && auth('admin')->check();
+
         /*
         |--------------------------------------------------------------------------
         | Find Published Product Data Page
@@ -67,11 +73,17 @@ class ProductController extends Controller
         $productDataPage = ProductDataPage::query()
             ->with('layout')
             ->where('slug', $productPath)
-            ->where('status', 'active')
+            ->when(
+                ! $previewDraft,
+                fn ($query) => $query->where('status', 'active')
+            )
             ->first();
 
         if ($productDataPage) {
-            return $this->showProductDataPage($productDataPage);
+            return $this->showProductDataPage(
+                $productDataPage,
+                $previewDraft
+            );
         }
 
         /*
@@ -80,16 +92,25 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $product = Product::query()
-            ->where(
-                'slug',
-                $productPath
-            )
-            ->where(
+        $productQuery = Product::query()->where(
+            'slug',
+            $productPath
+        );
+
+        if (! $previewDraft) {
+            $productQuery->where(
                 'status',
                 'active'
-            )
-            ->firstOrFail();
+            );
+        }
+
+        $product = $productQuery->firstOrFail();
+
+        return $this->renderProduct($product, $previewDraft);
+    }
+
+    public function renderProduct(Product $product, bool $previewDraft = false, ?array $snapshot = null)
+    {
 
         /*
         |--------------------------------------------------------------------------
@@ -120,15 +141,18 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (
-            ! $product->layout
-            ||
-            empty(
-                $product
-                    ->layout
-                    ->published_layout_json
-            )
-        ) {
+        if (! $product->layout) {
+
+            abort(404);
+
+        }
+
+        $layout = $previewDraft
+            ? ($product->layout->draft_layout_json
+                ?? $product->layout->published_layout_json)
+            : $product->layout->published_layout_json;
+
+        if (empty($layout)) {
 
             abort(404);
 
@@ -140,15 +164,18 @@ class ProductController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (
-            ! $product->page
-            ||
-            empty(
-                $product
-                    ->page
-                    ->published_content_json
-            )
-        ) {
+        if (! $product->page && $snapshot === null) {
+
+            abort(404);
+
+        }
+
+        $content = $snapshot !== null ? ['blocks' => $snapshot] : ($previewDraft
+            ? ($product->page->draft_content_json
+                ?? $product->page->published_content_json)
+            : $product->page->published_content_json);
+
+        if (empty($content)) {
 
             abort(404);
 
@@ -159,16 +186,6 @@ class ProductController extends Controller
         | Data
         |--------------------------------------------------------------------------
         */
-
-        $layout =
-            $product
-                ->layout
-                ->published_layout_json;
-
-        $content =
-            $product
-                ->page
-                ->published_content_json;
 
         $blocks =
             $content['blocks']
@@ -367,9 +384,9 @@ class ProductController extends Controller
 
                 'contents' => $blocks,
 
-                'publishedAt' => $product
-                    ->page
-                    ->published_at,
+                'visualEditorPreview' => $snapshot !== null,
+
+                'publishedAt' => $product->page?->published_at,
 
                 'faqData' => $faqData,
 
@@ -395,25 +412,35 @@ class ProductController extends Controller
      * Render a published Product Data page in the same storefront shell and
      * CMS block renderer used by regular products.
      */
-    private function showProductDataPage(ProductDataPage $productDataPage)
+    public function showProductDataPage(
+        ProductDataPage $productDataPage,
+        bool $previewDraft = false,
+        ?array $snapshot = null
+    )
     {
-        if (
-            ! $productDataPage->layout
-            ||
-            empty($productDataPage->layout->published_layout_json)
-            ||
-            empty($productDataPage->published_content_json)
-        ) {
+        if (! $productDataPage->layout) {
             abort(404);
         }
 
-        $layout = $productDataPage->layout->published_layout_json;
-        $content = $productDataPage->published_content_json;
+        $layout = $previewDraft
+            ? ($productDataPage->layout->draft_layout_json
+                ?? $productDataPage->layout->published_layout_json)
+            : $productDataPage->layout->published_layout_json;
+
+        $content = $snapshot !== null ? ['blocks' => $snapshot] : ($previewDraft
+            ? ($productDataPage->draft_content_json
+                ?? $productDataPage->published_content_json)
+            : $productDataPage->published_content_json);
+
+        if (empty($layout) || empty($content)) {
+            abort(404);
+        }
 
         return view('products.show', [
             'product' => $productDataPage,
             'layout' => $layout,
             'contents' => $content['blocks'] ?? [],
+            'visualEditorPreview' => $snapshot !== null,
             'publishedAt' => $productDataPage->published_at,
             'faqData' => [],
             'reviewData' => [],
@@ -441,6 +468,8 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'quantity' => ['nullable', 'integer', 'min:1', 'max:1000000000'],
+            'selected_option_ids' => ['nullable', 'array', 'max:100'],
+            'selected_option_ids.*' => ['integer', 'distinct', 'min:1'],
             'total_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
             'subtotal_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
             'discount_amount' => ['nullable', 'integer', 'max:100000000000'],
@@ -467,14 +496,14 @@ class ProductController extends Controller
             'price_rows.*.key' => ['nullable', 'string', 'max:100'],
             'price_rows.*.label' => ['required', 'string', 'max:255'],
             'price_rows.*.amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
-            'price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,subtotal,discount,total'],
+            'price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,shipping,subtotal,discount,total'],
             'confirm_price_rows' => ['nullable', 'array', 'max:100'],
             'confirm_price_rows_present' => ['nullable', 'boolean'],
             'confirm_price_rows.*' => ['array'],
             'confirm_price_rows.*.key' => ['nullable', 'string', 'max:100'],
             'confirm_price_rows.*.label' => ['required', 'string', 'max:255'],
             'confirm_price_rows.*.amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
-            'confirm_price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,subtotal,discount,total'],
+            'confirm_price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,shipping,subtotal,discount,total'],
             'complete_summary' => ['nullable', 'array', 'max:100'],
             'complete_summary_present' => ['nullable', 'boolean'],
             'complete_summary.*' => ['array'],
@@ -487,8 +516,12 @@ class ProductController extends Controller
             'complete_price_rows.*.key' => ['nullable', 'string', 'max:100'],
             'complete_price_rows.*.label' => ['required', 'string', 'max:255'],
             'complete_price_rows.*.amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
-            'complete_price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,subtotal,discount,total'],
+            'complete_price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,shipping,subtotal,discount,total'],
         ]);
+
+        $quantity = (int) ($validated['quantity'] ?? 1);
+        $selectedOptionIds = array_map('intval', $validated['selected_option_ids'] ?? []);
+        $this->validateSelectedOptionQuantity($product, $quantity, $selectedOptionIds);
 
         $orderValues = collect(json_decode((string) ($validated['order_values'] ?? '[]'), true) ?: [])
             ->filter(static fn ($field): bool => is_array($field))
@@ -501,7 +534,8 @@ class ProductController extends Controller
             ->all();
 
         $request->session()->put('configured_order_'.$product->getKey(), [
-            'quantity' => (int) ($validated['quantity'] ?? 1),
+            'quantity' => $quantity,
+            'selected_option_ids' => $selectedOptionIds,
             'total_amount' => (int) ($validated['total_amount'] ?? 0),
             'subtotal_amount' => (int) ($validated['subtotal_amount'] ?? 0),
             'discount_amount' => (int) ($validated['discount_amount'] ?? 0),
@@ -1058,6 +1092,8 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'quantity' => ['nullable', 'integer', 'min:1', 'max:1000000000'],
+            'selected_option_ids' => ['nullable', 'array', 'max:100'],
+            'selected_option_ids.*' => ['integer', 'distinct', 'min:1'],
             'total_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
             'subtotal_amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
             'discount_amount' => ['nullable', 'integer', 'max:100000000000'],
@@ -1080,8 +1116,12 @@ class ProductController extends Controller
             'price_rows.*' => ['array'],
             'price_rows.*.label' => ['required', 'string', 'max:255'],
             'price_rows.*.amount' => ['nullable', 'integer', 'min:0', 'max:100000000000'],
-            'price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,subtotal,discount,total'],
+            'price_rows.*.kind' => ['nullable', 'string', 'in:product,charge,shipping,subtotal,discount,total'],
         ]);
+
+        $requestedQuantity = (int) ($validated['quantity'] ?? 1);
+        $selectedOptionIds = array_map('intval', $validated['selected_option_ids'] ?? []);
+        $this->validateSelectedOptionQuantity($product, $requestedQuantity, $selectedOptionIds);
 
         $summaryRows = collect($validated['summary'] ?? [])
             ->map(static fn (array $row): array => [
@@ -1116,7 +1156,7 @@ class ProductController extends Controller
         $subtotalAmount = (int) ($validated['subtotal_amount'] ?? $totalAmount);
         $discountAmount = (int) ($validated['discount_amount'] ?? 0);
         $taxAmount = (int) round($totalAmount * 10 / 110);
-        $quantity = (int) ($validated['quantity'] ?? 1);
+        $quantity = $requestedQuantity;
         $customerInput = $validated['estimate_customer'] ?? [];
         $customer = [
             'last_name' => trim((string) ($customerInput['last_name'] ?? '')),
@@ -1182,6 +1222,97 @@ class ProductController extends Controller
             'Content-Length' => (string) strlen($pdfContent),
             'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
         ]);
+    }
+
+    /**
+     * Reject quantities outside the limits attached to the selected options.
+     * The browser applies the same limits for immediate feedback, but this
+     * server-side check is the authoritative guard before saving the order.
+     *
+     * @param  list<int>  $selectedOptionIds
+     */
+    private function validateSelectedOptionQuantity(Product $product, int $quantity, array $selectedOptionIds): void
+    {
+        if ($selectedOptionIds === []) {
+            return;
+        }
+
+        $product->loadMissing([
+            'optionSteps',
+            'optionGroupAssignments.optionGroup.productOptions',
+            'optionGroupAssignments.items.productOption',
+        ]);
+
+        $availableOptions = collect($this->storefrontOrderSteps($product))
+            ->flatMap(static fn (array $step): array => $step['groups'])
+            ->flatMap(static fn (array $group): array => $group['options'])
+            ->values();
+
+        $minimum = 1;
+        $maximum = null;
+        $hasQuantityRule = false;
+
+        foreach ($selectedOptionIds as $optionId) {
+            $selectedOptions = $availableOptions
+                ->filter(static fn (array $option): bool => (int) $option['id'] === $optionId);
+
+            if ($selectedOptions->isEmpty()) {
+                throw ValidationException::withMessages([
+                    'selected_option_ids' => '選択されたオプションがこの商品にありません。',
+                ]);
+            }
+
+            foreach ($selectedOptions as $option) {
+                $rule = $option['quantity_rule'] ?? 'no_limit';
+
+                if (in_array($rule, ['minimum_only', 'min_max_range'], true) && $option['min_qty'] !== null) {
+                    $minimum = max($minimum, (int) $option['min_qty']);
+                    $hasQuantityRule = true;
+                }
+
+                if (in_array($rule, ['maximum_only', 'min_max_range'], true) && $option['max_qty'] !== null) {
+                    $maximum = $maximum === null
+                        ? (int) $option['max_qty']
+                        : min($maximum, (int) $option['max_qty']);
+                    $hasQuantityRule = true;
+                }
+
+                if ($rule === 'exact_quantity_only' && $option['exact_qty'] !== null) {
+                    $exactQuantity = (int) $option['exact_qty'];
+                    $minimum = max($minimum, $exactQuantity);
+                    $maximum = $maximum === null ? $exactQuantity : min($maximum, $exactQuantity);
+                    $hasQuantityRule = true;
+                }
+            }
+        }
+
+        if (! $hasQuantityRule) {
+            return;
+        }
+
+        if ($maximum !== null && $minimum > $maximum) {
+            throw ValidationException::withMessages([
+                'quantity' => '選択したオプションの数量条件が一致しないため、数量を確定できません。',
+            ]);
+        }
+
+        if ($minimum === $maximum && $maximum !== null && $quantity !== $minimum) {
+            throw ValidationException::withMessages([
+                'quantity' => 'ご注文数量は'.$minimum.'個で入力してください。',
+            ]);
+        }
+
+        if ($quantity < $minimum) {
+            throw ValidationException::withMessages([
+                'quantity' => 'ご注文数量は'.$minimum.'個以上で入力してください。',
+            ]);
+        }
+
+        if ($maximum !== null && $quantity > $maximum) {
+            throw ValidationException::withMessages([
+                'quantity' => 'ご注文数量は'.$maximum.'個以下で入力してください。',
+            ]);
+        }
     }
 
     /**
@@ -1418,11 +1549,14 @@ class ProductController extends Controller
      * price-rule screens; this keeps the order form independent from Eloquent
      * model internals and avoids exposing rule names or timestamps.
      *
-     * @return array{product_rules: list<array<string, mixed>>, option_rules: list<array<string, mixed>>}
+     * @return array{price_display_type: string, product_rules: list<array<string, mixed>>, option_rules: list<array<string, mixed>>}
      */
     private function storefrontOrderPricing(Product $product): array
     {
         $pricing = [
+            'price_display_type' => $product->price_display_type === 'without_tax' ? 'without_tax' : 'with_tax',
+            'shipping_fee' => (int) ($product->shipping_fee ?? 800),
+            'shipping_free_minimum' => $product->shipping_free_minimum,
             'product_rules' => [],
             'option_rules' => [],
         ];
@@ -1436,7 +1570,7 @@ class ProductController extends Controller
                 ->where('product_id', $product->id)
                 ->with([
                     'conditions:id,product_price_rule_id,product_option_id',
-                    'tiers:id,product_price_rule_id,quantity,unit_price_with_tax,is_display',
+                    'tiers:id,product_price_rule_id,quantity,unit_price,unit_price_with_tax,is_display',
                 ])
                 ->orderBy('id')
                 ->get()
@@ -1449,6 +1583,7 @@ class ProductController extends Controller
                     'tiers' => $rule->tiers
                         ->map(static fn ($tier): array => [
                             'quantity' => (int) $tier->quantity,
+                            'unit_price' => (float) $tier->unit_price,
                             'unit_price_with_tax' => (float) $tier->unit_price_with_tax,
                             'is_display' => (bool) $tier->is_display,
                         ])
@@ -1469,7 +1604,7 @@ class ProductController extends Controller
                 ->with([
                     'targetOption:id,option_group_id',
                     'conditions:id,option_price_rule_id,product_option_id',
-                    'tiers:id,option_price_rule_id,quantity,additional_price_with_tax',
+                    'tiers:id,option_price_rule_id,quantity,additional_price,additional_price_with_tax',
                 ])
                 ->orderBy('id')
                 ->get()
@@ -1485,6 +1620,7 @@ class ProductController extends Controller
                     'tiers' => $rule->tiers
                         ->map(static fn ($tier): array => [
                             'quantity' => (int) $tier->quantity,
+                            'additional_price' => (float) $tier->additional_price,
                             'additional_price_with_tax' => (float) $tier->additional_price_with_tax,
                         ])
                         ->values()

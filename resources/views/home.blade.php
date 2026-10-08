@@ -15,38 +15,21 @@
     <style type="text/css">
         body {
           font-family:
-            IwaUDGoDspPro-Th,
+            Arial,
             'Hiragino Sans',
             'ヒラギノ角ゴシック',
+            'Noto Sans JP',
+            'ヒラギノ角ゴ Pro W3',
+            'Hiragino Kaku Gothic ProN',
             'メイリオ',
             Meiryo,
-            'Hiragino Kaku Gothic ProN',
-            'Yu Gothic',
             sans-serif !important;
           -webkit-font-smoothing: antialiased !important;
-          font-size: 13.6px;
+          font-size: 16px;
           font-feature-settings: palt;
           -webkit-text-size-adjust: 100%;
-          letter-spacing: -.06em;
+          letter-spacing: normal;
           color: #281600;
-        }
-
-        a,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-          font-family:
-            IwaUDGoDspPro-Th,
-            'Hiragino Sans',
-            'ヒラギノ角ゴシック',
-            'メイリオ',
-            Meiryo,
-            'Hiragino Kaku Gothic ProN',
-            'Yu Gothic',
-            sans-serif !important;
         }
 
         .info {
@@ -148,6 +131,11 @@
           transition-duration: .1s
         }
 
+        table.tbl_index {
+          border: 1px solid #ccc;
+          margin-top: 10px;
+        }
+
         .social-box {
           width: 48%;
           height: 500px;
@@ -179,6 +167,10 @@
         }
 
         .new-text {
+          font-family: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif !important;
+          color: #000 !important;
+          background: transparent !important;
+          padding: 0 !important;
           font-size: 16px !important;
           letter-spacing: 0.05em !important;
           line-height: 150% !important;
@@ -253,6 +245,67 @@
         .tbl_index .detail {
           font-size: calc(16px + 6 * ((15vw - 320px) / 680));
           line-height: 26px;
+        }
+
+        .tbl_index .home-product-description {
+          width: 58%;
+          padding-left: 15px;
+          overflow: hidden;
+          margin: auto;
+        }
+
+        .tbl_index .home-product-description p {
+          width: auto;
+          padding: 0;
+          margin: 0 0 4px;
+          overflow: visible;
+        }
+
+        .tbl_index .home-product-description .detail,
+        .tbl_index .home-product-description .detail * {
+          color: #111 !important;
+        }
+
+        .tbl_index .home-product-features p {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 2.4px 7px;
+          margin: 2px 0;
+          overflow: hidden;
+          color: #fff;
+          font-size: 15.5px;
+          font-weight: bold;
+          line-height: 18px;
+          white-space: nowrap;
+          background: #f40f0f;
+        }
+
+        .tbl_index .home-product-features span {
+          display: inline;
+          margin: 0;
+          padding: 0;
+          color: inherit;
+          font-size: inherit;
+          line-height: inherit;
+          background: transparent;
+        }
+
+        @media screen and (max-width: 768px) {
+          .tbl_index .home-product-description {
+            width: 55%;
+            padding-left: 5px;
+          }
+
+          .tbl_index .home-product-features {
+            width: 24% !important;
+          }
+
+          .tbl_index .home-product-features p {
+            padding: 1px 5px;
+            font-size: 2.5vw;
+            font-weight: 100;
+            line-height: 3vw;
+          }
         }
 
         @media(max-width: 576px) {
@@ -384,6 +437,11 @@
       @endif
 
       <h1 style="font-size: 14px;" class="new-text">オリジナルグッズ・ノベルティを小ロット短納期で製作。</h1>
+      @if ($hasConfiguredHomeProductCards)
+        @foreach ($homeProductCards as $homeProductCard)
+          @include('partials.home-product-card', ['homeProductCard' => $homeProductCard])
+        @endforeach
+      @else
       <!-- :: index start :: -->
       <table width="100%" cellspacing="0" class="tbl_index">
         <tr>
@@ -1455,7 +1513,7 @@
         </tr>
       </table> -->
 
-      
+      @endif
 
       @if ($news->isNotEmpty())
         <style>
@@ -1511,15 +1569,15 @@
             <h2 class="font-news">News!</h2>
           </div>
           @foreach ($news as $item)
-            <a href="news-detail.php?id={{ $item['id'] }}" style="color:black;" class="ddv">
+            <a href="{{ route('news.show', ['news' => $item->id]) }}" style="color:black;" class="ddv">
               <div class="news-item">
-                <div class="news-date">{{ $item['published_at']->format('Y.m.d') }}</div>
-                <div class="news-title" style="letter-spacing: 0.05em;">{{ $item['title'] }}</div>
+                <div class="news-date">{{ $item->published_at?->format('Y.m.d') }}</div>
+                <div class="news-title" style="letter-spacing: 0.05em;">{{ $item->title }}</div>
               </div>
             </a>
           @endforeach
           <div class="foo-news">
-            <a href="news.php">News一覧へ</a>
+            <a href="{{ route('news.index') }}">News一覧へ</a>
           </div>
         </div>
       @endif
@@ -1542,7 +1600,7 @@
 
       <!-- <div>&nbsp;</div> -->
       <div class="fullw-img">
-        <a href="/reviews/"><img class="lazy" data-src="/reviews/img/reviews_bannerB.webp" width="771" height="238"></a>
+        <a href="/reviews/"><img class="lazy" data-src="/images/home/reviews_bannerB.webp" alt="Customer reviews" width="771" height="238"></a>
       </div>
       <div id="customer_review_area">
         <div class="slider_review">
@@ -1576,7 +1634,7 @@
   <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   <script type="text/javascript">
     $(function() {
-      $('#info_div').load(@json(route('legacy-mock.info')));
+      $('#info_div').load(@json(route('home-notification.show')));
 
       var $reviewSlider = $('.slider_review');
       if ($reviewSlider.length && $.fn.bxSlider) {

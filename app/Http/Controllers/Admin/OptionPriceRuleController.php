@@ -184,19 +184,13 @@ class OptionPriceRuleController extends Controller
     {
         $groups = $this->groupsForProduct($product);
         $allOptionIds = $groups->pluck('options')->flatten(1)->pluck('id')->map(static fn ($id): int => (int) $id);
-        $mainOptionIds = $groups
-            ->where('is_main_price_group', true)
-            ->pluck('options')
-            ->flatten(1)
-            ->pluck('id')
-            ->map(static fn ($id): int => (int) $id);
         $targetId = (int) $data['target_product_option_id'];
         $conditionIds = collect($data['condition_product_option_ids'] ?? [])
             ->map(static fn ($id): int => (int) $id);
 
-        if (! $mainOptionIds->contains($targetId)) {
+        if (! $allOptionIds->contains($targetId)) {
             throw ValidationException::withMessages([
-                'target_product_option_id' => 'The target option must belong to an active Main Price Group assigned to this product.',
+                'target_product_option_id' => 'The target option must belong to an active Option Group assigned to this product.',
             ]);
         }
 

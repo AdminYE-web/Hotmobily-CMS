@@ -5,6 +5,7 @@
     @php
         $isProductDataPage = $product instanceof \App\Models\ProductDataPage;
         $isStandaloneCustomPage = $product instanceof \App\Models\CustomPage;
+        $isStandaloneGuidePage = $product instanceof \App\Models\GuidePage;
     @endphp
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
@@ -20,7 +21,7 @@
 
     <meta name="robots" content="index,follow">
 
-    <link rel="canonical" href="{{ $isStandaloneCustomPage ? url('/' . $product->slug) : url('/products/' . $product->slug) }}">
+    <link rel="canonical" href="{{ $isStandaloneCustomPage ? url('/' . $product->slug) : ($isStandaloneGuidePage ? url('/guide/' . $product->slug) : url('/products/' . $product->slug)) }}">
 
 
     {{--
@@ -497,6 +498,12 @@
         }
 
 
+        .store-rich-text img,
+        .store-step-information-text img {
+            max-width: 100%;
+            height: auto;
+        }
+
         .store-rich-text-small {
             font-size: 12px;
             line-height: 1.4;
@@ -507,6 +514,235 @@
             color: #06c !important;
             cursor: pointer;
             text-decoration: underline !important;
+        }
+
+
+        /* ============================================================
+           Guide Step Information
+        ============================================================ */
+
+        .store-step-information {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            margin-top: 20px;
+            border-top: 2px solid #ccc;
+        }
+
+
+        .store-step-information-image {
+            flex: 0 0 20%;
+            width: 20%;
+        }
+
+
+        .store-step-information-image img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+
+        .store-step-information-text {
+            flex: 1 1 0;
+            width: 77%;
+            min-width: 0;
+            padding: 0 0 0 10px;
+            color: #281600;
+            font-size: 16px;
+            letter-spacing: .05em;
+            line-height: 1.5;
+        }
+
+
+        .store-step-information-text-full {
+            width: 100%;
+            padding-left: 0;
+        }
+
+
+        .store-step-information-text-small {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+
+        .store-step-information-text h1,
+        .store-step-information-text h2,
+        .store-step-information-text h3,
+        .store-step-information-text h4,
+        .store-step-information-text h5,
+        .store-step-information-text h6 {
+            margin: 15px 0 10px;
+        }
+
+
+        .store-step-information-text p,
+        .store-step-information-text ul,
+        .store-step-information-text ol {
+            margin-top: 0;
+            margin-bottom: 8px;
+            margin-left: 15px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+
+        @media (max-width: 768px) {
+            .store-step-information-image,
+            .store-step-information-text {
+                flex-basis: 100%;
+                width: 100%;
+            }
+
+            .store-step-information-text {
+                padding-left: 0;
+            }
+        }
+
+
+        /* ============================================================
+           Guide Main Component
+        ============================================================ */
+
+        .store-guide-main {
+            width: 100%;
+            color: #000;
+        }
+
+
+        .store-guide-main-heading {
+            margin: 0 0 12px;
+            color: #111;
+            font-size: 24px;
+            text-align: center;
+        }
+
+
+        .store-guide-main-description {
+            margin-bottom: 12px;
+        }
+
+
+        .store-guide-main-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+
+        .store-guide-main-card {
+            display: block;
+            width: 32%;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: linear-gradient(to bottom left, #e6e6e6 10%, #ebefee 35%, #fefefe 100%);
+            color: #000;
+            text-align: center;
+            text-decoration: none !important;
+        }
+
+
+        .store-guide-main-card:hover {
+            opacity: .7;
+        }
+
+
+        .store-guide-main-card-inner {
+            margin: 5px;
+            padding: 10px 5px;
+            color: #000;
+            font-weight: 700;
+            line-height: 20px;
+        }
+
+
+        .store-guide-main-card-inner img {
+            display: block;
+            width: 63%;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+        }
+
+
+        .store-guide-main-card-title {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+
+        .store-guide-main-card-description {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+
+        .store-guide-main-card-description p {
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .store-guide-main-other {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #d6edf7;
+            text-align: center;
+        }
+
+
+        .store-guide-main-other a {
+            color: #0000aa;
+        }
+
+
+        @media (max-width: 768px) {
+            .store-guide-main-card-title {
+                padding: 10px;
+            }
+        }
+
+
+        @media (max-width: 576px) {
+            .store-guide-main-card {
+                width: 49%;
+            }
+
+            .store-guide-main-card-inner {
+                padding: 10px 0;
+                font-size: 12px;
+            }
+
+            .store-guide-main-card-title {
+                padding: 0;
+                font-size: 14px;
+            }
+
+            .store-guide-main-card-description {
+                font-size: 12px;
+            }
+        }
+
+
+        @media (max-width: 320px) {
+            .store-guide-main-card {
+                width: 90%;
+                margin-right: auto;
+                margin-left: auto;
+                margin-bottom: 10px;
+            }
+
+            .store-guide-main-card-inner {
+                padding: 10px 5px;
+                font-size: 14px;
+            }
+
+            .store-guide-main-card-title {
+                font-size: 16px;
+            }
         }
 
 
@@ -630,6 +866,7 @@
         .store-image-modal-dialog {
             position: relative;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             box-sizing: border-box;
@@ -1874,25 +2111,32 @@
         .option-parts-row {
             display: flex;
             flex-wrap: wrap;
-            margin: 0 -10px;
+            justify-content: flex-start;
+            gap: 0;
+            margin: 0;
         }
 
         .mt-10-part-4 {
             flex: 0 0 25%;
             max-width: 25%;
-            padding: 10px;
+            padding: 0 0 6px;
             text-align: center;
             box-sizing: border-box;
         }
 
         .mt-10-part-4 img.picpro {
-            max-width: 160px;
+            max-width: 100%;
             width: 100%;
             height: auto;
+            margin: 0;
             border: 1px solid #eee;
             border-radius: 4px;
             background: #fafafa;
             transition: transform .2s;
+        }
+
+        .option-parts-row > .mt-10-part-4 > br {
+            display: none;
         }
 
         .mt-10-part-4 img.picpro:hover {
@@ -1911,6 +2155,62 @@
             color: #666 !important;
             display: inline-block;
             text-decoration: none;
+        }
+
+        .store-image-modal-description {
+            box-sizing: border-box;
+            width: 0;
+            min-width: 100%;
+            max-height: 20vh;
+            overflow-y: auto;
+            padding: 0 12px;
+            margin: 4px 0;
+            font-size: 12px;
+            color: #333;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+            text-align: left;
+        }
+
+        .store-image-modal.has-description .store-image-modal-dialog img {
+            max-height: calc(72vh - 100px);
+        }
+
+        .store-image-modal-picture {
+            position: relative;
+        }
+
+        .store-image-modal.has-description .store-image-modal-dialog {
+            padding: 0 0 26px;
+            background: transparent;
+        }
+
+        .store-image-modal.has-description .store-image-modal-picture {
+            background: #fff;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .store-image-modal.has-description .store-image-modal-description {
+            padding: 0 44px 0 4px;
+            color: #ddd;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .store-image-modal.has-description .store-image-modal-counter {
+            bottom: 8px;
+            padding-left: 4px;
+            color: #ccc;
+            text-align: left;
+        }
+
+        .store-image-modal.has-description .store-image-modal-close {
+            top: auto;
+            bottom: 18px;
+            right: 0;
+            color: #ccc;
+            font-size: 42px;
         }
 
         .part_link {
@@ -1985,6 +2285,8 @@
         <div class="product-layout-container">
             @include('products.partials.layout-rows', [
                 'rows' => $beforeOrderRows,
+                'guideMain' => $guideMain ?? null,
+                'guideItems' => $guideItems ?? collect(),
                 'faqData' => $faqData ?? [],
                 'reviewData' => $reviewData ?? [],
             ])
@@ -2001,6 +2303,8 @@
             <div class="product-layout-container product-layout-container-after-order">
                 @include('products.partials.layout-rows', [
                     'rows' => $afterOrderRows,
+                    'guideMain' => $guideMain ?? null,
+                    'guideItems' => $guideItems ?? collect(),
                     'faqData' => $faqData ?? [],
                     'reviewData' => $reviewData ?? [],
                 ])
@@ -2030,6 +2334,7 @@
                 ×
             </button>
 
+            <div class="store-image-modal-picture">
             <button
                 type="button"
                 class="store-image-modal-nav store-image-modal-prev"
@@ -2053,6 +2358,13 @@
             >
                 次へ
             </button>
+            </div>
+
+            <div
+                class="store-image-modal-description"
+                data-store-image-modal-description
+                hidden
+            ></div>
 
             <div
                 class="store-image-modal-counter"
@@ -2468,6 +2780,8 @@
 
                 let imageModalIndex = 0;
 
+                const imageModalDescription = imageModal?.querySelector('[data-store-image-modal-description]');
+
                 function updateImageModal(index) {
                     if (!imageModalImage || !imageModalTriggers.length) {
                         return;
@@ -2483,6 +2797,13 @@
                         trigger.dataset.imageModalSrc || '';
                     imageModalImage.alt =
                         trigger.dataset.imageModalAlt || '';
+
+                    if (imageModalDescription) {
+                        const description = trigger.dataset.imageModalDescription || '';
+                        imageModalDescription.textContent = description;
+                        imageModalDescription.hidden = !description.trim();
+                        imageModal.classList.toggle('has-description', Boolean(description.trim()));
+                    }
 
                     if (imageModalCounter) {
                         imageModalCounter.textContent =
@@ -2508,7 +2829,8 @@
                 }
 
                 allImageModalTriggers.forEach(function(trigger) {
-                    trigger.addEventListener('click', function() {
+                    trigger.addEventListener('click', function(event) {
+                        event.preventDefault();
                         const group = trigger.dataset.imageModalGroup || '';
 
                         imageModalTriggers = group
@@ -2526,6 +2848,16 @@
                         imageModal?.classList.add('is-open');
                         imageModal?.setAttribute('aria-hidden', 'false');
                         document.body.style.overflow = 'hidden';
+                    });
+                });
+
+                document.querySelectorAll('.option-parts-row .part-zoom').forEach(function (link) {
+                    link.addEventListener('click', function (event) {
+                        const trigger = link.closest('.mt-10-part-4')?.querySelector('[data-store-image-modal-trigger]');
+                        if (trigger) {
+                            event.preventDefault();
+                            trigger.click();
+                        }
                     });
                 });
 
@@ -2642,8 +2974,11 @@
                             );
 
 
+                        // Keep the legacy holiday type because the original
+                        // calculator treats type2 (sales holiday) differently
+                        // from type3 (factory holiday).
                         const holidayMap =
-                            new Set();
+                            new Map();
 
 
                         holidays.forEach(
@@ -2680,9 +3015,11 @@
                                     )
                                 ) {
 
-                                    holidayMap.add(
-                                        date
-                                    );
+                                    if (!holidayMap.has(date)) {
+                                        holidayMap.set(date, new Set());
+                                    }
+
+                                    holidayMap.get(date).add(type);
 
                                 }
 
@@ -2840,35 +3177,116 @@
                         );
 
 
-                    while (
-                        count <
-                        days
-                    ) {
-
-                        date =
-                            addDays(
-                                date,
-                                1
-                            );
+                    if (days <= 0) {
+                        return date;
+                    }
 
 
+                    // The legacy site accepts manuscripts until 12:00 JST.
+                    // After that cutoff production starts on the next date.
+                    if (getTokyoHour() >= 12) {
+                        date = addDays(date, 1);
+                    }
+
+
+                    let safety = 0;
+
+
+                    while (count < days) {
+                        const weekday =
+                            getTokyoWeekday(date);
+
+                        const holidayTypes =
+                            holidayMap.get(date) ||
+                            new Set();
+
+                        // Match original check_holiday.php: Sundays and
+                        // factory holidays do not count as production days;
+                        // sales holidays still count toward production.
                         if (
-                            holidayMap.has(
-                                date
-                            )
+                            weekday !== 0 &&
+                            !holidayTypes.has('type3')
                         ) {
-
-                            continue;
-
+                            count++;
                         }
 
 
-                        count++;
+                        if (count >= days) {
+                            // A shipment cannot leave on Saturday, Sunday,
+                            // a sales holiday, or a factory holiday. Keep
+                            // advancing without counting more production days.
+                            while (isShippingBlocked(date, holidayMap)) {
+                                date = addDays(date, 1);
 
+                                if (++safety > 1500) {
+                                    throw new Error(
+                                        'Shipping calculation exceeded safety limit.'
+                                    );
+                                }
+                            }
+
+                            return date;
+                        }
+
+
+                        if (++safety > 1500) {
+                            throw new Error(
+                                'Shipping calculation exceeded safety limit.'
+                            );
+                        }
+
+
+                        date = addDays(date, 1);
                     }
 
 
                     return date;
+                }
+
+
+                function getTokyoHour() {
+                    const hour =
+                        new Intl.DateTimeFormat(
+                            'en-US', {
+                                timeZone: 'Asia/Tokyo',
+                                hour: '2-digit',
+                                hour12: false,
+                            }
+                        ).format(
+                            new Date()
+                        );
+
+
+                    return Number(hour) % 24;
+                }
+
+
+                function getTokyoWeekday(dateKey) {
+                    const [year, month, day] =
+                        dateKey.split('-').map(Number);
+
+
+                    return new Date(
+                        Date.UTC(year, month - 1, day, 12)
+                    ).getUTCDay();
+                }
+
+
+                function isShippingBlocked(dateKey, holidayMap) {
+                    const weekday =
+                        getTokyoWeekday(dateKey);
+
+                    const holidayTypes =
+                        holidayMap.get(dateKey) ||
+                        new Set();
+
+
+                    return (
+                        weekday === 0 ||
+                        weekday === 6 ||
+                        holidayTypes.has('type2') ||
+                        holidayTypes.has('type3')
+                    );
                 }
 
 
