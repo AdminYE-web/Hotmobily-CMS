@@ -347,10 +347,6 @@
                         class="form-control"
                     >
 
-                        <option value="both">
-                            Normal + Cloth
-                        </option>
-
                         <option value="normal">
                             Normal only
                         </option>
@@ -1092,11 +1088,6 @@ document.addEventListener(
                     return 'Cloth';
 
 
-                case 'both':
-
-                    return 'Normal + Cloth';
-
-
                 default:
 
                     return type;
@@ -1163,10 +1154,10 @@ document.addEventListener(
 
 
             /*
-             * Default = both
+             * Default = normal
              */
             calendarTypeInput.value =
-                'both';
+                'normal';
 
 
             modal.modal(
@@ -1275,7 +1266,7 @@ document.addEventListener(
 
 
             calendarTypeInput.value =
-                'both';
+                'normal';
 
 
             document

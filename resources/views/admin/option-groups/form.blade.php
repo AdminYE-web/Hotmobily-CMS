@@ -54,6 +54,14 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="5" class="form-control @error('description') is-invalid @enderror" maxlength="50000">{{ old('description', $optionGroup->description) }}</textarea>
+                        <small class="form-text text-muted">Displayed above this Option Group's choices on the product page.</small>
+                        <small class="form-text text-muted">Select text, then click Help Text button in the toolbar to turn it into a button that opens this group's Help Text. Click it again to remove the button.</small>
+                        @error('description')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    </div>
+
+                    <div class="form-group">
                         <label for="help_text">Help Text</label>
                         <textarea id="help_text" name="help_text" rows="4" class="form-control @error('help_text') is-invalid @enderror" maxlength="2000">{{ old('help_text', $optionGroup->help_text) }}</textarea>
                         @error('help_text')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -113,6 +121,7 @@
         .ck-content figure.horizontal-line hr,
         .ck-content hr { margin-left: 0; border: 0; border-top: 1px solid #d0d0d0; }
         .option-group-help-preview img { max-width: 100%; height: auto; }
+        .ck-content a[href="#option-group-help"] { color: #00f; text-decoration: none; }
     </style>
 @endpush
 
@@ -120,9 +129,9 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const textarea = document.querySelector('#help_text');
+            const textareas = document.querySelectorAll('#description, #help_text');
             const Editor = window.CKEDITOR && window.CKEDITOR.ClassicEditor;
-            if (!textarea || !Editor) return;
+            if (!textareas.length || !Editor) return;
 
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -158,6 +167,7 @@
                 }
             }
 
+            textareas.forEach(function (textarea) {
             Editor.create(textarea, {
                 licenseKey: 'GPL',
                 toolbar: {
@@ -203,11 +213,46 @@
                     'CaseChange',
                 ],
             }).then(function (editor) {
+                if (textarea.id === 'description') {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'ck ck-button ck-off ck-button_with-text';
+                    button.setAttribute('aria-label', 'Help Text button');
+                    button.title = 'Turn selected text into a Help Text button, or remove it';
+                    button.innerHTML = '<span class="ck ck-button__label">Help Text button</span>';
+                    const command = editor.commands.get('link');
+                    const updateButton = function () {
+                        const active = command.value === '#option-group-help';
+                        button.disabled = !command.isEnabled || (editor.model.document.selection.isCollapsed && !active);
+                        button.classList.toggle('ck-on', active);
+                        button.classList.toggle('ck-off', !active);
+                        button.setAttribute('aria-pressed', String(active));
+                    };
+                    button.addEventListener('mousedown', function (event) { event.preventDefault(); });
+                    button.addEventListener('click', function () {
+                        if (button.disabled) return;
+                        editor.execute(command.value === '#option-group-help' ? 'unlink' : 'link', '#option-group-help');
+                        editor.editing.view.focus();
+                        updateButton();
+                    });
+                    editor.ui.view.toolbar.element.querySelector('.ck-toolbar__items').appendChild(button);
+                    editor.model.document.selection.on('change:range', updateButton);
+                    command.on('change:value', updateButton);
+                    command.on('change:isEnabled', updateButton);
+                    updateButton();
+                }
+                editor.model.document.on('change:data', function () {
+                    textarea.value = editor.getData();
+                });
+                textarea.form.addEventListener('submit', function () {
+                    editor.updateSourceElement();
+                });
                 editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
                     return new OptionGroupUploadAdapter(loader);
                 };
             }).catch(function (error) {
-                console.error('Option Group Help Text CKEditor error:', error);
+                console.error('Option Group ' + textarea.id + ' CKEditor error:', error);
+            });
             });
         });
     </script>

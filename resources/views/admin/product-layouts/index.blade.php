@@ -139,7 +139,7 @@
                                 Published
                             </th>
 
-                            <th style="width:260px;">
+                            <th style="width:340px;">
                                 Action
                             </th>
 
@@ -598,6 +598,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         Delete
                     </button>
 
+                    ${layoutApiBase === '/api/v1/admin/product-layouts' ? `
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-duplicate"
+                            data-id="${layout.id}">
+                            Duplicate
+                        </button>
+                    ` : ''}
+
                 </td>
 
             `;
@@ -978,8 +985,37 @@ document.addEventListener('DOMContentLoaded', function () {
     |--------------------------------------------------------------------------
     */
 
+    async function duplicateLayout(button)
+    {
+        button.disabled = true;
+        button.textContent = 'Copying...';
+        errorBox.classList.add('d-none');
+
+        try {
+            const response = await fetch(`${layoutApiBase}/${button.dataset.id}/duplicate`, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrf },
+            });
+            const result = await response.json();
+            if (!response.ok) throw result;
+
+            await loadLayouts();
+        } catch (error) {
+            errorBox.textContent = error.message ?? 'Failed to duplicate layout.';
+            errorBox.classList.remove('d-none');
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Duplicate';
+        }
+    }
+
     function bindTableButtons()
     {
+        list.querySelectorAll('.btn-duplicate').forEach(function (button) {
+            button.onclick = function () { duplicateLayout(this); };
+        });
+
         document
             .querySelectorAll(
                 '.btn-edit'

@@ -51,7 +51,7 @@
                     button.style.setProperty('--ve-color', section.color || '#25ad68');
                     const dot = document.createElement('span'); dot.className = 've-dot'; dot.setAttribute('aria-hidden', 'true');
                     const text = document.createElement('span'); text.className = 've-section-label'; text.textContent = section.label;
-                    const detail = document.createElement('small'); detail.textContent = section.blockId ? '#' + section.blockId : section.url ? 'Shared across pages' : 'ยังไม่มีหน้าจัดการ'; text.append(detail);
+                    const detail = document.createElement('small'); detail.textContent = section.blockId ? '#' + section.blockId : section.url ? 'Shared across pages' : 'No management page available'; text.append(detail);
                     const arrow = document.createElement('span'); arrow.textContent = '›'; arrow.setAttribute('aria-hidden', 'true');
                     button.append(dot, text, arrow);
                     button.addEventListener('click', () => openSection(section.key));
@@ -74,13 +74,13 @@
                 const section = sections.find(item => item.key === key) || config.sharedSections.find(item => item.key === key);
                 if (!section) return;
                 if (!section.blockId) {
-                    if (!section.url) { setStatus('Navigation ยังไม่มีหน้าจัดการในระบบ'); return; }
+                    if (!section.url) { setStatus('No management page is available for Navigation.'); return; }
                     window.open(section.url, '_blank', 'noopener');
-                    setStatus('เปิดหน้าจัดการในแท็บใหม่แล้ว ข้อมูลที่กำลังแก้ยังอยู่ในแท็บนี้');
+                    setStatus('Management page opened in a new tab. Your current edits remain in this tab.');
                     return;
                 }
                 const target = document.querySelector(`.content-block[data-block-id="${CSS.escape(section.blockId)}"]`);
-                if (!target) { setStatus('ไม่พบบล็อกนี้ใน editor กรุณา Refresh Preview'); return; }
+                if (!target) { setStatus('Block not found in the editor. Click Refresh Preview.'); return; }
                 selectedKey = key;
                 setView(false);
                 let block = target;
@@ -103,7 +103,7 @@
             };
             const loadPreview = async () => {
                 if (loading) return;
-                if (!config.getLayout()) { setStatus('กำลังโหลด Content Editor กรุณาลองอีกครั้ง'); return; }
+                if (!config.getLayout()) { setStatus('Content Editor is loading. Please try again.'); return; }
                 loading = true; refresh.disabled = true; back.disabled = true;
                 setStatus('Loading preview…');
                 collectSections(); renderSections();
@@ -114,8 +114,8 @@
                     if (!enabled) return;
                     frame.srcdoc = html;
                     setView(true);
-                    setStatus('Preview จากข้อมูลที่กำลังแก้ · ยังไม่ได้บันทึก');
-                } catch (error) { setStatus(error.message + ' — กด Refresh Preview เพื่อลองใหม่'); }
+                    setStatus('Preview of current edits · Not saved yet');
+                } catch (error) { setStatus(error.message + ' — Click Refresh Preview to try again'); }
                 finally { loading = false; refresh.disabled = false; back.disabled = false; }
             };
             frame.addEventListener('load', () => {
@@ -126,12 +126,12 @@
                 if (!enabled || event.origin !== window.location.origin || event.source !== frame.contentWindow || !event.data || typeof event.data !== 'object') return;
                 if (event.data.type === 'visual-editor:ready') {
                     configureFrame();
-                    setStatus('Preview พร้อมแล้ว · ยังไม่ได้บันทึก');
+                    setStatus('Preview ready · Not saved yet');
                 }
                 if (event.data.type === 'visual-editor:edit-section' && typeof event.data.key === 'string') openSection(event.data.key);
             });
             toggle.addEventListener('click', () => {
-                if (!config.getLayout()) { setStatus('กำลังโหลด Content Editor กรุณาลองอีกครั้ง'); return; }
+                if (!config.getLayout()) { setStatus('Content Editor is loading. Please try again.'); return; }
                 enabled = !enabled;
                 root.classList.toggle('is-enabled', enabled);
                 toggle.setAttribute('aria-pressed', String(enabled));

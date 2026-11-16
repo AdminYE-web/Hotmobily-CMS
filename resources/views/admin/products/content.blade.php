@@ -27,9 +27,9 @@
 
 <div class="container-fluid">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="content-editor-header mb-4">
 
-        <div>
+        <div class="content-editor-heading">
 
             <a href="{{ $contentIndexUrl }}">
                 ← {{ $isGuideContent ? 'Guides' : ($isCustomPageContent ? 'Custom Pages' : ($isProductDataContent ? 'Product Data' : 'Products')) }}
@@ -46,12 +46,35 @@
         </div>
 
 
-        <div class="d-flex align-items-center">
+        <div class="content-editor-actions">
+
+            <div class="content-editor-status">
 
             <span
                 id="save-status"
                 class="text-muted mr-3"
             ></span>
+
+            @unless ($isCmsContent)
+                <span id="content-current-versions" class="text-muted small mr-3" aria-live="polite"></span>
+            @endunless
+
+            </div>
+
+            <div class="content-editor-buttons">
+            @unless ($isCmsContent)
+                <button type="button" class="btn btn-outline-secondary mr-2" id="content-revisions"
+                    data-list-url="{{ url('/api/v1/admin/products/'.$product->id.'/revisions') }}"
+                    data-preview-url="{{ route('admin.products.revisions.preview', [$product, '__REVISION__']) }}">
+                    Revisions
+                </button>
+            @endunless
+
+            @if ($hasVisualEditor)
+                <button type="button" id="ve-toggle" class="btn btn-primary mr-2" aria-pressed="false">
+                    Visual Editor <span id="ve-mode-label">OFF</span>
+                </button>
+            @endif
 
             <button
                 type="button"
@@ -68,6 +91,8 @@
             >
                 Publish
             </button>
+
+            </div>
 
         </div>
 
@@ -120,16 +145,97 @@
 
 </div>
 
+@unless ($isCmsContent)
+    @include('admin.products.partials.revisions')
+@endunless
+
 @endsection
 
 
 @push('styles')
+<link rel="stylesheet" href="{{ asset('css/shipping-summary.css') }}?v={{ filemtime(public_path('css/shipping-summary.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/price-matrix.css') }}?v={{ filemtime(public_path('css/price-matrix.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}">
+<link rel="stylesheet" href="{{ asset('css/custom-table-business-days.css') }}?v={{ filemtime(public_path('css/custom-table-business-days.css')) }}">
+<script defer src="{{ asset('js/custom-table-business-days.js') }}?v={{ filemtime(public_path('js/custom-table-business-days.js')) }}"></script>
+<link rel="stylesheet" href="{{ asset('css/heading-editor.css') }}?v={{ filemtime(public_path('css/heading-editor.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/button-group.css') }}?v={{ filemtime(public_path('css/button-group.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/youtube-tags.css') }}?v={{ filemtime(public_path('css/youtube-tags.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/gallery-showcase.css') }}?v={{ filemtime(public_path('css/gallery-showcase.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/usage-examples.css') }}">
+<link rel="stylesheet" href="{{ asset('css/product-catalog.css') }}">
+<link rel="stylesheet" href="{{ asset('css/custom-faq.css') }}">
+<link rel="stylesheet" href="{{ asset('css/x-posts.css') }}">
 
 @if ($hasVisualEditor)
     <link rel="stylesheet" href="{{ asset('admin/css/product-content-visual-editor.css') }}">
 @endif
 
 <style>
+
+.content-editor-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 16px 24px;
+    padding-top: 8px;
+}
+.content-editor-heading {
+    flex: 1 1 520px;
+    min-width: 0;
+}
+.content-editor-heading h1 {
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.content-editor-actions {
+    flex: 0 0 auto;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+.content-editor-status {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px 12px;
+    min-height: 16px;
+    font-size: 12px;
+}
+.content-editor-status > span {
+    margin-right: 0 !important;
+}
+.content-editor-status > span:empty {
+    display: none;
+}
+.content-editor-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.content-editor-buttons > .btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    margin-right: 0 !important;
+    white-space: nowrap;
+}
+@media (max-width: 991px) {
+    .content-editor-heading { flex-basis: 100%; }
+    .content-editor-actions { width: 100%; }
+}
+@media (max-width: 575px) {
+    .content-editor-heading h1 { font-size: 22px; }
+    .content-editor-actions { align-items: stretch; }
+    .content-editor-status { justify-content: flex-start; }
+    .content-editor-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .content-editor-buttons > .btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
 
 /* ============================================================
    Main
@@ -385,6 +491,7 @@
 
 
 .product-header-background-color-input,
+.product-header-text-color-input,
 .product-highlight-title-color-input,
 .info-card-title-color-input {
     display: inline-block;
@@ -520,6 +627,22 @@
 
     border: 1px solid #ddd;
     border-radius: 4px;
+}
+
+.gallery-drag-handle {
+    flex: 0 0 auto;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.gallery-image-row.is-dragging {
+    opacity: .55;
+    outline: 2px dashed #007bff;
+}
+
+.gallery-image-row.is-dragging .gallery-drag-handle {
+    cursor: grabbing;
 }
 
 
@@ -1665,6 +1788,22 @@
 
 
 @push('scripts')
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+<script src="{{ asset('admin/js/custom-table-description-editor.js') }}?v={{ filemtime(public_path('admin/js/custom-table-description-editor.js')) }}"></script>
+<script src="{{ asset('admin/js/heading-editor.js') }}?v={{ filemtime(public_path('admin/js/heading-editor.js')) }}"></script>
+<script src="{{ asset('admin/js/button-group-editor.js') }}?v={{ filemtime(public_path('admin/js/button-group-editor.js')) }}"></script>
+<script src="{{ asset('admin/js/youtube-tags-editor.js') }}?v={{ filemtime(public_path('admin/js/youtube-tags-editor.js')) }}"></script>
+<script src="{{ asset('admin/js/price-matrix-editor.js') }}?v={{ filemtime(public_path('admin/js/price-matrix-editor.js')) }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script src="{{ asset('admin/js/gallery-showcase-editor.js') }}?v={{ filemtime(public_path('admin/js/gallery-showcase-editor.js')) }}"></script>
+<script src="{{ asset('admin/js/attachment-gallery-editor.js') }}?v={{ filemtime(public_path('admin/js/attachment-gallery-editor.js')) }}"></script>
+<script src="{{ asset('admin/js/related-blogs-presets.js') }}?v={{ filemtime(public_path('admin/js/related-blogs-presets.js')) }}"></script>
+<script src="{{ asset('admin/js/usage-examples-editor.js') }}"></script>
+<script src="{{ asset('admin/js/product-catalog-editor.js') }}"></script>
+<script src="{{ asset('admin/js/custom-faq-editor.js') }}"></script>
+<script src="{{ asset('admin/js/x-posts-editor.js') }}"></script>
+<script src="{{ asset('admin/js/product-details-price-editor.js') }}"></script>
+<script src="{{ asset('admin/js/text-link-download-editor.js') }}?v={{ filemtime(public_path('admin/js/text-link-download-editor.js')) }}"></script>
 
 @if ($hasVisualEditor)
     <script src="{{ asset('admin/js/product-content-visual-editor.js') }}"></script>
@@ -2243,6 +2382,17 @@ document.addEventListener(
 
 
             bindGalleryButtons();
+            window.HeadingEditor.bind(csrf);
+            window.ButtonGroupEditor.bind(`${contentApiBase}/${productId}`, csrf, uploadSingleImageFile);
+            window.YoutubeTagsEditor.bind();
+            window.PriceMatrixEditor.bind();
+            window.GalleryShowcaseEditor.bind();
+            window.AttachmentGalleryEditor.bind(uploadSingleImageFile, csrf);
+            window.UsageExamplesEditor.bind(uploadSingleImageFile);
+            window.ProductCatalogEditor.bind(uploadSingleImageFile, contentApiBase);
+            window.CustomFaqEditor.bind(contentApiBase);
+            window.XPostsEditor.bind();
+            window.ProductDetailsPriceEditor.bind();
 
             bindMultiPhotoEditors();
 
@@ -2251,6 +2401,7 @@ document.addEventListener(
             bindTemplateFileUploaders();
 
             bindTextLinkEditors();
+            window.TextLinkDownloadEditor.bind(`${contentApiBase}/${productId}`, csrf);
 
             bindLinkUrlPickers();
 
@@ -2313,6 +2464,8 @@ document.addEventListener(
                             '#ffffff'
                         );
 
+                    const headerTextColor = normalizeHexColor(blockContent.text_color, '#000000');
+
 
                     fields = `
 
@@ -2355,6 +2508,14 @@ document.addEventListener(
 
                         </div>
 
+
+                        <div class="form-group">
+                            <label for="header-text-color-${escapeHtml(block.id)}">Text Color</label>
+                            <input id="header-text-color-${escapeHtml(block.id)}" type="color"
+                                class="form-control product-field product-header-text-color-input"
+                                data-block-id="${escapeHtml(block.id)}" data-field="text_color"
+                                value="${headerTextColor}" title="Product Header text color">
+                        </div>
 
                         <div class="form-check">
 
@@ -2416,6 +2577,8 @@ document.addEventListener(
 
 
                     fields = `
+                        ${window.ProductDetailsPriceEditor.render(block.id, blockContent)}
+                        <div data-pdp-legacy ${blockContent.price_table_enabled ? 'hidden' : ''}>
 
                         ${textInput(
                             block.id,
@@ -2435,6 +2598,7 @@ document.addEventListener(
                         )}
 
 
+                        </div>
                         ${shippingDaysInput(
                             block.id,
                             blockContent.shipping_days
@@ -2442,14 +2606,7 @@ document.addEventListener(
                         )}
 
 
-                        ${textareaInput(
-                            block.id,
-                            'shipping_note',
-                            'Shipping Note',
-                            blockContent.shipping_note
-                            ?? '',
-                            3
-                        )}
+                        ${window.ProductDetailsPriceEditor.renderShippingNote(block.id, blockContent)}
 
 
                         ${textareaInput(
@@ -2642,59 +2799,8 @@ document.addEventListener(
 
 
                 case 'heading':
-
-                    fields =
-                        textInput(
-                            block.id,
-                            'text',
-                            'Heading',
-                            blockContent.text
-                            ?? ''
-                        );
-
-                    if (isProductDataContent) {
-                        const headingBackgroundColor =
-                            normalizeHexColor(
-                                blockContent.background_color,
-                                '#f58214'
-                            );
-
-                        fields += `
-
-                            <div class="form-group">
-
-                                <label>
-                                    Background Color
-                                </label>
-
-                                <input
-                                    type="color"
-                                    class="
-                                        form-control
-                                        product-field
-                                        product-data-heading-background-color-input
-                                    "
-                                    data-block-id="${block.id}"
-                                    data-field="background_color"
-                                    value="${headingBackgroundColor}"
-                                    title="Heading background color"
-                                >
-
-                            </div>
-
-                        `;
-
-                        fields += textInput(
-                            block.id,
-                            'updated_date',
-                            'Date (e.g. 2025年1月29日)',
-                            blockContent.updated_date
-                            ?? ''
-                        );
-                    }
-
+                    fields = window.HeadingEditor.render(block.id, blockContent, @json(\App\Support\HeadingContent::defaults()), isProductDataContent);
                     break;
-
 
                 case 'rich_text':
 
@@ -2802,19 +2908,7 @@ document.addEventListener(
 
                     fields = `
 
-                        ${textInput(
-                            block.id,
-                            'title',
-                            isProductDataContent
-                                ? 'YouTube Title'
-                            : 'Accordion Title',
-                            blockContent.title
-                            ?? (
-                                isProductDataContent
-                                    ? ''
-                                    : 'ラバーストラップ自社工場のご紹介'
-                            )
-                        )}
+                        ${isProductDataContent ? textInput(block.id, 'title', 'YouTube Title', blockContent.title ?? '') : ''}
 
 
                         ${textInput(
@@ -2842,23 +2936,21 @@ document.addEventListener(
                         ${textInput(
                             block.id,
                             'link_text',
-                            'Detail Link Text',
-                            blockContent.link_text
-                            ?? (
-                                isProductDataContent
-                                    ? ''
-                                    : '自社生産の詳細はこちら'
-                            )
+                            'Detail Link Text (optional)',
+                            blockContent.link_text ?? ''
                         )}
 
 
                         ${linkUrlInput(
                             block.id,
                             'link_url',
-                            'Detail Link URL',
+                            'Detail Link URL (optional)',
                             blockContent.link_url
-                            ?? '/lp/rubber-guide-inhouse.php'
+                            ?? ''
                         )}
+
+                        <small class="d-block text-muted mb-3">Leave either Detail Link field blank to hide the link below the video.</small>
+                        ${window.YoutubeTagsEditor.render(block.id, blockContent, @json(\App\Support\YoutubeTagsContent::defaults()))}
 
                     `;
 
@@ -3086,129 +3178,8 @@ document.addEventListener(
 
 
                 case 'button':
-
-                    fields = `
-
-                        ${textInput(
-                            block.id,
-                            'text',
-                            'Button Text',
-                            blockContent.text
-                            ?? ''
-                        )}
-
-
-                        ${linkUrlInput(
-                            block.id,
-                            'url',
-                            'Button URL',
-                            blockContent.url
-                            ?? ''
-                        )}
-
-                    `;
-
-                    if (isProductDataContent) {
-                        const buttonTextColor =
-                            normalizeHexColor(
-                                blockContent.text_color,
-                                '#ffffff'
-                            );
-
-                        const buttonBackgroundColor =
-                            normalizeHexColor(
-                                blockContent.background_color,
-                                '#ff9900'
-                            );
-
-                        const buttonBorderRadiusValue =
-                            Number(
-                                blockContent.border_radius
-                            );
-
-                        const buttonBorderRadius =
-                            Number.isFinite(
-                                buttonBorderRadiusValue
-                            )
-                                ? Math.max(
-                                    0,
-                                    Math.min(
-                                        999,
-                                        buttonBorderRadiusValue
-                                    )
-                                )
-                                : 4;
-
-                        fields += `
-
-                            <div class="form-group">
-
-                                <label>
-                                    Text Color
-                                </label>
-
-                                <input
-                                    type="color"
-                                    class="
-                                        form-control
-                                        product-field
-                                        product-data-button-color-input
-                                    "
-                                    data-block-id="${block.id}"
-                                    data-field="text_color"
-                                    value="${buttonTextColor}"
-                                    title="Button text color"
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label>
-                                    Background Color
-                                </label>
-
-                                <input
-                                    type="color"
-                                    class="
-                                        form-control
-                                        product-field
-                                        product-data-button-color-input
-                                    "
-                                    data-block-id="${block.id}"
-                                    data-field="background_color"
-                                    value="${buttonBackgroundColor}"
-                                    title="Button background color"
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label>
-                                    Border Radius (px)
-                                </label>
-
-                                <input
-                                    type="number"
-                                    class="form-control product-field"
-                                    data-block-id="${block.id}"
-                                    data-field="border_radius"
-                                    min="0"
-                                    max="999"
-                                    step="1"
-                                    value="${buttonBorderRadius}"
-                                >
-
-                            </div>
-
-                        `;
-                    }
-
+                    fields = window.ButtonGroupEditor.render(block.id, blockContent, @json(\App\Support\ButtonGroupContent::defaults()), @json(['solid'=>\App\Support\ButtonGroupContent::appearance(), 'card'=>\App\Support\ButtonGroupContent::appearance('card')]), @json(\App\Support\ButtonGroupContent::icons()), isProductDataContent);
                     break;
-
 
                 case 'text_link':
 
@@ -3282,6 +3253,15 @@ document.addEventListener(
                             ?? ''
                         )}
 
+                        ${linkUrlInput(
+                            block.id,
+                            'image_link_url',
+                            'Image Link URL (optional)',
+                            Object.prototype.hasOwnProperty.call(blockContent, 'image_link_url')
+                                ? (blockContent.image_link_url ?? '')
+                                : (blockContent.link_url ?? '')
+                        )}
+
 
                         ${textareaInput(
                             block.id,
@@ -3344,6 +3324,34 @@ document.addEventListener(
 
                     break;
 
+
+                case 'usage_examples':
+                    fields = window.UsageExamplesEditor.render(block.id, blockContent, @json(\App\Support\UsageExamplesContent::defaults()));
+                    break;
+
+                case 'product_catalog':
+                    fields = window.ProductCatalogEditor.render(block.id, blockContent, @json(\App\Support\ProductCatalogContent::defaults()));
+                    break;
+
+                case 'custom_faq':
+                    fields = window.CustomFaqEditor.render(block.id, blockContent, @json(\App\Support\CustomFaqContent::defaults()), @json(\App\Support\CustomFaqContent::icons()), @json(\App\Support\CustomFaqContent::presets()));
+                    break;
+
+                case 'x_posts':
+                    fields = window.XPostsEditor.render(block.id, blockContent, @json(\App\Support\XPostsContent::defaults()));
+                    break;
+
+                case 'gallery_showcase':
+                    fields = window.GalleryShowcaseEditor.render(block.id, blockContent, {...@json(\App\Support\GalleryShowcaseContent::defaults()), ...(block.settings?.showcase || {})});
+                    break;
+
+                case 'attachment_gallery':
+                    fields = window.AttachmentGalleryEditor.render(block.id, blockContent, @json(\App\Support\AttachmentGalleryContent::defaults()));
+                    break;
+
+                case 'price_matrix':
+                    fields = window.PriceMatrixEditor.render(block.id, blockContent, @json(\App\Support\PriceMatrixContent::defaults()));
+                    break;
 
                 case 'price_accordion':
 
@@ -3846,11 +3854,11 @@ document.addEventListener(
             return `
                 <div class="card mb-3 border-0 bg-transparent">
                     <div class="form-group mb-2">
-                        <label class="font-weight-bold text-dark">Section Title (หัวข้อ Component)</label>
+                        <label class="font-weight-bold text-dark">Section Title</label>
                         <input type="text" class="form-control option-grid-title-field" data-block-id="${blockId}" value="${escapeHtml(data.title)}" placeholder="アタッチメント・加工・オプション">
                     </div>
                     <div class="form-group mb-3">
-                        <label class="font-weight-bold text-dark">Intro Description (คำบรรยายสั้น)</label>
+                        <label class="font-weight-bold text-dark">Intro Description</label>
                         <textarea class="form-control option-grid-intro-field" data-block-id="${blockId}" rows="2" placeholder="当店ラバーストラップのアタッチメント・加工・オプションのご紹介です。">${escapeHtml(data.intro)}</textarea>
                     </div>
 
@@ -3861,7 +3869,7 @@ document.addEventListener(
                                 <i class="fas fa-folder-open text-warning mr-1"></i> Tabs List (${data.tabs.length} Tabs)
                             </label>
                             <button type="button" class="btn btn-sm btn-success font-weight-bold btn-add-option-tab" data-block-id="${blockId}">
-                                <i class="fas fa-plus mr-1"></i> + Add Tab (เพิ่มแท็บ)
+                                <i class="fas fa-plus mr-1"></i> + Add Tab
                             </button>
                         </div>
 
@@ -3869,7 +3877,7 @@ document.addEventListener(
                             ${data.tabs.map((tab, idx) => `
                                 <button type="button" class="btn btn-sm ${idx === activeIndex ? 'btn-warning shadow-sm font-weight-bold' : 'btn-outline-secondary'} btn-switch-option-tab" data-block-id="${blockId}" data-tab-index="${idx}">
                                     <span class="mr-1">${idx + 1}. ${escapeHtml(tab.title || 'Untitled')}</span>
-                                    <span class="badge ${tab.type === 'parts' ? 'badge-success' : 'badge-primary'}">${tab.type === 'parts' ? 'ตัวสินค้า (Parts)' : 'Card Info'}</span>
+                                    <span class="badge ${tab.type === 'parts' ? 'badge-success' : 'badge-primary'}">${tab.type === 'parts' ? 'Parts' : 'Card Info'}</span>
                                     <span class="badge badge-light border ml-1">${(tab.items || []).length}</span>
                                 </button>
                             `).join('')}
@@ -3893,7 +3901,7 @@ document.addEventListener(
                             <span class="badge badge-dark">Tab #${tabIndex + 1}</span>
                             <div class="input-group input-group-sm" style="max-width: 250px;">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text font-weight-bold">ชื่อ Tab:</span>
+                                    <span class="input-group-text font-weight-bold">Tab Name:</span>
                                 </div>
                                 <input type="text" class="form-control option-tab-title-edit" data-block-id="${blockId}" data-tab-index="${tabIndex}" value="${escapeHtml(tab.title)}" placeholder="Tab Title">
                             </div>
@@ -3903,21 +3911,21 @@ document.addEventListener(
                                     <span class="input-group-text font-weight-bold">Type:</span>
                                 </div>
                                 <select class="form-control option-tab-type-edit" data-block-id="${blockId}" data-tab-index="${tabIndex}">
-                                    <option value="parts" ${isParts ? 'selected' : ''}>📦 ตัวสินค้า / Parts Grid (ภาพ, ราคา, ภาพขยาย)</option>
-                                    <option value="cards" ${!isParts ? 'selected' : ''}>🗂️ Card Info / การ์ดข้อมูล (ภาพ, คำบรรยาย, ลิงก์)</option>
+                                    <option value="parts" ${isParts ? 'selected' : ''}>📦 Parts Grid (images, prices, zoom images)</option>
+                                    <option value="cards" ${!isParts ? 'selected' : ''}>🗂️ Card Info (images, descriptions, links)</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="d-flex align-items-center" style="gap: 4px;">
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-move-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-direction="up" ${tabIndex === 0 ? 'disabled' : ''} title="ย้ายขึ้น">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-move-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-direction="up" ${tabIndex === 0 ? 'disabled' : ''} title="Move up">
                                 <i class="fas fa-arrow-up"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary btn-move-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-direction="down" ${tabIndex === totalTabs - 1 ? 'disabled' : ''} title="ย้ายลง">
+                            <button type="button" class="btn btn-sm btn-outline-secondary btn-move-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-direction="down" ${tabIndex === totalTabs - 1 ? 'disabled' : ''} title="Move down">
                                 <i class="fas fa-arrow-down"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" ${totalTabs <= 1 ? 'disabled' : ''} title="ลบแท็บนี้">
-                                <i class="fas fa-trash-alt mr-1"></i> ลบ Tab
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-tab" data-block-id="${blockId}" data-tab-index="${tabIndex}" ${totalTabs <= 1 ? 'disabled' : ''} title="Delete this tab">
+                                <i class="fas fa-trash-alt mr-1"></i> Delete Tab
                             </button>
                         </div>
                     </div>
@@ -3939,10 +3947,10 @@ document.addEventListener(
             return `
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0 font-weight-bold text-success">
-                        <i class="fas fa-cubes mr-1"></i> รายการพาร์ทสินค้า / Parts Items (${items.length} รายการ)
+                        <i class="fas fa-cubes mr-1"></i> Parts Items (${items.length} items)
                     </h6>
                     <button type="button" class="btn btn-sm btn-outline-success font-weight-bold btn-add-part-item" data-block-id="${blockId}" data-tab-index="${tabIndex}">
-                        <i class="fas fa-plus mr-1"></i> + เพิ่มพาร์ทสินค้า (+ Add Part)
+                        <i class="fas fa-plus mr-1"></i> + Add Part
                     </button>
                 </div>
 
@@ -3953,7 +3961,7 @@ document.addEventListener(
                                 <div class="card-body p-2 d-flex flex-column">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <span class="badge badge-secondary">#${itemIdx + 1}</span>
-                                        <button type="button" class="btn btn-xs btn-outline-danger btn-delete-part-item" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="ลบพาร์ท">
+                                        <button type="button" class="btn btn-xs btn-outline-danger btn-delete-part-item" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="Delete part">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
@@ -3970,8 +3978,8 @@ document.addEventListener(
                                         <div class="input-group input-group-sm">
                                             <input type="text" class="form-control form-control-sm part-field-image" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.image_url)}" placeholder="/products/images/HM_part1.webp">
                                             <div class="input-group-append">
-                                                <button type="button" class="btn btn-outline-primary btn-upload-part-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="อัพโหลดรูปภาพ">
-                                                    <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                                <button type="button" class="btn btn-outline-primary btn-upload-part-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="Upload image">
+                                                    <i class="fas fa-upload mr-1"></i> Upload
                                                 </button>
                                             </div>
                                         </div>
@@ -3979,30 +3987,30 @@ document.addEventListener(
                                     </div>
 
                                     <div class="form-group mb-1">
-                                        <label class="small text-muted mb-0 font-weight-bold">ชื่อสินค้า (Title):</label>
+                                        <label class="small text-muted mb-0 font-weight-bold">Product Title:</label>
                                         <input type="text" class="form-control form-control-sm part-field-title" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.title)}" placeholder="通常松葉+カニカン">
                                     </div>
 
                                     <div class="form-group mb-1">
-                                        <label class="small text-muted mb-0 font-weight-bold">ราคา (Price badge):</label>
+                                        <label class="small text-muted mb-0 font-weight-bold">Price Badge:</label>
                                         <input type="text" class="form-control form-control-sm part-field-price" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.price)}" placeholder="+0円 or +11円">
                                     </div>
 
                                     <div class="form-group mb-1">
-                                        <label class="small text-muted mb-0 font-weight-bold">รายละเอียด (Description):</label>
-                                        <textarea class="form-control form-control-sm part-field-description" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" rows="3" placeholder="รายละเอียดพาร์ทสินค้า...">${escapeHtml(item.description ?? '')}</textarea>
+                                        <label class="small text-muted mb-0 font-weight-bold">Description:</label>
+                                        <textarea class="form-control form-control-sm part-field-description" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" rows="3" placeholder="Enter part details...">${escapeHtml(item.description ?? '')}</textarea>
                                     </div>
 
                                     <div class="form-group mb-0 mt-auto">
                                         <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <label class="small text-muted mb-0 font-weight-bold">Zoom URL (รูปภาพตอนขยาย):</label>
+                                            <label class="small text-muted mb-0 font-weight-bold">Zoom Image URL:</label>
                                             <span class="small font-weight-bold part-zoom-upload-status" style="font-size: 11px;"></span>
                                         </div>
                                         <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control form-control-sm part-field-zoom" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.zoom_url || item.image_url)}" placeholder="(เว้นว่างจะใช้รูปหลัก)">
+                                            <input type="text" class="form-control form-control-sm part-field-zoom" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.zoom_url || item.image_url)}" placeholder="Leave blank to use the main image">
                                             <div class="input-group-append">
-                                                <button type="button" class="btn btn-outline-secondary btn-upload-zoom-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="อัพโหลดรูปขยาย">
-                                                    <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                                <button type="button" class="btn btn-outline-secondary btn-upload-zoom-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="Upload zoom image">
+                                                    <i class="fas fa-upload mr-1"></i> Upload
                                                 </button>
                                             </div>
                                         </div>
@@ -4018,7 +4026,7 @@ document.addEventListener(
                 <div class="card mt-3 border-secondary bg-white">
                     <div class="card-header py-1 px-3 bg-light d-flex justify-content-between align-items-center">
                         <small class="font-weight-bold text-muted">
-                            <i class="fas fa-image mr-1"></i> แบนเนอร์ด้านล่างแท็บ (Bottom Banner - Optional)
+                            <i class="fas fa-image mr-1"></i> Bottom Banner (Optional)
                         </small>
                     </div>
                     <div class="card-body p-3">
@@ -4031,8 +4039,8 @@ document.addEventListener(
                                 <div class="input-group input-group-sm">
                                     <input type="text" class="form-control form-control-sm part-banner-image-input" data-block-id="${blockId}" data-tab-index="${tabIndex}" value="${escapeHtml(tab.banner_image_url)}" placeholder="/products/images/accessories.webp">
                                     <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-primary btn-upload-banner-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" title="อัพโหลดแบนเนอร์">
-                                            <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                        <button type="button" class="btn btn-outline-primary btn-upload-banner-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" title="Upload banner">
+                                            <i class="fas fa-upload mr-1"></i> Upload
                                         </button>
                                     </div>
                                 </div>
@@ -4055,10 +4063,10 @@ document.addEventListener(
             return `
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0 font-weight-bold text-primary">
-                        <i class="fas fa-id-card mr-1"></i> รายการการ์ดข้อมูล / Card Info Items (${items.length} รายการ)
+                        <i class="fas fa-id-card mr-1"></i> Card Info Items (${items.length} items)
                     </h6>
                     <button type="button" class="btn btn-sm btn-outline-primary font-weight-bold btn-add-card-item" data-block-id="${blockId}" data-tab-index="${tabIndex}">
-                        <i class="fas fa-plus mr-1"></i> + เพิ่มการ์ดข้อมูล (+ Add Card)
+                        <i class="fas fa-plus mr-1"></i> + Add Card
                     </button>
                 </div>
 
@@ -4069,8 +4077,8 @@ document.addEventListener(
                                 <span class="font-weight-bold small text-dark">
                                     <i class="fas fa-file-alt mr-1 text-primary"></i> Card #${itemIdx + 1} ${item.title ? '— ' + escapeHtml(item.title) : ''}
                                 </span>
-                                <button type="button" class="btn btn-xs btn-outline-danger btn-delete-card-item" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="ลบการ์ดนี้">
-                                    <i class="fas fa-times mr-1"></i> ลบการ์ด
+                                <button type="button" class="btn btn-xs btn-outline-danger btn-delete-card-item" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="Delete this card">
+                                    <i class="fas fa-times mr-1"></i> Delete Card
                                 </button>
                             </div>
                             <div class="card-body p-3">
@@ -4087,8 +4095,8 @@ document.addEventListener(
                                             <div class="input-group input-group-sm">
                                                 <input type="text" class="form-control form-control-sm card-field-image" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.image_url)}" placeholder="/products/images/rubberstrap/v2/rubber_guide02.webp">
                                                 <div class="input-group-append">
-                                                    <button type="button" class="btn btn-outline-primary btn-upload-card-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="อัพโหลดรูปภาพการ์ด">
-                                                        <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                                    <button type="button" class="btn btn-outline-primary btn-upload-card-img" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" title="Upload card image">
+                                                        <i class="fas fa-upload mr-1"></i> Upload
                                                     </button>
                                                 </div>
                                             </div>
@@ -4097,22 +4105,22 @@ document.addEventListener(
                                     </div>
                                     <div class="col-md-8">
                                         <div class="form-group mb-2">
-                                            <label class="small text-muted font-weight-bold mb-1">หัวข้อการ์ด (Card Title):</label>
+                                            <label class="small text-muted font-weight-bold mb-1">Card Title:</label>
                                             <input type="text" class="form-control form-control-sm card-field-title" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.title)}" placeholder="ぷっくり凹凸タイプ・フラットタイプ">
                                         </div>
 
                                         <div class="form-group mb-2">
-                                            <label class="small text-muted font-weight-bold mb-1">คำบรรยาย (Description):</label>
-                                            <textarea class="form-control form-control-sm card-field-desc" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" rows="3" placeholder="ข้อความอธิบายคุณสมบัติหรือรายละเอียด...">${escapeHtml(item.description)}</textarea>
+                                            <label class="small text-muted font-weight-bold mb-1">Description:</label>
+                                            <textarea class="form-control form-control-sm card-field-desc" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" rows="3" placeholder="Enter features or details...">${escapeHtml(item.description)}</textarea>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-5 mb-2">
-                                                <label class="small text-muted font-weight-bold mb-1">ข้อความปุ่มลิงก์ (Link Text):</label>
+                                                <label class="small text-muted font-weight-bold mb-1">Link Text:</label>
                                                 <input type="text" class="form-control form-control-sm card-field-link-text" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.link_text || '詳細はこちら')}" placeholder="詳細はこちら">
                                             </div>
                                             <div class="col-md-7 mb-2">
-                                                <label class="small text-muted font-weight-bold mb-1">Link URL (URL หรือ #block-id):</label>
+                                                <label class="small text-muted font-weight-bold mb-1">Link URL (URL or #block-id):</label>
                                                 <input type="text" class="form-control form-control-sm card-field-link-url" data-block-id="${blockId}" data-tab-index="${tabIndex}" data-item-index="${itemIdx}" value="${escapeHtml(item.link_url)}" placeholder="/lp/... or #block-id">
                                             </div>
                                         </div>
@@ -4196,7 +4204,7 @@ document.addEventListener(
                 delTabBtn.addEventListener('click', function () {
                     const idx = Number(this.dataset.tabIndex);
                     if (data.tabs.length <= 1) return;
-                    if (!confirm(`ต้องการลบ Tab "${data.tabs[idx]?.title || ''}" ใช่หรือไม่?`)) return;
+                    if (!confirm(`Delete tab "${data.tabs[idx]?.title || ''}"?`)) return;
 
                     data.tabs.splice(idx, 1);
                     data.activeTabIndex = Math.max(0, idx - 1);
@@ -4459,7 +4467,7 @@ document.addEventListener(
                     try {
                         if (status) {
                             status.className = 'small font-weight-bold part-upload-status text-warning';
-                            status.textContent = '⏳ กำลังอัพโหลด...';
+                            status.textContent = '⏳ Uploading...';
                         }
                         if (btn) btn.disabled = true;
 
@@ -4482,14 +4490,14 @@ document.addEventListener(
 
                         if (status) {
                             status.className = 'small font-weight-bold part-upload-status text-success';
-                            status.textContent = '✓ สำเร็จ';
-                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                            status.textContent = '✓ Uploaded';
+                            setTimeout(() => { if (status && status.textContent === '✓ Uploaded') status.textContent = ''; }, 3000);
                         }
                     } catch (err) {
                         alert(err?.message || 'Upload failed');
                         if (status) {
                             status.className = 'small font-weight-bold part-upload-status text-danger';
-                            status.textContent = '❌ ล้มเหลว';
+                            status.textContent = '❌ Upload failed';
                         }
                     } finally {
                         if (btn) btn.disabled = false;
@@ -4522,7 +4530,7 @@ document.addEventListener(
                     try {
                         if (status) {
                             status.className = 'small font-weight-bold part-zoom-upload-status text-warning';
-                            status.textContent = '⏳ กำลังอัพโหลด...';
+                            status.textContent = '⏳ Uploading...';
                         }
                         if (btn) btn.disabled = true;
 
@@ -4537,14 +4545,14 @@ document.addEventListener(
 
                         if (status) {
                             status.className = 'small font-weight-bold part-zoom-upload-status text-success';
-                            status.textContent = '✓ สำเร็จ';
-                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                            status.textContent = '✓ Uploaded';
+                            setTimeout(() => { if (status && status.textContent === '✓ Uploaded') status.textContent = ''; }, 3000);
                         }
                     } catch (err) {
                         alert(err?.message || 'Upload failed');
                         if (status) {
                             status.className = 'small font-weight-bold part-zoom-upload-status text-danger';
-                            status.textContent = '❌ ล้มเหลว';
+                            status.textContent = '❌ Upload failed';
                         }
                     } finally {
                         if (btn) btn.disabled = false;
@@ -4575,7 +4583,7 @@ document.addEventListener(
                     try {
                         if (status) {
                             status.className = 'small font-weight-bold banner-upload-status text-warning';
-                            status.textContent = '⏳ กำลังอัพโหลด...';
+                            status.textContent = '⏳ Uploading...';
                         }
                         if (btn) btn.disabled = true;
 
@@ -4590,14 +4598,14 @@ document.addEventListener(
 
                         if (status) {
                             status.className = 'small font-weight-bold banner-upload-status text-success';
-                            status.textContent = '✓ สำเร็จ';
-                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                            status.textContent = '✓ Uploaded';
+                            setTimeout(() => { if (status && status.textContent === '✓ Uploaded') status.textContent = ''; }, 3000);
                         }
                     } catch (err) {
                         alert(err?.message || 'Upload failed');
                         if (status) {
                             status.className = 'small font-weight-bold banner-upload-status text-danger';
-                            status.textContent = '❌ ล้มเหลว';
+                            status.textContent = '❌ Upload failed';
                         }
                     } finally {
                         if (btn) btn.disabled = false;
@@ -4630,7 +4638,7 @@ document.addEventListener(
                     try {
                         if (status) {
                             status.className = 'small font-weight-bold card-upload-status text-warning';
-                            status.textContent = '⏳ กำลังอัพโหลด...';
+                            status.textContent = '⏳ Uploading...';
                         }
                         if (btn) btn.disabled = true;
 
@@ -4648,14 +4656,14 @@ document.addEventListener(
 
                         if (status) {
                             status.className = 'small font-weight-bold card-upload-status text-success';
-                            status.textContent = '✓ สำเร็จ';
-                            setTimeout(() => { if (status && status.textContent === '✓ สำเร็จ') status.textContent = ''; }, 3000);
+                            status.textContent = '✓ Uploaded';
+                            setTimeout(() => { if (status && status.textContent === '✓ Uploaded') status.textContent = ''; }, 3000);
                         }
                     } catch (err) {
                         alert(err?.message || 'Upload failed');
                         if (status) {
                             status.className = 'small font-weight-bold card-upload-status text-danger';
-                            status.textContent = '❌ ล้มเหลว';
+                            status.textContent = '❌ Upload failed';
                         }
                     } finally {
                         if (btn) btn.disabled = false;
@@ -4744,6 +4752,7 @@ document.addEventListener(
                     data-text-link-block="${block.id}"
                 >
 
+                    ${window.TextLinkDownloadEditor.render(block.id, content)}
                     ${textInput(
                         block.id,
                         'text',
@@ -4753,6 +4762,7 @@ document.addEventListener(
                     )}
 
 
+                    <div data-tld-normal>
                     ${linkUrlInput(
                         block.id,
                         'url',
@@ -4762,6 +4772,7 @@ document.addEventListener(
                     )}
 
 
+                    </div>
                     <div class="form-group">
 
                         <label>
@@ -4792,7 +4803,7 @@ document.addEventListener(
                     </div>
 
 
-                    <div class="form-group mb-0">
+                    <div class="form-group mb-0" data-tld-normal>
 
                         <label>
                             Open Link
@@ -5048,6 +5059,15 @@ document.addEventListener(
         |--------------------------------------------------------------------------
         */
 
+        function flexibleTableBusinessDaysSettings(content) {
+            return {
+                description: String(content.description ?? ''),
+                enable_business_days_switch: Boolean(content.enable_business_days_switch ?? false),
+                business_days_label: String(content.business_days_label ?? '営業日数を表示'),
+                show_business_days: Boolean(content.show_business_days ?? true),
+            };
+        }
+
         function normalizeFlexibleTableContent(
             content
         )
@@ -5077,6 +5097,7 @@ document.addEventListener(
             ) {
 
                 return {
+                    ...flexibleTableBusinessDaysSettings(content),
 
                     title:
                         String(
@@ -5188,6 +5209,7 @@ document.addEventListener(
 
 
             return {
+                    ...flexibleTableBusinessDaysSettings(content),
 
                 title:
                     String(
@@ -5245,6 +5267,7 @@ document.addEventListener(
         )
         {
             return {
+                business_days: cell?.business_days === null || cell?.business_days === undefined ? '' : String(cell.business_days),
 
                 id:
                     String(
@@ -5325,6 +5348,7 @@ document.addEventListener(
         )
         {
             return {
+                business_days: '',
 
                 id:
                     generateFlexCellId(),
@@ -5477,6 +5501,14 @@ document.addEventListener(
                 </div>
 
 
+                <div class="form-group"><label>Description</label><textarea class="form-control flex-table-description" rows="4" maxlength="50000">${escapeHtml(data.description)}</textarea><small class="text-muted">Displayed above the table. When enabled, the business days switch appears to its right.</small></div>
+                <fieldset class="border rounded p-3 mb-3">
+                    <legend class="h6 w-auto px-1">Business days display</legend>
+                    <label class="d-block"><input type="checkbox" class="flex-table-days-enabled" ${data.enable_business_days_switch?'checked':''}> Enable business days switch on the storefront</label>
+                    <div class="form-group"><label>Switch label</label><input class="form-control flex-table-days-label" maxlength="255" value="${escapeHtml(data.business_days_label)}"></div>
+                    <label class="d-block"><input type="checkbox" class="flex-table-days-default" ${data.show_business_days?'checked':''}> Show business days by default</label>
+                    <small class="text-muted">Enter the date in Content and the number of business days in the separate Business days field for each delivery cell. The switch only hides the day count. Dates and prices stay visible.</small>
+                </fieldset>
                 <div class="flex-table-topbar">
 
                     <div>
@@ -5487,8 +5519,8 @@ document.addEventListener(
 
                         <div class="text-muted small">
 
-                            แต่ละแถวกำหนด Cell / Width / Row Span /
-                            สี / Alignment ได้อิสระ
+                            Customize cells, widths, row spans,
+                            colors, and alignment for each row.
 
                         </div>
 
@@ -5572,13 +5604,13 @@ document.addEventListener(
 
                 <div class="flex-table-help">
 
-                    Width ของ Cell ในแถว
+                    Cell widths in this row
 
                     +
 
-                    Width ที่ถูก Row Span จากแถวก่อนหน้า
+                    Widths occupied by row spans from previous rows
 
-                    ต้องรวมเป็น
+                    must add up to
 
                     <strong>
                         100%
@@ -6024,6 +6056,8 @@ document.addEventListener(
                         )}</textarea>
 
                     </div>
+                    <div class="form-group"><label>Business days (optional)</label><div class="input-group"><input type="number" min="0" max="3650" step="1" class="form-control flex-cell-field" data-field="business_days" value="${escapeHtml(cell.business_days ?? '')}" placeholder="e.g. 10"><div class="input-group-append"><span class="input-group-text">日</span></div></div><small class="text-muted">Leave blank for price and heading cells. Enter a whole number; 0 is allowed.</small></div>
+
 
 
                     <div class="row">
@@ -6854,6 +6888,7 @@ document.addEventListener(
 
         function bindFlexibleTableEditors()
         {
+            window.CustomTableDescriptionEditor.bind();
             /*
              * Set Row Count
              */
@@ -8158,6 +8193,11 @@ document.addEventListener(
             }
 
 
+            result.description = editor.querySelector('.flex-table-description')?.value ?? '';
+            result.enable_business_days_switch = editor.querySelector('.flex-table-days-enabled')?.checked ?? false;
+            result.business_days_label = editor.querySelector('.flex-table-days-label')?.value ?? '営業日数を表示';
+            result.show_business_days = editor.querySelector('.flex-table-days-default')?.checked ?? true;
+
             result.title =
                 editor
                     .querySelector(
@@ -8831,6 +8871,7 @@ document.addEventListener(
                                             ${formatMultiline(
                                                 cell.content
                                             )}
+                                            ${cell.business_days !== '' && cell.business_days !== null && cell.business_days !== undefined && (!data.enable_business_days_switch || data.show_business_days) ? '<div>'+escapeHtml(cell.business_days)+'日</div>' : ''}
 
                                         </div>
 
@@ -8857,6 +8898,8 @@ document.addEventListener(
 
         function validateFlexibleTables()
         {
+            const buttonError = window.ButtonGroupEditor.validate();
+            if (buttonError) return buttonError;
             let error =
                 null;
 
@@ -9459,11 +9502,25 @@ document.addEventListener(
 
             return `
 
+                <div class="form-group">
+                    <label for="gallery-columns-${block.id}">Images per row</label>
+                    <select id="gallery-columns-${block.id}" class="form-control product-field"
+                        data-block-id="${block.id}" data-field="columns">
+                        <option value="2" ${Number(content.columns) === 3 ? '' : 'selected'}>2 images per row</option>
+                        <option value="3" ${Number(content.columns) === 3 ? 'selected' : ''}>3 images per row</option>
+                    </select>
+                </div>
+
                 <div class="form-group mb-0">
 
                     <label>
                         Product Images
                     </label>
+
+                    <small class="form-text text-muted mb-2">
+                        Drag the handle to reorder images. The first image is the main image.
+                        You can also focus the handle and use the Up / Down arrow keys.
+                    </small>
 
 
                     <div
@@ -9999,6 +10056,11 @@ document.addEventListener(
 
                 <div class="gallery-image-row">
 
+                    <button type="button" class="btn btn-sm btn-outline-secondary gallery-drag-handle"
+                        aria-label="Reorder image" title="Drag to reorder, or use Up / Down arrow keys">
+                        &#9776;
+                    </button>
+
                     <div class="gallery-image-preview">
 
                         <img
@@ -10083,6 +10145,7 @@ document.addEventListener(
 
         function bindGalleryButtons()
         {
+            bindGallerySorting();
             document
                 .querySelectorAll(
                     '.upload-gallery-images'
@@ -10369,6 +10432,74 @@ document.addEventListener(
             }
         }
 
+
+        function bindGallerySorting()
+        {
+            document.querySelectorAll('.gallery-drag-handle').forEach(function (handle) {
+                if (handle.dataset.sortBound === '1') return;
+                handle.dataset.sortBound = '1';
+
+                const row = handle.closest('.gallery-image-row');
+                const list = row.closest('.gallery-list');
+                let drag = null;
+
+                function finish(cancelled = false) {
+                    if (!drag) return;
+                    const state = drag;
+                    drag = null;
+                    row.classList.remove('is-dragging');
+                    if (cancelled) list.insertBefore(row, state.next);
+                    if (list.hasPointerCapture(state.pointerId)) list.releasePointerCapture(state.pointerId);
+                    if (state.moved && !cancelled) {
+                        list.dispatchEvent(new Event('input', { bubbles: true }));
+                        list.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+
+                handle.addEventListener('pointerdown', function (event) {
+                    if (!event.isPrimary || event.button !== 0) return;
+                    event.preventDefault();
+                    handle.focus({ preventScroll: true });
+                    drag = { pointerId: event.pointerId, y: event.clientY, next: row.nextElementSibling, moved: false };
+                    list.setPointerCapture(event.pointerId);
+                });
+
+                list.addEventListener('pointermove', function (event) {
+                    if (!drag || drag.pointerId !== event.pointerId) return;
+                    if (!drag.moved && Math.abs(event.clientY - drag.y) < 5) return;
+                    drag.moved = true;
+                    row.classList.add('is-dragging');
+
+                    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('.gallery-image-row');
+                    if (target && target !== row && target.parentElement === list) {
+                        const bounds = target.getBoundingClientRect();
+                        list.insertBefore(row, event.clientY < bounds.top + bounds.height / 2 ? target : target.nextElementSibling);
+                        handle.focus({ preventScroll: true });
+                    }
+                    if (event.clientY < 60) window.scrollBy(0, -20);
+                    else if (event.clientY > window.innerHeight - 60) window.scrollBy(0, 20);
+                });
+
+                list.addEventListener('pointerup', () => finish());
+                list.addEventListener('pointercancel', () => finish(true));
+                list.addEventListener('lostpointercapture', () => finish(true));
+                handle.addEventListener('keydown', function (event) {
+                    if (event.key === 'Escape' && drag) {
+                        event.preventDefault();
+                        finish(true);
+                        return;
+                    }
+                    if (drag || !['ArrowUp', 'ArrowDown'].includes(event.key)) return;
+                    event.preventDefault();
+                    const target = event.key === 'ArrowUp' ? row.previousElementSibling : row.nextElementSibling;
+                    if (!target) return;
+                    list.insertBefore(row, event.key === 'ArrowUp' ? target : target.nextElementSibling);
+                    handle.focus({ preventScroll: true });
+                    list.dispatchEvent(new Event('input', { bubbles: true }));
+                    list.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            });
+        }
 
         function updateGalleryEmptyState(
             blockId
@@ -11569,7 +11700,7 @@ document.addEventListener(
 
                     <small class="form-text text-muted">
 
-                        ระบบจะข้าม Holiday type1, type2 และ type3
+                        The calculation excludes holidays of types 1, 2, and 3.
 
                     </small>
 
@@ -11874,6 +12005,7 @@ document.addEventListener(
                     [
                         'stacked',
                         'grouped',
+                        'summary',
                     ].includes(
                         content.display_type
                     )
@@ -11899,6 +12031,8 @@ document.addEventListener(
                     content.footer_note
                     ?? '',
 
+                start_background: normalizeHexColor(content.start_background, '#bee0fa'),
+
                 schedules:
                     schedules.map(
                         function (
@@ -11921,6 +12055,8 @@ document.addEventListener(
                                 days:
                                     schedule.days
                                     ?? 0,
+
+                                background_color: normalizeHexColor(schedule.background_color, ({blue:'#bee0fa',pink:'#f8cecc',cyan:'#c5f1f1',orange:'#ffe0b8',gray:'#e5e5e5'})[schedule.theme] || '#bee0fa'),
 
                                 theme:
                                     normalizeScheduleTheme(
@@ -12002,6 +12138,7 @@ document.addEventListener(
                                 Grouped
                             </option>
 
+                            <option value="summary" ${data.display_type === 'summary' ? 'selected' : ''}>Summary Table</option>
                         </select>
 
                     </div>
@@ -12028,6 +12165,7 @@ document.addEventListener(
                     </div>
 
 
+                    <div class="form-group"><label>Summary Table: Start Cell Background</label><input type="color" class="form-control shipping-schedule-main-field" data-field="start_background" value="${normalizeHexColor(data.start_background, '#bee0fa')}"></div>
                     <div class="row">
 
                         <div class="col-md-6">
@@ -12272,6 +12410,7 @@ document.addEventListener(
                     </div>
 
 
+                    <div class="form-group"><label>Summary Table: Item Background</label><input type="color" class="form-control schedule-item-field" data-field="background_color" value="${normalizeHexColor(schedule.background_color, ({blue:'#bee0fa',pink:'#f8cecc',cyan:'#c5f1f1',orange:'#ffe0b8',gray:'#e5e5e5'})[schedule.theme] || '#bee0fa')}"></div>
                     <div class="row">
 
                         <div class="col-md-6">
@@ -12851,7 +12990,7 @@ document.addEventListener(
                                 ...schedule,
 
                                 calculation:
-                                    calculateShippingDate(
+                                    (data.display_type === 'summary' ? calculateSummaryShippingDate : calculateShippingDate)(
                                         Number(
                                             schedule.days
                                         )
@@ -12864,7 +13003,9 @@ document.addEventListener(
 
 
                 preview.innerHTML =
-                    data.display_type === 'grouped'
+                    data.display_type === 'summary'
+                    ? renderSummarySchedulePreview(data, schedules)
+                    : data.display_type === 'grouped'
 
                     ? renderGroupedSchedulePreview(
                         data,
@@ -12895,6 +13036,43 @@ document.addEventListener(
             }
         }
 
+
+        function calculateSummaryShippingDate(days)
+        {
+            // Match the storefront's noon cutoff and production/shipping day rules.
+            let date = getTokyoTodayKey(), count = 0, safety = 0;
+            days = Math.max(0, Math.floor(Number(days) || 0));
+            if (!days) return {date};
+            const hour = Number(new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Tokyo',hour:'2-digit',hour12:false}).format(new Date())) % 24;
+            if (hour >= 12) date = addDaysToDateKey(date, 1);
+            const types = key => new Set((shippingHolidays.get(key) || []).map(item => item.type));
+            const blocked = key => [0,6].includes(dateKeyToUtcDate(key).getUTCDay()) || types(key).has('type2') || types(key).has('type3');
+            while (count < days) {
+                if (dateKeyToUtcDate(date).getUTCDay() !== 0 && !types(date).has('type3')) count++;
+                if (count >= days) {
+                    while (blocked(date)) {
+                        date = addDaysToDateKey(date, 1);
+                        if (++safety > 1500) throw new Error('Shipping calculation exceeded safety limit.');
+                    }
+                    return {date};
+                }
+                date = addDaysToDateKey(date, 1);
+                if (++safety > 1500) throw new Error('Shipping calculation exceeded safety limit.');
+            }
+            return {date};
+        }
+
+        function renderSummarySchedulePreview(data, schedules)
+        {
+            const startColor = normalizeHexColor(data.start_background, '#bee0fa');
+            const rows = schedules.map((schedule, index) => {
+                const color = normalizeHexColor(schedule.background_color, ({blue:'#bee0fa',pink:'#f8cecc',cyan:'#c5f1f1',orange:'#ffe0b8',gray:'#e5e5e5'})[schedule.theme] || '#bee0fa');
+                const label = schedule.label?.trim() || `${schedule.days}営業日出荷予定`;
+                return `<tr>${index === 0 ? `<th style="background-color:${startColor}">${escapeHtml(data.start_label)}</th>` : ''}<th style="background-color:${color}">${escapeHtml(label)}</th></tr>
+                    <tr>${index === 0 ? `<td rowspan="${schedules.length * 2 - 1}" class="shipping-summary-start" style="background-color:${startColor}">${escapeHtml(formatTokyoNowDisplay())}</td>` : ''}<td class="shipping-summary-date" style="background-color:${color}">${escapeHtml(formatDisplayDateKey(schedule.calculation.date))}</td></tr>`;
+            }).join('');
+            return `${data.title ? `<h3>${escapeHtml(data.title)}</h3>` : ''}<div class="shipping-summary-scroll"><table class="shipping-summary-table">${data.intro_text ? `<thead><tr><th colspan="2" class="shipping-summary-message">${escapeHtml(data.intro_text)}</th></tr></thead>` : ''}<tbody>${rows}</tbody></table></div>${data.footer_note ? `<p>${escapeHtml(data.footer_note)}</p>` : ''}`;
+        }
 
         function renderGroupedSchedulePreview(
             data,
@@ -13996,9 +14174,9 @@ document.addEventListener(
                                 type="button"
                                 class="btn btn-outline-primary btn-upload-single-image"
                                 data-block-id="${blockId}"
-                                title="อัพโหลดรูปภาพ"
+                                title="Upload image"
                             >
-                                <i class="fas fa-upload mr-1"></i> อัพภาพ
+                                <i class="fas fa-upload mr-1"></i> Upload
                             </button>
                         </div>
                     </div>
@@ -14038,7 +14216,7 @@ document.addEventListener(
                         try {
                             if (status) {
                                 status.className = 'small font-weight-bold single-image-upload-status text-warning';
-                                status.textContent = '⏳ กำลังอัพโหลด...';
+                                status.textContent = '⏳ Uploading...';
                             }
                             if (btn) btn.disabled = true;
 
@@ -14059,16 +14237,16 @@ document.addEventListener(
 
                             if (status) {
                                 status.className = 'small font-weight-bold single-image-upload-status text-success';
-                                status.textContent = '✓ สำเร็จ';
+                                status.textContent = '✓ Uploaded';
                                 setTimeout(function () {
-                                    if (status && status.textContent === '✓ สำเร็จ') status.textContent = '';
+                                    if (status && status.textContent === '✓ Uploaded') status.textContent = '';
                                 }, 3000);
                             }
                         } catch (err) {
                             alert(err?.message || 'Upload failed');
                             if (status) {
                                 status.className = 'small font-weight-bold single-image-upload-status text-danger';
-                                status.textContent = '❌ ล้มเหลว';
+                                status.textContent = '❌ Upload failed';
                             }
                         } finally {
                             if (btn) btn.disabled = false;
@@ -15844,6 +16022,7 @@ document.addEventListener(
                             title: article?.title ?? '',
                             url: article?.url ?? '',
                             image_url: article?.image_url ?? '',
+                            underline: article?.underline === true || article?.underline === 1 || article?.underline === '1',
                         };
 
                     }
@@ -15945,6 +16124,9 @@ document.addEventListener(
                                 class="form-control form-control-sm related-blog-article-title"
                                 value="${escapeHtml(article.title ?? '')}"
                             >
+                            <label class="small mt-2 mb-0 d-block">
+                                <input type="checkbox" class="related-blog-underline" ${article.underline ? 'checked' : ''}> Underline article title
+                            </label>
                         </div>
 
 
@@ -15966,6 +16148,11 @@ document.addEventListener(
 
         function bindRelatedBlogEditors()
         {
+            window.RelatedBlogsPresets.bind({
+                csrf,
+                renderArticle: relatedBlogArticleEditor,
+                bindUploads: bindSingleImageUploaders,
+            });
             document
                 .querySelectorAll(
                     '.related-blogs-editor'
@@ -16054,6 +16241,40 @@ document.addEventListener(
         {
             const result =
                 {};
+
+            document.querySelectorAll('[data-yt-tags-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.YoutubeTagsEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-he-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.HeadingEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-bge-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.ButtonGroupEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-pdp-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.ProductDetailsPriceEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-pm-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.PriceMatrixEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-ue-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.UsageExamplesEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-pc-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.ProductCatalogEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-cf-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.CustomFaqEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-xp-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.XPostsEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-gs-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.GalleryShowcaseEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-ag-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.AttachmentGalleryEditor.collect(editor);
+            });
 
 
             /*
@@ -16386,6 +16607,7 @@ document.addEventListener(
                                         function (article) {
 
                                             return {
+                                                underline: article.querySelector('.related-blog-underline')?.checked ?? false,
                                                 title:
                                                     String(
                                                         article
@@ -16476,7 +16698,7 @@ document.addEventListener(
 
 
                 setStatus(
-                    'Table error'
+                    'Validation error'
                 );
 
 
@@ -16562,6 +16784,7 @@ document.addEventListener(
                     content;
 
 
+                document.dispatchEvent(new Event('product-content-version-changed'));
                 setStatus(
                     'Draft saved'
                 );
@@ -16623,10 +16846,14 @@ document.addEventListener(
             .onclick =
                 async function () {
 
-                    const saved =
-                        await saveDraft(
-                            false
-                        );
+                    const tableError = validateFlexibleTables();
+                    if (tableError) {
+                        alert(tableError);
+                        setStatus('Validation error');
+                        return;
+                    }
+
+                    const saved = isProductDataContent ? await saveDraft(false) : true;
 
 
                     if (
@@ -16675,10 +16902,13 @@ document.addEventListener(
                                         'Accept':
                                             'application/json',
 
+                                        'Content-Type': 'application/json',
+
                                         'X-CSRF-TOKEN':
                                             csrf,
 
                                     },
+                                    body: isProductDataContent ? undefined : JSON.stringify({ blocks: collectContent() }),
                                 }
                             );
 
@@ -16696,6 +16926,10 @@ document.addEventListener(
                         }
 
 
+                        if (!isProductDataContent && result.data?.draft_content_json?.blocks) {
+                            contents = result.data.draft_content_json.blocks;
+                        }
+                        document.dispatchEvent(new Event('product-content-version-changed'));
                         setStatus(
                             'Published'
                         );
@@ -17405,6 +17639,14 @@ document.addEventListener(
 
                 option_card_grid:
                     'OptionCardGrid',
+
+                usage_examples: 'Usage Examples',
+                product_catalog: 'Product Catalog',
+                custom_faq: 'Custom FAQ',
+                x_posts: 'X Posts',
+                gallery_showcase: 'Gallery Showcase',
+                attachment_gallery: 'Attachment Gallery',
+                price_matrix: 'Price Matrix',
 
                 price_accordion:
                     'Price',

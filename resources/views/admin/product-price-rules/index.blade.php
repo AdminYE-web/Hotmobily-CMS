@@ -17,6 +17,34 @@
             <div class="alert alert-success">{{ session('status') }}</div>
         @endif
 
+        @php($hasFilters = $filters['q'] !== '' || $filters['product'] !== '')
+
+        <form method="GET" action="{{ route('admin.product-price-rules.index') }}" class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="form-row align-items-end">
+                    <div class="col-md-6 mb-2 mb-md-0">
+                        <label for="filter-q" class="small text-muted mb-1">Search</label>
+                        <input type="search" id="filter-q" name="q" value="{{ $filters['q'] }}" class="form-control" placeholder="Rule name, product, option name or code">
+                    </div>
+                    <div class="col-md-4 mb-2 mb-md-0">
+                        <label for="filter-product" class="small text-muted mb-1">Product</label>
+                        <select id="filter-product" name="product" class="form-control">
+                            <option value="">All</option>
+                            @foreach ($productOptions as $product)
+                                <option value="{{ $product->id }}" @selected($filters['product'] === (string) $product->id)>{{ $product->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex">
+                        <button type="submit" class="btn btn-primary flex-fill mr-2">Search</button>
+                        @if ($hasFilters)
+                            <a href="{{ route('admin.product-price-rules.index') }}" class="btn btn-outline-secondary">Clear</a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <strong>Rule list</strong>
@@ -56,7 +84,7 @@
                                     <td><a href="{{ route('admin.product-price-rules.edit', $rule) }}" class="btn btn-sm btn-outline-primary">Edit</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="7" class="text-center text-muted py-4">No Product Price Rules created yet.</td></tr>
+                                <tr><td colspan="7" class="text-center text-muted py-4">{{ $hasFilters ? 'No rules match your search.' : 'No Product Price Rules created yet.' }}</td></tr>
                             @endforelse
                         </tbody>
                     </table>

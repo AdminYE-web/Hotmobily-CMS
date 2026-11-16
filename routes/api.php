@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\V1\Admin\GuideMainController;
 use App\Http\Controllers\Api\V1\Admin\GuidePageController;
 use App\Http\Controllers\Api\V1\Admin\ProductPageController;
 use App\Http\Controllers\Api\V1\Admin\ProductLayoutController;
+use App\Http\Controllers\Admin\ProductContentRevisionController;
 use App\Http\Controllers\Api\V1\Admin\FaqController;
 use App\Http\Controllers\Api\V1\Admin\FaqImageController;
 use App\Http\Controllers\Api\V1\Admin\OptionGroupImageController;
@@ -259,6 +260,18 @@ Route::prefix('v1')->group(function () {
             Route::prefix('admin')
                 ->group(function () {
 
+                    Route::get('gallery-showcase/pages', [\App\Http\Controllers\Api\V1\Admin\GalleryShowcaseController::class, 'index']);
+                    Route::get('gallery-showcase/pages/{id}', [\App\Http\Controllers\Api\V1\Admin\GalleryShowcaseController::class, 'show'])->whereNumber('id');
+
+                    Route::apiResource('attachment-gallery-presets', \App\Http\Controllers\Api\V1\Admin\AttachmentGalleryPresetController::class)
+                        ->parameters(['attachment-gallery-presets' => 'attachmentGalleryPreset']);
+                    Route::apiResource('heading-presets', \App\Http\Controllers\Api\V1\Admin\HeadingPresetController::class)
+                        ->parameters(['heading-presets' => 'headingPreset']);
+                    Route::apiResource('related-blogs-presets', \App\Http\Controllers\Api\V1\Admin\RelatedBlogsPresetController::class)
+                        ->parameters(['related-blogs-presets' => 'relatedBlogsPreset']);
+                    Route::apiResource('option-group-presets', \App\Http\Controllers\Api\V1\Admin\OptionGroupPresetController::class)
+                        ->parameters(['option-group-presets' => 'optionGroupPreset']);
+
                 /*
 |--------------------------------------------------------------------------
 | FAQ Management
@@ -458,6 +471,11 @@ Route::delete(
                      *
                      * GET /api/v1/admin/product-layouts/1
                      */
+                    Route::post(
+                        '/product-layouts/{productLayout}/duplicate',
+                        [ProductLayoutController::class, 'duplicate']
+                    );
+
                     Route::get(
                         '/product-layouts/{productLayout}',
                         [
@@ -667,6 +685,11 @@ Route::delete(
                         ]
                     );
 
+                    Route::post(
+                        '/products/{product}/duplicate',
+                        [ProductController::class, 'duplicate']
+                    );
+
 
                     /*
                      * Update Product
@@ -725,6 +748,9 @@ Route::delete(
                      * GET
                      * /api/v1/admin/products/1/page
                      */
+                    Route::get('/products/{product}/revisions', [ProductContentRevisionController::class, 'index']);
+                    Route::post('/products/{product}/revisions/{revision}/restore', [ProductContentRevisionController::class, 'restore']);
+
                     Route::get(
                         '/products/{product}/page',
                         [

@@ -63,20 +63,7 @@ class HolidayController extends Controller
                 $request->calendar_type;
 
 
-            $query->where(
-                function ($q) use ($calendarType) {
-
-                    $q->where(
-                        'calendar_type',
-                        $calendarType
-                    )
-                    ->orWhere(
-                        'calendar_type',
-                        'both'
-                    );
-
-                }
-            );
+            $query->where('calendar_type', $calendarType);
         }
 
 
@@ -141,7 +128,7 @@ class HolidayController extends Controller
 
             'calendar_type' => [
                 'required',
-                'in:normal,cloth,both',
+                'in:normal,cloth',
             ],
 
             'title' => [
@@ -236,7 +223,7 @@ class HolidayController extends Controller
 
             'calendar_type' => [
                 'required',
-                'in:normal,cloth,both',
+                'in:normal,cloth',
             ],
 
             'title' => [

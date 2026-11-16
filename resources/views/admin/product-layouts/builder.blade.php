@@ -273,6 +273,14 @@
 
 
                     @unless ($isCmsBuilder)
+                    <button type="button" class="component-button add-block" data-type="gallery_showcase">Gallery Showcase</button>
+                    <button type="button" class="component-button add-block" data-type="usage_examples">Usage Examples</button>
+                    <button type="button" class="component-button add-block" data-type="product_catalog">Product Catalog</button>
+                    <button type="button" class="component-button add-block" data-type="custom_faq">Custom FAQ</button>
+                    <button type="button" class="component-button add-block" data-type="x_posts">X Posts</button>
+                    <button type="button" class="component-button add-block" data-type="attachment_gallery">
+                        Attachment Gallery
+                    </button>
                     <button
                         type="button"
                         class="component-button add-block"
@@ -349,6 +357,10 @@
                         Template Button
                     </button>
 
+
+                    <button type="button" class="component-button add-block" data-type="price_matrix">
+                        Price Matrix
+                    </button>
 
                     <button
                         type="button"
@@ -873,6 +885,8 @@
 
 
 @push('styles')
+
+<link rel="stylesheet" href="{{ asset('admin/css/component-palette-preview.css') }}?v={{ filemtime(public_path('admin/css/component-palette-preview.css')) }}">
 
 <style>
 
@@ -2399,6 +2413,7 @@
 @push('scripts')
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script src="{{ asset('admin/js/component-palette-preview.js') }}?v={{ filemtime(public_path('admin/js/component-palette-preview.js')) }}"></script>
 
 <script>
 
@@ -2488,12 +2503,15 @@ document.addEventListener(
             event
         )
         {
-            dragScrollPointerY =
-                event.clientY
+            const pointerEvent = event.originalEvent ?? event;
+            const pointerY =
+                pointerEvent.touches?.[0]?.clientY
                 ??
-                event.touches?.[0]?.clientY
-                ??
-                null;
+                pointerEvent.clientY;
+
+            if (Number.isFinite(pointerY)) {
+                dragScrollPointerY = pointerY;
+            }
         }
 
 
@@ -2564,13 +2582,26 @@ document.addEventListener(
         }
 
 
-        function startDragAutoScroll()
+        function startDragAutoScroll(event)
         {
             stopDragAutoScroll();
 
 
             dragScrollPointerY =
                 null;
+
+            if (event) updateDragScrollPointer(event);
+
+            // Native HTML dragging suppresses pointermove; dragover keeps
+            // the viewport edge position current until the drop finishes.
+            document.addEventListener('dragover', updateDragScrollPointer, { capture: true, passive: true });
+            document.addEventListener('mousemove', updateDragScrollPointer, { passive: true });
+            document.addEventListener('dragend', stopDragAutoScroll, true);
+            document.addEventListener('drop', stopDragAutoScroll, true);
+            document.addEventListener('pointerup', stopDragAutoScroll, true);
+            document.addEventListener('touchend', stopDragAutoScroll, true);
+            document.addEventListener('touchcancel', stopDragAutoScroll, true);
+            window.addEventListener('blur', stopDragAutoScroll);
 
 
             document.addEventListener(
@@ -2600,6 +2631,14 @@ document.addEventListener(
 
         function stopDragAutoScroll()
         {
+            document.removeEventListener('dragover', updateDragScrollPointer, true);
+            document.removeEventListener('mousemove', updateDragScrollPointer);
+            document.removeEventListener('dragend', stopDragAutoScroll, true);
+            document.removeEventListener('drop', stopDragAutoScroll, true);
+            document.removeEventListener('pointerup', stopDragAutoScroll, true);
+            document.removeEventListener('touchend', stopDragAutoScroll, true);
+            document.removeEventListener('touchcancel', stopDragAutoScroll, true);
+            window.removeEventListener('blur', stopDragAutoScroll);
             document.removeEventListener(
                 'pointermove',
                 updateDragScrollPointer
@@ -3844,7 +3883,7 @@ document.addEventListener(
                         block,
                         `
 
-                            <${tag}>
+                            <${tag} style="background:#f3f3f3;color:#000;text-align:center;border:0;border-bottom:3px solid #ff8000;padding:5px 10px!important;font-size:18px;font-weight:700;line-height:1.5;">
                                 Heading Title
                             </${tag}>
 
@@ -3983,57 +4022,7 @@ document.addEventListener(
 
 
                 case 'youtube':
-
-                    if (isProductDataBuilder) {
-                        return contentWrapper(
-                            block,
-                            `
-
-                                <div class="sim-youtube-direct">
-
-                                    <div class="sim-youtube-title">
-                                        YouTube Title
-                                    </div>
-
-                                    <div class="sim-youtube-preview">
-                                        <span class="sim-youtube-play">▶</span>
-                                    </div>
-
-                                </div>
-
-                            `
-                        );
-                    }
-
-                    return contentWrapper(
-                        block,
-                        `
-
-                            <div class="sim-accordion">
-
-                                <div class="sim-accordion-header">
-                                    ラバーストラップ自社工場のご紹介
-                                </div>
-
-
-                                <div class="sim-accordion-body">
-
-                                    <div class="sim-youtube-preview">
-                                        <span class="sim-youtube-play">▶</span>
-                                    </div>
-
-
-                                    <div class="text-right mt-2">
-                                        自社生産の詳細はこちら
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        `
-                    );
-
+                    return contentWrapper(block, `<div class="sim-youtube-direct">${isProductDataBuilder ? '<div class="sim-youtube-title">YouTube Title</div>' : ''}<div class="sim-youtube-preview"><span class="sim-youtube-play">▶</span></div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">${['7営業日OK','安心安全材料','自社生産','10個OK'].map(label=>`<span style="padding:6px 10px;background:#58aede;color:#fff;border-radius:2px;font-size:12px;">${label}</span>`).join('')}</div></div>`);
 
                 case 'related_blogs':
 
@@ -4101,21 +4090,7 @@ document.addEventListener(
 
 
                 case 'button':
-
-                    return contentWrapper(
-                        block,
-                        `
-
-                            <button
-                                type="button"
-                                class="btn btn-primary"
-                            >
-                                詳細はこちら
-                            </button>
-
-                        `
-                    );
-
+                    return contentWrapper(block, '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;"><div style="padding:12px;background:#ff9900;color:#fff;border-radius:6px;text-align:center;font-size:24px;font-weight:bold;">ご注文</div><div style="padding:12px;background:#293f50;color:#fff;border-radius:6px;text-align:center;font-size:24px;font-weight:bold;">見積書作成</div><div style="padding:24px 16px;border:1px solid #ddd;box-shadow:0 3px 10px #0003;border-radius:6px;background:#fff;">↓ Download template</div><div style="padding:24px 16px;border:1px solid #ddd;box-shadow:0 3px 10px #0003;border-radius:6px;background:#fff;">▤ Data creation guide</div></div><small>Configure buttons per row, colors, icons, links and downloadable files in Product Content.</small>');
 
                 case 'template_button':
 
@@ -4397,6 +4372,42 @@ document.addEventListener(
                         )
                     );
 
+
+                case 'gallery_showcase':
+                    return contentWrapper(block, `<h3>Gallery Showcase</h3><p>Selected gallery images with tag filters.</p><div style="display:flex;gap:8px;margin-bottom:12px">${['Individual','Company','Red','Blue'].map(t=>`<span style="background:#e49e00;color:#fff;padding:4px 12px;border-radius:20px">${t}</span>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(${Number(block.settings?.showcase?.columns)||3},minmax(0,1fr));gap:16px">${[1,2,3].map(n=>`<div><div style="background:#ff8000;color:white;text-align:center;border-radius:4px">Example ${n}</div><div style="aspect-ratio:1;background:#f5f5f5;border:1px solid #ddd;display:grid;place-items:center">Gallery image ${n}</div><small style="color:blue">Click to enlarge</small></div>`).join('')}</div>`);
+
+                case 'usage_examples':
+                    return contentWrapper(block, `<strong>利用事例</strong><p>商品の利用事例をご紹介します。</p><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;">${[1,2].map(n=>`<div style="border:1px solid #ddd;padding:12px;background:#fff;"><div style="aspect-ratio:1;background:#f1f3f5;display:grid;place-items:center;">Example image ${n}</div><small style="color:blue;">クリックすると拡大します</small><div style="text-align:right;font-size:10px;">2026年6月12日</div><strong>Example title ${n}</strong><p>Example description</p></div>`).join('')}</div><small>Configure images, dates and descriptions in Product Content.</small>`);
+
+                case 'x_posts': {
+                    const columns = [1,2,3].includes(Number(block.settings?.x_columns)) ? Number(block.settings.x_columns) : 2;
+                    const dark = block.settings?.x_theme === 'dark';
+                    return contentWrapper(block, `<div style="display:grid;grid-template-columns:repeat(${columns},minmax(0,1fr));gap:16px;">${Array.from({length:columns},(_,i)=>`<div style="border:1px solid #cfd9de;border-radius:16px;padding:16px;background:${dark?'#15202b':'#fff'};color:${dark?'#fff':'#111'};"><strong>𝕏 Customer post ${i+1}</strong><p>Post text and photos are loaded from X.</p><div style="height:100px;background:${dark?'#253341':'#eff3f4'};border-radius:12px;"></div></div>`).join('')}</div><small>Example only. Add post URLs in Product Content.</small>`);
+                }
+
+                case 'custom_faq': {
+                    const icons = @json(\App\Support\CustomFaqContent::icons());
+                    return contentWrapper(block, `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;">${[['cart','ご注文・お見積りについて'],['gem','仕様・品質について'],['pen','Q. データ作成について'],['monitor','完成図シミュレーターについて'],['calendar','納期について'],['card','お支払いについて']].map(([icon,title])=>`<div style="display:flex;align-items:center;gap:10px;border:3px solid #eee;padding:12px;min-height:68px;background:#fff;"><span style="display:inline-flex;flex:none;width:24px;height:24px;">${icons[icon].svg}</span><span>${title}</span></div>`).join('')}</div><small>Configure FAQ titles, icons and links in Product Content.</small>`);
+                }
+
+                case 'product_catalog':
+                    return contentWrapper(block, `<div style="border:1px solid #ddd;border-radius:12px;padding:16px;background:#f9fafc;text-align:center;"><strong>ボタンをクリックして表示する商品を切り替えることができます。</strong><div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">${['定番＆おすすめ','新商品','キーホルダー','実用品'].map(label=>`<span style="flex:1;padding:8px;border:1px solid #ddd;border-radius:24px;background:white;">${label}</span>`).join('')}</div></div><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:20px;">${[1,2,3].map(n=>`<div style="padding:10px;border:1px solid #ddd;"><div style="aspect-ratio:1;border:1px solid #ff8000;display:grid;place-items:center;background:#fff;">Product ${n}</div><strong>Product title</strong><div>1個<span style="color:red;">168</span>円（税込）〜</div><div>最短（6営業日）</div><mark>新商品！</mark></div>`).join('')}</div><small>Configure categories and product cards in Product Content.</small>`);
+
+                case 'attachment_gallery':
+                    return contentWrapper(block, `<strong>アタッチメント</strong><p>写真をクリックすると拡大写真と詳細説明を確認頂けます。</p>
+                        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;text-align:center;">
+                        ${[1,2,3].map(n=>`<div><div style="padding:25px 5px;border:1px solid #ddd;background:#fff;">🔗<br>Attachment ${n}</div><small>+0円<br>クリックすると拡大します</small></div>`).join('')}</div>
+                        <div class="text-center mt-2"><span class="btn btn-light btn-sm">もっと見る</span></div>
+                        <small>Example only. Configure images, prices and details in Product Content.</small>`);
+
+                case 'price_matrix':
+                    return contentWrapper(block, `
+                        <div><strong>納期</strong><p>◉ 10営業日　○ 6営業日</p>
+                        <strong>印刷面</strong><p>◉ 片面印刷　○ 両面印刷</p>
+                        <strong>数量・サイズ別価格表</strong>
+                        <table class="sim-table"><tr><th>数量</th><th>50×50mm以内</th><th>75×75mm以内</th><th>100×100mm以内</th></tr>
+                        <tr><td>1</td><td>990</td><td>1089</td><td>1188</td></tr><tr><td>5</td><td>411</td><td>455</td><td>569</td></tr></table>
+                        <small>Example only. Configure options and prices in Product Content.</small></div>`);
 
                 case 'price_accordion':
 
@@ -5239,6 +5250,7 @@ document.addEventListener(
 
         function destroySortables()
         {
+            stopDragAutoScroll();
             sortableInstances.forEach(
                 function (instance) {
 
@@ -6014,7 +6026,7 @@ document.addEventListener(
 
                         <div class="alert alert-light border mb-0">
 
-                            หัวข้อ, YouTube URL, ภาพปก และลิงก์รายละเอียดจะกำหนดจาก
+                            Set the YouTube URL, cover image, details link, and optional tags with colors and links in the
 
                             <strong>
                                 Product Content Editor
@@ -6033,8 +6045,8 @@ document.addEventListener(
 
                         <div class="alert alert-light border mb-0">
 
-                            หัวข้อ, รูปภาพ, ชื่อบทความ และลิงก์ของ Related Blogs
-                            จะกำหนดจาก
+                            Set the section title, images, article titles, and links for Related Blogs
+                            in the
 
                             <strong>
                                 Product Content Editor
@@ -6218,13 +6230,17 @@ document.addEventListener(
                     break;
 
 
+                case 'button':
+                    container.innerHTML = '<div class="alert alert-light border mb-0">Configure buttons per row (1–4), mobile columns, styles, icons, colors, links and file downloads in <strong>Product Content Editor</strong>.</div>';
+                    break;
+
                 case 'text_link':
 
                     container.innerHTML = `
 
                         <div class="alert alert-light border mb-0">
 
-                            Text และ URL จะกำหนดจาก
+                            Set the text and URL in the
 
                             <strong>
                                 Product Content Editor
@@ -6232,8 +6248,8 @@ document.addEventListener(
 
                             <br><br>
 
-                            Layout Builder ใช้กำหนดตำแหน่ง,
-                            Width, Alignment และ Block ID เท่านั้น
+                            Use Layout Builder to configure the position,
+                            width, alignment, and Block ID.
 
                         </div>
 
@@ -6242,13 +6258,50 @@ document.addEventListener(
                     break;
 
 
+                case 'price_matrix':
+                    container.innerHTML = '<div class="alert alert-light border mb-0">Configure option groups, size columns and prices in <strong>Product Content Editor</strong>. Add and name groups such as Delivery, Print or Material. Each product has its own groups and prices.</div>';
+                    break;
+
+                case 'gallery_showcase':
+                    container.innerHTML = `<div class="form-group"><label>Default title</label><input class="form-control block-setting" data-key="showcase.title" value="${escapeHtml(block.settings?.showcase?.title || '')}"></div>
+                    <div class="form-group"><label>Default description</label><textarea class="form-control block-setting" data-key="showcase.description">${escapeHtml(block.settings?.showcase?.description || '')}</textarea></div>
+                    <div class="form-group"><label>Default columns</label><select class="form-control block-setting" data-key="showcase.columns">${[1,2,3,4].map(n=>`<option value="${n}" ${Number(block.settings?.showcase?.columns??3)===n?'selected':''}>${n}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Show tag filters by default</label><select class="form-control block-setting" data-key="showcase.show_tags"><option value="1" ${block.settings?.showcase?.show_tags!==false?'selected':''}>Yes</option><option value="0" ${block.settings?.showcase?.show_tags===false?'selected':''}>No</option></select></div>
+                    <div class="form-group"><label>Show gallery link by default</label><select class="form-control block-setting" data-key="showcase.show_more"><option value="1" ${block.settings?.showcase?.show_more!==false?'selected':''}>Yes</option><option value="0" ${block.settings?.showcase?.show_more===false?'selected':''}>No</option></select></div>
+                    <p>Select the Gallery, images and their order in Product Content.</p>`;
+                    break;
+
+                case 'usage_examples':
+                    container.innerHTML = '<div class="alert alert-light border mb-0">Configure columns, images, dates and descriptions in <strong>Product Content Editor</strong>.</div>';
+                    break;
+
+                case 'product_catalog':
+                    container.innerHTML = '<div class="alert alert-light border mb-0">Configure filter categories, product cards, prices and columns in <strong>Product Content Editor</strong>.</div>';
+                    break;
+
+                case 'custom_faq':
+                    container.innerHTML = '<div class="alert alert-light border mb-0">Configure FAQ category titles, icons, destinations and columns in <strong>Product Content Editor</strong>.</div>';
+                    break;
+
+                case 'x_posts':
+                    container.innerHTML = `
+                        <div class="form-group"><label>Columns (desktop)</label><select class="form-control block-setting" data-key="x_columns">${[1,2,3].map(n=>`<option value="${n}" ${Number(block.settings?.x_columns??2)===n?'selected':''}>${n}</option>`).join('')}</select><small>Mobile uses one column. Narrow containers automatically reduce columns to fit X embeds.</small></div>
+                        <div class="form-group"><label>Theme</label><select class="form-control block-setting" data-key="x_theme"><option value="light" ${block.settings?.x_theme!=='dark'?'selected':''}>Light</option><option value="dark" ${block.settings?.x_theme==='dark'?'selected':''}>Dark</option></select></div>
+                        <div class="form-group"><label>Conversation</label><select class="form-control block-setting" data-key="x_conversation"><option value="none" ${block.settings?.x_conversation!=='all'?'selected':''}>Hide previous posts</option><option value="all" ${block.settings?.x_conversation==='all'?'selected':''}>Show previous posts</option></select></div>
+                        <div class="alert alert-light border mb-0">Enter the section title, description and post URLs in <strong>Product Content Editor</strong>.</div>`;
+                    break;
+
+                case 'attachment_gallery':
+                    container.innerHTML = '<div class="alert alert-light border mb-0">Configure gallery columns, Show more, images, prices and modal details in <strong>Product Content Editor</strong>.</div>';
+                    break;
+
                 case 'custom_table':
 
                     container.innerHTML = `
 
                         <div class="alert alert-light border mb-0">
 
-                            Column, Row และข้อมูลของตารางจะกำหนดจาก
+                            Set table columns, rows, and data in the
 
                             <strong>
                                 Product Content Editor
@@ -6256,7 +6309,7 @@ document.addEventListener(
 
                             <br><br>
 
-                            Product แต่ละตัวสามารถมีข้อมูลตารางต่างกันได้
+                            Each product can have its own table data.
 
                         </div>
 
@@ -6293,10 +6346,10 @@ document.addEventListener(
 
                             <strong>OptionCardGrid</strong>
                             <br><br>
-                            แท็บ (Tabs), รายการอะไหล่/ออปชัน, ราคา, และลิงก์จะกำหนดจาก
+                            Set tabs, parts and options, prices, and links in the
                             <strong>Product Content Editor</strong>
                             <br><br>
-                            Product แต่ละตัวสามารถปรับแต่งข้อมูลออปชันและการ์ดต่างกันได้
+                            Each product can have its own options and card content.
 
                         </div>
 
@@ -6464,10 +6517,13 @@ document.addEventListener(
                                 }
 
 
-                                block.settings[
-                                    field.dataset.key
-                                ] =
-                                    value;
+                                if (field.dataset.key.startsWith('showcase.')) {
+                                    const key = field.dataset.key.slice(9);
+                                    block.settings.showcase ||= {};
+                                    block.settings.showcase[key] = ['show_tags','show_more'].includes(key) ? value === '1' : key === 'columns' ? Number(value) : value;
+                                } else {
+                                    block.settings[field.dataset.key] = value;
+                                }
 
                             }
                         );
@@ -7634,6 +7690,14 @@ document.addEventListener(
                 template_button:
                     'Template Button',
 
+                usage_examples: 'Usage Examples',
+                product_catalog: 'Product Catalog',
+                custom_faq: 'Custom FAQ',
+                x_posts: 'X Posts',
+                gallery_showcase: 'Gallery Showcase',
+                attachment_gallery: 'Attachment Gallery',
+                price_matrix: 'Price Matrix',
+
                 price_accordion:
                     'Price',
 
@@ -7803,6 +7867,15 @@ document.addEventListener(
         | Start
         |--------------------------------------------------------------------------
         */
+
+        window.ComponentPalettePreview.init({
+            render(type) {
+                if (type === 'accordion') {
+                    return '<div class="sim-accordion"><div class="sim-accordion-header">Section title ⌄</div><div class="sim-accordion-body">Content inside the expandable section.</div></div>';
+                }
+                return previewBlock({id:'component-palette-example', type, settings:defaultSettings(type), children:[]});
+            }
+        });
 
         loadLayout();
 

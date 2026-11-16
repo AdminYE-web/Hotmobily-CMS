@@ -501,6 +501,8 @@ class ProductOptionManagerController extends Controller
             ->mapWithKeys(static fn (ProductOptionGroup $assignment): array => [
                 $assignment->option_group_id => [
                     'configured' => $assignment->has_option_configuration,
+                    'quantity_min' => $assignment->quantity_min,
+                    'quantity_max' => $assignment->quantity_max,
                     'summary_label' => $assignment->summary_label,
                     'preview_summary_label' => $assignment->preview_summary_label,
                     'show_in_preview_summary' => $assignment->show_in_preview_summary,
@@ -610,7 +612,11 @@ class ProductOptionManagerController extends Controller
                 $isConfigured = $settings['configured'] ?? false;
                 $storedOrderLookup = array_flip($storedOptionOrder);
                 $orderedOptions = $group->productOptions
-                    ->sortBy(static fn (ProductOption $option): int => $storedOrderLookup[$option->id] ?? PHP_INT_MAX)
+                    ->sort(static function (ProductOption $left, ProductOption $right) use ($storedOrderLookup): int {
+                        $position = ($storedOrderLookup[$left->id] ?? PHP_INT_MAX) <=> ($storedOrderLookup[$right->id] ?? PHP_INT_MAX);
+                        if ($position !== 0) return $position;
+                        return strnatcasecmp($left->option_name, $right->option_name) ?: ($left->id <=> $right->id);
+                    })
                     ->values();
 
                 return [
@@ -618,6 +624,8 @@ class ProductOptionManagerController extends Controller
                     'group_code' => $group->group_code,
                     'group_name' => $group->group_name,
                     'display_type' => $group->display_type,
+                    'quantity_min' => old('quantity_limits.'.$group->id.'.min', $settings['quantity_min'] ?? null),
+                    'quantity_max' => old('quantity_limits.'.$group->id.'.max', $settings['quantity_max'] ?? null),
                     'help_text' => $group->help_text,
                     'is_main_price_group' => $group->is_main_price_group,
                     'is_required' => $group->is_required,
@@ -740,6 +748,10 @@ class ProductOptionManagerController extends Controller
     {
         $data = $request->validate([
             'option_group_ids' => ['nullable', 'array'],
+            'quantity_limits' => ['nullable', 'array'],
+            'quantity_limits.*' => ['array'],
+            'quantity_limits.*.min' => ['nullable', 'integer', 'min:1', 'max:2147483647'],
+            'quantity_limits.*.max' => ['nullable', 'integer', 'min:1', 'max:2147483647'],
             'option_group_ids.*' => ['integer', 'distinct', 'exists:option_groups,id'],
             'steps' => ['required', 'array', 'min:1'],
             'steps.*.key' => ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9_-]+$/'],
@@ -842,6 +854,14 @@ class ProductOptionManagerController extends Controller
             'option_config.*.max_qty' => ['nullable', 'integer', 'min:0'],
             'option_config.*.exact_qty' => ['nullable', 'integer', 'min:0'],
         ]);
+
+        foreach ($data['quantity_limits'] ?? [] as $groupId => $limits) {
+            if (isset($limits['min'], $limits['max']) && (int) $limits['max'] < (int) $limits['min']) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'quantity_limits.'.$groupId.'.max' => 'Maximum quantity must be greater than or equal to minimum quantity.',
+                ]);
+            }
+        }
 
         $groupIds = collect($data['option_group_ids'] ?? [])
             ->map(static fn ($id): int => (int) $id)
@@ -1572,6 +1592,8 @@ class ProductOptionManagerController extends Controller
                         'product_option_step_id' => $stepIdsByKey[$stepKey],
                         'sort_order' => $data['option_group_sort_orders'][$groupId] ?? ($position + 1),
                         'has_option_configuration' => true,
+                        'quantity_min' => ($displayTypesByGroup[$groupId] ?? null) === 'quantity_input' ? ($data['quantity_limits'][$groupId]['min'] ?? null) : null,
+                        'quantity_max' => ($displayTypesByGroup[$groupId] ?? null) === 'quantity_input' ? ($data['quantity_limits'][$groupId]['max'] ?? null) : null,
                         'show_in_order_summary' => $summaryFieldsForGroup->isNotEmpty(),
                         'summary_label' => ($summaryFieldLabels[$groupSummaryKey] ?? '') !== '' ? $summaryFieldLabels[$groupSummaryKey] : null,
                         'summary_sort_order' => $summarySortOrder === null ? 0 : $summarySortOrder + 1,

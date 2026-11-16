@@ -104,6 +104,13 @@
                     </div>
                 </div>
 
+                <div class="d-flex flex-wrap align-items-center mb-3" style="gap:8px">
+                    <button id="import-tier-csv" type="button" class="btn btn-outline-primary">Upload CSV</button>
+                    <input id="tier-csv-file" type="file" accept=".csv,text/csv" hidden>
+                    <small class="text-muted">CSV columns: Quantity, Unit Price (excluding tax). Import replaces the current tiers and calculates tax-inclusive prices using Auto Tax.</small>
+                </div>
+                <div id="tier-csv-status" class="small mb-3" role="status" aria-live="polite" hidden></div>
+
                 <div class="tier-table-wrap">
                     <table class="table tier-table mb-0">
                         <thead>
@@ -155,6 +162,7 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('admin/js/price-tier-csv.js') }}?v={{ filemtime(public_path('admin/js/price-tier-csv.js')) }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const catalog = @json($productCatalog);
@@ -222,12 +230,18 @@
                 });
             };
 
+            const wholeTaxPrice = function (value) {
+                if (String(value ?? '').trim() === '') return '';
+                const number = Number(value);
+                return Number.isFinite(number) ? String(Math.floor(number)) : '';
+            };
             const recalculateTax = function (row, force) {
                 const price = parseFloat(row.querySelector('[data-field="unit_price"]').value);
                 const withTax = row.querySelector('[data-field="unit_price_with_tax"]');
                 if (force || withTax.dataset.manual !== '1') {
                     const rate = parseFloat(taxRate.value) || 0;
-                    withTax.value = Number.isFinite(price) ? (price * (1 + rate / 100)).toFixed(2) : '';
+                    // Prices and tax rates have two decimal places; scale first to avoid floating-point underflow at whole yen.
+                    withTax.value = Number.isFinite(price) ? String(Math.floor(Math.round(price * 100) * (10000 + Math.round(rate * 100)) / 1000000)) : '';
                 }
             };
 
@@ -248,7 +262,7 @@
                     return `<tr>
                         <td><input name="tiers[${index}][quantity]" data-field="quantity" type="number" min="1" step="1" value="${escapeHtml(tier.quantity)}" class="form-control" required></td>
                         <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">&#165;</span></div><input name="tiers[${index}][unit_price]" data-field="unit_price" type="number" min="0" step="0.01" value="${escapeHtml(tier.unit_price)}" class="form-control" required></div></td>
-                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">&#165;</span></div><input name="tiers[${index}][unit_price_with_tax]" data-field="unit_price_with_tax" data-manual="${tier.unit_price_with_tax_manual ? '1' : ''}" type="number" min="0" step="0.01" value="${escapeHtml(tier.unit_price_with_tax)}" class="form-control" required></div></td>
+                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">&#165;</span></div><input name="tiers[${index}][unit_price_with_tax]" data-field="unit_price_with_tax" data-manual="${tier.unit_price_with_tax_manual ? '1' : ''}" type="number" min="0" step="1" value="${escapeHtml(wholeTaxPrice(tier.unit_price_with_tax))}" class="form-control" required></div></td>
                         <td class="text-center"><input type="radio" name="display_tier_index" value="${index}" ${index === displayTierIndex ? 'checked' : ''} aria-label="Display this tier"></td>
                         <td><button type="button" class="btn btn-sm remove-tier">Remove</button></td>
                     </tr>`;
@@ -261,6 +275,13 @@
                     withTax.addEventListener('input', function () {
                         withTax.dataset.manual = '1';
                         recalculatePrice(row);
+                    });
+                    withTax.addEventListener('change', function () {
+                        const value = wholeTaxPrice(withTax.value);
+                        if (withTax.value !== value) {
+                            withTax.value = value;
+                            recalculatePrice(row);
+                        }
                     });
                     row.querySelectorAll('[data-field]').forEach(function (input) {
                         input.addEventListener('keydown', function (event) {
@@ -323,6 +344,36 @@
             });
             document.getElementById('add-tier').addEventListener('click', function () {
                 appendTier();
+            });
+            const csvButton = document.getElementById('import-tier-csv');
+            const csvFile = document.getElementById('tier-csv-file');
+            const csvStatus = document.getElementById('tier-csv-status');
+            csvButton.addEventListener('click', function () {csvFile.click();});
+            csvFile.addEventListener('change', async function () {
+                const file = csvFile.files[0];
+                if (!file) return;
+                csvButton.disabled = true;
+                csvFile.disabled = true;
+                try {
+                    if (file.size > 1024 * 1024) throw Error('Maximum CSV file size is 1 MB.');
+                    const imported = window.PriceTierCsv.parse(await file.text());
+                    const hasCurrentValues = Array.from(tierRows.querySelectorAll('[data-field]')).some(input => input.value.trim() !== '');
+                    if (hasCurrentValues && !confirm(`Replace the current price tiers with ${imported.length} rows from "${file.name}"?`)) return;
+                    tiers = imported;
+                    displayTierIndex = 0;
+                    renderTiers();
+                    csvStatus.className = 'small mb-3 text-success';
+                    csvStatus.textContent = `${file.name}: imported ${imported.length} price tiers. Tax-inclusive prices calculated using Auto Tax. Save the rule to apply.`;
+                    csvStatus.hidden = false;
+                } catch (error) {
+                    csvStatus.className = 'small mb-3 text-danger';
+                    csvStatus.textContent = error.message;
+                    csvStatus.hidden = false;
+                } finally {
+                    csvButton.disabled = false;
+                    csvFile.disabled = false;
+                    csvFile.value = '';
+                }
             });
 
             renderConditions();

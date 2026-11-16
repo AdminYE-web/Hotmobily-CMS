@@ -21,6 +21,7 @@
     }
 
     $initialProductId = (int) old('product_id', $rule->product_id);
+    $initialAllProducts = filter_var(old('applies_to_all_products', $isEditing && $rule->product_id === null), FILTER_VALIDATE_BOOLEAN);
     $initialTargetOptionId = (int) old('target_product_option_id', $rule->target_product_option_id);
     $initialConditionIds = collect(old('condition_product_option_ids', $selectedConditionIds))
         ->map(static fn ($id): int => (int) $id)
@@ -60,10 +61,14 @@
 
             <section class="rule-section">
                 <h2>Rule Information</h2>
+                <div class="form-group">
+                    <label class="mb-1"><input id="applies_to_all_products" name="applies_to_all_products" type="checkbox" value="1" @checked($initialAllProducts)> All products</label>
+                    <small class="form-text text-muted">Apply to any product with the selected options. A matching product-specific rule takes priority over this shared rule for the same target option.</small>
+                </div>
                 <div class="form-row">
                     <div class="form-group col-md-4">
-                        <label for="product_id">Product <span class="text-danger">*</span></label>
-                        <select id="product_id" name="product_id" class="form-control @error('product_id') is-invalid @enderror" required>
+                        <label for="product_id">Product <span id="product-required" class="text-danger" @if($initialAllProducts) hidden @endif>*</span></label>
+                        <select id="product_id" name="product_id" class="form-control @error('product_id') is-invalid @enderror" @if($initialAllProducts) disabled @else required @endif>
                             <option value="">-- Select Product --</option>
                             @foreach ($products as $product)
                                 <option value="{{ $product->id }}" @selected($initialProductId === (int) $product->id)>
@@ -127,6 +132,12 @@
                     </div>
                 </div>
 
+                <div class="d-flex flex-wrap align-items-center mb-3" style="gap:8px">
+                    <button id="import-tier-csv" type="button" class="btn btn-outline-primary">Upload CSV</button>
+                    <input id="tier-csv-file" type="file" accept=".csv,text/csv" hidden>
+                    <small class="text-muted">CSV columns: Quantity, Additional Price (or Unit Price), excluding tax. Import replaces the current tiers and calculates tax-inclusive prices using Auto Tax.</small>
+                </div>
+                <div id="tier-csv-status" class="small mb-3" role="status" aria-live="polite" hidden></div>
                 <div class="tier-table-wrap">
                     <table class="table tier-table mb-0">
                         <thead>
@@ -178,9 +189,12 @@
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('admin/js/price-tier-csv.js') }}?v={{ filemtime(public_path('admin/js/price-tier-csv.js')) }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const catalog = @json($productCatalog);
+            const globalGroups = @json($globalOptionGroups);
+            const allProducts = document.getElementById('applies_to_all_products');
             const productSelect = document.getElementById('product_id');
             const targetOptions = document.getElementById('target-options');
             const conditionOptions = document.getElementById('condition-options');
@@ -198,6 +212,7 @@
             };
 
             const currentProduct = function () {
+                if (allProducts.checked) return {groups:globalGroups};
                 return catalog.find(function (product) { return Number(product.id) === Number(productSelect.value); });
             };
 
@@ -262,12 +277,17 @@
                 });
             };
 
+            const wholeTaxPrice = function (value) {
+                if (String(value ?? '').trim() === '') return '';
+                const number = Number(value);
+                return Number.isFinite(number) ? String(Math.floor(number)) : '';
+            };
             const recalculateTax = function (row, force) {
                 const price = parseFloat(row.querySelector('[data-field="additional_price"]').value);
                 const withTax = row.querySelector('[data-field="additional_price_with_tax"]');
                 if (force || withTax.dataset.manual !== '1') {
                     const rate = parseFloat(taxRate.value) || 0;
-                    withTax.value = Number.isFinite(price) ? (price * (1 + rate / 100)).toFixed(2) : '';
+                    withTax.value = Number.isFinite(price) ? String(Math.floor(Math.round(price * 100) * (10000 + Math.round(rate * 100)) / 1000000)) : '';
                 }
             };
 
@@ -287,7 +307,7 @@
                     return `<tr>
                         <td><input name="tiers[${index}][quantity]" data-field="quantity" type="number" min="1" step="1" value="${escapeHtml(tier.quantity)}" class="form-control" required></td>
                         <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">¥</span></div><input name="tiers[${index}][additional_price]" data-field="additional_price" type="number" min="0" step="0.01" value="${escapeHtml(tier.additional_price)}" class="form-control" required></div></td>
-                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">¥</span></div><input name="tiers[${index}][additional_price_with_tax]" data-field="additional_price_with_tax" data-manual="${tier.additional_price_with_tax_manual ? '1' : ''}" type="number" min="0" step="0.01" value="${escapeHtml(tier.additional_price_with_tax)}" class="form-control" required></div></td>
+                        <td><div class="input-group"><div class="input-group-prepend"><span class="input-group-text">¥</span></div><input name="tiers[${index}][additional_price_with_tax]" data-field="additional_price_with_tax" data-manual="${tier.additional_price_with_tax_manual ? '1' : ''}" type="number" min="0" step="1" value="${escapeHtml(wholeTaxPrice(tier.additional_price_with_tax))}" class="form-control" required></div></td>
                         <td><button type="button" class="btn btn-sm remove-tier">Remove</button></td>
                     </tr>`;
                 }).join('');
@@ -299,6 +319,13 @@
                     withTax.addEventListener('input', function () {
                         withTax.dataset.manual = '1';
                         recalculatePrice(row);
+                    });
+                    withTax.addEventListener('change', function () {
+                        const value = wholeTaxPrice(withTax.value);
+                        if (withTax.value !== value) {
+                            withTax.value = value;
+                            recalculatePrice(row);
+                        }
                     });
                     row.querySelectorAll('[data-field]').forEach(function (input) {
                         input.addEventListener('keydown', function (event) {
@@ -341,6 +368,15 @@
                 conditionIds = [];
                 renderConditions();
             });
+            allProducts.addEventListener('change', function () {
+                productSelect.disabled = allProducts.checked;
+                productSelect.required = !allProducts.checked;
+                document.getElementById('product-required').hidden = allProducts.checked;
+                const validIds = new Set((currentProduct()?.groups || []).flatMap(group => group.options.map(option => Number(option.id))));
+                if (!validIds.has(targetId)) targetId = 0;
+                conditionIds = conditionIds.filter(id => validIds.has(id));
+                renderConditions();
+            });
             taxRate.addEventListener('input', function () {
                 tierRows.querySelectorAll('tr').forEach(function (row) {
                     const withTax = row.querySelector('[data-field="additional_price_with_tax"]');
@@ -353,6 +389,37 @@
             });
             document.getElementById('add-tier').addEventListener('click', function () {
                 appendTier();
+            });
+            const csvButton = document.getElementById('import-tier-csv');
+            const csvFile = document.getElementById('tier-csv-file');
+            const csvStatus = document.getElementById('tier-csv-status');
+            csvButton.addEventListener('click', function () {csvFile.click();});
+            csvFile.addEventListener('change', async function () {
+                const file = csvFile.files[0];
+                if (!file) return;
+                csvButton.disabled = true;
+                csvFile.disabled = true;
+                try {
+                    if (file.size > 1024 * 1024) throw Error('Maximum CSV file size is 1 MB.');
+                    const imported = window.PriceTierCsv.parse(await file.text(), {priceHeaders:['additional price', 'unit price']}).map(row => ({
+                        quantity:row.quantity, additional_price:row.unit_price, additional_price_with_tax:'', additional_price_with_tax_manual:false,
+                    }));
+                    const hasCurrentValues = Array.from(tierRows.querySelectorAll('[data-field]')).some(input => input.value.trim() !== '');
+                    if (hasCurrentValues && !confirm(`Replace the current price tiers with ${imported.length} rows from "${file.name}"?`)) return;
+                    tiers = imported;
+                    renderTiers();
+                    csvStatus.className = 'small mb-3 text-success';
+                    csvStatus.textContent = `${file.name}: imported ${imported.length} price tiers. Tax-inclusive prices calculated using Auto Tax. Save the rule to apply.`;
+                    csvStatus.hidden = false;
+                } catch (error) {
+                    csvStatus.className = 'small mb-3 text-danger';
+                    csvStatus.textContent = error.message;
+                    csvStatus.hidden = false;
+                } finally {
+                    csvButton.disabled = false;
+                    csvFile.disabled = false;
+                    csvFile.value = '';
+                }
             });
 
             renderConditions();

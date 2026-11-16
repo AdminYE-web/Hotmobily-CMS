@@ -53,6 +53,12 @@ use App\Models\GuideLayout;
 use App\Models\GuidePage;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/downloads/content/{kind}/{record}/{filename}', \App\Http\Controllers\Storefront\ContentFileDownloadController::class)
+    ->whereIn('kind', ['products', 'product-data', 'custom-pages', 'guides'])
+    ->whereNumber('record')
+    ->where('filename', '[A-Fa-f0-9-]{36}\.[A-Za-z0-9]+')
+    ->name('content-files.download');
+
 /*
 |--------------------------------------------------------------------------
 | Home
@@ -513,6 +519,8 @@ Route::prefix('admin')
 
                 Route::post('/product-options', [ProductOptionController::class, 'store'])
                     ->name('product-options.store');
+                Route::post('/product-options/bulk-upload', [ProductOptionController::class, 'bulkUpload'])
+                    ->name('product-options.bulk-upload');
 
                 Route::get('/product-options/{productOption}/edit', [ProductOptionController::class, 'edit'])
                     ->name('product-options.edit');
@@ -642,6 +650,9 @@ Route::prefix('admin')
 
                 Route::post('/products/{product}/content/preview', \App\Http\Controllers\Admin\ProductContentPreviewController::class)
                     ->name('products.content.preview');
+
+                Route::get('/products/{product}/revisions/{revision}/preview', [\App\Http\Controllers\Admin\ProductContentRevisionController::class, 'preview'])
+                    ->name('products.revisions.preview');
 
                 /*
                 |--------------------------------------------------------------------------

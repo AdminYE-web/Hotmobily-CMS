@@ -17,6 +17,42 @@
             <div class="alert alert-success">{{ session('status') }}</div>
         @endif
 
+        @php($hasFilters = $filters['q'] !== '' || $filters['display_type'] !== '' || $filters['status'] !== '')
+
+        <form method="GET" action="{{ route('admin.option-groups.index') }}" class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="form-row align-items-end">
+                    <div class="col-md-5 mb-2 mb-md-0">
+                        <label for="filter-q" class="small text-muted mb-1">Search</label>
+                        <input type="search" id="filter-q" name="q" value="{{ $filters['q'] }}" class="form-control" placeholder="Group code or group name">
+                    </div>
+                    <div class="col-md-3 mb-2 mb-md-0">
+                        <label for="filter-display-type" class="small text-muted mb-1">Display Type</label>
+                        <select id="filter-display-type" name="display_type" class="form-control">
+                            <option value="">All</option>
+                            @foreach ($displayTypes as $value => $label)
+                                <option value="{{ $value }}" @selected($filters['display_type'] === $value)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2 mb-md-0">
+                        <label for="filter-status" class="small text-muted mb-1">Active</label>
+                        <select id="filter-status" name="status" class="form-control">
+                            <option value="">All</option>
+                            <option value="active" @selected($filters['status'] === 'active')>Active</option>
+                            <option value="inactive" @selected($filters['status'] === 'inactive')>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex">
+                        <button type="submit" class="btn btn-primary flex-fill mr-2">Search</button>
+                        @if ($hasFilters)
+                            <a href="{{ route('admin.option-groups.index') }}" class="btn btn-outline-secondary">Clear</a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <strong>Group list</strong>
@@ -69,7 +105,7 @@
                                     <td><a href="{{ route('admin.option-groups.edit', $optionGroup) }}" class="btn btn-sm btn-outline-primary">Edit</a></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="10" class="text-center text-muted py-4">No Option Groups created yet.</td></tr>
+                                <tr><td colspan="10" class="text-center text-muted py-4">{{ $hasFilters ? 'No groups match your search.' : 'No Option Groups created yet.' }}</td></tr>
                             @endforelse
                         </tbody>
                     </table>

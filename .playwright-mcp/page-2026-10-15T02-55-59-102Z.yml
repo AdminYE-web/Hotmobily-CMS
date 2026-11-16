@@ -1,0 +1,610 @@
+- generic [active] [ref=e1]:
+  - table [ref=e3]:
+    - rowgroup [ref=e4]:
+      - row [ref=e5]:
+        - cell [ref=e6]:
+          - link [ref=e7] [cursor=pointer]:
+            - /url: //hotmobily.jp/
+            - img "Hotmobily header banner" [ref=e8]
+        - cell [ref=e9]:
+          - link [ref=e10] [cursor=pointer]:
+            - /url: tel:05068655591
+            - img "Contact Hotmobily" [ref=e11]
+  - generic [ref=e12]:
+    - list:
+      - listitem [ref=e13]:
+        - generic [ref=e14] [cursor=pointer]: データ作成ガイド
+        - list:
+          - listitem
+      - listitem [ref=e15]:
+        - generic [ref=e16] [cursor=pointer]: 製作実績
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=e17]:
+        - link "テンプレート" [ref=e18] [cursor=pointer]:
+          - /url: /template/
+      - listitem [ref=e19]:
+        - generic [ref=e20] [cursor=pointer]: 製作詳細
+        - list:
+          - listitem
+      - listitem [ref=e21]:
+        - generic [ref=e22] [cursor=pointer]: ご利用ガイド
+        - list:
+          - listitem
+          - listitem
+      - listitem [ref=e23]:
+        - generic [ref=e24] [cursor=pointer]: FAQ・口コミ求人
+        - list:
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=e25]:
+        - generic [ref=e26] [cursor=pointer]: 問合せサンプル請求営業呼び出し
+        - list:
+          - listitem
+          - listitem
+  - text:                     
+  - generic [ref=e27]:
+    - generic [ref=e28]:
+      - navigation [ref=e29]:
+        - list [ref=e30]:
+          - listitem [ref=e31]:
+            - link "商品一覧" [ref=e32] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e35]:
+            - link "ラバーストラップ ラバーストラップ" [ref=e36] [cursor=pointer]:
+              - /url: http://new-hotmobily.test/products/rubberstrap
+              - img "ラバーストラップ" [ref=e37]
+              - generic [ref=e38]: ラバーストラップ
+      - generic [ref=e39]:
+        - link [ref=e40] [cursor=pointer]:
+          - /url: //x.com/GoodsYe
+        - link [ref=e42] [cursor=pointer]:
+          - /url: //www.facebook.com/Hotmobily_jp-%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC-171871399585893
+        - link [ref=e44] [cursor=pointer]:
+          - /url: //www.youtube.com/channel/UCCAbieM95Kd0ay_nk5Fa9lA/
+        - link [ref=e46] [cursor=pointer]:
+          - /url: https://www.instagram.com/hot.mobily/?hl=ja
+      - separator [ref=e48]
+      - heading [level=3] [ref=e49]:
+        - link "ホットモバイリーに関するツイート" [ref=e50] [cursor=pointer]:
+          - /url: //x.com/search?q=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC
+      - heading [level=3] [ref=e51]:
+        - link [ref=e52] [cursor=pointer]:
+          - /url: http://new-hotmobily.test/contact/index.php
+          - img "test" [ref=e53]
+      - table [ref=e54]:
+        - rowgroup [ref=e55]:
+          - row [ref=e56]:
+            - columnheader "10月 2026" [ref=e57]
+          - row [ref=e58]:
+            - columnheader "日" [ref=e59]
+            - columnheader "月" [ref=e60]
+            - columnheader "火" [ref=e61]
+            - columnheader "水" [ref=e62]
+            - columnheader "木" [ref=e63]
+            - columnheader "金" [ref=e64]
+            - columnheader "土" [ref=e65]
+        - rowgroup [ref=e66]:
+          - row [ref=e67]:
+            - cell [ref=e68]
+            - cell [ref=e69]
+            - cell [ref=e70]
+            - cell [ref=e71]
+            - cell "1" [ref=e72]
+            - cell "2" [ref=e73]
+            - cell "3" [ref=e74]
+          - row [ref=e75]:
+            - cell "4" [ref=e76]
+            - cell "5" [ref=e77]
+            - cell "6" [ref=e78]
+            - cell "7" [ref=e79]
+            - cell "8" [ref=e80]
+            - cell "9" [ref=e81]
+            - cell "10" [ref=e82]
+          - row [ref=e83]:
+            - cell "11" [ref=e84]
+            - cell "12" [ref=e85]
+            - cell "13" [ref=e86]
+            - cell "14" [ref=e87]
+            - cell "15" [ref=e88]
+            - cell "16" [ref=e89]
+            - cell "17" [ref=e90]
+          - row [ref=e91]:
+            - cell "18" [ref=e92]
+            - cell "19" [ref=e93]
+            - cell "20" [ref=e94]
+            - cell "21" [ref=e95]
+            - cell "22" [ref=e96]
+            - cell "23" [ref=e97]
+            - cell "24" [ref=e98]
+          - row [ref=e99]:
+            - cell "25" [ref=e100]
+            - cell "26" [ref=e101]
+            - cell "27" [ref=e102]
+            - cell "28" [ref=e103]
+            - cell "29" [ref=e104]
+            - cell "30" [ref=e105]
+            - cell "31" [ref=e106]
+          - row [ref=e107]
+          - row [ref=e108]:
+            - columnheader "11月 2026" [ref=e109]
+          - row [ref=e110]:
+            - columnheader "日" [ref=e111]
+            - columnheader "月" [ref=e112]
+            - columnheader "火" [ref=e113]
+            - columnheader "水" [ref=e114]
+            - columnheader "木" [ref=e115]
+            - columnheader "金" [ref=e116]
+            - columnheader "土" [ref=e117]
+          - row [ref=e118]:
+            - cell "1" [ref=e119]
+            - cell "2" [ref=e120]
+            - cell "3" [ref=e121]
+            - cell "4" [ref=e122]
+            - cell "5" [ref=e123]
+            - cell "6" [ref=e124]
+            - cell "7" [ref=e125]
+          - row [ref=e126]:
+            - cell "8" [ref=e127]
+            - cell "9" [ref=e128]
+            - cell "10" [ref=e129]
+            - cell "11" [ref=e130]
+            - cell "12" [ref=e131]
+            - cell "13" [ref=e132]
+            - cell "14" [ref=e133]
+          - row [ref=e134]:
+            - cell "15" [ref=e135]
+            - cell "16" [ref=e136]
+            - cell "17" [ref=e137]
+            - cell "18" [ref=e138]
+            - cell "19" [ref=e139]
+            - cell "20" [ref=e140]
+            - cell "21" [ref=e141]
+          - row [ref=e142]:
+            - cell "22" [ref=e143]
+            - cell "23" [ref=e144]
+            - cell "24" [ref=e145]
+            - cell "25" [ref=e146]
+            - cell "26" [ref=e147]
+            - cell "27" [ref=e148]
+            - cell "28" [ref=e149]
+          - row [ref=e150]:
+            - cell "29" [ref=e151]
+            - cell "30" [ref=e152]
+            - cell [ref=e153]
+            - cell [ref=e154]
+            - cell [ref=e155]
+            - cell [ref=e156]
+            - cell [ref=e157]
+      - generic [ref=e158]:
+        - generic [ref=e159]:
+          - paragraph [ref=e160]: ①
+          - text: 営業+生産休業日
+        - generic [ref=e161]:
+          - paragraph [ref=e162]: ②
+          - text: 営業休業日（生産はあり）
+        - generic [ref=e163]:
+          - paragraph [ref=e164]: ③
+          - text: 生産休業日（営業はあり）
+        - generic [ref=e165]:
+          - text: 営業日：
+          - paragraph [ref=e166]: ①
+          - paragraph [ref=e167]: ②
+          - text: を除く日
+        - generic [ref=e168]:
+          - text: 生産日：
+          - paragraph [ref=e169]: ①
+          - paragraph [ref=e170]: ③
+          - text: を除く日
+    - generic [ref=e172]:
+      - group [ref=e174]:
+        - generic "9月18日以降の大型連休（シルバーウィーク・中国連休）の営業体制と納期に関するお知らせ" [ref=e175] [cursor=pointer]
+      - generic [ref=e176]:
+        - link [ref=e178] [cursor=pointer]:
+          - /url: https://hotmobily.jp/products/tapestry/
+          - img "Tapestry product banner" [ref=e180]
+        - button "Previous banner" [ref=e181] [cursor=pointer]: ❮
+        - button "Next banner" [ref=e182] [cursor=pointer]: ❯
+      - generic [ref=e183]:
+        - button "Show banner 1" [ref=e184] [cursor=pointer]
+        - button "Show banner 2" [ref=e185] [cursor=pointer]
+        - button "Show banner 3" [ref=e186] [cursor=pointer]
+      - heading "オリジナルグッズ・ノベルティを小ロット短納期で製作。" [level=1] [ref=e187]
+      - table [ref=e188]:
+        - rowgroup [ref=e189]:
+          - row [ref=e190]:
+            - cell [ref=e191]:
+              - link "オリジナルラバーストラップ オリジナルラバーストラップ 凹凸表面が特徴のソフトゴム製。自由なカタチで 製作。同人グッズ、記念品、販促品。100本～。 @126円～ 最短 2週間納品 15色定額料金※1 送料無料" [ref=e192] [cursor=pointer]:
+                - /url: http://new-hotmobily.test/products/rubberstrap
+                - generic [ref=e193]:
+                  - img "オリジナルラバーストラップ" [ref=e195]
+                  - generic [ref=e196]:
+                    - generic [ref=e197]: オリジナルラバーストラップ
+                    - generic [ref=e198]:
+                      - paragraph [ref=e199]: 凹凸表面が特徴のソフトゴム製。自由なカタチで
+                      - paragraph [ref=e200]: 製作。同人グッズ、記念品、販促品。100本～。
+                  - generic [ref=e201]:
+                    - paragraph [ref=e202]: "@126円～"
+                    - paragraph [ref=e203]: 最短 2週間納品
+                    - paragraph [ref=e204]: 15色定額料金※1
+                    - paragraph [ref=e205]: 送料無料
+      - generic [ref=e206]:
+        - heading "News!" [level=2] [ref=e208]
+        - link "2026.10.01 【新製品】ピタッと挟んで夜道の安全を守る！実用性抜群の「リフレクターマグネット」製作サービスを開始〜 高輝度3M社製シート採用・フルカラー印刷対応のオリジナル交通安全グッズ 〜" [ref=e209] [cursor=pointer]:
+          - /url: http://new-hotmobily.test/news/54
+          - generic [ref=e210]:
+            - generic [ref=e211]: 2026.10.01
+            - generic [ref=e212]: 【新製品】ピタッと挟んで夜道の安全を守る！実用性抜群の「リフレクターマグネット」製作サービスを開始〜 高輝度3M社製シート採用・フルカラー印刷対応のオリジナル交通安全グッズ 〜
+        - link "2026.10.01 【新製品】最短7営業日で出荷！「オリジナルラバーマグネット」の製作サービスがスタート〜 最安151円から！実用的で存在感抜群のノベルティ・販売品を自社生産でお届け 〜" [ref=e213] [cursor=pointer]:
+          - /url: http://new-hotmobily.test/news/53
+          - generic [ref=e214]:
+            - generic [ref=e215]: 2026.10.01
+            - generic [ref=e216]: 【新製品】最短7営業日で出荷！「オリジナルラバーマグネット」の製作サービスがスタート〜 最安151円から！実用的で存在感抜群のノベルティ・販売品を自社生産でお届け 〜
+        - link "2026.09.09 【10%OFF】オリジナルアクリルグッツ・ラバーグッズ制作キャンペーン｜100個〜のご注文がお得！" [ref=e217] [cursor=pointer]:
+          - /url: http://new-hotmobily.test/news/52
+          - generic [ref=e218]:
+            - generic [ref=e219]: 2026.09.09
+            - generic [ref=e220]: 【10%OFF】オリジナルアクリルグッツ・ラバーグッズ制作キャンペーン｜100個〜のご注文がお得！
+        - link "News一覧へ" [ref=e222] [cursor=pointer]:
+          - /url: http://new-hotmobily.test/news
+      - link [ref=e224] [cursor=pointer]:
+        - /url: /reviews/
+      - generic [ref=e228]:
+        - generic [aria-hidden] [ref=e229]:
+          - paragraph [ref=e230]:
+            - text: "お客様対応:"
+            - generic [ref=e231]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e232]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e233]: 原
+            - text: 製品：
+            - generic [ref=e234]: ラバーキーホルダー
+          - paragraph [ref=e235]: 2026年06月30日 13:05:00
+        - generic [aria-hidden] [ref=e236]:
+          - paragraph [ref=e237]:
+            - text: "お客様対応:"
+            - generic [ref=e238]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e239]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e240]: 原
+            - text: 製品：
+            - generic [ref=e241]: ラバーコースター
+          - paragraph [ref=e242]: 2026年06月30日 12:47:00
+        - generic [aria-hidden] [ref=e243]:
+          - paragraph [ref=e244]: デザインの作成補助や、仕上がりイメージ、納期、最終的な製品のクオリティ、全て満足でした
+          - separator [ref=e245]
+          - paragraph [ref=e246]:
+            - text: "お客様対応:"
+            - generic [ref=e247]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e248]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e249]: 原
+            - text: 製品：
+            - generic [ref=e250]: アクリルキーホルダー
+          - paragraph [ref=e251]: 2026年06月28日 16:22:00
+        - generic [ref=e252]:
+          - paragraph [ref=e253]: 特に不満もなく、とても満足した仕上がりでした。他の会社も検討しましたが、内容と価格のバランスで納得できました。1つ挙げるとすれば、注文の行程で「仕上がりイメージを確認後に入金」ということに気づかず、注文と同時に入金してしまいました。当方の確認不足ですが、感覚的に分かりづらかったかも、と少し思いました。
+          - separator [ref=e254]
+          - paragraph [ref=e255]:
+            - text: "お客様対応:"
+            - generic [ref=e256]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e257]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e258]: ビビアン
+            - text: 製品：
+            - generic [ref=e259]: アクリルキーホルダー
+          - paragraph [ref=e260]: 2026年09月08日 13:01:00
+        - generic [ref=e261]:
+          - paragraph [ref=e262]:
+            - text: "お客様対応:"
+            - generic [ref=e263]: ★ ★ ★ ★ ☆
+            - text: "製品の満足度:"
+            - generic [ref=e264]: ★ ★ ★ ★ ☆
+            - text: 営業担当：
+            - generic [ref=e265]: 竹村
+            - text: 製品：
+            - generic [ref=e266]: 刺繍キーホルダー
+          - paragraph [ref=e267]: 2026年08月31日 06:47:00
+        - generic [ref=e268]:
+          - paragraph [ref=e269]:
+            - text: "お客様対応:"
+            - generic [ref=e270]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e271]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e272]: ビビアン
+            - text: 製品：
+            - generic [ref=e273]: アクリルキーホルダー
+          - paragraph [ref=e274]: 2026年08月28日 11:11:00
+        - generic [aria-hidden] [ref=e275]:
+          - paragraph [ref=e276]:
+            - text: "お客様対応:"
+            - generic [ref=e277]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e278]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e279]: 原
+            - text: 製品：
+            - generic [ref=e280]: アクリルキーホルダー
+          - paragraph [ref=e281]: 2026年08月26日 11:53:00
+        - generic [aria-hidden] [ref=e282]:
+          - paragraph [ref=e283]:
+            - text: "お客様対応:"
+            - generic [ref=e284]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e285]: ★ ★ ★ ★ ☆
+            - text: 営業担当：
+            - generic [ref=e286]: ビビアン
+            - text: 製品：
+            - generic [ref=e287]: アクリルキーホルダー
+          - paragraph [ref=e288]: 2026年08月20日 17:58:00
+        - generic [aria-hidden] [ref=e289]:
+          - paragraph [ref=e290]: 仕上がりもよく、大変お世話になりました。
+          - separator [ref=e291]
+          - paragraph [ref=e292]:
+            - text: "お客様対応:"
+            - generic [ref=e293]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e294]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e295]: 竹村
+            - text: 製品：
+            - generic [ref=e296]: フライトタグ
+          - paragraph [ref=e297]: 2026年08月20日 10:48:00
+        - generic [aria-hidden] [ref=e298]:
+          - paragraph [ref=e299]:
+            - text: "お客様対応:"
+            - generic [ref=e300]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e301]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e302]: 原
+            - text: 製品：
+            - generic [ref=e303]: ラバーコースター
+          - paragraph [ref=e304]: 2026年08月18日 13:55:00
+        - generic [aria-hidden] [ref=e305]:
+          - paragraph [ref=e306]: ・対応に関して：他社はメールでのやり取りだけの対応が多い中で、御社は電話連絡で直接相談できるのでとても安心でした。また急な注文変更に対してもスピーディにご対応いただきとても感謝しています。支払いに関しても柔軟に対応いただき助かりました。 ・最終製品に対して：アクリル部分にセロハンのカバーがされていたのは素晴らしいです。表裏のデザインで制作していただきましたが、間の白おさえの白色が薄いのか、かざすと反対側が透けて見えるのは少し残念でした。
+          - separator [ref=e307]
+          - paragraph [ref=e308]:
+            - text: "お客様対応:"
+            - generic [ref=e309]: ★ ★ ★ ★ ☆
+            - text: "製品の満足度:"
+            - generic [ref=e310]: ★ ★ ★ ★ ☆
+            - text: 営業担当：
+            - generic [ref=e311]: 竹村
+            - text: 製品：
+            - generic [ref=e312]: アクリルアンブレラマーカー
+          - paragraph [ref=e313]: 2026年08月03日 08:46:00
+        - generic [aria-hidden] [ref=e314]:
+          - paragraph [ref=e315]:
+            - text: "お客様対応:"
+            - generic [ref=e316]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e317]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e318]: 竹村
+            - text: 製品：
+            - generic [ref=e319]: リフレクター（圧着）
+          - paragraph [ref=e320]: 2026年07月31日 12:53:00
+        - generic [aria-hidden] [ref=e321]:
+          - paragraph [ref=e322]: 追加で製作が必要となり、タイトな納期で心配しておりましたが、丁寧な回答とご対応で納期にも無事間に合い、イメージ通りのものができて大変良かったです
+          - separator [ref=e323]
+          - paragraph [ref=e324]:
+            - text: "お客様対応:"
+            - generic [ref=e325]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e326]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e327]: 原
+            - text: 製品：
+            - generic [ref=e328]: アクリルキーホルダー
+          - paragraph [ref=e329]: 2026年07月29日 09:56:00
+        - generic [aria-hidden] [ref=e330]:
+          - paragraph [ref=e331]:
+            - text: "お客様対応:"
+            - generic [ref=e332]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e333]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e334]: 原
+            - text: 製品：
+            - generic [ref=e335]: フライトタグ
+          - paragraph [ref=e336]: 2026年07月28日 13:15:00
+        - generic [aria-hidden] [ref=e337]:
+          - paragraph [ref=e338]: 日数がタイトであったのにご対応いただき、製品の仕上がりも非常に満足できるものでした。対応も丁寧で分かりやすく、とても助かりました。ありがとうございました。
+          - separator [ref=e339]
+          - paragraph [ref=e340]:
+            - text: "お客様対応:"
+            - generic [ref=e341]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e342]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e343]: 竹村
+            - text: 製品：
+            - generic [ref=e344]: ラバーキーホルダー
+          - paragraph [ref=e345]: 2026年07月28日 12:49:00
+        - generic [aria-hidden] [ref=e346]:
+          - paragraph [ref=e347]: 思った以上に素敵な仕上がりで大満足です。 次からもお願いします。
+          - separator [ref=e348]
+          - paragraph [ref=e349]:
+            - text: "お客様対応:"
+            - generic [ref=e350]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e351]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e352]: その他・覚えていない
+            - text: 製品：
+            - generic [ref=e353]: アクリルキーホルダー
+          - paragraph [ref=e354]: 2026年07月21日 17:17:00
+        - generic [aria-hidden] [ref=e355]:
+          - paragraph [ref=e356]:
+            - text: "お客様対応:"
+            - generic [ref=e357]: ★ ★ ★ ★ ☆
+            - text: "製品の満足度:"
+            - generic [ref=e358]: ★ ★ ★ ★ ☆
+            - text: 営業担当：
+            - generic [ref=e359]: ビビアン
+            - text: 製品：
+            - generic [ref=e360]: ラバーストラップ
+          - paragraph [ref=e361]: 2026年07月09日 11:50:00
+        - generic [aria-hidden] [ref=e362]:
+          - paragraph [ref=e363]: こちらを利用するのは初めてで、入稿の仕方について一度お問い合わせをしたところ、迅速かつ丁寧なお返事をいただきました。その後、シミュレーターを使用し入稿しましたが簡単でわかりやすく、出来上がりもきれいで大変満足しております。モノづくり初心者でも、作りたいものを形にしていただくことができました。またお願いしたいと思います。
+          - separator [ref=e364]
+          - paragraph [ref=e365]:
+            - text: "お客様対応:"
+            - generic [ref=e366]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e367]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e368]: 竹村
+            - text: 製品：
+            - generic [ref=e369]: アクリルキーホルダー
+          - paragraph [ref=e370]: 2026年07月04日 19:53:00
+        - generic [aria-hidden] [ref=e371]:
+          - paragraph [ref=e372]: 発注確定直前で数が変更になる可能性が出てくるトラブルがあったのですが、オプションの増減等で納期が調整できるとご連絡いただきまして最終的に納得できる数量で発注できました。 サイトの説明や仕上がりイメージ図がわかりやすく、初めてのラバー製品でも安心して注文できました。 最終製品のクオリティが高く、クライアント様にもご満足いただけました。
+          - separator [ref=e373]
+          - paragraph [ref=e374]:
+            - text: "お客様対応:"
+            - generic [ref=e375]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e376]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e377]: 原
+            - text: 製品：
+            - generic [ref=e378]: ラバーキーホルダー
+          - paragraph [ref=e379]: 2026年06月30日 13:33:00
+        - generic [aria-hidden] [ref=e380]:
+          - paragraph [ref=e381]: 試作品も複数対応いただき、イメージ通りのものができあがりました。
+          - separator [ref=e382]
+          - paragraph [ref=e383]:
+            - text: "お客様対応:"
+            - generic [ref=e384]: ★ ★ ★ ☆ ☆
+            - text: "製品の満足度:"
+            - generic [ref=e385]: ★ ★ ★ ★ ☆
+            - text: 営業担当：
+            - generic [ref=e386]: 原
+            - text: 製品：
+            - generic [ref=e387]: アクリルアンブレラマーカー
+          - paragraph [ref=e388]: 2026年06月30日 13:27:00
+        - generic [aria-hidden] [ref=e389]:
+          - paragraph [ref=e390]:
+            - text: "お客様対応:"
+            - generic [ref=e391]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e392]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e393]: 原
+            - text: 製品：
+            - generic [ref=e394]: ラバーキーホルダー
+          - paragraph [ref=e395]: 2026年06月30日 13:05:00
+        - generic [aria-hidden] [ref=e396]:
+          - paragraph [ref=e397]:
+            - text: "お客様対応:"
+            - generic [ref=e398]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e399]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e400]: 原
+            - text: 製品：
+            - generic [ref=e401]: ラバーコースター
+          - paragraph [ref=e402]: 2026年06月30日 12:47:00
+        - generic [aria-hidden] [ref=e403]:
+          - paragraph [ref=e404]: デザインの作成補助や、仕上がりイメージ、納期、最終的な製品のクオリティ、全て満足でした
+          - separator [ref=e405]
+          - paragraph [ref=e406]:
+            - text: "お客様対応:"
+            - generic [ref=e407]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e408]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e409]: 原
+            - text: 製品：
+            - generic [ref=e410]: アクリルキーホルダー
+          - paragraph [ref=e411]: 2026年06月28日 16:22:00
+        - generic [aria-hidden] [ref=e412]:
+          - paragraph [ref=e413]: 特に不満もなく、とても満足した仕上がりでした。他の会社も検討しましたが、内容と価格のバランスで納得できました。1つ挙げるとすれば、注文の行程で「仕上がりイメージを確認後に入金」ということに気づかず、注文と同時に入金してしまいました。当方の確認不足ですが、感覚的に分かりづらかったかも、と少し思いました。
+          - separator [ref=e414]
+          - paragraph [ref=e415]:
+            - text: "お客様対応:"
+            - generic [ref=e416]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e417]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e418]: ビビアン
+            - text: 製品：
+            - generic [ref=e419]: アクリルキーホルダー
+          - paragraph [ref=e420]: 2026年09月08日 13:01:00
+        - generic [aria-hidden] [ref=e421]:
+          - paragraph [ref=e422]:
+            - text: "お客様対応:"
+            - generic [ref=e423]: ★ ★ ★ ★ ☆
+            - text: "製品の満足度:"
+            - generic [ref=e424]: ★ ★ ★ ★ ☆
+            - text: 営業担当：
+            - generic [ref=e425]: 竹村
+            - text: 製品：
+            - generic [ref=e426]: 刺繍キーホルダー
+          - paragraph [ref=e427]: 2026年08月31日 06:47:00
+        - generic [aria-hidden] [ref=e428]:
+          - paragraph [ref=e429]:
+            - text: "お客様対応:"
+            - generic [ref=e430]: ★ ★ ★ ★ ★
+            - text: "製品の満足度:"
+            - generic [ref=e431]: ★ ★ ★ ★ ★
+            - text: 営業担当：
+            - generic [ref=e432]: ビビアン
+            - text: 製品：
+            - generic [ref=e433]: アクリルキーホルダー
+          - paragraph [ref=e434]: 2026年08月28日 11:11:00
+  - generic [ref=e436]:
+    - generic [ref=e437]: 商品情報
+    - generic [ref=e438]:
+      - link "全商品一覧" [ref=e440] [cursor=pointer]:
+        - /url: /
+      - link "ラバーストラップ" [ref=e442] [cursor=pointer]:
+        - /url: /products/rubberstrap/
+      - link "ラバーコースター" [ref=e444] [cursor=pointer]:
+        - /url: /products/rubbercoaster/
+      - link "アクリルキーホルダー" [ref=e446] [cursor=pointer]:
+        - /url: /products/acrylic/
+      - link "リフレクター（反射）チャーム" [ref=e448] [cursor=pointer]:
+        - /url: /products/reflecter.php
+      - link "メガネクロス・マイクロファイバーポーチ" [ref=e450] [cursor=pointer]:
+        - /url: /products/microfibers.php
+      - link "カラビナ" [ref=e452] [cursor=pointer]:
+        - /url: /products/carabiner/
+      - link "オリジナルキーホルダー" [ref=e454] [cursor=pointer]:
+        - /url: /products/keychains-ranking
+    - generic [ref=e455]:
+      - link "キャンペーン一覧" [ref=e457] [cursor=pointer]:
+        - /url: /campaign/
+      - link "個人情報保護方針" [ref=e459] [cursor=pointer]:
+        - /url: /privacy/index.html
+      - link "運営会社" [ref=e461] [cursor=pointer]:
+        - /url: /company/index.html
+      - link "ご利用規約" [ref=e463] [cursor=pointer]:
+        - /url: /sitepolicy/index.html
+      - link "問い合わせサンプル請求" [ref=e465] [cursor=pointer]:
+        - /url: /contact/index.php
+      - link "ホットストラップ" [ref=e467] [cursor=pointer]:
+        - /url: //hotstrap.jp/
+      - link "お役立ち情報" [ref=e469] [cursor=pointer]:
+        - /url: //hotmobily.jp/blog-content/lists
+      - link "シリコンリストバンドスタジオ" [ref=e471] [cursor=pointer]:
+        - /url: https://silicone-wristband-studio.jp/
+      - link "Custom pvc keychains YG" [ref=e473] [cursor=pointer]:
+        - /url: https://you-goods.com/
+    - paragraph [ref=e474]: Copyright © 2023-2028 ホットモバイリーオリジナルグッズ. Powered by YOU AND EARTH Co.,ltd. ホットモバイリー、ホットストラップはユー・アンド・アース株式会社の登録商標です。
+  - text: "> > >"

@@ -14,6 +14,8 @@ class ProductOptionGroup extends Model
         'product_option_step_id',
         'sort_order',
         'has_option_configuration',
+        'quantity_min',
+        'quantity_max',
         'show_in_order_summary',
         'summary_label',
         'summary_sort_order',
@@ -55,6 +57,8 @@ class ProductOptionGroup extends Model
         return [
             'sort_order' => 'integer',
             'has_option_configuration' => 'boolean',
+            'quantity_min' => 'integer',
+            'quantity_max' => 'integer',
             'show_in_order_summary' => 'boolean',
             'summary_sort_order' => 'integer',
             'show_in_preview_summary' => 'boolean',

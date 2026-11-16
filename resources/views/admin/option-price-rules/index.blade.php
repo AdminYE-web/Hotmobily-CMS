@@ -17,6 +17,43 @@
             <div class="alert alert-success">{{ session('status') }}</div>
         @endif
 
+        @php($hasFilters = $filters['q'] !== '' || $filters['product'] !== '' || $filters['price_type'] !== '')
+
+        <form method="GET" action="{{ route('admin.option-price-rules.index') }}" class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="form-row align-items-end">
+                    <div class="col-md-5 mb-2 mb-md-0">
+                        <label for="filter-q" class="small text-muted mb-1">Search</label>
+                        <input type="search" id="filter-q" name="q" value="{{ $filters['q'] }}" class="form-control" placeholder="Rule name, product, option name or code">
+                    </div>
+                    <div class="col-md-3 mb-2 mb-md-0">
+                        <label for="filter-product" class="small text-muted mb-1">Product</label>
+                        <select id="filter-product" name="product" class="form-control">
+                            <option value="">All</option>
+                            <option value="global" @selected($filters['product'] === 'global')>All products (global rules)</option>
+                            @foreach ($productOptions as $product)
+                                <option value="{{ $product->id }}" @selected($filters['product'] === (string) $product->id)>{{ $product->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2 mb-md-0">
+                        <label for="filter-price-type" class="small text-muted mb-1">Price Type</label>
+                        <select id="filter-price-type" name="price_type" class="form-control">
+                            <option value="">All</option>
+                            <option value="per_order" @selected($filters['price_type'] === 'per_order')>Per order</option>
+                            <option value="per_piece" @selected($filters['price_type'] === 'per_piece')>Per piece</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex">
+                        <button type="submit" class="btn btn-primary flex-fill mr-2">Search</button>
+                        @if ($hasFilters)
+                            <a href="{{ route('admin.option-price-rules.index') }}" class="btn btn-outline-secondary">Clear</a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </form>
+
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <strong>Rule list</strong>
@@ -44,7 +81,7 @@
                                 <tr>
                                     <td>{{ $rules->firstItem() + $loop->index }}</td>
                                     <td>
-                                        {{ $rule->product?->name ?? '-' }}
+                                        {{ $rule->product_id === null ? 'All products' : ($rule->product?->name ?? '-') }}
                                         <div class="small text-muted">{{ $rule->product?->slug }}</div>
                                     </td>
                                     <td>{{ $rule->rule_name }}</td>
@@ -67,7 +104,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="9" class="text-center text-muted py-4">No Option Price Rules created yet.</td></tr>
+                                <tr><td colspan="9" class="text-center text-muted py-4">{{ $hasFilters ? 'No rules match your search.' : 'No Option Price Rules created yet.' }}</td></tr>
                             @endforelse
                         </tbody>
                     </table>

@@ -347,6 +347,9 @@
                     }
 
 
+                    $headerTextColor = strtolower(trim((string) ($content['text_color'] ?? '#000000')));
+                    if (!preg_match('/^#[0-9a-f]{6}$/', $headerTextColor)) $headerTextColor = '#000000';
+
                     $showShare =
                         (bool)
                         (
@@ -364,7 +367,7 @@
 
                     <h1
                         class="store-product-title h1-new"
-                        style="background-color: {{ $backgroundColor }} !important;"
+                        style="background-color: {{ $backgroundColor }} !important; color: {{ $headerTextColor }} !important;"
                     >
 
                         {{ $title }}
@@ -530,6 +533,7 @@
                     <div
                         class="store-gallery product-gallery"
                         data-store-gallery
+                        style="--gallery-columns: {{ in_array($content['columns'] ?? null, [3, '3'], true) ? 3 : 2 }};"
                     >
 
                         <div class="store-gallery-main main-image">
@@ -658,6 +662,9 @@
 
                     @endphp
 
+                    @if(!empty($content['price_table_enabled']))
+                        @include('products.partials.product-details-price-table')
+                    @else
                     @if(
                         !empty(
                             $content[
@@ -720,6 +727,8 @@
                     @endif
 
 
+                    @endif
+
                     @if(
                         isset(
                             $content[
@@ -767,13 +776,11 @@
 
                         <div class="store-product-note">
 
-                            {!! nl2br(
-                                e(
-                                    $content[
-                                        'shipping_note'
-                                    ]
-                                )
-                            ) !!}
+                            @if(($content['shipping_note_format'] ?? 'plain') === 'html')
+                                {!! (new \App\Support\RichTextSanitizer)->sanitize($content['shipping_note'] ?? '') !!}
+                            @else
+                                {!! nl2br(e($content['shipping_note'] ?? '')) !!}
+                            @endif
 
                         </div>
 
@@ -882,7 +889,14 @@
 
                 @endphp
 
-                @if ($isProductDataPage)
+                @php
+                    $headingStyle = is_array($content['heading_style'] ?? null) ? \App\Support\HeadingContent::style($content['heading_style']) : null;
+                @endphp
+                @if ($headingStyle !== null)
+                    <{{ $headingTag }} class="store-heading store-heading--custom"
+                        style="--heading-align:{{ $headingStyle['alignment'] }};--heading-background:{{ $headingStyle['background_color'] }};--heading-color:{{ $headingStyle['text_color'] }};--heading-line-color:{{ $headingStyle['underline_color'] }};--heading-line-width:{{ $headingStyle['show_underline'] ? $headingStyle['underline_width'] : 0 }}px;">{{ $content['text'] ?? '' }}</{{ $headingTag }}>
+                    @if($isProductDataPage && !empty($content['updated_date']))<div class="store-heading-date">© {{ $content['updated_date'] }}</div>@endif
+                @elseif ($isProductDataPage)
                     @php
                         $headingBackgroundColor = strtolower(trim((string) ($content['background_color'] ?? '')));
 
@@ -1224,6 +1238,9 @@
                 'button'
             )
 
+                @if(is_array($content['items'] ?? null))
+                    @include('products.partials.button-group')
+                @else
                 @php
 
                     $buttonUrl =
@@ -1294,6 +1311,7 @@
                     </a>
 
                 @endif
+                @endif
 
 
             {{-- ============================================================
@@ -1308,7 +1326,10 @@
 
                 @php
 
-                    $linkUrl =
+                    $isFileDownload = ($content['link_mode'] ?? 'link') === 'download';
+                    $linkUrl = $isFileDownload
+                        ? \App\Support\TextLinkDownload::url($content)
+                        :
                         $safeUrl(
                             $content['url']
                             ??
@@ -1319,9 +1340,8 @@
                     $newTab =
                         (bool)
                         (
-                            $content['new_tab']
-                            ??
-                            false
+                            ($content['target'] ?? '') === '_blank'
+                            || ($content['new_tab'] ?? false)
                         );
 
 
@@ -1358,11 +1378,12 @@
 
                     <a
                         href="{{ $linkUrl }}"
-                        class="store-text-link"
-                        style="color: {{ $textColor }} !important;"
+                        class="store-text-link {{ $isFileDownload ? 'store-text-download' : '' }}"
+                        @if($isFileDownload) download="{{ $content['file_name'] ?? '' }}" @endif
+                        style="color: {{ $textColor }} !important; display: inline-block; margin-top: {{ max(0, min(200, (int) ($content['spacing_top'] ?? 0))) }}px; margin-bottom: {{ max(0, min(200, (int) ($content['spacing_bottom'] ?? 0))) }}px; text-decoration: {{ ($content['underline'] ?? true) ? 'underline' : 'none' }} !important;"
 
                         @if(
-                            $newTab
+                            !$isFileDownload && $newTab
                         )
                             target="_blank"
                             rel="noopener noreferrer"
@@ -1450,6 +1471,12 @@
                             )
                         );
 
+                    $infoImageLink = $safeUrl(
+                        array_key_exists('image_link_url', $content)
+                            ? $content['image_link_url']
+                            : ($content['link_url'] ?? '')
+                    );
+
 
                     if (
                         $infoImageAlt === ''
@@ -1499,11 +1526,11 @@
                     )
 
                         @if(
-                            $infoLink
+                            $infoImageLink
                         )
 
                             <a
-                                href="{{ $infoLink }}"
+                                href="{{ $infoImageLink }}"
                                 class="store-info-card-image"
                             >
 
@@ -1703,15 +1730,6 @@
                         &&
                         $product instanceof \App\Models\ProductDataPage;
 
-                    $youtubeToggleId =
-                        'store-youtube-toggle-'
-                        .
-                        (
-                            $effectiveId !== ''
-                                ? $effectiveId
-                                : md5(json_encode($block))
-                        );
-
                     $youtubeTitle = trim((string) (
                         $content['title']
                         ?? ($isProductDataPage
@@ -1747,15 +1765,11 @@
                     ));
 
                     $youtubeLinkText = trim((string) (
-                        $content['link_text']
-                        ?? ($isProductDataPage
-                            ? ''
-                            : '自社生産の詳細はこちら')
+                        $content['link_text'] ?? ''
                     ));
 
                     $youtubeLinkUrl = trim((string) (
-                        $content['link_url']
-                        ?? '/lp/rubber-guide-inhouse.php'
+                        $content['link_url'] ?? ''
                     ));
 
                     if ($isProductDataPage) {
@@ -1778,12 +1792,6 @@
                         ? $youtubeThumbnail
                         : '/products/img/rubber-production-yt.webp';
 
-                    $youtubeLinkText = $youtubeLinkText !== ''
-                        ? $youtubeLinkText
-                        : ($isProductDataPage
-                            ? ''
-                            : '自社生産の詳細はこちら');
-
                     $isValidYoutubeId = (bool) preg_match(
                         '/^[A-Za-z0-9_-]{11}$/',
                         $youtubeId
@@ -1791,31 +1799,16 @@
                 @endphp
 
                 @if($isValidYoutubeId)
-                    <div class="store-youtube {{ $isProductDataPage ? 'store-youtube--direct' : 'store-accordion' }}">
+                    <div class="store-youtube store-youtube--direct">
                         @if ($isProductDataPage && $youtubeTitle !== '')
                             <div class="store-youtube-title">
                                 {{ $youtubeTitle }}
                             </div>
                         @endif
 
-                        @unless ($isProductDataPage)
-                        <input
-                            id="{{ $youtubeToggleId }}"
-                            class="store-accordion-input"
-                            type="checkbox"
-                            checked
-                        >
 
-                        <label
-                            class="store-accordion-summary"
-                            for="{{ $youtubeToggleId }}"
-                        >
-                            <span>{{ $youtubeTitle }}</span>
-                            <span class="store-accordion-arrow"></span>
-                        </label>
-                        @endunless
 
-                        <div class="{{ $isProductDataPage ? 'store-youtube-direct-content' : 'store-accordion-content' }}">
+                        <div class="store-youtube-direct-content">
                             <div class="store-youtube-player">
                                 <button
                                     type="button"
@@ -1832,7 +1825,9 @@
                                 </button>
                             </div>
 
-                            @if($youtubeLinkUrl !== '' && (!$isProductDataPage || $youtubeLinkText !== ''))
+                            @include('products.partials.youtube-tags')
+
+                            @if($youtubeLinkUrl !== '' && $youtubeLinkText !== '')
                                 <div class="store-youtube-link">
                                     <a href="{{ $youtubeLinkUrl }}">
                                         {{ $youtubeLinkText }}
@@ -1971,7 +1966,7 @@
                                     <div class="store-related-blog-body">
                                         <a
                                             href="{{ $articleUrl }}"
-                                            style="color:black;"
+                                            style="color:black; text-decoration:{{ filter_var($article['underline'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'underline' : 'none' }} !important;"
                                         >
                                             {{ $articleTitle }}
                                         </a>
@@ -2098,6 +2093,8 @@
                             : $content;
 
 
+                    $daysSettings = array_replace(\App\Support\CustomTableBusinessDays::defaults(), array_intersect_key($table, \App\Support\CustomTableBusinessDays::defaults()));
+
                     $tableTitle =
                         trim(
                             (string)
@@ -2127,6 +2124,7 @@
                     )
                 )
 
+                    <div class="store-custom-table-block" data-custom-table-days>
                     <div class="store-table-scroll">
 
                         @if(
@@ -2141,6 +2139,18 @@
 
                         @endif
 
+                        @if($daysSettings['description'] !== '' || $daysSettings['enable_business_days_switch'])
+                            <div class="store-custom-table-intro {{ $daysSettings['description'] !== '' ? 'has-description' : '' }} {{ $daysSettings['enable_business_days_switch'] ? 'has-switch' : '' }}">
+                            @if($daysSettings['description'] !== '')
+                                <div class="store-custom-table-description">{!! (new \App\Support\RichTextSanitizer)->sanitize($daysSettings['description']) !!}</div>
+                            @endif
+                            @if($daysSettings['enable_business_days_switch'])
+                            <div class="store-custom-table-days-controls">
+                                <label class="store-custom-table-days-switch"><input type="checkbox" data-custom-table-days-toggle @checked($daysSettings['show_business_days'])><span class="store-custom-table-days-track" aria-hidden="true"></span><span>{{ $daysSettings['business_days_label'] }}</span></label>
+                            </div>
+                            @endif
+                            </div>
+                        @endif
                         <table class="store-custom-table">
 
                             <colgroup>
@@ -2462,6 +2472,9 @@
                                                     )
                                                 ) !!}
 
+                                                @if(isset($cell['business_days']) && $cell['business_days'] !== '')
+                                                    <span class="store-custom-table-business-days" data-custom-table-day-count @if($daysSettings['enable_business_days_switch'] && !$daysSettings['show_business_days']) hidden @endif>{{ (int) $cell['business_days'] }}日</span>
+                                                @endif
                                             </td>
 
                                         @endforeach
@@ -2474,6 +2487,7 @@
 
                         </table>
 
+                    </div>
                     </div>
 
                 @endif
@@ -2662,7 +2676,9 @@
                         GROUPED
                     ==================================================== --}}
 
-                    @if(
+                    @if($displayType === 'summary')
+                        @include('products.partials.shipping-summary')
+                    @elseif(
                         $displayType
                         ===
                         'grouped'
@@ -3780,6 +3796,22 @@
                     "
                 ></div>
 
+
+            @elseif($type === 'gallery_showcase')
+                @include('products.partials.gallery-showcase')
+            @elseif($type === 'usage_examples')
+                @include('products.partials.usage-examples')
+            @elseif($type === 'product_catalog')
+                @include('products.partials.product-catalog')
+            @elseif($type === 'custom_faq')
+                @include('products.partials.custom-faq')
+            @elseif($type === 'x_posts')
+                @include('products.partials.x-posts')
+            @elseif($type === 'attachment_gallery')
+                @include('products.partials.attachment-gallery')
+
+            @elseif($type === 'price_matrix')
+                @include('products.partials.price-matrix')
 
             {{-- ============================================================
                 System Components

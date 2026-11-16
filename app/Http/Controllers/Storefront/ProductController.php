@@ -109,7 +109,7 @@ class ProductController extends Controller
         return $this->renderProduct($product, $previewDraft);
     }
 
-    public function renderProduct(Product $product, bool $previewDraft = false, ?array $snapshot = null)
+    public function renderProduct(Product $product, bool $previewDraft = false, ?array $snapshot = null, ?array $layoutSnapshot = null, bool $visualEditorPreview = true)
     {
 
         /*
@@ -147,10 +147,10 @@ class ProductController extends Controller
 
         }
 
-        $layout = $previewDraft
+        $layout = $layoutSnapshot ?? ($previewDraft
             ? ($product->layout->draft_layout_json
                 ?? $product->layout->published_layout_json)
-            : $product->layout->published_layout_json;
+            : $product->layout->published_layout_json);
 
         if (empty($layout)) {
 
@@ -384,7 +384,7 @@ class ProductController extends Controller
 
                 'contents' => $blocks,
 
-                'visualEditorPreview' => $snapshot !== null,
+                'visualEditorPreview' => $snapshot !== null && $visualEditorPreview,
 
                 'publishedAt' => $product->page?->published_at,
 
@@ -1233,24 +1233,32 @@ class ProductController extends Controller
      */
     private function validateSelectedOptionQuantity(Product $product, int $quantity, array $selectedOptionIds): void
     {
-        if ($selectedOptionIds === []) {
-            return;
-        }
-
         $product->loadMissing([
             'optionSteps',
             'optionGroupAssignments.optionGroup.productOptions',
             'optionGroupAssignments.items.productOption',
         ]);
 
-        $availableOptions = collect($this->storefrontOrderSteps($product))
-            ->flatMap(static fn (array $step): array => $step['groups'])
+        $availableGroups = collect($this->storefrontOrderSteps($product))
+            ->flatMap(static fn (array $step): array => $step['groups']);
+        $availableOptions = $availableGroups
             ->flatMap(static fn (array $group): array => $group['options'])
             ->values();
 
         $minimum = 1;
         $maximum = null;
         $hasQuantityRule = false;
+
+        foreach ($availableGroups->where('display_type', 'quantity_input') as $group) {
+            if (($group['quantity_min'] ?? null) !== null) {
+                $minimum = max($minimum, (int) $group['quantity_min']);
+                $hasQuantityRule = true;
+            }
+            if (($group['quantity_max'] ?? null) !== null) {
+                $maximum = $maximum === null ? (int) $group['quantity_max'] : min($maximum, (int) $group['quantity_max']);
+                $hasQuantityRule = true;
+            }
+        }
 
         foreach ($selectedOptionIds as $optionId) {
             $selectedOptions = $availableOptions
@@ -1476,6 +1484,9 @@ class ProductController extends Controller
                         'name' => $group->group_name,
                         'display_type' => $group->display_type ?: 'button',
                         'help_text' => $group->help_text,
+                        'quantity_min' => $assignment->quantity_min,
+                        'quantity_max' => $assignment->quantity_max,
+                        'description' => $group->description,
                         'remark_text' => $group->remark_text,
                         'is_required' => (bool) $group->is_required,
                         'has_option_configuration' => (bool) $assignment->has_option_configuration,
@@ -1600,7 +1611,7 @@ class ProductController extends Controller
             && Schema::hasTable('option_price_rule_tiers')
         ) {
             $pricing['option_rules'] = OptionPriceRule::query()
-                ->where('product_id', $product->id)
+                ->where(fn ($query) => $query->where('product_id', $product->id)->orWhereNull('product_id'))
                 ->with([
                     'targetOption:id,option_group_id',
                     'conditions:id,option_price_rule_id,product_option_id',
@@ -1609,6 +1620,7 @@ class ProductController extends Controller
                 ->orderBy('id')
                 ->get()
                 ->map(static fn (OptionPriceRule $rule): array => [
+                    'is_global' => $rule->product_id === null,
                     'target_option_id' => (int) $rule->target_product_option_id,
                     'target_group_id' => (int) ($rule->targetOption?->option_group_id ?? 0),
                     'price_type' => $rule->price_type,

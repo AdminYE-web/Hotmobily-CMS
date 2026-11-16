@@ -1298,6 +1298,12 @@ document.addEventListener(
 
                                 ${draftButton}
 
+                                <button type="button"
+                                    class="btn btn-sm btn-outline-primary duplicate-product"
+                                    data-id="${product.id}">
+                                    Duplicate
+                                </button>
+
 
                                 <a
                                     href="/admin/products/${product.id}/options"
@@ -1323,19 +1329,6 @@ document.addEventListener(
                                 >
                                     Edit
                                 </button>
-
-
-                                <a
-                                    href="/api/v1/products/${encodeProductPath(product.slug)}/page"
-                                    target="_blank"
-                                    class="
-                                        btn
-                                        btn-sm
-                                        btn-outline-secondary
-                                    "
-                                >
-                                    API
-                                </a>
 
 
                                 <button
@@ -2241,6 +2234,36 @@ function encodeProductPath(
         |--------------------------------------------------------------------------
         */
 
+        async function duplicateProduct(id, button)
+        {
+            button.disabled = true;
+            button.textContent = 'Duplicating...';
+
+            try {
+                const response = await fetch(`/api/v1/admin/products/${id}/duplicate`, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrf,
+                    },
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw result;
+                }
+
+                await loadProducts();
+                await loadProductLayouts();
+                await openEditModal(result.data.id);
+            } catch (error) {
+                alert(formatApiError(error));
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Duplicate';
+            }
+        }
+
         async function deleteProduct(id)
         {
             const product =
@@ -2329,6 +2352,12 @@ function encodeProductPath(
 
         function bindProductButtons()
         {
+            document.querySelectorAll('.duplicate-product').forEach(function (button) {
+                button.onclick = function () {
+                    duplicateProduct(this.dataset.id, this);
+                };
+            });
+
             document
                 .querySelectorAll(
                     '.edit-product'

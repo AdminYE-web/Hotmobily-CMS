@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ProductLayout;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class ProductLayoutController extends Controller
@@ -98,6 +100,34 @@ class ProductLayoutController extends Controller
     | Show
     |--------------------------------------------------------------------------
     */
+
+    public function duplicate(ProductLayout $productLayout)
+    {
+        $copy = DB::transaction(function () use ($productLayout) {
+            $source = ProductLayout::query()->lockForUpdate()->findOrFail($productLayout->id);
+            $baseSlug = Str::substr($source->slug, 0, 230).'-copy';
+            $slug = $baseSlug;
+            $number = 2;
+
+            while (ProductLayout::where('slug', $slug)->exists()) {
+                $slug = $baseSlug.'-'.$number++;
+            }
+
+            return ProductLayout::create([
+                'name' => Str::substr($source->name, 0, 248).' (Copy)',
+                'slug' => $slug,
+                'description' => $source->description,
+                'status' => 'draft',
+                'draft_layout_json' => $source->draft_layout_json
+                    ?? $source->published_layout_json
+                    ?? ['version' => 2, 'rows' => []],
+                'published_layout_json' => null,
+                'published_at' => null,
+            ]);
+        });
+
+        return response()->json(['success' => true, 'data' => $copy], 201);
+    }
 
     public function show(
         ProductLayout $productLayout
@@ -224,6 +254,13 @@ class ProductLayoutController extends Controller
 
             'template_button',
 
+            'gallery_showcase',
+            'attachment_gallery',
+            'usage_examples',
+            'product_catalog',
+            'custom_faq',
+            'x_posts',
+            'price_matrix',
             'price_accordion',
 
             'shipping_schedule',
@@ -285,6 +322,13 @@ class ProductLayoutController extends Controller
 
             'template_button',
 
+            'gallery_showcase',
+            'attachment_gallery',
+            'usage_examples',
+            'product_catalog',
+            'custom_faq',
+            'x_posts',
+            'price_matrix',
             'price_accordion',
 
             'shipping_schedule',
@@ -380,6 +424,16 @@ class ProductLayoutController extends Controller
                     'present',
                     'array',
                 ],
+
+                'rows.*.columns.*.blocks.*.settings.showcase' => 'sometimes|array',
+                'rows.*.columns.*.blocks.*.settings.showcase.title' => 'nullable|string|max:255',
+                'rows.*.columns.*.blocks.*.settings.showcase.description' => 'nullable|string|max:50000',
+                'rows.*.columns.*.blocks.*.settings.showcase.columns' => 'sometimes|integer|between:1,4',
+                'rows.*.columns.*.blocks.*.settings.showcase.show_tags' => 'sometimes|boolean',
+                'rows.*.columns.*.blocks.*.settings.showcase.show_more' => 'sometimes|boolean',
+                'rows.*.columns.*.blocks.*.settings.x_columns' => ['sometimes', 'integer', 'in:1,2,3'],
+                'rows.*.columns.*.blocks.*.settings.x_theme' => ['sometimes', Rule::in(['light', 'dark'])],
+                'rows.*.columns.*.blocks.*.settings.x_conversation' => ['sometimes', Rule::in(['all', 'none'])],
 
                 'rows.*.columns.*.blocks.*.settings.custom_id' => [
 
@@ -507,6 +561,16 @@ class ProductLayoutController extends Controller
                     'array',
 
                 ],
+
+                'rows.*.columns.*.blocks.*.children.*.settings.showcase' => 'sometimes|array',
+                'rows.*.columns.*.blocks.*.children.*.settings.showcase.title' => 'nullable|string|max:255',
+                'rows.*.columns.*.blocks.*.children.*.settings.showcase.description' => 'nullable|string|max:50000',
+                'rows.*.columns.*.blocks.*.children.*.settings.showcase.columns' => 'sometimes|integer|between:1,4',
+                'rows.*.columns.*.blocks.*.children.*.settings.showcase.show_tags' => 'sometimes|boolean',
+                'rows.*.columns.*.blocks.*.children.*.settings.showcase.show_more' => 'sometimes|boolean',
+                'rows.*.columns.*.blocks.*.children.*.settings.x_columns' => ['sometimes', 'integer', 'in:1,2,3'],
+                'rows.*.columns.*.blocks.*.children.*.settings.x_theme' => ['sometimes', Rule::in(['light', 'dark'])],
+                'rows.*.columns.*.blocks.*.children.*.settings.x_conversation' => ['sometimes', Rule::in(['all', 'none'])],
 
                 'rows.*.columns.*.blocks.*.children.*.settings.custom_id' => [
 

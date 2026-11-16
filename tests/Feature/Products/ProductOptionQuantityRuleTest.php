@@ -55,6 +55,7 @@ class ProductOptionQuantityRuleTest extends TestCase
             $table->unsignedInteger('sort_order')->default(0);
             $table->boolean('has_option_configuration')->default(true);
         });
+        (require database_path('migrations/2026_11_10_000200_add_quantity_limits_to_product_option_groups_table.php'))->up();
 
         Schema::create('product_options', function (Blueprint $table): void {
             $table->id();
@@ -188,6 +189,71 @@ class ProductOptionQuantityRuleTest extends TestCase
                 'selected_option_ids' => [$this->optionId],
             ])
             ->assertSessionHasErrors(['quantity']);
+    }
+
+    private function addQuantityGroup(?int $min, ?int $max): int
+    {
+        $groupId = DB::table('option_groups')->insertGetId([
+            'group_code' => 'quantity', 'group_name' => 'Quantity', 'display_type' => 'quantity_input', 'is_active' => true, 'is_required' => true,
+        ]);
+        DB::table('product_option_groups')->insert([
+            'product_id' => $this->productId, 'option_group_id' => $groupId, 'product_option_step_id' => null,
+            'has_option_configuration' => true, 'quantity_min' => $min, 'quantity_max' => $max,
+        ]);
+        return $groupId;
+    }
+
+    public function test_quantity_group_limits_apply_without_any_selected_options(): void
+    {
+        $this->addQuantityGroup(10, 200);
+        foreach ([9, 201] as $quantity) {
+            $this->post(route('products.customer.store', ['productPath' => $this->productSlug]), ['quantity' => $quantity])
+                ->assertSessionHasErrors('quantity');
+            $this->assertFalse(session()->has('configured_order_'.$this->productId));
+        }
+        foreach ([10, 200] as $quantity) {
+            $this->post(route('products.customer.store', ['productPath' => $this->productSlug]), ['quantity' => $quantity])
+                ->assertRedirect(route('products.customer', ['productPath' => $this->productSlug]));
+            $this->assertSame($quantity, session()->get('configured_order_'.$this->productId.'.quantity'));
+        }
+    }
+
+    public function test_quantity_group_limits_intersect_with_selected_option_rules(): void
+    {
+        $this->addQuantityGroup(150, 200);
+        foreach ([125, 250] as $quantity) {
+            $this->post(route('products.customer.store', ['productPath' => $this->productSlug]), ['quantity' => $quantity, 'selected_option_ids' => [$this->optionId]])
+                ->assertSessionHasErrors('quantity');
+        }
+        $this->post(route('products.customer.store', ['productPath' => $this->productSlug]), ['quantity' => 175, 'selected_option_ids' => [$this->optionId]])
+            ->assertRedirect(route('products.customer', ['productPath' => $this->productSlug]));
+    }
+
+    public function test_admin_saves_quantity_group_limits_and_rejects_inverted_range(): void
+    {
+        $groupId = $this->addQuantityGroup(null, null);
+        foreach (['product_option_groups' => new \App\Models\ProductOptionGroup, 'product_option_steps' => new \App\Models\ProductOptionStep] as $name => $model) {
+            Schema::table($name, function (Blueprint $table) use ($name, $model): void {
+                foreach ($model->getFillable() as $field) if (!Schema::hasColumn($name, $field)) $table->text($field)->nullable();
+                $table->timestamps();
+            });
+        }
+        Schema::table('products', function (Blueprint $table): void {
+            $table->boolean('show_notice')->default(false);
+            $table->text('notice_text')->nullable();
+            $table->text('complete_head_text')->nullable();
+            $table->timestamps();
+        });
+        $this->actingAs(new \App\Models\Admin(['email' => 'qa@example.test']), 'admin');
+        $data = ['option_group_ids' => [$groupId], 'steps' => [['key' => 'step-1', 'id' => 1, 'name' => 'Step 1']], 'option_group_steps' => [$groupId => 'step-1'], 'quantity_limits' => [$groupId => ['min' => 20, 'max' => 500]]];
+        $this->put(route('admin.products.options.update', $this->productId), $data)->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertDatabaseHas('product_option_groups', ['product_id' => $this->productId, 'option_group_id' => $groupId, 'quantity_min' => 20, 'quantity_max' => 500]);
+        $data['quantity_limits'][$groupId] = ['min' => 500, 'max' => 20];
+        $this->put(route('admin.products.options.update', $this->productId), $data)->assertSessionHasErrors('quantity_limits.'.$groupId.'.max');
+        $this->assertDatabaseHas('product_option_groups', ['option_group_id' => $groupId, 'quantity_min' => 20, 'quantity_max' => 500]);
+        $data['quantity_limits'][$groupId] = ['min' => '', 'max' => ''];
+        $this->put(route('admin.products.options.update', $this->productId), $data)->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertDatabaseHas('product_option_groups', ['option_group_id' => $groupId, 'quantity_min' => null, 'quantity_max' => null]);
     }
 
     /** @return list<string> */

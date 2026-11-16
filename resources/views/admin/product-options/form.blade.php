@@ -48,7 +48,7 @@
 
                         <div class="form-group col-md-6">
                             <label for="option_code">Option Code <span class="text-danger">*</span></label>
-                            <input id="option_code" name="option_code" type="text" value="{{ old('option_code', $productOption->option_code) }}" class="form-control @error('option_code') is-invalid @enderror" maxlength="100" pattern="[A-Za-z0-9_-]+" required>
+                            <input id="option_code" name="option_code" type="text" value="{{ old('option_code', $productOption->option_code) }}" class="form-control @error('option_code') is-invalid @enderror" maxlength="100" required>
                             <small class="form-text text-muted">Unique within the selected Option Group.</small>
                             @error('option_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>

@@ -1,0 +1,8 @@
+.product-details-price-summary { margin-bottom: 15px; max-width: 100%; min-width: 0; }
+.product-details-price-title { margin: 0 0 10px; font-size: 18px; font-weight: normal; }
+.product-details-price-scroll { max-width: 100%; overflow-x: auto; }
+.product-details-price-table { width: 100%; border-collapse: collapse; table-layout: fixed; color: #111; }
+.product-details-price-table th, .product-details-price-table td { border: 1px solid #222; text-align: center; padding: 12px 8px; min-width: 100px; white-space: nowrap; }
+.product-details-price-table th { background: #efefef; font-size: 13px; font-weight: bold; }
+.product-details-price-table td { background: #fff; font-size: 13px; }
+.product-details-price-table td strong { font-size: 20px; font-weight: bold; }

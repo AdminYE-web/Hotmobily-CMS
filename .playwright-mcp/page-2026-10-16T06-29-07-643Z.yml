@@ -1,0 +1,1497 @@
+- generic [active] [ref=e1]:
+  - table [ref=e3]:
+    - rowgroup [ref=e4]:
+      - row [ref=e5]:
+        - cell [ref=e6]:
+          - link [ref=e7] [cursor=pointer]:
+            - /url: //hotmobily.jp/
+            - img "ホットモバイリー（HOT MOBILY）オリジナルグッズ・ノベルティ制作｜プチプラ・短納期、1個から対応" [ref=e8]
+        - cell [ref=e9]:
+          - link [ref=e10] [cursor=pointer]:
+            - /url: tel:05068655591
+            - img "専用電話 050-6865-5591（日本全国・固定電話より3分間10円）受付時間10:30〜19:30、定休日：土日祝日。メール：contact@hotmobily.jp。住所：東京都江東区青海2-4-32" [ref=e11]
+  - generic [ref=e12]:
+    - list:
+      - listitem [ref=e13]:
+        - link "データ作成ガイド" [ref=e14] [cursor=pointer]:
+          - /url: javascript:void(0);
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=e15]:
+        - link "製作実績" [ref=e16] [cursor=pointer]:
+          - /url: javascript:void(0);
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=e17]:
+        - link "テンプレート" [ref=e18] [cursor=pointer]:
+          - /url: /template/
+      - listitem [ref=e19]:
+        - generic [ref=e20] [cursor=pointer]: 製作詳細
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=e21]:
+        - link "ご利用ガイド" [ref=e22] [cursor=pointer]:
+          - /url: javascript:void(0);
+        - list:
+          - listitem
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=e23]:
+        - link "FAQ・口コミ求人" [ref=e24] [cursor=pointer]:
+          - /url: javascript:void(0);
+        - list:
+          - listitem
+          - listitem
+          - listitem
+      - listitem [ref=e25]:
+        - link "問合せ サンプル請求 営業呼び出し" [ref=e26] [cursor=pointer]:
+          - /url: javascript:void(0);
+          - text: 問合せサンプル請求営業呼び出し
+        - list:
+          - listitem
+          - listitem
+  - text:                      
+  - generic [ref=e27]:
+    - generic [ref=e28]:
+      - navigation [ref=e29]:
+        - list [ref=e30]:
+          - listitem [ref=e31]:
+            - link "商品一覧 商品一覧" [ref=e32] [cursor=pointer]:
+              - /url: /
+              - img "商品一覧" [ref=e33]
+              - generic [ref=e34]: 商品一覧
+          - listitem [ref=e35]:
+            - link "めじるしキーホルダー めじるしキーホルダー" [ref=e36] [cursor=pointer]:
+              - /url: /all-marker-products.php
+              - img "めじるしキーホルダー" [ref=e37]
+              - generic [ref=e38]: めじるしキーホルダー
+          - listitem [ref=e39]:
+            - link "オリジナルキーホルダー オリジナルキーホルダー" [ref=e40] [cursor=pointer]:
+              - /url: /products/keychains-ranking
+              - img "オリジナルキーホルダー" [ref=e41]
+              - generic [ref=e42]: オリジナルキーホルダー
+          - listitem [ref=e43]:
+            - link "ラバーストラップ ラバーストラップ" [ref=e44] [cursor=pointer]:
+              - /url: /products/rubberstrap/
+              - img "ラバーストラップ" [ref=e45]
+              - generic [ref=e46]: ラバーストラップ
+          - listitem [ref=e47]:
+            - link "ラバーキーホルダー ラバーキーホルダー" [ref=e48] [cursor=pointer]:
+              - /url: /products/rubberkeyholder/
+              - img "ラバーキーホルダー" [ref=e49]
+              - generic [ref=e50]: ラバーキーホルダー
+          - listitem [ref=e51]:
+            - link "ラバーコースター ラバーコースター" [ref=e52] [cursor=pointer]:
+              - /url: /products/rubbercoaster/
+              - img "ラバーコースター" [ref=e53]
+              - generic [ref=e54]: ラバーコースター
+          - listitem [ref=e55]:
+            - link "アクリル製品一覧 アクリル製品一覧" [ref=e56] [cursor=pointer]:
+              - /url: /all-acrylic-products.php
+              - img "アクリル製品一覧" [ref=e57]
+              - generic [ref=e58]: アクリル製品一覧
+          - listitem [ref=e59]:
+            - link "アクリルキーホルダー アクリルキーホルダー" [ref=e60] [cursor=pointer]:
+              - /url: /products/acrylic/
+              - img "アクリルキーホルダー" [ref=e61]
+              - generic [ref=e62]: アクリルキーホルダー
+          - listitem [ref=e63]:
+            - link "アクリルスタンド アクリルスタンド" [ref=e64] [cursor=pointer]:
+              - /url: /products/acrylic/figure
+              - img "アクリルスタンド" [ref=e65]
+              - generic [ref=e66]: アクリルスタンド
+          - listitem [ref=e67]:
+            - link "リフレクター（反射）チャーム リフレクター（反射）チャーム" [ref=e68] [cursor=pointer]:
+              - /url: /products/reflecter.php
+              - img "リフレクター（反射）チャーム" [ref=e69]
+              - generic [ref=e70]: リフレクター（反射）チャーム
+          - listitem [ref=e71]:
+            - link "オリジナルワッペン オリジナルワッペン" [ref=e72] [cursor=pointer]:
+              - /url: /products/wappen
+              - img "オリジナルワッペン" [ref=e73]
+              - generic [ref=e74]: オリジナルワッペン
+          - listitem [ref=e75]:
+            - link "メガネクロス・マイクロファイバーポーチ メガネクロス・マイクロファイバーポーチ" [ref=e76] [cursor=pointer]:
+              - /url: /products/microfibers.php
+              - img "メガネクロス・マイクロファイバーポーチ" [ref=e77]
+              - generic [ref=e78]: メガネクロス・マイクロファイバーポーチ
+          - listitem [ref=e79]:
+            - link "カラビナリング カラビナリング" [ref=e80] [cursor=pointer]:
+              - /url: /products/carabiner/
+              - img "カラビナリング" [ref=e81]
+              - generic [ref=e82]: カラビナリング
+      - generic [ref=e83]:
+        - link [ref=e84] [cursor=pointer]:
+          - /url: //x.com/GoodsYe
+          - img "X GoodsYe" [ref=e85]
+        - link [ref=e86] [cursor=pointer]:
+          - /url: //www.facebook.com/Hotmobily_jp-%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC-171871399585893
+          - img "Facebook Hotmobily_jp - ホットモバイリー" [ref=e87]
+        - link [ref=e88] [cursor=pointer]:
+          - /url: //www.youtube.com/channel/UCCAbieM95Kd0ay_nk5Fa9lA/
+          - img "YouTube Hotmobily" [ref=e89]
+        - link [ref=e90] [cursor=pointer]:
+          - /url: https://www.instagram.com/hot.mobily/?hl=ja
+          - img "Instagram Hotmobily" [ref=e91]
+      - separator [ref=e92]
+      - heading [level=3] [ref=e93]:
+        - link "ホットモバイリーに関するツイート" [ref=e94] [cursor=pointer]:
+          - /url: //x.com/search?q=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC
+      - heading [level=3] [ref=e95]:
+        - link "今すぐサンプル請求！" [ref=e96] [cursor=pointer]:
+          - /url: /contact/index.php
+      - heading [level=3] [ref=e98]:
+        - link "ノベルティー営業担当呼び出しフォーム" [ref=e99] [cursor=pointer]:
+          - /url: /meeting_date/
+      - heading [level=3] [ref=e101]:
+        - link [ref=e102] [cursor=pointer]:
+          - /url: /blog-content/lists
+      - paragraph [ref=e104]:
+        - link [ref=e105] [cursor=pointer]:
+          - /url: /production/
+      - heading [level=3] [ref=e106]:
+        - link "?" [ref=e107] [cursor=pointer]:
+          - /url: //www.hotstrap.jp/
+      - link [ref=e108] [cursor=pointer]:
+        - /url: https://www.google.com/search?q=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC&oq=%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg9MgYIAhBFGD0yBggDEEUYPTIGCAQQRRhB0gEIMjg5OWowajGoAgCwAgA&sourceid=chrome&ie=UTF-8
+      - table [ref=e109]:
+        - rowgroup [ref=e110]:
+          - row [ref=e111]:
+            - columnheader "10月 2026" [ref=e112]
+          - row [ref=e113]:
+            - columnheader "日" [ref=e114]
+            - columnheader "月" [ref=e115]
+            - columnheader "火" [ref=e116]
+            - columnheader "水" [ref=e117]
+            - columnheader "木" [ref=e118]
+            - columnheader "金" [ref=e119]
+            - columnheader "土" [ref=e120]
+        - rowgroup [ref=e121]:
+          - row [ref=e122]:
+            - cell [ref=e123]
+            - cell [ref=e124]
+            - cell [ref=e125]
+            - cell [ref=e126]
+            - cell "1" [ref=e127]
+            - cell "2" [ref=e128]
+            - cell "3" [ref=e129]
+          - row [ref=e130]:
+            - cell "4" [ref=e131]
+            - cell "5" [ref=e132]
+            - cell "6" [ref=e133]
+            - cell "7" [ref=e134]
+            - cell "8" [ref=e135]
+            - cell "9" [ref=e136]
+            - cell "10" [ref=e137]
+          - row [ref=e138]:
+            - cell "11" [ref=e139]
+            - cell "12" [ref=e140]
+            - cell "13" [ref=e141]
+            - cell "14" [ref=e142]
+            - cell "15" [ref=e143]
+            - cell "16" [ref=e144]
+            - cell "17" [ref=e145]
+          - row [ref=e146]:
+            - cell "18" [ref=e147]
+            - cell "19" [ref=e148]
+            - cell "20" [ref=e149]
+            - cell "21" [ref=e150]
+            - cell "22" [ref=e151]
+            - cell "23" [ref=e152]
+            - cell "24" [ref=e153]
+          - row [ref=e154]:
+            - cell "25" [ref=e155]
+            - cell "26" [ref=e156]
+            - cell "27" [ref=e157]
+            - cell "28" [ref=e158]
+            - cell "29" [ref=e159]
+            - cell "30" [ref=e160]
+            - cell "31" [ref=e161]
+          - row [ref=e162]:
+            - cell [ref=e163]
+            - cell [ref=e164]
+            - cell [ref=e165]
+            - cell [ref=e166]
+            - cell [ref=e167]
+            - cell [ref=e168]
+            - cell [ref=e169]
+          - row [ref=e170]
+          - row [ref=e171]:
+            - columnheader "11月 2026" [ref=e172]
+          - row [ref=e173]:
+            - columnheader "日" [ref=e174]
+            - columnheader "月" [ref=e175]
+            - columnheader "火" [ref=e176]
+            - columnheader "水" [ref=e177]
+            - columnheader "木" [ref=e178]
+            - columnheader "金" [ref=e179]
+            - columnheader "土" [ref=e180]
+          - row [ref=e181]:
+            - cell "1" [ref=e182]
+            - cell "2" [ref=e183]
+            - cell "3" [ref=e184]
+            - cell "4" [ref=e185]
+            - cell "5" [ref=e186]
+            - cell "6" [ref=e187]
+            - cell "7" [ref=e188]
+          - row [ref=e189]:
+            - cell "8" [ref=e190]
+            - cell "9" [ref=e191]
+            - cell "10" [ref=e192]
+            - cell "11" [ref=e193]
+            - cell "12" [ref=e194]
+            - cell "13" [ref=e195]
+            - cell "14" [ref=e196]
+          - row [ref=e197]:
+            - cell "15" [ref=e198]
+            - cell "16" [ref=e199]
+            - cell "17" [ref=e200]
+            - cell "18" [ref=e201]
+            - cell "19" [ref=e202]
+            - cell "20" [ref=e203]
+            - cell "21" [ref=e204]
+          - row [ref=e205]:
+            - cell "22" [ref=e206]
+            - cell "23" [ref=e207]
+            - cell "24" [ref=e208]
+            - cell "25" [ref=e209]
+            - cell "26" [ref=e210]
+            - cell "27" [ref=e211]
+            - cell "28" [ref=e212]
+          - row [ref=e213]:
+            - cell "29" [ref=e214]
+            - cell "30" [ref=e215]
+            - cell [ref=e216]
+            - cell [ref=e217]
+            - cell [ref=e218]
+            - cell [ref=e219]
+            - cell [ref=e220]
+      - generic [ref=e221]:
+        - generic [ref=e222]:
+          - paragraph [ref=e223]: ①
+          - text: 営業+生産休業日
+        - generic [ref=e224]:
+          - paragraph [ref=e225]: ②
+          - text: 営業休業日（生産はあり）
+        - generic [ref=e226]:
+          - paragraph [ref=e227]: ③
+          - text: 生産休業日（営業はあり）
+        - generic [ref=e228]:
+          - text: 営業日：
+          - paragraph [ref=e229]: ①
+          - paragraph [ref=e230]: ②
+          - text: を除く日
+        - generic [ref=e231]:
+          - text: 生産日：
+          - paragraph [ref=e232]: ①
+          - paragraph [ref=e233]: ③
+          - text: を除く日
+    - generic [ref=e234]:
+      - list [ref=e235]:
+        - link [ref=e236] [cursor=pointer]:
+          - /url: /order/cart.php
+          - listitem [ref=e237]: カート情報
+      - generic [ref=e241]:
+        - heading "アクリルキーホルダー（2026年版）" [level=1] [ref=e242]
+        - generic [ref=e243]:
+          - paragraph [ref=e244]: シェアする
+          - link [ref=e245] [cursor=pointer]:
+            - /url: //x.com/GoodsYe
+          - link [ref=e246] [cursor=pointer]:
+            - /url: //www.facebook.com/Hotmobily_jp-%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC-171871399585893
+          - link [ref=e247] [cursor=pointer]:
+            - /url: https://www.instagram.com/hot.mobily/?hl=ja
+          - paragraph [ref=e248]: 更新日：2026年9月25日
+      - generic [ref=e249]:
+        - generic [ref=e250]:
+          - generic [ref=e252]:
+            - img "猫耳帽子の女の子のイラストのアクキー" [ref=e254] [cursor=pointer]
+            - img "水色の髪の女の子のイラストのアクキー" [ref=e256] [cursor=pointer]
+            - img "電車のイラストのアクキー" [ref=e258] [cursor=pointer]
+            - img "インコの写真のアクキー" [ref=e260] [cursor=pointer]
+            - img "可愛い動物キャラクターたちのイラストのアクキー" [ref=e262] [cursor=pointer]
+            - img "文字のデザインのアクキー" [ref=e264] [cursor=pointer]
+          - generic [ref=e265]:
+            - img "猫耳帽子の女の子のイラストのアクキー" [ref=e266] [cursor=pointer]
+            - img "水色の髪の女の子のイラストのアクキー" [ref=e267] [cursor=pointer]
+            - img "電車のイラストのアクキー" [ref=e268] [cursor=pointer]
+            - img "インコの写真のアクキー" [ref=e269] [cursor=pointer]
+            - img "可愛い動物キャラクターたちのイラストのアクキー" [ref=e270] [cursor=pointer]
+            - img "文字のデザインのアクキー" [ref=e271] [cursor=pointer]
+          - button "この商品を見積・注文する" [ref=e273] [cursor=pointer]
+          - link "製作事例を見る" [ref=e276] [cursor=pointer]:
+            - /url: https://hotmobily.jp/gallery/acrylic_key
+          - link "商品レビューを見る" [ref=e277] [cursor=pointer]:
+            - /url: javascript:void(0)
+        - generic [ref=e278]:
+          - paragraph [ref=e280]: 製作単価目安（税込）
+          - table [ref=e281]:
+            - rowgroup [ref=e282]:
+              - row [ref=e283]:
+                - columnheader "1個" [ref=e284]
+                - columnheader "50個" [ref=e285]
+                - columnheader "300個" [ref=e286]
+            - rowgroup [ref=e287]:
+              - row [ref=e288]:
+                - cell "990円～" [ref=e289]
+                - cell "255円～" [ref=e290]
+                - cell "188円～" [ref=e291]
+          - paragraph [ref=e293]: 出荷目安（通常納期）：10月28日(水)
+          - generic [ref=e294]:
+            - text: ※出荷目安は本日原稿が確定した場合の日付です。 ※上記よりも早くお届けする6営業日後出荷コースもございます。 詳しくは
+            - link "納期詳細" [ref=e295] [cursor=pointer]:
+              - /url: javascript:void(0)
+            - text: をご確認ください。
+          - heading "オリジナルアクリルキーホルダーを製作！1個から注文可能！" [level=2] [ref=e296]
+          - generic [ref=e297]:
+            - heading "最安単価168円（税込）！" [level=3] [ref=e298]
+            - link [ref=e299] [cursor=pointer]:
+              - /url: javascript:void(0)
+              - img "ホットモバイリーのアクキーは最安単価が168円（税込）！" [ref=e300]
+            - paragraph [ref=e301]: 最安単価がたったの168円（税込）の激安価格！大ロットほど単価が安くなりお得です。
+            - link "料金の詳細" [ref=e303] [cursor=pointer]:
+              - /url: javascript:void(0)
+          - generic [ref=e304]:
+            - heading "シミュレーターで手軽に注文可能！" [level=3] [ref=e305]
+            - link [ref=e306] [cursor=pointer]:
+              - /url: javascript:void(0)
+              - img "シミュレーター機能でアクキーをお手軽注文！" [ref=e307]
+            - paragraph [ref=e308]: シミュレーター機能を使ったお手軽注文が可能！注文から納品までがスムーズです。
+            - link "シミュレーターの詳細" [ref=e310] [cursor=pointer]:
+              - /url: javascript:void(0)
+          - generic [ref=e311]:
+            - heading "印刷がはがれない！" [level=3] [ref=e312]
+            - link [ref=e313] [cursor=pointer]:
+              - /url: javascript:void(0)
+              - img "ホットモバイリーのアクキーはデザインを守る保護フィルム付き！" [ref=e314]
+            - paragraph [ref=e315]: 印刷したデザインを透明度の高い保護フィルムでカバー。こすれたり引っかいたりしても印刷がはがれません。
+            - link "保護フィルムの詳細" [ref=e317] [cursor=pointer]:
+              - /url: javascript:void(0)
+      - generic [ref=e320]:
+        - generic [ref=e321] [cursor=pointer]: シミュレーターをご用意！カットラインと白押さえを自動生成！
+        - generic [ref=e325]:
+          - link [ref=e327] [cursor=pointer]:
+            - /url: https://hotmobily.jp/lp/acrylic-simulator-guide
+            - img "シミュレーター機能でアクキーをお手軽注文！" [ref=e328]
+          - paragraph [ref=e329]: お客様がアクキーにしたいイラストや写真をアップロードすれば、その場でアクキーのカットライン（カットパス）が生成されるシミュレーターをご用意しております。
+          - paragraph [ref=e330]: 注文の時点でカットラインがどのような形になるかわかるので、「完成図をイメージして注文できる」「途中でデザイナーをはさまずに手早くサッと注文できる」などのメリットが強みです。ぜひご活用ください。
+          - link "シミュレーター使用ガイド" [ref=e331] [cursor=pointer]:
+            - /url: https://hotmobily.jp/lp/acrylic-simulator-guide
+      - generic [ref=e334]:
+        - generic [ref=e335] [cursor=pointer]: 製作料金
+        - generic [ref=e339]:
+          - paragraph [ref=e340]:
+            - text: 納期と印刷面を選択してください。サイズ別の製作単価表が表示されます。ここは価格表のみです。 見積・注文をご希望の方は
+            - link "注文フォーム" [ref=e341] [cursor=pointer]:
+              - /url: "#est-order"
+            - text: をご利用ください。
+          - heading "納期" [level=3] [ref=e342]
+          - generic [ref=e344]:
+            - generic [ref=e345] [cursor=pointer]:
+              - radio "10営業日" [checked]
+              - text: 10営業日
+            - generic [ref=e347] [cursor=pointer]:
+              - radio "6営業日"
+              - text: 6営業日
+          - heading "印刷面" [level=3] [ref=e349]
+          - generic [ref=e351]:
+            - generic [ref=e352] [cursor=pointer]:
+              - radio "片面印刷" [checked]
+              - text: 片面印刷
+            - generic [ref=e354] [cursor=pointer]:
+              - radio "両面印刷"
+              - text: 両面印刷
+          - heading "数量・サイズ別価格表" [level=3] [ref=e356]
+          - table [ref=e358]:
+            - rowgroup [ref=e359]:
+              - row [ref=e360]:
+                - cell [ref=e361]
+                - cell "50×50mm以内" [ref=e362]
+                - cell "75×75mm以内" [ref=e363]
+                - cell "100×100mm以内" [ref=e364]
+            - rowgroup [ref=e365]:
+              - row [ref=e366]:
+                - cell "1" [ref=e367]
+                - cell "990" [ref=e368]
+                - cell "1089" [ref=e369]
+                - cell "1188" [ref=e370]
+              - row [ref=e371]:
+                - cell "5" [ref=e372]
+                - cell "411" [ref=e373]
+                - cell "455" [ref=e374]
+                - cell "569" [ref=e375]
+              - row [ref=e376]:
+                - cell "10" [ref=e377]
+                - cell "328" [ref=e378]
+                - cell "367" [ref=e379]
+                - cell "476" [ref=e380]
+              - row [ref=e381]:
+                - cell "20" [ref=e382]
+                - cell "290" [ref=e383]
+                - cell "324" [ref=e384]
+                - cell "433" [ref=e385]
+              - row [ref=e386]:
+                - cell "30" [ref=e387]
+                - cell "276" [ref=e388]
+                - cell "305" [ref=e389]
+                - cell "413" [ref=e390]
+              - row [ref=e391]:
+                - cell "50" [ref=e392]
+                - cell "255" [ref=e393]
+                - cell "284" [ref=e394]
+                - cell "383" [ref=e395]
+              - row [ref=e396]:
+                - cell "70" [ref=e397]
+                - cell "227" [ref=e398]
+                - cell "251" [ref=e399]
+                - cell "356" [ref=e400]
+              - row [ref=e401]:
+                - cell "100" [ref=e402]
+                - cell "207" [ref=e403]
+                - cell "227" [ref=e404]
+                - cell "336" [ref=e405]
+              - row [ref=e406]:
+                - cell "200" [ref=e407]
+                - cell "193" [ref=e408]
+                - cell "221" [ref=e409]
+                - cell "322" [ref=e410]
+              - row [ref=e411]:
+                - cell "300" [ref=e412]
+                - cell "188" [ref=e413]
+                - cell "217" [ref=e414]
+                - cell "316" [ref=e415]
+              - row [ref=e416]:
+                - cell "500" [ref=e417]
+                - cell "178" [ref=e418]
+                - cell "207" [ref=e419]
+                - cell "277" [ref=e420]
+              - row [ref=e421]:
+                - cell "1000" [ref=e422]
+                - cell "168" [ref=e423]
+                - cell "198" [ref=e424]
+                - cell "267" [ref=e425]
+      - generic [ref=e428]:
+        - generic [ref=e429] [cursor=pointer]: データ作成補助が無料！
+        - generic [ref=e433]:
+          - paragraph [ref=e434]: アクリル製品の製作に必要不可欠なカットパス・白押さえの作成（データ作成補助）を無料で承っております。お気軽にご利用ください。
+          - link [ref=e435] [cursor=pointer]:
+            - /url: /products/acrylic/cutline_white
+            - img "オリジナルアクキーの入稿データを無料作成" [ref=e436]
+          - paragraph [ref=e437]: なお、「カットパス・白押さえも自分で細かく設定したい」という方向けに、入稿データ作成のテンプレート及びアクリル製品の入稿データ作成ガイドもご用意しております。
+          - link "入稿データテンプレートをダウンロード" [ref=e438] [cursor=pointer]:
+            - /url: /products/acrylic/template/template-acrylic-keychains.zip
+          - link "入稿データ作成ガイド" [ref=e439] [cursor=pointer]:
+            - /url: /products/data-acrylic.php
+      - generic [ref=e442]:
+        - generic [ref=e443] [cursor=pointer]: 納期
+        - generic [ref=e447]:
+          - paragraph [ref=e448]: 出荷日の目安は以下です。6営業日後出荷コース、10営業日後出荷コースがございます。注文後のデザイン確定・制作開始の日時から数えて6営業日後または10営業日後が出荷日の目安です。
+          - table [ref=e449]:
+            - rowgroup [ref=e450]:
+              - row [ref=e451]:
+                - cell "今、この製品を製作開始した場合の出荷日を表示中" [ref=e452]
+              - row [ref=e453]:
+                - cell "製作開始日時" [ref=e454]
+                - cell "６営業日出荷予定" [ref=e455]
+              - row [ref=e456]:
+                - cell "10月16日(金) 13:29" [ref=e457]
+                - cell "10月23日(金)" [ref=e458]
+              - row [ref=e459]:
+                - cell "10営業日出荷予定" [ref=e460]
+              - row [ref=e461]:
+                - cell "10月28日(水)" [ref=e462]
+          - link "アクリル製品のご注文の流れ" [ref=e463] [cursor=pointer]:
+            - /url: /howtoorder/acrylic
+          - link "無料サンプルの送付をリクエスト" [ref=e464] [cursor=pointer]:
+            - /url: /contact/?item=アクリルキーホルダー
+      - generic [ref=e467]:
+        - generic [ref=e468] [cursor=pointer]: アタッチメント
+        - generic [ref=e472]:
+          - paragraph [ref=e473]: 写真をクリックすると拡大写真と詳細説明を確認頂けます。
+          - generic [ref=e474]:
+            - generic [ref=e476]:
+              - generic [ref=e477]:
+                - link [ref=e478] [cursor=pointer]:
+                  - /url: /products/images/HM_part1-2.jpg
+                - generic [ref=e480]: +0円
+                - link "📷クリックすると拡大します" [ref=e481] [cursor=pointer]:
+                  - /url: /products/images/HM_part1-2.jpg
+              - generic [ref=e482]:
+                - link [ref=e483] [cursor=pointer]:
+                  - /url: /products/images/HM_part2-2.jpg
+                - generic [ref=e485]: +0円
+                - link "📷クリックすると拡大します" [ref=e486] [cursor=pointer]:
+                  - /url: /products/images/HM_part2-2.jpg
+              - generic [ref=e487]:
+                - link [ref=e488] [cursor=pointer]:
+                  - /url: /products/images/HM_part14.jpg
+                - generic [ref=e490]: +0円
+                - link "📷クリックすると拡大します" [ref=e491] [cursor=pointer]:
+                  - /url: /products/images/HM_part14.jpg
+              - generic [ref=e492]:
+                - link [ref=e493] [cursor=pointer]:
+                  - /url: /products/images/HM_part15.jpg
+                - generic [ref=e495]: +0円
+                - link "📷クリックすると拡大します" [ref=e496] [cursor=pointer]:
+                  - /url: /products/images/HM_part15.jpg
+              - generic [ref=e497]:
+                - link [ref=e498] [cursor=pointer]:
+                  - /url: /products/images/HM_part18.jpg
+                - generic [ref=e500]: +0円
+                - link "📷クリックすると拡大します" [ref=e501] [cursor=pointer]:
+                  - /url: /products/images/HM_part18.jpg
+              - generic [ref=e502]:
+                - link [ref=e503] [cursor=pointer]:
+                  - /url: /products/images/HM_part16.jpg
+                - generic [ref=e505]: +0円
+                - link "📷クリックすると拡大します" [ref=e506] [cursor=pointer]:
+                  - /url: /products/images/HM_part16.jpg
+              - generic [ref=e507]:
+                - link [ref=e508] [cursor=pointer]:
+                  - /url: /products/images/HM_part19.jpg
+                - generic [ref=e510]: +0円
+                - link "📷クリックすると拡大します" [ref=e511] [cursor=pointer]:
+                  - /url: /products/images/HM_part19.jpg
+              - generic [ref=e512]:
+                - link [ref=e513] [cursor=pointer]:
+                  - /url: /products/images/HM_part17.jpg
+                - generic [ref=e515]: +0円
+                - link "📷クリックすると拡大します" [ref=e516] [cursor=pointer]:
+                  - /url: /products/images/HM_part17.jpg
+              - generic [ref=e517]:
+                - link [ref=e518] [cursor=pointer]:
+                  - /url: /products/images/HM_part20.jpg
+                - generic [ref=e520]: +0円
+                - link "📷クリックすると拡大します" [ref=e521] [cursor=pointer]:
+                  - /url: /products/images/HM_part20.jpg
+              - generic [ref=e522]:
+                - link [ref=e523] [cursor=pointer]:
+                  - /url: /products/images/HM_part3.jpg
+                - generic [ref=e525]: +11円
+                - link "📷クリックすると拡大します" [ref=e526] [cursor=pointer]:
+                  - /url: /products/images/HM_part3.jpg
+              - generic [ref=e527]:
+                - link [ref=e528] [cursor=pointer]:
+                  - /url: /products/images/HM_part5.jpg
+                - generic [ref=e530]: +11円
+                - link "📷クリックすると拡大します" [ref=e531] [cursor=pointer]:
+                  - /url: /products/images/HM_part5.jpg
+              - generic [ref=e532]:
+                - link [ref=e533] [cursor=pointer]:
+                  - /url: /products/images/HM_part9.jpg
+                - generic [ref=e535]: +11円
+                - link "📷クリックすると拡大します" [ref=e536] [cursor=pointer]:
+                  - /url: /products/images/HM_part9.jpg
+              - generic [ref=e537]:
+                - link [ref=e538] [cursor=pointer]:
+                  - /url: /products/images/HM_part10.jpg
+                - generic [ref=e539]: +11円
+                - link "📷クリックすると拡大します" [ref=e540] [cursor=pointer]:
+                  - /url: /products/images/HM_part10.jpg
+              - generic [ref=e541]:
+                - link [ref=e542] [cursor=pointer]:
+                  - /url: /products/images/HM_part11.jpg
+                - generic [ref=e543]: +11円
+                - link "📷クリックすると拡大します" [ref=e544] [cursor=pointer]:
+                  - /url: /products/images/HM_part11.jpg
+              - generic [ref=e545]:
+                - link [ref=e546] [cursor=pointer]:
+                  - /url: /products/images/HM_part12.jpg
+                - generic [ref=e547]: +11円
+                - link "📷クリックすると拡大します" [ref=e548] [cursor=pointer]:
+                  - /url: /products/images/HM_part12.jpg
+              - generic [ref=e549]:
+                - link [ref=e550] [cursor=pointer]:
+                  - /url: /products/images/HM_part13.jpg
+                - generic [ref=e551]: +11円
+                - link "📷クリックすると拡大します" [ref=e552] [cursor=pointer]:
+                  - /url: /products/images/HM_part13.jpg
+              - generic [ref=e553]:
+                - link [ref=e554] [cursor=pointer]:
+                  - /url: /products/images/HM_part4.jpg
+                - generic [ref=e555]: +22円
+                - link "📷クリックすると拡大します" [ref=e556] [cursor=pointer]:
+                  - /url: /products/images/HM_part4.jpg
+              - generic [ref=e557]:
+                - link [ref=e558] [cursor=pointer]:
+                  - /url: /products/images/HM_part6.jpg
+                - generic [ref=e559]: +22円
+                - link "📷クリックすると拡大します" [ref=e560] [cursor=pointer]:
+                  - /url: /products/images/HM_part6.jpg
+              - generic [ref=e561]:
+                - link [ref=e562] [cursor=pointer]:
+                  - /url: /products/images/HM_part7.jpg
+                - generic [ref=e563]: +22円
+                - link "📷クリックすると拡大します" [ref=e564] [cursor=pointer]:
+                  - /url: /products/images/HM_part7.jpg
+              - generic [ref=e565]:
+                - link [ref=e566] [cursor=pointer]:
+                  - /url: /products/images/HM_part8.jpg
+                - generic [ref=e567]: +22円
+                - link "📷クリックすると拡大します" [ref=e568] [cursor=pointer]:
+                  - /url: /products/images/HM_part8.jpg
+              - generic [ref=e569]:
+                - link [ref=e570] [cursor=pointer]:
+                  - /url: /products/acrylic/img/HM_part-um1.jpg
+                - generic [ref=e571]: +0円
+                - link "📷クリックすると拡大します" [ref=e572] [cursor=pointer]:
+                  - /url: /products/acrylic/img/HM_part-um1.jpg
+              - generic [ref=e573]:
+                - link [ref=e574] [cursor=pointer]:
+                  - /url: /products/acrylic/img/HM_part-um2.jpg
+                - generic [ref=e575]: +0円
+                - link "📷クリックすると拡大します" [ref=e576] [cursor=pointer]:
+                  - /url: /products/acrylic/img/HM_part-um2.jpg
+              - generic [ref=e577]:
+                - link [ref=e578] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/3.webp
+                - generic [ref=e579]: +22円
+                - link "📷クリックすると拡大します" [ref=e580] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/3.webp
+              - generic [ref=e581]:
+                - link [ref=e582] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/4.webp
+                - generic [ref=e583]: +22円
+                - link "📷クリックすると拡大します" [ref=e584] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/4.webp
+              - generic [ref=e585]:
+                - link [ref=e586] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/5.webp
+                - generic [ref=e587]: +22円
+                - link "📷クリックすると拡大します" [ref=e588] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/5.webp
+              - generic [ref=e589]:
+                - link [ref=e590] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/6.webp
+                - generic [ref=e591]: +22円
+                - link "📷クリックすると拡大します" [ref=e592] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/6.webp
+              - generic [ref=e593]:
+                - link [ref=e594] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/7.webp
+                - generic [ref=e595]: +22円
+                - link "📷クリックすると拡大します" [ref=e596] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/7.webp
+              - generic [ref=e597]:
+                - link [ref=e598] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/8.webp
+                - generic [ref=e599]: +22円
+                - link "📷クリックすると拡大します" [ref=e600] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/8.webp
+              - generic [ref=e601]:
+                - link [ref=e602] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/9.webp
+                - generic [ref=e603]: +22円
+                - link "📷クリックすると拡大します" [ref=e604] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/9.webp
+              - generic [ref=e605]:
+                - link [ref=e606] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/10.webp
+                - generic [ref=e607]: +22円
+                - link "📷クリックすると拡大します" [ref=e608] [cursor=pointer]:
+                  - /url: /products/pvc_hariawase/img/part-umbrella/10.webp
+              - generic [ref=e609]:
+                - link [ref=e610] [cursor=pointer]:
+                  - /url: /products/images/Red_opener.webp
+                - generic [ref=e611]: +55円
+                - link "📷クリックすると拡大します" [ref=e612] [cursor=pointer]:
+                  - /url: /products/images/Red_opener.webp
+              - generic [ref=e613]:
+                - link [ref=e614] [cursor=pointer]:
+                  - /url: /products/images/Blue_opener.webp
+                - generic [ref=e615]: +55円
+                - link "📷クリックすると拡大します" [ref=e616] [cursor=pointer]:
+                  - /url: /products/images/Blue_opener.webp
+              - generic [ref=e617]:
+                - link [ref=e618] [cursor=pointer]:
+                  - /url: /products/images/Purple_opener.webp
+                - generic [ref=e619]: +55円
+                - link "📷クリックすると拡大します" [ref=e620] [cursor=pointer]:
+                  - /url: /products/images/Purple_opener.webp
+              - generic [ref=e621]:
+                - link [ref=e622] [cursor=pointer]:
+                  - /url: /products/images/Black_opener.webp
+                - generic [ref=e623]: +55円
+                - link "📷クリックすると拡大します" [ref=e624] [cursor=pointer]:
+                  - /url: /products/images/Black_opener.webp
+            - link [ref=e626] [cursor=pointer]:
+              - /url: "#"
+      - generic [ref=e630]:
+        - generic [ref=e631] [cursor=pointer]: はがれない印刷となめらかなエッジ！アクキー製作ならホットモバイリー！
+        - paragraph [ref=e636]: 当店アクリルグッズは、印刷を守る保護フィルム付き。コインで削っても印刷が剥がれません。さらに、カット面のエッジには滑らかな触り心地のCNC加工を採用しています。
+      - generic [ref=e643]:
+        - generic [ref=e644] [cursor=pointer]: アクキー製作ガイドをご用意
+        - generic [ref=e649]:
+          - img "オリジナルアクキーの入稿データ作成ガイド"
+          - paragraph [ref=e650]: ホットモバイリーでは、初めてオリジナルアクキーを製作する方に向けた必見の解説ページをご用意。同社製品の品質と独自の特徴を詳しく紹介しています。最大の強みは、印刷面を透明なPETフィルムで覆い、デザインを傷や摩擦から守る「印刷が剥がれない保護構造」です。さらに、一般的なレーザーカットではなくCNC（切削）加工による「面取り」を採用し、断面が滑らかで安全な美しいエッジを実現しています。難しい白版データの作成サポートなど、初心者でも安心して高品質なアクリルグッズを作れるプロのノウハウが分かりやすくまとめられています。
+          - link "アクリルグッズの完全ガイド" [ref=e652] [cursor=pointer]:
+            - /url: https://hotmobily.jp/lp/acrylic-guide
+      - heading "ご注文・見積書作成" [level=2] [ref=e653]
+      - generic [ref=e654]:
+        - generic [ref=e655]:
+          - heading "【アクリルキーホルダー】" [level=3] [ref=e656]
+          - generic [ref=e657]: 0円（税込）
+        - generic [ref=e658]:
+          - table [ref=e660]:
+            - rowgroup [ref=e661]:
+              - row [ref=e662]:
+                - cell "納期" [ref=e663]
+                - cell "10営業日" [ref=e664]
+              - row [ref=e665]:
+                - cell "サイズ" [ref=e666]
+                - cell "50x50mm." [ref=e667]
+              - row [ref=e668]:
+                - cell "印刷面" [ref=e669]
+                - cell "片面印刷" [ref=e670]
+              - row [ref=e671]:
+                - cell "数量" [ref=e672]
+                - cell [ref=e673]
+              - row [ref=e674]:
+                - cell "試作品" [ref=e675]
+                - cell "なし" [ref=e676]
+              - row [ref=e677]:
+                - cell "データ作成補助" [ref=e678]
+                - cell "なし" [ref=e679]
+          - generic [ref=e680]: アタッチメント:なし
+          - generic [ref=e681]: 台紙:なし
+        - list [ref=e684]:
+          - listitem [ref=e685]:
+            - generic [ref=e686]: "1"
+            - generic [ref=e687]: 納期・サイズ・印刷面
+          - listitem [ref=e688]:
+            - generic [ref=e689]: "2"
+            - generic [ref=e690]: アタッチメント・台紙等
+          - listitem [ref=e691]:
+            - generic [ref=e692]: "3"
+            - generic [ref=e693]: 製品仕様・製作料金
+        - generic [ref=e694]:
+          - generic [ref=e695]:
+            - heading "以前のご注文と同じデザインでの製作ですか？" [level=3] [ref=e696]
+            - generic [ref=e697]:
+              - generic [ref=e699] [cursor=pointer]:
+                - radio "いいえ" [checked]
+                - text: いいえ
+              - generic [ref=e702] [cursor=pointer]:
+                - radio "はい"
+                - text: はい
+            - heading "シミュレーターを使用しますか？お客様のイラストや写真を元にカットパス・白押さえを自動生成します（片面印刷のみ対応）。" [level=3] [ref=e704]
+            - heading "※着日指定、注文後の配送先変更は対応いたしかねます。着日指定をご希望の場合、注文後の配送先変更の可能性がある場合は、シミュレーターを使用しない方法での注文をお願いいたします。" [level=3] [ref=e705]
+            - heading "※シミュレーターを使わない注文でご提供させて頂いている製作図面確認は省略となります。" [level=3] [ref=e706]
+            - heading [level=3] [ref=e707]:
+              - text: ※カード支払いのみとなります。
+              - link "その他の注意点" [ref=e708] [cursor=pointer]:
+                - /url: javascript:void(0)
+            - generic [ref=e709]:
+              - generic [ref=e711] [cursor=pointer]:
+                - radio "いいえ" [checked]
+                - text: いいえ
+              - generic [ref=e714] [cursor=pointer]:
+                - radio "はい"
+                - text: はい
+            - heading "納期" [level=3] [ref=e716]
+            - generic [ref=e718]:
+              - generic [ref=e720] [cursor=pointer]:
+                - radio "10営業日" [checked]
+                - text: 10営業日
+              - generic [ref=e723] [cursor=pointer]:
+                - radio "6営業日"
+                - text: 6営業日
+            - heading "サイズ" [level=3] [ref=e725]
+            - generic [ref=e726]:
+              - generic [ref=e728] [cursor=pointer]:
+                - radio "50x50mm." [checked]
+                - text: 50x50mm.
+              - generic [ref=e731] [cursor=pointer]:
+                - radio "75x75mm."
+                - text: 75x75mm.
+              - generic [ref=e734] [cursor=pointer]:
+                - radio "100x100mm."
+                - text: 100x100mm.
+            - heading "印刷面" [level=3] [ref=e736]
+            - generic [ref=e737]:
+              - generic [ref=e739] [cursor=pointer]:
+                - radio "片面印刷" [checked]
+                - text: 片面印刷
+              - generic [ref=e742] [cursor=pointer]:
+                - radio "両面印刷"
+                - text: 両面印刷
+            - heading "数量" [level=3] [ref=e744]
+            - generic [ref=e745]:
+              - generic [ref=e747] [cursor=pointer]:
+                - text: ご注文・御見積数量
+                - spinbutton "ご注文・御見積数量" [ref=e748]
+              - heading "※デザイン1種につき1注文となります。デザインが複数ある場合は、デザインごとにご注文ください。" [level=3] [ref=e750]
+          - text: あり なし あり なし あり なし
+          - link "アタッチメント・オプション入力へ" [ref=e752] [cursor=pointer]:
+            - /url: javascript:void(0)
+      - generic [ref=e755]:
+        - generic [ref=e756] [cursor=pointer]: 1個から注文可能！小ロットアクキー製作も大歓迎！
+        - generic [ref=e761]:
+          - img "オリジナルアクキーを1個から注文・製作可能！"
+          - paragraph [ref=e762]: 当店なら、オリジナルデザインを印刷したアクリルキーホルダーの注文を1個から承っております。1個や2個のアクリルキーホルダー製作のご注文は意外と多いです。
+          - paragraph [ref=e763]: 「試しに1個作ってみたい」「初めての同人イベントで10個くらいだけ作りたい」など、お気軽にご注文・ご相談ください。
+          - link "1個からご注文の詳細" [ref=e764] [cursor=pointer]:
+            - /url: https://hotmobily.jp/products/acrylic/1pcmoq
+      - generic [ref=e767]:
+        - generic [ref=e768] [cursor=pointer]: 当店アクキーの保護フィルムの詳細をご案内！
+        - generic [ref=e773]:
+          - img "アクキーのデザインの印刷を保護フィルムでしっかりガード！" [ref=e774]
+          - paragraph [ref=e775]: 当店のアクリルキーホルダーは、印刷面の全面をPETフィルムで保護します。印刷部分だけを保護するのではなく、面全体を透明シートで保護しますので、自然な仕上がりのアクリルキーホルダーです。鍵や金属物がアクリルキーホルダーに当たっても、印刷面には直接触れないため、印刷が剥がれることがありません。保護用のPETフィルムの厚さはたった0.2mm。フィルムの存在にさえ気づかない厚さです。
+          - link "保護フィルムの詳細" [ref=e776] [cursor=pointer]:
+            - /url: https://hotmobily.jp/products/acrylic/filmcoating
+      - generic [ref=e779]:
+        - generic [ref=e780] [cursor=pointer]: 当店アクキーのCNC加工の詳細をご案内！
+        - generic [ref=e785]:
+          - img "ホットモバイリーのオリジナルアクキーはなめらかな仕上がりのCNCカット！"
+          - paragraph [ref=e786]: とても細かなことですが、当店のこだわりのひとつとして、アクリルキーホルダーのCNC加工があります。アクリルのエッジのカットには通常レーザーが使用され、カットの後に小さな突起ができてしまい、触ったときに違和感があります。しかし、当店のアクリルキーホルダーは、エッジのカットにレーザーではなくCNC加工機を使用し、全ての製品の面取りをしています。このため、触れても違和感のないなめらかなカット面に仕上がります。
+          - link "CNC加工の詳細" [ref=e787] [cursor=pointer]:
+            - /url: https://hotmobily.jp/products/acrylic/roundededge
+      - generic [ref=e790]:
+        - generic [ref=e791] [cursor=pointer]: 当店のアクキーは安心・安価・高品質の自社生産！
+        - generic [ref=e796]:
+          - img "ホットモバイリーのオリジナルアクキーは完全自社生産！"
+          - paragraph [ref=e797]: アクリルキーホルダーを含め、当店のアクリル製品はすべて自社生産です。デザインの印刷、アクリル板のカット、包装まですべて自社工場で完結しています。自社生産のためマージンなどが発生せず、お客様のお求めの製品を低コストで製作することができます。製品のクオリティにも責任をもってこだわっております。お客様のデザインを活かした高品質のアクリルキーホルダー（アクキー）をお届けいたします。
+          - link "自社生産の詳細" [ref=e798] [cursor=pointer]:
+            - /url: https://hotmobily.jp/products/acrylic/ownfactory
+      - generic [ref=e801]:
+        - generic [ref=e802] [cursor=pointer]: アクリルキーホルダーについてのFAQ
+        - generic [ref=e807]:
+          - generic [ref=e808]:
+            - paragraph [ref=e810]: Q1. オリジナルデザインのアクリルキーホルダーを製作できますか？
+            - paragraph [ref=e812]: A1. はい、可能です。お客様のデザインデータを元にオリジナルのアクリルキーホルダーを製作いたします。
+          - generic [ref=e813]:
+            - paragraph [ref=e815]: Q2. 最低注文数は何個からですか？
+            - paragraph [ref=e817]: A2. 1個からご注文いただけます。小ロットでもお気軽にご注文ください。
+          - generic [ref=e818]:
+            - paragraph [ref=e820]: Q3. 印刷はどのように保護されていますか？
+            - paragraph [ref=e822]: A3. 印刷面を透明フィルムで保護しており、印刷が露出しないため、剥がれたり傷ついたりしません。アクキーをいつまでに大切にするホットモバイリー独自の製作方法です。
+          - generic [ref=e823]:
+            - paragraph [ref=e825]: Q4. アクリルのカット方法について教えてください。
+            - paragraph [ref=e827]: A4. CNCカットを採用しており、レーザーカットと比較しエッジが滑らかで手触りの良い仕上がりとなっています。
+          - generic [ref=e828]:
+            - paragraph [ref=e830]: Q5. 片面印刷と両面印刷の違いは何ですか？
+            - paragraph [ref=e832]: A5. 片面印刷では、製品の裏面には白押さえが見えます。両面印刷は、製品の表面も裏面もオリジナルデザインの印刷が見えます。左側の写真が片面印刷のアクリルキーホルダーの裏面、右側の写真が両面印刷のアクリルキーホルダーの裏面です。両面印刷は裏面にもデザインを入れられることがわかるかと思います。
+          - generic [ref=e833]:
+            - paragraph [ref=e835]: Q6. どのようなアタッチメントを選択できますか？
+            - paragraph [ref=e837]:
+              - text: A6. ボールチェーン、キーリングなどのアタッチメントをご用意しております。ゴールドもございます。詳細は
+              - link "アタッチメント欄" [ref=e838] [cursor=pointer]:
+                - /url: https://hotmobily.jp/products/acrylic/#attachments
+              - text: をご覧ください。
+          - generic [ref=e839]:
+            - paragraph [ref=e841]: Q7. 製作料金はどのくらいかかりますか？
+            - paragraph [ref=e843]:
+              - text: A7. 価格はサイズや数量によって異なります。例えば、50mm×50mmサイズの1個の価格は990円（税込）です。詳細は
+              - link "価格表" [ref=e844] [cursor=pointer]:
+                - /url: https://hotmobily.jp/products/acrylic/#price
+              - text: をご参照ください。
+          - generic [ref=e845]:
+            - paragraph [ref=e847]: Q8. 台紙の印刷はできますか？
+            - paragraph [ref=e849]: A8. はい、既製品の台紙50種類から選択するか、オリジナルデータを入稿いただくことも可能です。
+          - generic [ref=e850]:
+            - paragraph [ref=e852]: Q9. 注文後のキャンセルや変更は可能ですか？
+            - paragraph [ref=e854]: A9. 製作開始前であれば可能です。製作開始後のキャンセル・変更は対応できませんので、ご注意ください。尚、試作品をご注文の場合、量産時に色味修正をご希望の場合、営業担当にご連絡ください。
+          - generic [ref=e855]:
+            - paragraph [ref=e857]: Q10. 納期はどのくらいかかりますか？
+            - paragraph [ref=e859]:
+              - text: A10. 6営業日または10営業日から選択可能です。土日祝日及び工場不稼働日は営業日としてカウントされませんのでご注意ください。営業日カレンダーは
+              - link "ご利用ガイド（配送と納期）" [ref=e860] [cursor=pointer]:
+                - /url: https://hotmobily.jp/guide/delivery.php
+              - text: にてご確認頂けます。
+          - link "アクリルキーホルダーについてFAQページへ" [ref=e862] [cursor=pointer]:
+            - /url: https://hotmobily.jp/faq/product-info.php?code=acrylic
+      - generic [ref=e865]:
+        - generic [ref=e866] [cursor=pointer]: この商品に関する記事
+        - generic [ref=e870]:
+          - generic [ref=e871]:
+            - generic [ref=e872]:
+              - link [ref=e874] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-one.php
+              - link "「1個から」が叶える夢のグッズ作り！プロ仕様のオリジナルアクリルキーホルダーをあなたの手に" [ref=e876] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-one.php
+            - generic [ref=e878]:
+              - link [ref=e880] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-photo.php
+              - link "スマホの中の「写真」をアクリルキーホルダーにする魔法。思い出が“光の結晶”に変わる、新しい愛のカタチ。" [ref=e882] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-photo.php
+            - generic [ref=e884]:
+              - link [ref=e886] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-storage.php
+              - link "増え続ける“推し”を、未来へ遺すためのアーカイブ術。アクリルキーホルダーの「収納」を、整理整頓から「保存」の美学へ。" [ref=e888] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-storage.php
+            - generic [ref=e890]:
+              - link [ref=e892] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-display.php
+              - link "「専用ケース」は買わなくていい。家にある“あのアイテム”が、アクリルキーホルダーの神ディスプレイに変わる裏技 7選" [ref=e894] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-display.php
+            - generic [ref=e896]:
+              - link [ref=e898] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-logo.php
+              - link "【ロゴ×アクリルキーホルダー】CNCカットで魅せるデザインの美学。平面のデザインアイデンティティを、透明な立体彫刻へと昇華させる方法7選" [ref=e900] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-logo.php
+            - generic [ref=e902]:
+              - link [ref=e904] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-use.php
+              - link "アクリルキーホルダーの使い道7選！「鍵につける」だけじゃもったいない！アクリルキーホルダーの隠された才能を引き出す！ 7選" [ref=e906] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-use.php
+            - generic [ref=e908]:
+              - link [ref=e910] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-picture.php
+              - link "アクリルキーホルダーをイラストで作るコツ｜イラストレーターがアクリルキーホルダー作りにハマる理由も解説" [ref=e912] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-picture.php
+            - generic [ref=e914]:
+              - link [ref=e916] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-stylish.php
+              - link "アクリルキーホルダーをおしゃれに作るコツ｜透明感を活かすデザインの秘訣" [ref=e918] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-stylish.php
+            - generic [ref=e920]:
+              - link [ref=e922] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-niren.php
+              - link "2連アクリルキーホルダーの魅力｜揺れるデザインの黄金比と無限連結の楽しみ方" [ref=e924] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-niren.php
+            - generic [ref=e926]:
+              - link [ref=e928] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-case.php
+              - link "アクリルキーホルダー ケースの選び方｜傷防止・落下対策からデコ術まで徹底解説" [ref=e930] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-case.php
+            - generic [ref=e932]:
+              - link [ref=e934] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-protection.php
+              - link "アクリルキーホルダーの保護シートの新常識！剥がすだけじゃない「印刷を守る」魔法の技術" [ref=e936] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-protection.php
+            - generic [ref=e938]:
+              - link [ref=e940] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-resistance.php
+              - link "アクリルキーホルダーの傷防止対策｜印刷を守る最新技術とメンテナンス方法" [ref=e942] [cursor=pointer]:
+                - /url: /lp/acrylic-guide-resistance.php
+            - generic [ref=e944]:
+              - link [ref=e946] [cursor=pointer]:
+                - /url: /blog-content/acrylickeyholder-howtoprotect
+              - link "アクリルキーホルダーの印刷が剥げた！簡単にできる保護方法・剥がれ防止策とは？" [ref=e948] [cursor=pointer]:
+                - /url: /blog-content/acrylickeyholder-howtoprotect
+            - generic [ref=e950]:
+              - link [ref=e952] [cursor=pointer]:
+                - /url: /blog-content/acrylic-difference
+              - link "今さら聞けない！アクリルキーホルダー（アクキー）とアクリルチャームの違いとは？" [ref=e954] [cursor=pointer]:
+                - /url: /blog-content/acrylic-difference
+          - generic [ref=e956]:
+            - link [ref=e958] [cursor=pointer]:
+              - /url: /blog-content/cut-pass
+            - link "アクリル製品を作るなら知っておきたい！「カットパス」とは？" [ref=e960] [cursor=pointer]:
+              - /url: /blog-content/cut-pass
+      - generic [ref=e963]:
+        - generic [ref=e964] [cursor=pointer]: オリジナルアクリルキーホルダー製作に関するお客様の声
+        - generic [ref=e968]:
+          - generic [ref=e969]:
+            - generic [ref=e973]:
+              - separator [ref=e974]
+              - paragraph [ref=e975]: お客様対応:★★★★★ 製品の満足度:★★★★★ 営業担当： その他・覚えていない製品： アクリルキーホルダー
+              - paragraph [ref=e976]: 2026年09月21日 14:49:00
+            - generic [ref=e980]:
+              - paragraph [ref=e981]: 仕上がりイメージ図丁寧なのは有難いですがもう少し本体主体で見せて欲しいです。
+              - separator [ref=e982]
+              - paragraph [ref=e983]: お客様対応:★★★★★ 製品の満足度:★★★★★ 営業担当： 竹村製品： アクリルキーホルダー
+              - paragraph [ref=e984]: 2026年09月18日 11:21:00
+            - generic [ref=e988]:
+              - paragraph [ref=e989]: 特に不満もなく、とても満足した仕上がりでした。他の会社も検討しましたが、内容と価格のバランスで納得できました。1つ挙げるとすれば、注文の行程で「仕上がりイメージを確認後に入金」ということに気づかず、注文と同時に入金してしまいました。当方の確認不足ですが、感覚的に分かりづらかったかも、と少し思いました。
+              - separator [ref=e990]
+              - paragraph [ref=e991]: お客様対応:★★★★★ 製品の満足度:★★★★★ 営業担当： ビビアン製品： アクリルキーホルダー
+              - paragraph [ref=e992]: 2026年09月08日 13:01:00
+          - link "レビュー一覧ページへ" [ref=e994] [cursor=pointer]:
+            - /url: https://hotmobily.jp/reviews/
+      - generic [ref=e997]:
+        - generic [ref=e998] [cursor=pointer]: アクリルキーホルダー利用事例
+        - generic [ref=e1002]:
+          - paragraph [ref=e1003]: 当店で製作させて頂いたアクリルキーホルダーの利用事例です。
+          - generic [ref=e1004]:
+            - generic [ref=e1005]:
+              - link "📷クリックすると拡大します" [ref=e1006] [cursor=pointer]:
+                - /url: /products/acrylic/img/acrylickey/acrylic-keychain-use-01.webp
+              - paragraph [ref=e1008]: 2026年6月12日
+              - heading "マイバッグに取り付け！" [level=3] [ref=e1009]
+              - paragraph [ref=e1010]: 可愛い女の子イラストのアクキーと一緒にお出かけ！
+            - generic [ref=e1011]:
+              - link "📷クリックすると拡大します" [ref=e1012] [cursor=pointer]:
+                - /url: /products/acrylic/img/acrylickey/acrylic-keychain-use-02.webp
+              - paragraph [ref=e1014]: 2026年6月12日
+              - heading "キーリングとして！" [level=3] [ref=e1015]
+              - paragraph [ref=e1016]: マイキーにクールなカーデザインのアクキーをプラス！
+      - generic [ref=e1019]:
+        - generic [ref=e1020] [cursor=pointer]: 製品仕様
+        - table [ref=e1025]:
+          - rowgroup [ref=e1026]:
+            - row [ref=e1027]:
+              - cell "名称" [ref=e1028]
+              - cell "オリジナルアクリルキーホルダー" [ref=e1029]
+            - row [ref=e1030]:
+              - cell "素材" [ref=e1031]
+              - cell "アクリル板3mm厚" [ref=e1032]
+            - row [ref=e1033]:
+              - cell "サイズ" [ref=e1034]
+              - cell "50X50mm / 75X75mm / 100X100mm" [ref=e1035]
+            - row [ref=e1036]:
+              - cell "色数" [ref=e1037]
+              - cell "フルカラーUVインクジェット印刷+白押さえが基本となります。 片面印刷：UV印刷+白押さえ 両面印刷：UV印刷+白押さえ+UV印刷" [ref=e1038]: フルカラーUVインクジェット印刷+白押さえが基本となります。片面印刷：UV印刷+白押さえ両面印刷：UV印刷+白押さえ+UV印刷
+            - row [ref=e1039]:
+              - cell "アタッチメント" [ref=e1040]
+              - cell "ボールチェーン、キーリング等" [ref=e1041]
+            - row [ref=e1042]:
+              - cell "最小ロット" [ref=e1043]
+              - cell "1個" [ref=e1044]
+            - row [ref=e1045]:
+              - cell "包装" [ref=e1046]
+              - cell "個別OPP包装" [ref=e1047]
+            - row [ref=e1048]:
+              - cell "台紙" [ref=e1049]
+              - cell "既製品：50種類のデータから選択可 オリジナル印刷：お客様の入稿データを使用し、印刷します 支給された台紙封入、JANシール貼り等の軽作業は、@22円（税込）でお受けしております。" [ref=e1050]: 既製品：50種類のデータから選択可オリジナル印刷：お客様の入稿データを使用し、印刷します支給された台紙封入、JANシール貼り等の軽作業は、@22円（税込）でお受けしております。
+            - row [ref=e1051]:
+              - cell "特徴" [ref=e1052]
+              - cell "印刷面をフィルム保護。CNCカット" [ref=e1053]
+            - row [ref=e1054]:
+              - cell "納期" [ref=e1055]
+              - cell "6営業日/10営業日" [ref=e1056]
+      - generic [ref=e1059]:
+        - generic [ref=e1060] [cursor=pointer]: アクリルグッズ一覧
+        - generic [ref=e1064]:
+          - generic [ref=e1065]:
+            - paragraph [ref=e1066]: ボタンをクリックして表示する商品を切り替えることができます。
+            - generic [ref=e1067]:
+              - button "定番＆おすすめ" [ref=e1068] [cursor=pointer]
+              - button "シミュレーター対応" [ref=e1069] [cursor=pointer]
+              - button "新商品" [ref=e1070] [cursor=pointer]
+              - button "キーホルダー" [ref=e1071] [cursor=pointer]
+              - button "アクスタ・ジオラマ" [ref=e1072] [cursor=pointer]
+              - button "めじるし" [ref=e1073] [cursor=pointer]
+              - button "実用品" [ref=e1074] [cursor=pointer]
+              - button "ユニークグッズ" [ref=e1075] [cursor=pointer]
+          - generic [ref=e1076]:
+            - link [ref=e1078] [cursor=pointer]:
+              - /url: /products/acrylic/
+              - img "オリジナルアクリルキーホルダー作成例。複数キャラクターがデザインされたダイカット型アクキー" [ref=e1079]
+              - heading "アクリルキーホルダー" [level=3] [ref=e1080]
+              - generic [ref=e1081]:
+                - paragraph [ref=e1082]: 1個168円（税込）～
+                - paragraph [ref=e1083]: 最短（6営業日）
+            - link [ref=e1085] [cursor=pointer]:
+              - /url: /products/acrylic/connectable-acrylic-keyholder
+              - img "オリジナル2連アクリルキーホルダー作成例。キャラクターとロゴのミニチャームが繋がったグッズ" [ref=e1086]
+              - heading "2連アクリルキーホルダー" [level=3] [ref=e1087]
+              - generic [ref=e1088]:
+                - paragraph [ref=e1089]: 1個300円（税込）～
+                - paragraph [ref=e1090]: 最短（6営業日）
+                - paragraph [ref=e1091]: 新商品！
+            - link [ref=e1093] [cursor=pointer]:
+              - /url: /products/acrylic/blister-pack-style
+              - img "ブリスターパック風アクリルキーホルダー作成例。パッケージ型ケースの中にアクリルパーツを封入したオリジナルグッズ" [ref=e1094]
+              - heading "ブリスターパック風 アクリルキーホルダー" [level=3] [ref=e1095]: ブリスターパック風アクリルキーホルダー
+              - generic [ref=e1096]:
+                - paragraph [ref=e1097]: 1個416円（税込）～
+                - paragraph [ref=e1098]: 最短（12営業日）
+                - paragraph [ref=e1099]: 新商品！
+            - link [ref=e1101] [cursor=pointer]:
+              - /url: /products/acrylic/syaka-syaka-acrylic-keyholder
+              - img "シャカシャカアクリルキーホルダー作成例。透明な枠の中で複数の小さなアクリルパーツが動くオリジナルグッズ" [ref=e1102]
+              - heading "シャカシャカ アクリルキーホルダー" [level=3] [ref=e1103]: シャカシャカアクリルキーホルダー
+              - generic [ref=e1104]:
+                - paragraph [ref=e1105]: 1個656円（税込）～
+                - paragraph [ref=e1106]: 最短（10営業日）
+                - paragraph [ref=e1107]: 新商品！
+            - link [ref=e1109] [cursor=pointer]:
+              - /url: /products/acrylic/tsumehodai
+              - img "アクリル詰め放題（組み立て式ジオラマ）作成例。1枚のプレートに複数パーツを配置したオリジナルグッズ" [ref=e1110]
+              - heading "アクリル詰め放題" [level=3] [ref=e1111]
+              - generic [ref=e1112]:
+                - paragraph [ref=e1113]: 1個3850円（税込）～
+                - paragraph [ref=e1114]: 最短（10営業日）
+                - paragraph [ref=e1115]: 新商品！
+            - link [ref=e1117] [cursor=pointer]:
+              - /url: /products/acrylic/aurora.php
+              - img "オーロラアクリルキーホルダー作成例。光の反射で青や紫に色が変化するオーロラ素材を使用したアクキー" [ref=e1118]
+              - heading "オーロラアクリルキーホルダー" [level=3] [ref=e1119]
+              - generic [ref=e1120]:
+                - paragraph [ref=e1121]: 1個188円（税込）～
+                - paragraph [ref=e1122]: 最短（6営業日）
+            - link [ref=e1124] [cursor=pointer]:
+              - /url: /products/acrylic/rainbow.php
+              - img "レインボーアクリルキーホルダー作成例。表面が虹色に輝くホログラム加工仕様のオリジナルグッズ" [ref=e1125]
+              - heading "レインボーアクリルキーホルダー" [level=3] [ref=e1126]
+              - generic [ref=e1127]:
+                - paragraph [ref=e1128]: 1個188円（税込）～
+                - paragraph [ref=e1129]: 最短（6営業日）
+            - link [ref=e1131] [cursor=pointer]:
+              - /url: /products/acrylic/recycle.php
+              - img "再生材料アクリルキーホルダー作成例。環境に優しいリサイクルアクリル板を使用したオリジナルグッズ" [ref=e1132]
+              - heading "再生材料アクリルキーホルダー" [level=3] [ref=e1133]
+              - generic [ref=e1134]:
+                - paragraph [ref=e1135]: 1個168円（税込）～
+                - paragraph [ref=e1136]: 最短（6営業日）
+            - link [ref=e1138] [cursor=pointer]:
+              - /url: /products/acrylic/omamori-keyholder.php
+              - img "お守り型アクリルキーホルダー作成例。専用の飾り紐を通した和風デザインのオリジナルお守りグッズ" [ref=e1139]
+              - heading "お守りアクリルキーホルダー" [level=3] [ref=e1140]
+              - generic [ref=e1141]:
+                - paragraph [ref=e1142]: 1個245円（税込）～
+                - paragraph [ref=e1143]: 最短（6営業日）
+            - link [ref=e1145] [cursor=pointer]:
+              - /url: /products/acrylic/figure
+              - img "オリジナルアクリルスタンド（アクスタ）作成例。キャラクター本体とハート型オリジナル台座のセット" [ref=e1146]
+              - heading "アクリルスタンド" [level=3] [ref=e1147]
+              - generic [ref=e1148]:
+                - paragraph [ref=e1149]: 1個233円（税込）～
+                - paragraph [ref=e1150]: 最短（6営業日）
+            - link [ref=e1152] [cursor=pointer]:
+              - /url: /products/acrylic/figure/rainbow
+              - img "レインボーアクリルスタンド作成例。表面が虹色に輝くホログラム加工を施したオリジナルアクスタ" [ref=e1153]
+              - heading "レインボーアクリルスタンド" [level=3] [ref=e1154]
+              - generic [ref=e1155]:
+                - paragraph [ref=e1156]: 1個330円（税込）～
+                - paragraph [ref=e1157]: 最短（6営業日）
+                - paragraph [ref=e1158]: 新商品！
+            - link [ref=e1160] [cursor=pointer]:
+              - /url: /products/acrylic/figure/aurora
+              - img "オーロラアクリルスタンド作成例。光の角度で色が変化するオーロラ素材を使用した星型台座のオリジナルアクスタ" [ref=e1161]
+              - heading "オーロラアクリルスタンド" [level=3] [ref=e1162]
+              - generic [ref=e1163]:
+                - paragraph [ref=e1164]: 1個330円（税込）～
+                - paragraph [ref=e1165]: 最短（6営業日）
+                - paragraph [ref=e1166]: 新商品！
+            - link [ref=e1168] [cursor=pointer]:
+              - /url: /products/acrylic/dioramastand
+              - img "ジオラマアクリルスタンド作成例。複数のキャラクターと背景・看板パーツを立体的に配置できるオリジナルアクリルジオラマ" [ref=e1169]
+              - heading "ジオラマアクリルスタンド" [level=3] [ref=e1170]
+              - generic [ref=e1171]:
+                - paragraph [ref=e1172]: 1個398円（税込）～
+                - paragraph [ref=e1173]: 最短（6営業日）
+                - paragraph [ref=e1174]: 新商品！
+            - link [ref=e1176] [cursor=pointer]:
+              - /url: /products/acrylic/monitor
+              - img "モニターアクリルスタンド作成例。パソコンのモニター上部に設置できるオリジナルアクスタ" [ref=e1177]
+              - heading "モニターアクリルスタンド" [level=3] [ref=e1178]
+              - generic [ref=e1179]:
+                - paragraph [ref=e1180]: 1個398円（税込）～
+                - paragraph [ref=e1181]: 最短（6営業日）
+                - paragraph [ref=e1182]: 新商品！
+            - link [ref=e1184] [cursor=pointer]:
+              - /url: /products/acrylic/board
+              - img "アクリルパネル作成例。金属製スタンドパーツで自立する、複数キャラクターを配置した透明なオリジナルアクリルボード" [ref=e1185]
+              - heading "アクリルパネル（アクリルボード）" [level=3] [ref=e1186]
+              - generic [ref=e1187]:
+                - paragraph [ref=e1188]: 1個740円（税込）～
+                - paragraph [ref=e1189]: 最短（6営業日）
+                - paragraph [ref=e1190]: 新商品！
+            - link [ref=e1192] [cursor=pointer]:
+              - /url: /products/acrylic/stand
+              - img "アクリルスマホスタンド作成例。分解して持ち運べる、組み立て式のオリジナルアクリル製スマートフォンスタンド" [ref=e1193]
+              - heading "アクリルスマホスタンド" [level=3] [ref=e1194]
+              - generic [ref=e1195]:
+                - paragraph [ref=e1196]: 1個876円（税込）～
+                - paragraph [ref=e1197]: 最短（6営業日）
+            - link [ref=e1199] [cursor=pointer]:
+              - /url: /products/acrylic/umbrella
+              - img "めじるしアクセサリー作成例。傘の取っ手やペットボトルに付けられるシリコンリング付きのアクリル製アンブレラマーカー" [ref=e1200]
+              - heading "めじるしキーホルダー（アクリルアンブレラマーカー）" [level=3] [ref=e1201]
+              - generic [ref=e1202]:
+                - paragraph [ref=e1203]: 1個168円（税込）～
+                - paragraph [ref=e1204]: 最短（6営業日）
+            - link [ref=e1206] [cursor=pointer]:
+              - /url: /products/acrylic/badge
+              - img "アクリルクリップ作成例。裏面に安全ピンとクリップの両方が付いたオリジナルキャラクターアクリルバッジ" [ref=e1207]
+              - heading "アクリルクリップ（アクリルバッジ）" [level=3] [ref=e1208]
+              - generic [ref=e1209]:
+                - paragraph [ref=e1210]: 1個168円（税込）～
+                - paragraph [ref=e1211]: 最短（6営業日）
+            - link [ref=e1213] [cursor=pointer]:
+              - /url: /products/acrylic/coaster
+              - img "アクリルコースター作成例。透明感があり水濡れに強い、角丸仕様のオリジナルプリントアクリル製コースター" [ref=e1214]
+              - heading "アクリルコースター" [level=3] [ref=e1215]
+              - generic [ref=e1216]:
+                - paragraph [ref=e1217]: 1個267円（税込）～
+                - paragraph [ref=e1218]: 最短（6営業日）
+            - link [ref=e1220] [cursor=pointer]:
+              - /url: /products/acrylic/hairbunch
+              - img "アクリルヘアゴム作成例。キャラクターのダイカットアクリルパーツが付いたオリジナルの太めヘアアクセサリー" [ref=e1221]
+              - heading "アクリルヘアバンド" [level=3] [ref=e1222]
+              - generic [ref=e1223]:
+                - paragraph [ref=e1224]: 1個168円（税込）～
+                - paragraph [ref=e1225]: 最短（6営業日）
+            - link [ref=e1227] [cursor=pointer]:
+              - /url: /products/acrylic/griptok
+              - img "アクリルスマホグリップ作成例。スマートフォンの背面に貼り付けて落下防止やスタンドになるオリジナルグリップトック" [ref=e1228]
+              - heading "アクリルスマホグリップトック" [level=3] [ref=e1229]
+              - generic [ref=e1230]:
+                - paragraph [ref=e1231]: 1個267円（税込）～
+                - paragraph [ref=e1232]: 最短（6営業日）
+      - generic [ref=e1235]:
+        - generic [ref=e1236] [cursor=pointer]: 御社にお伺いします！
+        - generic [ref=e1240]:
+          - link [ref=e1241] [cursor=pointer]:
+            - /url: //hotmobily.jp/meeting_date/
+          - paragraph [ref=e1242]: 対面やZoom等でのご相談をご希望の法人様向けに、当店営業の呼出フォームをご用意しております。「仕様や納期についてまずは話を聞きたい」「希望のデザインができるのか確かめたい」といったご希望のある法人様は、ぜひご活用ください。
+      - generic [ref=e1245]:
+        - generic [ref=e1246] [cursor=pointer]: お客様が当店製作のオリジナルアクキーをXで紹介してくださいました！
+        - generic [ref=e1251]:
+          - iframe [ref=e1254]:
+            - article [ref=f2e4] [cursor=pointer]:
+              - link "Xでこのポストを表示する":
+                - /url: https://x.com/etowarlukarzas/status/1738063253954232607?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+              - generic [ref=f2e5]:
+                - link [aria-hidden] [ref=f2e14]:
+                  - /url: https://twitter.com/etowarlukarzas
+                - generic [ref=f2e20]:
+                  - link [ref=f2e21]:
+                    - /url: https://twitter.com/etowarlukarzas
+                    - generic [ref=f2e22]:
+                      - generic [ref=f2e23]: エトワール
+                      - img "認証済みアカウント" [ref=f2e27]
+                  - generic [ref=f2e30]:
+                    - link "@etowarlukarzas" [ref=f2e31]:
+                      - /url: https://twitter.com/etowarlukarzas
+                    - generic [ref=f2e34]:
+                      - generic [aria-hidden] [ref=f2e35]: ·
+                      - link "フォローする" [ref=f2e36]:
+                        - /url: https://x.com/intent/follow?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&screen_name=etowarlukarzas
+                - link "Xで表示" [ref=f2e37]:
+                  - /url: https://x.com/etowarlukarzas/status/1738063253954232607?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+              - generic [ref=f2e42]:
+                - text: ネルゲル様のアクリルキーホルダー30個今日届きました
+                - img "😆" [ref=f2e43]
+                - img "✨" [ref=f2e44]
+                - text: 素敵に作ってくれて感謝です
+                - img "💞" [ref=f2e45]
+                - text: 仕上がり綺麗で予備も2つ入れてくれてました
+                - img "✨" [ref=f2e46]
+                - text: またぜひ次も何か作りたいです
+                - img "🩷" [ref=f2e47]
+                - text: 初めてのアクリルキーホルダーだから嬉しい
+                - img "💞" [ref=f2e48]
+                - link "#アクリルキーホルダー" [ref=f2e50]:
+                  - /url: https://x.com/hashtag/%E3%82%A2%E3%82%AF%E3%83%AA%E3%83%AB%E3%82%AD%E3%83%BC%E3%83%9B%E3%83%AB%E3%83%80%E3%83%BC?src=hashtag_click
+                - link "#ホットモバイリー" [ref=f2e52]:
+                  - /url: https://x.com/hashtag/%E3%83%9B%E3%83%83%E3%83%88%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AA%E3%83%BC?src=hashtag_click
+              - generic [ref=f2e57]:
+                - link [ref=f2e59]:
+                  - /url: https://x.com/etowarlukarzas/status/1738063253954232607/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                  - generic "画像" [ref=f2e61]:
+                    - img "画像" [ref=f2e63]
+                - link [ref=f2e65]:
+                  - /url: https://x.com/etowarlukarzas/status/1738063253954232607/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                  - generic "画像" [ref=f2e67]:
+                    - img "画像" [ref=f2e69]
+              - article [ref=f2e72]:
+                - link "Xでこのポストを表示する":
+                  - /url: https://x.com/GoodsYe/status/1693526237954920585?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es3_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                - generic [ref=f2e76]:
+                  - generic [ref=f2e78]:
+                    - generic [ref=f2e89]: HOTMOBILY_ホットモバイリーのオリジナルグッズ製作
+                    - img "認証済みアカウント" [ref=f2e93]
+                  - generic [ref=f2e96]: "@GoodsYe"
+                - generic [ref=f2e101]:
+                  - text: 改めて自己紹介
+                  - img "💁‍♀️" [ref=f2e102]
+                  - text: ・オリジナルグッズ製作「ホットモバイリー」／オリジナルネックストラップ製作「ホットストラップ」運営 ・本社は日本 ・中国とタイに海外拠点 ・新製品の紹介やキャンペーンの案内、グッズ製作のあれこれ、製作事例等を投稿 よろしくお願いします
+                  - img "🩷" [ref=f2e103]
+                  - generic [ref=f2e104]: "#企業公式夏のフォロー祭り"
+              - generic [ref=f2e105]:
+                - link "午後0:05 · 2023年12月22日" [ref=f2e110]:
+                  - /url: https://x.com/etowarlukarzas/status/1738063253954232607?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                  - time [ref=f2e111]: 午後0:05 · 2023年12月22日
+                - link "X広告の情報とプライバシー" [ref=f2e112]:
+                  - /url: https://help.x.com/x-for-websites-ads-info-and-privacy
+              - generic [ref=f2e116]:
+                - link "いいねしましょう。このポストには27件のいいねがあります" [ref=f2e117]:
+                  - /url: https://x.com/intent/like?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&tweet_id=1738063253954232607
+                  - generic [ref=f2e122]: "27"
+                - link "Xでこのポストに返信" [ref=f2e123]:
+                  - /url: https://x.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&in_reply_to=1738063253954232607
+                  - generic [ref=f2e128]: 返信
+                - button "リンクをコピー" [ref=f2e129]
+              - link "Xでもっと読む" [ref=f2e136]:
+                - /url: https://x.com/explore?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1738063253954232607%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+          - iframe [ref=e1257]:
+            - article [ref=f3e4] [cursor=pointer]:
+              - link "Xでこのポストを表示する":
+                - /url: https://x.com/panda8hiro/status/1743126711661903912?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+              - generic [ref=f3e5]:
+                - link [aria-hidden] [ref=f3e14]:
+                  - /url: https://twitter.com/panda8hiro
+                - generic [ref=f3e20]:
+                  - link [ref=f3e21]:
+                    - /url: https://twitter.com/panda8hiro
+                    - generic [ref=f3e24]:
+                      - text: 熊猫屋☆HiRΦ
+                      - img "🐼" [ref=f3e25]
+                      - text: 生誕祭
+                      - img "🎂" [ref=f3e26]
+                      - text: 9/23(水
+                      - img "㊗️" [ref=f3e27]
+                      - text: )荻窪Top Beat Club
+                  - generic [ref=f3e28]:
+                    - link "@panda8hiro" [ref=f3e29]:
+                      - /url: https://twitter.com/panda8hiro
+                    - generic [ref=f3e32]:
+                      - generic [aria-hidden] [ref=f3e33]: ·
+                      - link "フォローする" [ref=f3e34]:
+                        - /url: https://x.com/intent/follow?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&screen_name=panda8hiro
+                - link "Xで表示" [ref=f3e35]:
+                  - /url: https://x.com/panda8hiro/status/1743126711661903912?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+              - generic [ref=f3e40]:
+                - text: PundaRock
+                - img "🆕" [ref=f3e41]
+                - text: GOODS
+                - img "✨" [ref=f3e42]
+                - text: ロゴアクリルキーホルダー！ 1/8(月・祝)熊猫夜会 ＠下北沢BREATH より発売開始です！！ 1個 1,000円 是非ともよろしくお願いします！ めちゃくちゃ可愛い! そして仕上げが丁寧
+                - img "✨" [ref=f3e43]
+                - link "@GoodsYe" [ref=f3e45]:
+                  - /url: https://x.com/GoodsYe?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                - text: 様ありがとうございます
+                - img "😆" [ref=f3e46]
+              - generic [ref=f3e51]:
+                - link [ref=f3e53]:
+                  - /url: https://x.com/panda8hiro/status/1743126711661903912/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                  - generic "画像" [ref=f3e55]:
+                    - img "画像" [ref=f3e57]
+                - link [ref=f3e59]:
+                  - /url: https://x.com/panda8hiro/status/1743126711661903912/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                  - generic "画像" [ref=f3e61]:
+                    - img "画像" [ref=f3e63]
+              - generic [ref=f3e64]:
+                - link "午前11:26 · 2024年1月5日" [ref=f3e69]:
+                  - /url: https://x.com/panda8hiro/status/1743126711661903912?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                  - time [ref=f3e70]: 午前11:26 · 2024年1月5日
+                - link "X広告の情報とプライバシー" [ref=f3e71]:
+                  - /url: https://help.x.com/x-for-websites-ads-info-and-privacy
+              - generic [ref=f3e75]:
+                - link "いいねしましょう。このポストには12件のいいねがあります" [ref=f3e76]:
+                  - /url: https://x.com/intent/like?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&tweet_id=1743126711661903912
+                  - generic [ref=f3e81]: "12"
+                - link "Xでこのポストに返信" [ref=f3e82]:
+                  - /url: https://x.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&in_reply_to=1743126711661903912
+                  - generic [ref=f3e87]: 返信
+                - button "リンクをコピー" [ref=f3e88]
+              - link "Xでもっと読む" [ref=f3e95]:
+                - /url: https://x.com/explore?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1743126711661903912%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+          - iframe [ref=e1260]:
+            - article [ref=f4e4] [cursor=pointer]:
+              - link "Xでこのポストを表示する":
+                - /url: https://x.com/askr_iktrik/status/1739937918456668377?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+              - generic [ref=f4e5]:
+                - link [aria-hidden] [ref=f4e14]:
+                  - /url: https://twitter.com/askr_iktrik
+                - generic [ref=f4e20]:
+                  - link "朝倉工務店" [ref=f4e21]:
+                    - /url: https://twitter.com/askr_iktrik
+                  - generic [ref=f4e25]:
+                    - link "@askr_iktrik" [ref=f4e26]:
+                      - /url: https://twitter.com/askr_iktrik
+                    - generic [ref=f4e29]:
+                      - generic [aria-hidden] [ref=f4e30]: ·
+                      - link "フォローする" [ref=f4e31]:
+                        - /url: https://x.com/intent/follow?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&screen_name=askr_iktrik
+                - link "Xで表示" [ref=f4e32]:
+                  - /url: https://x.com/askr_iktrik/status/1739937918456668377?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+              - generic [ref=f4e37]:
+                - text: 参加者特典のプレゼントはホットモバイリー様(
+                - link "@GoodsYe" [ref=f4e39]:
+                  - /url: https://x.com/GoodsYe?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                - text: )で製作させてもらいました。 最初から裏面に保護フィルム付きだし面取りしてくれて画像だけ投げたらパスも引いて貰えます。 仕上がりや対応もとても良かったのでまた次回も利用させて貰いたいです！！
+                - link "hotmobily.jp" [ref=f4e40]:
+                  - /url: https://t.co/bLybMDI1gO
+              - generic [ref=f4e45]:
+                - generic [ref=f4e46]:
+                  - link [ref=f4e48]:
+                    - /url: https://x.com/askr_iktrik/status/1739937918456668377/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                    - generic "画像" [ref=f4e50]:
+                      - img "画像" [ref=f4e52]
+                  - link [ref=f4e54]:
+                    - /url: https://x.com/askr_iktrik/status/1739937918456668377/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                    - generic "画像" [ref=f4e56]:
+                      - img "画像" [ref=f4e58]
+                - generic [ref=f4e59]:
+                  - link [ref=f4e61]:
+                    - /url: https://x.com/askr_iktrik/status/1739937918456668377/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                    - generic "画像" [ref=f4e63]:
+                      - img "画像" [ref=f4e65]
+                  - link [ref=f4e67]:
+                    - /url: https://x.com/askr_iktrik/status/1739937918456668377/photo/1?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                    - generic "画像" [ref=f4e69]:
+                      - img "画像" [ref=f4e71]
+              - generic [ref=f4e72]:
+                - link "午後4:15 · 2023年12月27日" [ref=f4e77]:
+                  - /url: https://x.com/askr_iktrik/status/1739937918456668377?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+                  - time [ref=f4e78]: 午後4:15 · 2023年12月27日
+                - link "X広告の情報とプライバシー" [ref=f4e79]:
+                  - /url: https://help.x.com/x-for-websites-ads-info-and-privacy
+              - generic [ref=f4e83]:
+                - link "いいねしましょう。このポストには42件のいいねがあります" [ref=f4e84]:
+                  - /url: https://x.com/intent/like?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&tweet_id=1739937918456668377
+                  - generic [ref=f4e89]: "42"
+                - link "Xでこのポストに返信" [ref=f4e90]:
+                  - /url: https://x.com/intent/tweet?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F&in_reply_to=1739937918456668377
+                  - generic [ref=f4e95]: 返信
+                - button "リンクをコピー" [ref=f4e96]
+              - link "Xでもっと読む" [ref=f4e103]:
+                - /url: https://x.com/explore?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1739937918456668377%7Ctwgr%5E62d7d13d69e5f8c2a3cb5aa2045c3aab53caa83d%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fhotmobily.jp%2Fproducts%2Facrylic%2F
+  - generic [ref=e1262]:
+    - generic [ref=e1263]: 商品情報
+    - generic [ref=e1264]:
+      - link "全商品一覧" [ref=e1266] [cursor=pointer]:
+        - /url: /
+      - link "ラバーストラップ" [ref=e1268] [cursor=pointer]:
+        - /url: /products/rubberstrap/
+      - link "ラバーコースター" [ref=e1270] [cursor=pointer]:
+        - /url: /products/rubbercoaster/
+      - link "アクリルキーホルダー" [ref=e1272] [cursor=pointer]:
+        - /url: /products/acrylic/
+      - link "リフレクター（反射）チャーム" [ref=e1274] [cursor=pointer]:
+        - /url: /products/reflecter.php
+      - link "メガネクロス・マイクロファイバーポーチ" [ref=e1276] [cursor=pointer]:
+        - /url: /products/microfibers.php
+      - link "カラビナ" [ref=e1278] [cursor=pointer]:
+        - /url: /products/carabiner/
+      - link "オリジナルキーホルダー" [ref=e1280] [cursor=pointer]:
+        - /url: /products/keychains-ranking
+    - generic [ref=e1281]:
+      - link "キャンペーン一覧" [ref=e1283] [cursor=pointer]:
+        - /url: /campaign/
+      - link "個人情報保護方針" [ref=e1285] [cursor=pointer]:
+        - /url: /privacy/index.html
+      - link "運営会社" [ref=e1287] [cursor=pointer]:
+        - /url: /company/index.html
+      - link "ご利用規約" [ref=e1289] [cursor=pointer]:
+        - /url: /sitepolicy/index.html
+      - link "問い合わせサンプル請求" [ref=e1291] [cursor=pointer]:
+        - /url: /contact/index.php
+      - link "ホットストラップ" [ref=e1293] [cursor=pointer]:
+        - /url: //hotstrap.jp/
+      - link "お役立ち情報" [ref=e1295] [cursor=pointer]:
+        - /url: //hotmobily.jp/blog-content/lists
+      - link "シリコンリストバンドスタジオ" [ref=e1297] [cursor=pointer]:
+        - /url: https://silicone-wristband-studio.jp/
+      - link "Custom pvc keychains YG" [ref=e1299] [cursor=pointer]:
+        - /url: https://you-goods.com/
+    - paragraph [ref=e1300]: Copyright © 2023-2028 ホットモバイリーオリジナルグッズ. Powered by YOU AND EARTH Co.,ltd. ホットモバイリー、ホットストラップはユー・アンド・アース株式会社の登録商標です。
+  - text: "> > >"

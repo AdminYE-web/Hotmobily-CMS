@@ -7,6 +7,7 @@ use App\Models\OptionGroup;
 use App\Models\ProductOption;
 use App\Support\RichTextSanitizer;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -17,15 +18,89 @@ use Illuminate\View\View;
 
 class ProductOptionController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $filters = [
+            'q' => trim((string) $request->query('q', '')),
+            'group' => (string) $request->query('group', ''),
+            'status' => (string) $request->query('status', ''),
+            'disabled' => (string) $request->query('disabled', ''),
+        ];
+
+        $productOptions = ProductOption::query()
+            ->with('optionGroup:id,group_code,group_name')
+            ->when($filters['q'] !== '', function ($query) use ($filters): void {
+                $like = '%'.addcslashes($filters['q'], '%_\\').'%';
+
+                $query->where(fn ($query) => $query->where('option_code', 'like', $like)->orWhere('option_name', 'like', $like));
+            })
+            ->when(ctype_digit($filters['group']), fn ($query) => $query->where('option_group_id', (int) $filters['group']))
+            ->when($filters['status'] === 'active', fn ($query) => $query->where('is_active', true))
+            ->when($filters['status'] === 'inactive', fn ($query) => $query->where('is_active', false))
+            ->when($filters['disabled'] === 'yes', fn ($query) => $query->where('is_disabled', true))
+            ->when($filters['disabled'] === 'no', fn ($query) => $query->where('is_disabled', false))
+            ->orderBy('option_group_id')
+            ->orderBy('option_name')
+            ->paginate(30)
+            ->withQueryString();
+
         return view('admin.product-options.index', [
-            'productOptions' => ProductOption::query()
-                ->with('optionGroup:id,group_code,group_name')
-                ->orderBy('option_group_id')
-                ->orderBy('option_name')
-                ->paginate(30),
+            'productOptions' => $productOptions,
+            'optionGroups' => $this->optionGroups(),
+            'filterGroups' => OptionGroup::query()->orderBy('group_name')->get(['id', 'group_code', 'group_name']),
+            'filters' => $filters,
         ]);
+    }
+
+    public function bulkUpload(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'option_group_id' => ['required', 'integer', Rule::exists('option_groups', 'id')->where('is_active', true)],
+            'upload_id' => ['required', 'uuid'],
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,gif,webp,bmp', 'max:5120'],
+        ]);
+        $file = $request->file('image');
+        $stem = trim(preg_replace('/[\x00-\x1f\x7f]/u', '', pathinfo(basename(str_replace('\\', '/', $file->getClientOriginalName())), PATHINFO_FILENAME)) ?? '');
+        if ($stem === '') {
+            throw \Illuminate\Validation\ValidationException::withMessages(['image' => 'The image must have a filename before its extension.']);
+        }
+        $storedName = null;
+        try {
+            [$option, $created] = DB::transaction(function () use ($data, $file, $stem, &$storedName): array {
+                // Serialize bulk uploads to a group while choosing a unique filename-based code.
+                OptionGroup::whereKey($data['option_group_id'])->lockForUpdate()->firstOrFail();
+                $existing = ProductOption::where('bulk_upload_key', $data['upload_id'])->first();
+                if ($existing) {
+                    abort_if((int) $existing->option_group_id !== (int) $data['option_group_id'], 409, 'This upload was already used for another Option Group.');
+                    return [$existing, false];
+                }
+                $base = Str::substr($stem, 0, 100);
+                $code = $base;
+                for ($suffix = 2; ProductOption::where('option_group_id', $data['option_group_id'])->where('option_code', $code)->exists(); $suffix++) {
+                    $ending = '_'.$suffix;
+                    $code = Str::substr($base, 0, 100 - strlen($ending)).$ending;
+                }
+                $directory = public_path('product-options');
+                File::ensureDirectoryExists($directory);
+                $storedName = Str::uuid()->toString().'.'.$file->extension();
+                $file->move($directory, $storedName);
+                $option = new ProductOption([
+                    'option_group_id' => $data['option_group_id'], 'option_code' => $code,
+                    'option_name' => Str::substr($stem, 0, 255), 'option_images' => [$storedName],
+                    'is_active' => true, 'is_disabled' => false,
+                ]);
+                $option->bulk_upload_key = $data['upload_id'];
+                $option->save();
+                return [$option, true];
+            });
+        } catch (\Throwable $error) {
+            if ($storedName !== null) $this->deleteStoredImages([$storedName]);
+            throw $error;
+        }
+        return response()->json(['data' => [
+            'id' => $option->id, 'option_name' => $option->option_name, 'option_code' => $option->option_code,
+            'edit_url' => route('admin.product-options.edit', $option), 'created' => $created,
+        ]], $created ? 201 : 200);
     }
 
     public function create(): View
@@ -126,7 +201,7 @@ class ProductOptionController extends Controller
             'option_code' => [
                 'required',
                 'string',
-                'alpha_dash:ascii',
+                'not_regex:/[\x00-\x1f\x7f]/u',
                 'max:100',
                 Rule::unique('product_options', 'option_code')
                     ->where('option_group_id', $request->integer('option_group_id'))

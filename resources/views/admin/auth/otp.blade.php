@@ -3,6 +3,7 @@
 <html lang="en">
 
 <head>
+    <link rel="icon" href="{{ asset('images/home/favicon.ico') }}" type="image/x-icon">
 
     <meta charset="UTF-8">
 

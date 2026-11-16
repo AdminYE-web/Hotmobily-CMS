@@ -1,0 +1,425 @@
+{
+  "title": "製作料金",
+  "quantity_label": "数量",
+  "actions_label": "Actions",
+  "description": "納期と印刷面を選択してください。サイズ別の製作単価表が表示されます。",
+  "delivery_label": "納期",
+  "print_label": "印刷面",
+  "table_title": "数量・サイズ別価格表",
+  "note": "価格は税込の製作単価です。",
+  "empty_message": "この条件の価格情報はありません。",
+  "deliveries": [
+    {
+      "id": "days10",
+      "label": "10営業日"
+    },
+    {
+      "id": "days6",
+      "label": "6営業日"
+    }
+  ],
+  "prints": [
+    {
+      "id": "single",
+      "label": "片面印刷"
+    },
+    {
+      "id": "double",
+      "label": "両面印刷"
+    }
+  ],
+  "sizes": [
+    {
+      "id": "size50",
+      "label": "50×50mm以内"
+    },
+    {
+      "id": "size75",
+      "label": "75×75mm以内"
+    },
+    {
+      "id": "size100",
+      "label": "100×100mm以内"
+    }
+  ],
+  "default_delivery": "days10",
+  "default_print": "single",
+  "variants": [
+    {
+      "delivery_id": "days10",
+      "print_id": "single",
+      "rows": [
+        {
+          "quantity": 1,
+          "prices": {
+            "size50": "990",
+            "size75": "1089",
+            "size100": "1188"
+          }
+        },
+        {
+          "quantity": 5,
+          "prices": {
+            "size50": "411",
+            "size75": "455",
+            "size100": "569"
+          }
+        },
+        {
+          "quantity": 10,
+          "prices": {
+            "size50": "328",
+            "size75": "367",
+            "size100": "476"
+          }
+        },
+        {
+          "quantity": 20,
+          "prices": {
+            "size50": "290",
+            "size75": "324",
+            "size100": "433"
+          }
+        },
+        {
+          "quantity": 30,
+          "prices": {
+            "size50": "276",
+            "size75": "305",
+            "size100": "413"
+          }
+        },
+        {
+          "quantity": 50,
+          "prices": {
+            "size50": "255",
+            "size75": "284",
+            "size100": "383"
+          }
+        },
+        {
+          "quantity": 70,
+          "prices": {
+            "size50": "227",
+            "size75": "251",
+            "size100": "356"
+          }
+        },
+        {
+          "quantity": 100,
+          "prices": {
+            "size50": "207",
+            "size75": "227",
+            "size100": "336"
+          }
+        },
+        {
+          "quantity": 200,
+          "prices": {
+            "size50": "193",
+            "size75": "221",
+            "size100": "322"
+          }
+        },
+        {
+          "quantity": 300,
+          "prices": {
+            "size50": "188",
+            "size75": "217",
+            "size100": "316"
+          }
+        },
+        {
+          "quantity": 500,
+          "prices": {
+            "size50": "178",
+            "size75": "207",
+            "size100": "277"
+          }
+        },
+        {
+          "quantity": 1000,
+          "prices": {
+            "size50": "168",
+            "size75": "198",
+            "size100": "267"
+          }
+        }
+      ]
+    },
+    {
+      "delivery_id": "days10",
+      "print_id": "double",
+      "rows": [
+        {
+          "quantity": 1,
+          "prices": {
+            "size50": "1237",
+            "size75": "1366",
+            "size100": "1485"
+          }
+        },
+        {
+          "quantity": 5,
+          "prices": {
+            "size50": "514",
+            "size75": "569",
+            "size100": "712"
+          }
+        },
+        {
+          "quantity": 10,
+          "prices": {
+            "size50": "410",
+            "size75": "458",
+            "size100": "595"
+          }
+        },
+        {
+          "quantity": 20,
+          "prices": {
+            "size50": "363",
+            "size75": "405",
+            "size100": "541"
+          }
+        },
+        {
+          "quantity": 30,
+          "prices": {
+            "size50": "344",
+            "size75": "381",
+            "size100": "517"
+          }
+        },
+        {
+          "quantity": 50,
+          "prices": {
+            "size50": "319",
+            "size75": "356",
+            "size100": "480"
+          }
+        },
+        {
+          "quantity": 70,
+          "prices": {
+            "size50": "284",
+            "size75": "314",
+            "size100": "446"
+          }
+        },
+        {
+          "quantity": 100,
+          "prices": {
+            "size50": "259",
+            "size75": "284",
+            "size100": "421"
+          }
+        },
+        {
+          "quantity": 200,
+          "prices": {
+            "size50": "243",
+            "size75": "276",
+            "size100": "403"
+          }
+        },
+        {
+          "quantity": 300,
+          "prices": {
+            "size50": "235",
+            "size75": "272",
+            "size100": "396"
+          }
+        },
+        {
+          "quantity": 500,
+          "prices": {
+            "size50": "223",
+            "size75": "259",
+            "size100": "346"
+          }
+        },
+        {
+          "quantity": 1000,
+          "prices": {
+            "size50": "210",
+            "size75": "247",
+            "size100": "334"
+          }
+        }
+      ]
+    },
+    {
+      "delivery_id": "days6",
+      "print_id": "single",
+      "rows": [
+        {
+          "quantity": 1,
+          "prices": {
+            "size50": "1098",
+            "size75": "1207",
+            "size100": "1316"
+          }
+        },
+        {
+          "quantity": 5,
+          "prices": {
+            "size50": "457",
+            "size75": "507",
+            "size100": "633"
+          }
+        },
+        {
+          "quantity": 10,
+          "prices": {
+            "size50": "365",
+            "size75": "408",
+            "size100": "529"
+          }
+        },
+        {
+          "quantity": 20,
+          "prices": {
+            "size50": "322",
+            "size75": "359",
+            "size100": "481"
+          }
+        },
+        {
+          "quantity": 30,
+          "prices": {
+            "size50": "305",
+            "size75": "338",
+            "size100": "459"
+          }
+        },
+        {
+          "quantity": 50,
+          "prices": {
+            "size50": "283",
+            "size75": "316",
+            "size100": "426"
+          }
+        },
+        {
+          "quantity": 70,
+          "prices": {
+            "size50": "253",
+            "size75": "280",
+            "size100": "396"
+          }
+        },
+        {
+          "quantity": 100,
+          "prices": {
+            "size50": "231",
+            "size75": "253",
+            "size100": "374"
+          }
+        },
+        {
+          "quantity": 200,
+          "prices": {
+            "size50": "215",
+            "size75": "245",
+            "size100": "358"
+          }
+        },
+        {
+          "quantity": 300,
+          "prices": {
+            "size50": "209",
+            "size75": "242",
+            "size100": "352"
+          }
+        }
+      ]
+    },
+    {
+      "delivery_id": "days6",
+      "print_id": "double",
+      "rows": [
+        {
+          "quantity": 1,
+          "prices": {
+            "size50": "1376",
+            "size75": "1514",
+            "size100": "1643"
+          }
+        },
+        {
+          "quantity": 5,
+          "prices": {
+            "size50": "572",
+            "size75": "633",
+            "size100": "792"
+          }
+        },
+        {
+          "quantity": 10,
+          "prices": {
+            "size50": "457",
+            "size75": "509",
+            "size100": "661"
+          }
+        },
+        {
+          "quantity": 20,
+          "prices": {
+            "size50": "402",
+            "size75": "449",
+            "size100": "601"
+          }
+        },
+        {
+          "quantity": 30,
+          "prices": {
+            "size50": "382",
+            "size75": "424",
+            "size100": "574"
+          }
+        },
+        {
+          "quantity": 50,
+          "prices": {
+            "size50": "355",
+            "size75": "396",
+            "size100": "533"
+          }
+        },
+        {
+          "quantity": 70,
+          "prices": {
+            "size50": "316",
+            "size75": "349",
+            "size100": "496"
+          }
+        },
+        {
+          "quantity": 100,
+          "prices": {
+            "size50": "288",
+            "size75": "316",
+            "size100": "467"
+          }
+        },
+        {
+          "quantity": 200,
+          "prices": {
+            "size50": "269",
+            "size75": "306",
+            "size100": "448"
+          }
+        },
+        {
+          "quantity": 300,
+          "prices": {
+            "size50": "260",
+            "size75": "302",
+            "size100": "440"
+          }
+        }
+      ]
+    }
+  ]
+}

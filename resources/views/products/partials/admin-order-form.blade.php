@@ -7,6 +7,48 @@
 @endphp
 
 <style>
+    /* Shared order-form foundations; product-specific legacy CSS may not be loaded. */
+    #order-form.admin-configured-order-form .step-container { display: flex; justify-content: space-between; padding-bottom: 10px; }
+    #order-form.admin-configured-order-form .step-box { width: 33%; }
+    #order-form.admin-configured-order-form .step-box:not(.step-list) span { width: 100%; line-height: 1.5; }
+    #order-form.admin-configured-order-form .step-list { width: 100%; }
+    #order-form.admin-configured-order-form .step-box img { width: 100%; height: auto; max-width: 135px; }
+    #order-form.admin-configured-order-form .step-box .table_rubber td:nth-child(odd) { width: 45%; }
+    #order-form.admin-configured-order-form .step-total { display: grid; text-align: right; }
+    #order-form.admin-configured-order-form .total-price { font-size: 26px; font-weight: 700; color: #d90000; }
+    #order-form.admin-configured-order-form .prd_total { font-size: 34px; }
+    #order-form.admin-configured-order-form .part-container { display: grid; width: 100%; }
+    #order-form.admin-configured-order-form .part-content { display: grid; width: 99%; border: 2px solid #f0f0f0; margin: 10px 0; border-radius: 5px; }
+    #order-form.admin-configured-order-form label.part-name { display: flex; position: relative; align-items: center; padding: 10px 10px 10px 45px; vertical-align: middle; user-select: none; cursor: pointer; }
+    #order-form.admin-configured-order-form .part-name input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; cursor: pointer; }
+    #order-form.admin-configured-order-form .checkmark { position: absolute; top: 5px; left: 5px; width: 25px; height: 25px; background: #fff; border: 1px solid lightgray; border-radius: 50%; }
+    #order-form.admin-configured-order-form .checkmark::after { content: ''; position: absolute; display: none; top: 2px; left: 2px; width: 21px; height: 21px; border: 0; border-radius: 50%; background: #f7b516; transform: none; }
+    #order-form.admin-configured-order-form .part-name:hover input[type="radio"] ~ .checkmark { background: #eee; }
+    #order-form.admin-configured-order-form .part-name input[type="radio"]:checked ~ .checkmark { background: #fff; }
+    #order-form.admin-configured-order-form .part-name input[type="radio"]:checked ~ .checkmark::after { display: block; }
+    #order-form.admin-configured-order-form .part-name input[type="radio"]:focus-visible ~ .checkmark { outline: 2px solid #1e90ff; outline-offset: 2px; }
+    #order-form.admin-configured-order-form .btn-back,
+    #order-form.admin-configured-order-form .btn-next { width: 35%; padding: 12px 0; border-radius: 5px; background: #1e6077; color: #fff; }
+    #order-form.admin-configured-order-form .btn-back { background: linear-gradient(to bottom, #f7f8fa, #e7e9ec); color: #000; border: 1px solid; }
+    #order-form.admin-configured-order-form .fixed-contrainer { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; height: 45px; background: #fff; }
+    @media (max-width: 576px) {
+        #order-form.admin-configured-order-form .step-box { width: 100%; }
+        #order-form.admin-configured-order-form .step-container.line1 { display: inline-table; min-width: 96%; }
+        #order-form.admin-configured-order-form .step-box:not(.step-list) { width: 100%; display: inherit; }
+        #order-form.admin-configured-order-form .step-box.line2 { width: 50%; display: inline-block; }
+        #order-form.admin-configured-order-form .total-price { font-size: 4vw; }
+        #order-form.admin-configured-order-form .prd_total { font-size: 5vw; }
+        #order-form.admin-configured-order-form .fixed-contrainer { top: 45px; }
+    }
+    #order-form.admin-configured-order-form .configured-option-description { margin: 5px 0 0; color: #281600; font-size: 13px; font-weight: 500; line-height: normal; overflow-wrap: anywhere; }
+    #order-form.admin-configured-order-form .configured-option-description p { margin: 0; font-size: inherit; line-height: inherit; }
+    #order-form.admin-configured-order-form .configured-option-description img { max-width: 100%; height: auto; }
+    #order-form.admin-configured-order-form .configured-option-description figure.table { overflow-x: auto; }
+    #order-form.admin-configured-order-form .configured-option-description table { width: 100%; border-collapse: collapse; }
+    #order-form.admin-configured-order-form .configured-option-description td,
+    #order-form.admin-configured-order-form .configured-option-description th { border: 1px solid #ccc; padding: 5px; }
+    #order-form.admin-configured-order-form .configured-option-description .configured-help-button { display: inline; min-width: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; color: #00f; font: inherit; text-align: inherit; text-decoration: none; vertical-align: baseline; cursor: pointer; }
+    #order-form.admin-configured-order-form .configured-option-description .configured-help-button:hover { background: transparent; color: #00f; text-decoration: underline; }
     /* Keep the legacy order-form structure; only option values come from Admin. */
     #order-form.admin-configured-order-form { margin-top: 24px; }
     #order-form.admin-configured-order-form .configured-summary-table { width: 100%; border-collapse: collapse; }
@@ -71,12 +113,15 @@
     #order-form.admin-configured-order-form .configured-option-group { margin-bottom: 20px; }
     #order-form.admin-configured-order-form .is-configured-hidden { display: none !important; }
     #order-form.admin-configured-order-form .is-configured-locked { opacity: .52; }
-    #order-form.admin-configured-order-form .configured-quantity-input .part-content { margin: 0; }
-    #order-form.admin-configured-order-form .configured-quantity-input .part-name { padding-left: 12px; }
-    #order-form.admin-configured-order-form .configured-quantity-input input[type="number"] { width: 210px; margin-left: 12px; text-align: right; }
+    #order-form.admin-configured-order-form .configured-quantity-input .part-content { box-sizing: border-box; width: 100%; margin: 0; }
+    #order-form.admin-configured-order-form .configured-quantity-input .part-name { gap: 16px; padding: 10px; cursor: default; }
+    #order-form.admin-configured-order-form .configured-quantity-label { flex: 0 0 auto; line-height: 1.5; }
+    #order-form.admin-configured-order-form .configured-quantity-input input[type="number"] { box-sizing: border-box; flex: 1 1 0; width: 0; min-width: 0; height: 32px; margin: 0; padding: 3px 7px; border: 1px solid #555; border-radius: 2px; background: #fff; color: #281600; font: inherit; text-align: right; }
+    #order-form.admin-configured-order-form .configured-quantity-guidance { margin: 0 10px 6px; color: #f00; font-size: 13px; line-height: 1.5; }
     #order-form.admin-configured-order-form .configured-quantity-input input[type="number"]:read-only { background-color: #f3f4f6; color: #555; cursor: not-allowed; }
     #order-form.admin-configured-order-form .configured-quantity-error { display: block; margin: 5px 0 0 12px; color: #c00; }
-    #order-form.admin-configured-order-form .configured-option-heading h3 { margin: 0 0 5px; }
+    #order-form.admin-configured-order-form .configured-option-heading h3 { margin: 0; padding: 0; color: #281600; font-size: 16px; font-weight: 500; line-height: normal; }
+    #order-form.admin-configured-order-form label.part-name { color: #281600; font-size: 16px; font-weight: 400; line-height: normal; }
     #order-form.admin-configured-order-form .configured-help-button { display: block; min-width: 58px; padding: 3px 10px; border: 1px solid #c8c8c8; border-radius: 3px; background: #fff; color: #333; font-size: 13px; line-height: 1.35; cursor: pointer; }
     #order-form.admin-configured-order-form .configured-help-button:hover { border-color: #999; background: #f5f5f5; }
     #order-form.admin-configured-order-form .configured-option-help { margin: 0; color: #111; font-size: 14px; line-height: 1.8; white-space: normal; }
@@ -126,7 +171,7 @@
     #order-form.admin-configured-order-form .configured-radio-list .part-container { display: block; }
     #order-form.admin-configured-order-form .configured-radio-list .part-content { margin-bottom: 7px; }
     #order-form.admin-configured-order-form .configured-previous-order { margin-top: 14px; }
-    #order-form.admin-configured-order-form .configured-previous-order-label { margin: 0 0 10px; font-size: 14px; font-weight: 400; line-height: 1.45; }
+    #order-form.admin-configured-order-form .configured-previous-order-label { margin: 0 0 10px; color: #281600; font-size: 16px; font-weight: 500; line-height: normal; }
     #order-form.admin-configured-order-form .configured-previous-order-field { padding: 10px 14px; border: 1px solid #ececec; border-radius: 4px; }
     #order-form.admin-configured-order-form .configured-previous-order input { box-sizing: border-box; width: 100%; max-width: none; height: 30px; padding: 4px 7px; border: 1px solid #777; border-radius: 2px; }
     #order-form.admin-configured-order-form .configured-button-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
@@ -155,6 +200,23 @@
     #order-form.admin-configured-order-form .configured-option-detail { display: block; margin-top: 3px; color: #666; font-size: 11px; white-space: pre-line; }
     #order-form.admin-configured-order-form .configured-color { display: inline-block; width: 11px; height: 11px; margin-right: 4px; border: 1px solid rgba(0, 0, 0, .3); border-radius: 50%; vertical-align: -1px; }
     #order-form.admin-configured-order-form .configured-switch-row { padding: 0 !important; }
+    #order-form.admin-configured-order-form .switch_off_button { position: relative; flex: 0 0 72px; box-sizing: border-box; width: 72px; height: 32px; margin: 5px; overflow: hidden; border: 1px solid lightgray; border-radius: 2px; }
+    #order-form.admin-configured-order-form .switch_off_button .checkbox { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; margin: 0; padding: 0; opacity: 0; cursor: pointer; }
+    #order-form.admin-configured-order-form .switch_off_button .knobs,
+    #order-form.admin-configured-order-form .switch_off_button .layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #order-form.admin-configured-order-form .switch_off_button .layer { background: #ebf7fc; }
+    #order-form.admin-configured-order-form .switch_off_button .knobs { z-index: 1; }
+    #order-form.admin-configured-order-form .switch_off .knobs::before,
+    #order-form.admin-configured-order-form .switch_off .knobs::after { position: absolute; top: 0; bottom: 0; display: grid; place-items: center; box-sizing: border-box; width: 50%; height: 100%; padding: 0; border-radius: 0; color: #fff; font-size: 13px; font-weight: 700; line-height: normal; }
+    #order-form.admin-configured-order-form .switch_off .knobs::before { content: 'あり'; left: 0; right: auto; background: #1e6077; }
+    #order-form.admin-configured-order-form .switch_off .knobs::after { content: 'なし'; right: 0; left: auto; background: #ccc; }
+    #order-form.admin-configured-order-form .switch_off .knobs span { position: absolute; z-index: 1; top: 0; bottom: 0; left: 0; right: auto; box-sizing: border-box; width: 50%; height: 100%; padding: 0; border: 1px solid lightgray; border-radius: 2px; background: #fff; transform: translateX(0); transition: transform .2s ease; }
+    #order-form.admin-configured-order-form .switch_off .checkbox:checked + .knobs span { left: 0; transform: translateX(100%); }
+    #order-form.admin-configured-order-form .switch_off .checkbox:checked ~ .layer { background: #fcebeb; }
+    #order-form.admin-configured-order-form .switch_off .checkbox:focus-visible + .knobs { outline: 2px solid #1e90ff; outline-offset: -2px; }
+    #order-form.admin-configured-order-form .configured-switch-quantity-warning { margin: 0 5px 8px; color: #f00; font-size: 13px; line-height: 1.5; }
+    #order-form.admin-configured-order-form .configured-switch-row.is-quantity-unavailable,
+    #order-form.admin-configured-order-form .switch_off_button .checkbox:disabled { cursor: not-allowed; }
     #order-form.admin-configured-order-form .configured-help-modal { position: fixed; z-index: 10000; display: none; align-items: center; justify-content: center; inset: 0; padding: 20px; background: rgba(0, 0, 0, .9); }
     #order-form.admin-configured-order-form .configured-help-modal.is-open { display: flex; }
     #order-form.admin-configured-order-form .configured-help-dialog { position: relative; width: min(900px, 100%); max-height: calc(100vh - 62px); overflow-y: auto; padding: 22px 40px 28px; border-radius: 5px; background: #fff; box-shadow: 0 4px 20px rgba(0, 0, 0, .35); }
@@ -187,6 +249,9 @@
     }
     body.configured-help-modal-open { overflow: hidden; }
     @media (max-width: 600px) {
+        #order-form.admin-configured-order-form .configured-step-actions.is-final { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        #order-form.admin-configured-order-form .configured-step-actions.is-final .configured-final-action { width: 100%; white-space: normal; overflow-wrap: anywhere; }
+        #order-form.admin-configured-order-form .configured-step-actions.is-final .configured-final-action--order { grid-column: 1 / -1; }
         #order-form.admin-configured-order-form .configured-step-list li::after { display: none; }
         #order-form.admin-configured-order-form .configured-step-label { min-height: 32px; font-size: 10px; }
         #order-form.admin-configured-order-form .configured-image-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -456,24 +521,30 @@
                             $defaultOption = collect($group['options'])->firstWhere('is_default', true);
                             $defaultOptionId = $defaultOption['id'] ?? null;
                             $inputName = 'product_options['.$group['id'].']';
+                            $hasDescriptionHelpLink = preg_match('/<a\b[^>]*\bhref\s*=\s*(["\'])#option-group-help\1/i', (string) ($group['description'] ?? '')) === 1;
                         @endphp
                         <section class="configured-option-group" data-configured-group="{{ $group['id'] }}" data-configured-display-type="{{ $displayType }}">
                             @if ($displayType !== 'paper_preview')
                                 <div class="configured-option-heading">
-                                    <h3>{{ $group['name'] }}@if ($group['is_required'])<span class="configured-required">必須</span>@endif</h3>
-                                    @if ($group['help_text'] !== null && $group['help_text'] !== '')
+                                    <h3>{{ $group['name'] }}@if ($group['is_required'])<span class="configured-required" hidden aria-live="polite">必須</span>@endif</h3>
+                                    @if ($group['help_text'] !== null && $group['help_text'] !== '' && !$hasDescriptionHelpLink)
                                         <button type="button" class="configured-help-button" data-configured-help-open="configured-help-modal-{{ $group['id'] }}">詳細</button>
                                     @endif
                                 </div>
+                            @endif
+
+                            @if (!empty($group['description']))
+                                <div class="configured-option-description ck-content">{!! $group['description'] !!}</div>
                             @endif
 
                             @if ($displayType === 'quantity_input')
                                 <div class="part-container configured-quantity-input">
                                     <div class="part-content">
                                         <label class="part-name" for="configured-quantity-{{ $group['id'] }}">
-                                            ご注文・御見積数量
-                                            <input id="configured-quantity-{{ $group['id'] }}" type="number" name="quantity" value="{{ old('quantity', 100) }}" min="1" step="1" inputmode="numeric" @if ($group['is_required']) required @endif>
+                                            <span class="configured-quantity-label">ご注文・御見積<br>数量</span>
+                                            <input id="configured-quantity-{{ $group['id'] }}" type="number" name="quantity" value="{{ old('quantity', '') }}" min="{{ $group['quantity_min'] ?? 1 }}" @if (isset($group['quantity_max'])) max="{{ $group['quantity_max'] }}" @endif data-quantity-min="{{ $group['quantity_min'] ?? '' }}" data-quantity-max="{{ $group['quantity_max'] ?? '' }}" aria-describedby="configured-quantity-guidance-{{ $group['id'] }}" step="1" inputmode="numeric" @if ($group['is_required']) required @endif>
                                         </label>
+                                        <p id="configured-quantity-guidance-{{ $group['id'] }}" class="configured-quantity-guidance">ご注文は{{ number_format($group['quantity_min'] ?? 1) }}以上@if(isset($group['quantity_max'])){{ number_format($group['quantity_max']) }}以下@endifでお願いします。</p>
                                         @error('quantity')<span class="configured-quantity-error">{{ $message }}</span>@enderror
                                     </div>
                                 </div>
@@ -491,6 +562,7 @@
                                                     </div>
                                                     {{ $option['name'] }}
                                                 </label>
+                                                <div id="configured-switch-quantity-{{ $option['id'] }}" class="configured-switch-quantity-warning" data-switch-quantity-warning role="status" aria-live="polite" hidden></div>
                                                 @if ($option['detail'] !== null && $option['detail'] !== '')<span class="configured-option-detail">{{ $option['detail'] }}</span>@endif
                                             </div>
                                             @if (!empty($option['is_disabled']) && trim((string) ($option['disable_text'] ?? '')) !== '')<div class="configured-option-disable-text" data-configured-disable-text hidden><span class="configured-option-disable-indicator" aria-hidden="true"></span><div class="configured-option-disable-content">{!! app(\App\Support\RichTextSanitizer::class)->sanitize($option['disable_text']) !!}</div></div>@endif
@@ -904,12 +976,52 @@
                     .map(function (input) { return Number(input.dataset.optionId); })
                     .filter(function (id) { return Number.isFinite(id) && id > 0; }));
             };
+            const updateSwitchQuantityAvailability = function () {
+                if (!quantityInput) return false;
+                const quantity = quantityInput.value.trim() === '' ? NaN : Number(quantityInput.value);
+                let selectionChanged = false;
+                orderForm.querySelectorAll('.configured-switch-row input[type="checkbox"][data-option-id]').forEach(function (input) {
+                    const option = input.closest('[data-configured-option]');
+                    const rule = option.dataset.quantityRule || 'no_limit';
+                    const min = Number.parseInt(option.dataset.minQty, 10);
+                    const max = Number.parseInt(option.dataset.maxQty, 10);
+                    const exact = Number.parseInt(option.dataset.exactQty, 10);
+                    const hasMin = ['minimum_only', 'min_max_range'].includes(rule) && Number.isFinite(min);
+                    const hasMax = ['maximum_only', 'min_max_range'].includes(rule) && Number.isFinite(max);
+                    const hasExact = rule === 'exact_quantity_only' && Number.isFinite(exact);
+                    const validQuantity = Number.isInteger(quantity) && quantity >= 1;
+                    const unavailable = (hasMin || hasMax || hasExact) && (!validQuantity || (hasMin && quantity < min) || (hasMax && quantity > max) || (hasExact && quantity !== exact));
+                    if (input.dataset.configuredOriginalDisabled === undefined) input.dataset.configuredOriginalDisabled = input.disabled ? '1' : '0';
+                    input.dataset.configuredQuantityDisabled = unavailable ? '1' : '0';
+                    input.disabled = unavailable || input.dataset.configuredOriginalDisabled === '1' || input.dataset.configuredDependencyDisabled === '1';
+                    input.closest('.configured-switch-row').classList.toggle('is-quantity-unavailable', unavailable);
+                    if (unavailable && input.checked) {input.checked = false; selectionChanged = true;}
+                    const warning = option.querySelector('[data-switch-quantity-warning]');
+                    if (warning) {
+                        warning.hidden = !unavailable;
+                        input.setAttribute('aria-describedby', warning.id);
+                        if (unavailable) {
+                            const name = (input.dataset.optionName || '').replace(/[（(]\s*[\d,]+\s*個[^)）]*[)）]/g, '').trim();
+                            const format = value => Number(value).toLocaleString('ja-JP');
+                            warning.textContent = hasExact
+                                ? name + 'は' + format(exact) + '個のご注文のみ受付'
+                                : hasMin && (!validQuantity || quantity < min)
+                                    ? name + 'は' + format(min) + '個以上のご注文から受付'
+                                    : name + 'は' + format(max) + '個以下のご注文で受付';
+                        }
+                    }
+                });
+                return selectionChanged;
+            };
             const applyQuantityRules = function () {
                 if (!quantityInput) return { min: 1, max: null, hasRule: false, conflict: false };
+                if (updateSwitchQuantityAvailability()) applyDependencies();
 
-                let min = 1;
-                let max = null;
-                let hasRule = false;
+                const groupMin = Number.parseInt(quantityInput.dataset.quantityMin, 10);
+                const groupMax = Number.parseInt(quantityInput.dataset.quantityMax, 10);
+                let min = Number.isFinite(groupMin) ? Math.max(1, groupMin) : 1;
+                let max = Number.isFinite(groupMax) ? groupMax : null;
+                let hasRule = Number.isFinite(groupMin) || Number.isFinite(groupMax);
                 let exactQuantity = null;
                 let hasConflictingExactValues = false;
 
@@ -955,6 +1067,15 @@
                 quantityInput.setAttribute('aria-readonly', lockToExactQuantity ? 'true' : 'false');
                 if (lockToExactQuantity) quantityInput.value = String(exactQuantity);
                 quantityInput.setCustomValidity(conflict ? '選択したオプションの数量条件が一致しません。' : '');
+                const guidance = quantityInput.closest('.configured-quantity-input')?.querySelector('.configured-quantity-guidance');
+                if (guidance) {
+                    const formatQuantity = value => Number(value).toLocaleString('ja-JP');
+                    guidance.textContent = conflict
+                        ? '選択したオプションの数量条件が一致しません。'
+                        : (min === max
+                            ? 'ご注文は' + formatQuantity(min) + 'でお願いします。'
+                            : 'ご注文は' + formatQuantity(min) + '以上' + (max === null ? '' : formatQuantity(max) + '以下') + 'でお願いします。');
+                }
 
                 return { min: min, max: max, hasRule: hasRule, conflict: conflict };
             };
@@ -1131,6 +1252,10 @@
                     // conditions that include the target option still match.
                     const displayConditionIds = new Set(selectedIds);
                     displayConditionIds.add(targetOptionId);
+                    if (rule.is_global && optionRules.some(candidate => !candidate.is_global
+                        && Number(candidate.target_option_id) === targetOptionId
+                        && ruleMatches(candidate, displayConditionIds)
+                        && matchingTier(candidate.tiers, quantity))) return;
                     if (ruleMatches(rule, displayConditionIds)) {
                         optionDisplayPrices.set(
                             targetOptionId,
@@ -1229,13 +1354,33 @@
                         if (control.dataset.configuredOriginalDisabled === undefined) {
                             control.dataset.configuredOriginalDisabled = control.disabled ? '1' : '0';
                         }
-                        control.disabled = isDisabled || control.dataset.configuredOriginalDisabled === '1';
+                        control.dataset.configuredDependencyDisabled = isDisabled ? '1' : '0';
+                        control.disabled = isDisabled || control.dataset.configuredOriginalDisabled === '1' || control.dataset.configuredQuantityDisabled === '1';
+                    });
+                });
+            };
+            const attemptedSteps = new Set();
+            const updateRequiredMessages = function () {
+                orderForm.querySelectorAll('[data-configured-step]').forEach(function (step) {
+                    const attempted = attemptedSteps.has(Number(step.dataset.configuredStep));
+                    step.querySelectorAll('.configured-option-group').forEach(function (group) {
+                        const message = group.querySelector('.configured-required');
+                        if (!message) return;
+                        const missing = !group.classList.contains('is-configured-hidden') && Array.from(group.querySelectorAll('input[required]:not(:disabled), select[required]:not(:disabled), textarea[required]:not(:disabled)')).some(function (input) {
+                            if (input.type === 'radio') {
+                                return !Array.from(group.querySelectorAll('input[type="radio"]:checked:not(:disabled)')).some(candidate => candidate.name === input.name);
+                            }
+                            return !input.validity.valid;
+                        });
+                        message.hidden = !attempted || !missing;
                     });
                 });
             };
             const currentStepIsValid = function () {
                 const step = orderForm.querySelector('[data-configured-step="' + currentStep + '"]');
                 if (!step) return true;
+                attemptedSteps.add(currentStep);
+                updateRequiredMessages();
 
                 const disabledInput = step.querySelector('input:checked:not(:disabled)[data-option-disabled="1"]');
                 if (disabledInput) {
@@ -1304,7 +1449,9 @@
                 });
             });
             orderForm.querySelector('[data-configured-clear]')?.addEventListener('click', function () {
+                attemptedSteps.clear();
                 orderForm.querySelector('#configured-order-form')?.reset();
+                updateRequiredMessages();
                 customerDetails?.querySelectorAll('input').forEach(function (input) { input.value = ''; });
                 hideCustomerDetails();
                 applyDependencies();
@@ -1453,6 +1600,21 @@
                 modal?.classList.remove('is-open');
                 document.body.classList.remove('configured-help-modal-open');
             };
+            orderForm.querySelectorAll('.configured-option-description a[href="#option-group-help"]').forEach(function (link) {
+                const group = link.closest('.configured-option-group');
+                const modal = group?.querySelector('[data-configured-help-modal]');
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'configured-help-button';
+                while (link.firstChild) button.appendChild(link.firstChild);
+                button.disabled = !modal;
+                if (modal) {
+                    button.dataset.configuredHelpOpen = modal.id;
+                    button.setAttribute('aria-haspopup', 'dialog');
+                    button.setAttribute('aria-controls', modal.id);
+                }
+                link.replaceWith(button);
+            });
             orderForm.querySelectorAll('[data-configured-help-open]').forEach(function (button) {
                 button.addEventListener('click', function () {
                     const modal = document.getElementById(button.dataset.configuredHelpOpen);
@@ -1480,11 +1642,15 @@
                     updateSummary();
                     updatePricing();
                     updateStepActions();
+                    updateRequiredMessages();
                 });
                 if (input.type === 'number') input.addEventListener('input', function () {
                     if (input === quantityInput) applyQuantityRules();
+                    updateDisabledOptionMessages();
                     updateSummary();
                     updatePricing();
+                    updateStepActions();
+                    updateRequiredMessages();
                 });
             });
             applyDependencies();

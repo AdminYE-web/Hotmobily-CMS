@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex,nofollow">
+    <link rel="icon" href="{{ asset('images/home/favicon.ico') }}" type="image/x-icon">
 
     <title>@yield('title', '管理画面') | Hotmobily</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">

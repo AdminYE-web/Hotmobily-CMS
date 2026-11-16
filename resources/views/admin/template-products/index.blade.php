@@ -135,7 +135,7 @@
                 }).then(function (response) {
                     if (!response.ok) throw new Error('Unable to save order');
                 }).catch(function () {
-                    alert('บันทึกลำดับไม่สำเร็จ กรุณาโหลดหน้าใหม่แล้วลองอีกครั้ง');
+                    alert('Could not save the order. Please reload the page and try again.');
                     window.location.reload();
                 }).finally(function () {
                     draggedRow = null;

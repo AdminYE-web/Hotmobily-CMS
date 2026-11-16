@@ -1,0 +1,12 @@
+.shipping-summary-scroll { width: 100%; overflow-x: auto; }
+.shipping-summary-table { width: 100%; border-collapse: collapse; table-layout: fixed; color: #000; border: 1px solid #281600; font-family: IwaUDGoDspPro-Th, sans-serif; font-size: 13.6px; line-height: 1.6; }
+.shipping-summary-table tr { border: 1px solid #281600; }
+.shipping-summary-table th, .shipping-summary-table td { padding: 3px; text-align: center; vertical-align: middle; font-weight: 700; border: 1px dotted #000; }
+.shipping-summary-table .shipping-summary-message { background: #fff; white-space: pre-line; border: 0; }
+.shipping-summary-table td.shipping-summary-start, .shipping-summary-table td.shipping-summary-date { padding: 3px; font-family: "I-OTF-UDゴ本文Pro L", sans-serif; font-size: 22px; line-height: 1.6; letter-spacing: -1px; }
+.shipping-summary-table td.shipping-summary-date, .shipping-summary-table .shipping-summary-date strong,
+.shipping-summary-table td.shipping-summary-start, .shipping-summary-table .shipping-summary-start strong { font-weight: 400; }
+@media (max-width: 575px) {
+    .shipping-summary-table td.shipping-summary-start, .shipping-summary-table td.shipping-summary-date { font-size: 17px; padding: 10px 5px; }
+    .shipping-summary-table th { font-size: 12px; padding: 5px; overflow-wrap: anywhere; }
+}

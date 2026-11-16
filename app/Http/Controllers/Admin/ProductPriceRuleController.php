@@ -15,18 +15,38 @@ use Illuminate\View\View;
 
 class ProductPriceRuleController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
+        $filters = [
+            'q' => trim((string) $request->query('q', '')),
+            'product' => (string) $request->query('product', ''),
+        ];
+
+        $rules = ProductPriceRule::query()
+            ->with([
+                'product:id,name,slug',
+                'conditions.productOption:id,option_name,option_code',
+            ])
+            ->withCount('tiers')
+            ->when($filters['q'] !== '', function ($query) use ($filters): void {
+                $like = '%'.addcslashes($filters['q'], '%_\\').'%';
+
+                $query->where(function ($query) use ($like): void {
+                    $query->where('rule_name', 'like', $like)
+                        ->orWhereHas('product', fn ($q) => $q->where('name', 'like', $like)->orWhere('slug', 'like', $like))
+                        ->orWhereHas('conditions.productOption', fn ($q) => $q->where('option_name', 'like', $like)->orWhere('option_code', 'like', $like));
+                });
+            })
+            ->when(ctype_digit($filters['product']), fn ($query) => $query->where('product_id', (int) $filters['product']))
+            ->orderBy('product_id')
+            ->orderBy('rule_name')
+            ->paginate(30)
+            ->withQueryString();
+
         return view('admin.product-price-rules.index', [
-            'rules' => ProductPriceRule::query()
-                ->with([
-                    'product:id,name,slug',
-                    'conditions.productOption:id,option_name,option_code',
-                ])
-                ->withCount('tiers')
-                ->orderBy('product_id')
-                ->orderBy('rule_name')
-                ->paginate(30),
+            'rules' => $rules,
+            'filters' => $filters,
+            'productOptions' => Product::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -218,7 +238,7 @@ class ProductPriceRuleController extends Controller
             $rule->tiers()->create([
                 'quantity' => $tier['quantity'],
                 'unit_price' => $tier['unit_price'],
-                'unit_price_with_tax' => $tier['unit_price_with_tax'],
+                'unit_price_with_tax' => floor((float) $tier['unit_price_with_tax']),
                 'is_display' => (int) $index === $displayTierIndex,
             ]);
         }

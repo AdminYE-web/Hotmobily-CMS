@@ -336,7 +336,7 @@
                         id="faq-category-help"
                         class="form-text text-muted"
                     >
-                        Product ใช้สำหรับข้อมูลสินค้า ส่วน Order, Delivery และ Payment ใช้สำหรับหมวด FAQ กลาง
+                        Use Product for product FAQs. Use Order, Delivery, and Payment for general FAQ categories.
                     </small>
 
                 </div>

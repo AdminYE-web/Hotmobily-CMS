@@ -5,11 +5,20 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductPage;
+use App\Services\ProductDuplicator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
+    public function duplicate(Product $product, ProductDuplicator $duplicator)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $duplicator->duplicate($product),
+        ], 201);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Admin Product List

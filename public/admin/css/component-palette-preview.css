@@ -1,0 +1,29 @@
+.component-palette-preview {
+    position: fixed;
+    z-index: 1040;
+    box-sizing: border-box;
+    width: 420px;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    display: flex;
+    flex-direction: column;
+    color: #20252b;
+    background: #fff;
+    border: 1px solid #d8dde2;
+    border-radius: 8px;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, .18);
+    overflow: hidden;
+}
+.component-palette-preview[hidden] { display: none !important; }
+.component-palette-preview-header { flex-shrink: 0; padding: 12px 15px; background: #f8f9fa; border-bottom: 1px solid #e5e7eb; }
+.component-palette-preview-header small { display: block; margin-bottom: 3px; font-size: 11px; color: #68717c; }
+.component-palette-preview-title { font-size: 15px; line-height: 1.4; }
+.component-palette-preview-description { margin: 5px 0 0; font-size: 12px; line-height: 1.5; color: #59636e; }
+.component-palette-preview-viewport { max-height: min(380px, 48vh); padding: 15px; overflow: auto; overscroll-behavior: contain; }
+.component-palette-preview-sample { pointer-events: none; user-select: none; font-size: 13px; overflow-wrap: anywhere; }
+.component-palette-preview-sample .sim-content-box { min-width: 0; }
+.component-palette-preview-sample img { max-width: 100%; }
+.component-palette-preview-sample table { width: 100%; font-size: 11px; }
+.component-palette-preview-sample h1, .component-palette-preview-sample h2 { font-size: 22px; }
+.component-palette-preview-sample .sim-youtube-preview { min-height: 0; aspect-ratio: 16 / 9; }
+.component-palette-preview-footer { flex-shrink: 0; padding: 9px 15px; border-top: 1px solid #e5e7eb; font-size: 11px; line-height: 1.5; color: #68717c; }

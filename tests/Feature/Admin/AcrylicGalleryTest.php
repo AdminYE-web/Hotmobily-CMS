@@ -428,7 +428,7 @@ class AcrylicGalleryTest extends TestCase
             ->assertSee('data-gallery-thumbnail', false)
             ->assertDontSee('dynamic-gallery-grid', false)
             ->assertSee('/css/gallery-rubber-keyholder.css?v=1.02', false)
-            ->assertSee('/js/gallery-rubber-keyholder.js?v=1.02', false);
+            ->assertSee('/js/gallery-rubber-keyholder.js?v='.filemtime(public_path('js/gallery-rubber-keyholder.js')), false);
     }
 
     public function test_rubber_keyholder_public_page_matches_the_legacy_gallery_structure(): void
@@ -452,7 +452,7 @@ class AcrylicGalleryTest extends TestCase
             ->assertSee('data-rubber-keyholder-gallery', false)
             ->assertSee('data-gallery-thumbnail', false)
             ->assertSee('/css/gallery-rubber-keyholder.css?v=1.02', false)
-            ->assertSee('/js/gallery-rubber-keyholder.js?v=1.02', false);
+            ->assertSee('/js/gallery-rubber-keyholder.js?v='.filemtime(public_path('js/gallery-rubber-keyholder.js')), false);
     }
 
     public function test_rubber_coaster_public_page_matches_the_legacy_gallery_structure(): void
@@ -483,7 +483,7 @@ class AcrylicGalleryTest extends TestCase
             ->assertSee('data-gallery-thumbnail', false)
             ->assertSee('/css/gallery-rubber-keyholder.css?v=1.02', false)
             ->assertSee('/products/acrylic/ptw/photoswipe.min.js?v=1.08', false)
-            ->assertSee('/js/gallery-rubber-keyholder.js?v=1.02', false);
+            ->assertSee('/js/gallery-rubber-keyholder.js?v='.filemtime(public_path('js/gallery-rubber-keyholder.js')), false);
     }
 
     /** @return list<array<string, mixed>> */

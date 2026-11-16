@@ -268,7 +268,7 @@
     });
 
     const initialTag = new URLSearchParams(window.location.search).get('tag') || '';
-    if (tagButtons.some((button) => button.dataset.galleryTag === initialTag)) {
+    if (initialTag && items.some((item) => itemTags(item).includes(initialTag))) {
         activeTag = initialTag;
         tagButtons.forEach((button) => {
             button.classList.toggle('active', button.dataset.galleryTag === activeTag);

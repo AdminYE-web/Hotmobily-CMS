@@ -294,7 +294,7 @@ class DynamicProductViewTest extends TestCase
         ], false);
     }
 
-    public function test_dynamic_product_view_renders_youtube_accordion_component(): void
+    public function test_dynamic_product_view_renders_youtube_directly_without_accordion(): void
     {
         $product = new Product([
             'name' => 'Video Product',
@@ -330,6 +330,8 @@ class DynamicProductViewTest extends TestCase
         $view
             ->assertSee('Factory video')
             ->assertSee('data-youtube-id="5KK0a4b1C9Q"', false)
+            ->assertSee('class="store-youtube store-youtube--direct"', false)
+            ->assertDontSee('class="store-accordion-input"', false)
             ->assertSee('See factory details')
             ->assertSee('https://www.youtube-nocookie.com/embed/', false);
     }
@@ -366,6 +368,7 @@ class DynamicProductViewTest extends TestCase
                         ],
                         [
                             'title' => 'Second article',
+                            'underline' => true,
                             'url' => '/blog-content/second-article',
                             'image_url' => '/images/second.webp',
                         ],
@@ -383,6 +386,8 @@ class DynamicProductViewTest extends TestCase
         $view
             ->assertSee('Related articles')
             ->assertSee('First article')
+            ->assertSee('text-decoration:none !important;', false)
+            ->assertSee('text-decoration:underline !important;', false)
             ->assertSee('/blog-content/first-article', false)
             ->assertSee('Second article')
             ->assertSee('/blog-content/second-article', false)

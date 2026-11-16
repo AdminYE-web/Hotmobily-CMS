@@ -68,12 +68,12 @@
                         <div class="form-group col-md-4">
                             <label for="heading">Public heading (H1)</label>
                             <input id="heading" name="heading" class="form-control" maxlength="255" value="{{ old('heading', $galleryPage->heading ?? '') }}" placeholder="製作事例紹介">
-                            <small class="form-text text-muted">ข้อความหัวข้อสีส้มด้านบนของหน้าสาธารณะ</small>
+                            <small class="form-text text-muted">The orange heading at the top of the public page.</small>
                         </div>
                         <div class="form-group col-md-8">
                             <label for="description">Public description</label>
                             <textarea id="description" name="description" rows="3" class="form-control" maxlength="65535">{{ old('description', $galleryPage->description) }}</textarea>
-                            <small class="form-text text-muted">จัดรูปแบบข้อความและแนบลิงก์ได้</small>
+                            <small class="form-text text-muted">Format text and add links.</small>
                         </div>
                     </div>
 

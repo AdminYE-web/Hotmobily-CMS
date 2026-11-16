@@ -250,7 +250,7 @@ class ProductDataPageController extends Controller
                 'required',
                 'file',
                 'mimes:pdf,zip,rar,7z,ai,psd,eps,svg,doc,docx,xls,xlsx,ppt,pptx,txt,csv,jpg,jpeg,png,webp,gif',
-                'max:51200',
+                'max:102400',
             ],
         ]);
 
@@ -345,6 +345,12 @@ class ProductDataPageController extends Controller
     private function sanitizeBlockContent(string $type, mixed $content): array
     {
         $content = is_array($content) ? $content : [];
+        if ($type === 'heading' && array_key_exists('heading_style', $content)) {
+            return \App\Support\HeadingContent::normalize($content);
+        }
+        if ($type === 'button' && array_key_exists('items', $content)) {
+            return \App\Support\ButtonGroupContent::normalize($content);
+        }
         $clean = $this->sanitizeNestedValues($content);
 
         if ($type === 'rich_text' && array_key_exists('content', $clean)) {

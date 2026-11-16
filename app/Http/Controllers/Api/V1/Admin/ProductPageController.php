@@ -7,6 +7,7 @@ use App\Models\Faq;
 use App\Models\Product;
 use App\Models\Review;
 use App\Support\UploadedImage;
+use App\Services\ProductContentRevisionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -213,6 +214,38 @@ class ProductPageController extends Controller
 
         ]);
 
+        $cleanContent = $this->validatedContent($request, $layout);
+
+        $page = app(ProductContentRevisionService::class)->saveDraft($product, [
+            'version' => 1,
+            'blocks' => $cleanContent,
+        ]);
+
+        return response()->json([
+
+            'success' => true,
+
+            'message' => 'Product content draft saved.',
+
+            'data' => [
+
+                'draft_content_json' => $page
+                    ->fresh()
+                    ->draft_content_json,
+
+            ],
+
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Publish
+    |--------------------------------------------------------------------------
+    */
+
+    private function validatedContent(Request $request, array $layout): array
+    {
         $layoutBlocks =
             $this->collectLayoutBlocks(
                 $layout
@@ -316,47 +349,11 @@ class ProductPageController extends Controller
             }
         }
 
-        $page =
-            $product
-                ->page()
-                ->firstOrCreate();
-
-        $page->update([
-
-            'draft_content_json' => [
-
-                'version' => 1,
-
-                'blocks' => $cleanContent,
-
-            ],
-
-        ]);
-
-        return response()->json([
-
-            'success' => true,
-
-            'message' => 'Product content draft saved.',
-
-            'data' => [
-
-                'draft_content_json' => $page
-                    ->fresh()
-                    ->draft_content_json,
-
-            ],
-
-        ]);
+        return $cleanContent;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Publish
-    |--------------------------------------------------------------------------
-    */
-
     public function publish(
+        Request $request,
         Product $product
     ) {
         $product->load([
@@ -396,15 +393,24 @@ class ProductPageController extends Controller
 
         }
 
-        $page =
-            $product->page;
+        $content = null;
+        if ($request->exists('blocks')) {
+            $request->validate(['blocks' => ['present', 'array']]);
+            $layout = $product->layout->draft_layout_json ?? $product->layout->published_layout_json;
+            if (empty($layout['rows'] ?? [])) {
+                return response()->json(['success' => false, 'message' => 'Selected layout is empty.'], 422);
+            }
+            $content = ['version' => 1, 'blocks' => $this->validatedContent($request, $layout)];
+        }
+
+        $page = $product->page;
 
         if (
-            ! $page
+            $content === null && (! $page
             ||
             empty(
                 $page->draft_content_json
-            )
+            ))
         ) {
 
             return response()->json([
@@ -417,13 +423,7 @@ class ProductPageController extends Controller
 
         }
 
-        $page->update([
-
-            'published_content_json' => $page->draft_content_json,
-
-            'published_at' => now(),
-
-        ]);
+        $page = app(ProductContentRevisionService::class)->publish($product, $content);
 
         return response()->json([
 
@@ -432,6 +432,8 @@ class ProductPageController extends Controller
             'message' => 'Product page published.',
 
             'data' => [
+
+                'draft_content_json' => $page->draft_content_json,
 
                 'published_at' => $page
                     ->fresh()
@@ -675,6 +677,8 @@ class ProductPageController extends Controller
              */
             'product_header' => [
 
+                'text_color' => $this->hexColorValue($content['text_color'] ?? null, '#000000'),
+
                 'title' => $this->stringValue(
                     $content['title']
                     ?? null,
@@ -706,6 +710,8 @@ class ProductPageController extends Controller
              */
             'product_gallery' => [
 
+                'columns' => in_array($content['columns'] ?? null, [3, '3'], true) ? 3 : 2,
+
                 'images' => $this->stringArray(
                     $content['images']
                     ?? []
@@ -722,7 +728,7 @@ class ProductPageController extends Controller
             /*
              * Product Details
              */
-            'product_details' => [
+            'product_details' => array_merge(\App\Support\ProductDetailsPriceContent::normalize($content), [
 
                 'reference_price' => $this->stringValue(
                     $content['reference_price']
@@ -743,10 +749,16 @@ class ProductPageController extends Controller
                     365
                 ),
 
-                'shipping_note' => $this->stringValue(
-                    $content['shipping_note']
-                    ?? null,
-                    2000
+                'shipping_note' => ($content['shipping_note_format'] ?? 'plain') === 'html'
+                    ? (new \App\Support\RichTextSanitizer)->sanitize(
+                        $this->stringValue($content['shipping_note'] ?? null, 20000) ?? ''
+                    )
+                    : $this->stringValue($content['shipping_note'] ?? null, 2000),
+
+                'shipping_note_format' => $this->enumValue(
+                    $content['shipping_note_format'] ?? 'plain',
+                    ['plain', 'html'],
+                    'plain'
                 ),
 
                 'highlight_title' => $this->stringValue(
@@ -761,20 +773,12 @@ class ProductPageController extends Controller
                     '#f59420'
                 ),
 
-            ],
+            ]),
 
             /*
              * Heading
              */
-            'heading' => [
-
-                'text' => $this->stringValue(
-                    $content['text']
-                    ?? null,
-                    1000
-                ),
-
-            ],
+            'heading' => \App\Support\HeadingContent::normalize($content),
 
             /*
              * Rich Text
@@ -842,9 +846,9 @@ class ProductPageController extends Controller
             ],
 
             /*
-             * YouTube accordion
+             * YouTube video and optional tags
              */
-            'youtube' => [
+            'youtube' => array_merge(\App\Support\YoutubeTagsContent::normalize($content), [
 
                 'title' => $this->stringValue(
                     $content['title']
@@ -882,7 +886,7 @@ class ProductPageController extends Controller
                     2000
                 ),
 
-            ],
+            ]),
 
             /*
              * Related blog articles
@@ -906,21 +910,7 @@ class ProductPageController extends Controller
             /*
              * Button
              */
-            'button' => [
-
-                'text' => $this->stringValue(
-                    $content['text']
-                    ?? null,
-                    255
-                ),
-
-                'url' => $this->stringValue(
-                    $content['url']
-                    ?? null,
-                    2000
-                ),
-
-            ],
+            'button' => \App\Support\ButtonGroupContent::normalize($content),
 
             /*
              * Downloadable Template Button
@@ -950,7 +940,7 @@ class ProductPageController extends Controller
             /*
              * Text Link
              */
-            'text_link' => [
+            'text_link' => array_merge(\App\Support\TextLinkDownload::normalize($content), [
 
                 'text' => $this->stringValue(
                     $content['text']
@@ -984,12 +974,12 @@ class ProductPageController extends Controller
                     '#111111'
                 ),
 
-            ],
+            ]),
 
             /*
              * Flexible Custom Table V2
              */
-            'custom_table' => [
+            'custom_table' => array_merge(\App\Support\CustomTableBusinessDays::settings($content), [
 
                 'title' => $this->stringValue(
                     $content['title']
@@ -1002,12 +992,19 @@ class ProductPageController extends Controller
                     ?? []
                 ),
 
-            ],
+            ]),
 
             /*
              * Info Card
              */
             'info_card' => [
+
+                'image_link_url' => $this->stringValue(
+                    array_key_exists('image_link_url', $content)
+                        ? $content['image_link_url']
+                        : ($content['link_url'] ?? null),
+                    2000
+                ),
 
                 'title' => $this->stringValue(
                     $content['title']
@@ -1113,6 +1110,7 @@ class ProductPageController extends Controller
                     [
                         'stacked',
                         'grouped',
+                        'summary',
                     ],
 
                     'stacked'
@@ -1143,6 +1141,8 @@ class ProductPageController extends Controller
                     10000
                 ),
 
+                'start_background' => $this->hexColorValue($content['start_background'] ?? null, '#bee0fa'),
+
                 'schedules' => $this->sanitizeShippingSchedules(
                     $content['schedules']
                     ?? []
@@ -1153,6 +1153,14 @@ class ProductPageController extends Controller
             /*
              * System Components
              */
+            'usage_examples' => \App\Support\UsageExamplesContent::normalize($content),
+            'product_catalog' => \App\Support\ProductCatalogContent::normalize($content),
+            'custom_faq' => \App\Support\CustomFaqContent::normalize($content),
+            'x_posts' => \App\Support\XPostsContent::normalize($content),
+            'gallery_showcase' => \App\Support\GalleryShowcaseContent::normalize($content),
+            'attachment_gallery' => \App\Support\AttachmentGalleryContent::normalize($content),
+            'price_matrix' => \App\Support\PriceMatrixContent::normalize($content),
+
             'price_accordion',
             'production_schedule',
             'divider',
@@ -1220,6 +1228,7 @@ class ProductPageController extends Controller
             }
 
             $item = [
+                'underline' => filter_var($article['underline'] ?? false, FILTER_VALIDATE_BOOLEAN),
                 'title' => $this->stringValue(
                     $article['title']
                     ?? null,
@@ -1526,6 +1535,8 @@ class ProductPageController extends Controller
                         ?? null,
                         100
                     ),
+
+                    'business_days' => \App\Support\CustomTableBusinessDays::days($cell['business_days'] ?? null),
 
                     'content' => $this->stringValue(
                         $cell['content']
@@ -2162,6 +2173,10 @@ class ProductPageController extends Controller
                     365
                 )
                     ?? 0,
+
+                'background_color' => $this->hexColorValue($schedule['background_color'] ?? null, [
+                    'blue' => '#bee0fa', 'pink' => '#f8cecc', 'cyan' => '#c5f1f1', 'orange' => '#ffe0b8', 'gray' => '#e5e5e5',
+                ][$schedule['theme'] ?? 'blue'] ?? '#bee0fa'),
 
                 'theme' => $this->enumValue(
 
@@ -2895,7 +2910,7 @@ class ProductPageController extends Controller
                 'required',
                 'file',
                 'mimes:pdf,zip,rar,7z,ai,psd,eps,svg,doc,docx,xls,xlsx,ppt,pptx,txt,csv,jpg,jpeg,png,webp,gif',
-                'max:51200',
+                'max:102400',
             ],
         ]);
 

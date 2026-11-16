@@ -419,6 +419,10 @@ class RichTextSanitizer
             return null;
         }
 
+        if ($href === '#option-group-help') {
+            return $href;
+        }
+
         if (str_starts_with($href, '/') && ! str_starts_with($href, '//')) {
             return $href;
         }

@@ -5,6 +5,7 @@
 <head>
 
     <meta charset="utf-8">
+    <link rel="icon" href="{{ asset('images/home/favicon.ico') }}" type="image/x-icon">
 
     <meta
         name="viewport"

@@ -11,6 +11,7 @@ class OptionGroup extends Model
         'group_code',
         'group_name',
         'display_type',
+        'description',
         'help_text',
         'remark_text',
         'is_main_price_group',

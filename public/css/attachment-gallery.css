@@ -1,0 +1,29 @@
+.attachment-gallery { width: 100%; color: #111; font-size: 14px; }
+.attachment-gallery > h3 { margin: 0 0 16px; font-size: 18px; font-weight: 700; }
+.ag-intro p { margin: 0 0 8px; }
+.ag-intro ul, .ag-intro ol { padding-left: 24px; margin-bottom: 12px; }
+.ag-intro ul { list-style: disc; }
+.ag-intro ol { list-style: decimal; }
+.ag-intro a { color: #06c; text-decoration: underline; }
+.ag-viewport { position: relative; }
+.attachment-gallery.is-collapsed .ag-viewport { max-height: var(--ag-height, 390px); overflow: hidden; }
+.attachment-gallery.is-collapsed .ag-viewport::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 75px; background: linear-gradient(transparent, #fff); pointer-events: none; }
+.ag-grid { display: grid; grid-template-columns: repeat(var(--ag-columns, 3), minmax(0, 1fr)); gap: 10px 22px; padding: 3px; }
+.ag-item { min-width: 0; margin: 0; text-align: center; }
+.ag-image-link { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1; background: #fff; border: 1px solid #d4d4d4; box-shadow: 0 2px 5px #0002; }
+.ag-photo { display: block; width: 100%; height: 100%; object-fit: contain; }
+.ag-price { margin-top: 3px; line-height: 1.4; }
+.ag-zoom { border: 0; padding: 4px 0; background: transparent; color: #00e; font-size: 10px; cursor: pointer; }
+.ag-toggle-wrap { text-align: center; margin-top: 8px; }
+.ag-toggle { width: min(100%, 270px); padding: 8px 18px; border: 1px solid #d5d5d5; border-radius: 6px; background: linear-gradient(#fff, #eaeaea); box-shadow: 0 3px 1px #0003; color: #333; font-size: 16px; cursor: pointer; }
+.attachment-gallery [hidden] { display: none !important; }
+.ag-image-placeholder { padding: 20px; color: #777; }
+.ag-editor { padding: 15px; border: 1px solid #d8dde2; border-radius: 6px; background: #f8f9fa; }
+.ag-editor-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.ag-editor-item { margin: 12px 0; padding: 12px; border: 1px solid #ddd; border-radius: 5px; background: #fff; }
+.ag-editor-preview { width: 100%; max-width: 140px; height: 140px; object-fit: contain; background: #fafafa; border: 1px solid #ddd; margin-bottom: 8px; }
+.ag-editor .ck-editor__editable { min-height: 130px; }
+.ag-editor-error { color: #b42318; }
+.ag-editor-list .sortable-ghost { opacity: .4; }
+.ag-item-handle { cursor: grab; touch-action: none; }
+@media (max-width: 767px) { .ag-grid { grid-template-columns: repeat(var(--ag-mobile-columns, 2), minmax(0, 1fr)); gap: 12px; } }

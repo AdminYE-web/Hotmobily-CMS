@@ -1,0 +1,193 @@
+- generic [ref=f19e36]:
+  - generic [ref=f19e37]:
+    - generic [ref=f19e38]: Menu
+    - generic [ref=f19e39]:
+      - link "Dashboard" [ref=f19e40] [cursor=pointer]:
+        - /url: http://new-hotmobily.test/admin/dashboard
+      - generic [ref=f19e41]: 口コミ >
+      - generic [ref=f19e42]: 見積&ご注文 >
+      - link "Lost Orders" [ref=f19e43] [cursor=pointer]:
+        - /url: /admin/orders_lost.php
+      - generic [ref=f19e44]: Design and Production request >
+      - link "Simulator Monitor" [ref=f19e45] [cursor=pointer]:
+        - /url: /admin/simulator_monitor.php
+      - generic [ref=f19e46]: Management >
+      - link "Template Management" [ref=f19e47] [cursor=pointer]:
+        - /url: http://new-hotmobily.test/admin/template-products
+      - link "Banner Settings" [ref=f19e48] [cursor=pointer]:
+        - /url: http://new-hotmobily.test/admin/banner
+      - generic [ref=f19e49]: Home Setting >
+      - generic [ref=f19e50]: Product Settings >
+      - generic [ref=f19e51]: Product data setting >
+      - generic [ref=f19e52]: Side Menu Setting >
+      - generic [ref=f19e53]: Menu Setting >
+      - generic [ref=f19e54]: Custom Page Setting >
+      - generic [ref=f19e55]: Guide Setting >
+      - link "Contact/Inquire" [ref=f19e56] [cursor=pointer]:
+        - /url: http://new-hotmobily.test/admin/contact
+      - link "Meeting Date" [ref=f19e57] [cursor=pointer]:
+        - /url: http://new-hotmobily.test/admin/meeting-date
+      - link "HM Sample Tracking" [ref=f19e58] [cursor=pointer]:
+        - /url: /admin/delivery.php
+      - link "Sales order" [ref=f19e59] [cursor=pointer]:
+        - /url: /admin/sales-orders/
+      - link "Cost Management" [ref=f19e60] [cursor=pointer]:
+        - /url: /admin/cost_management.php
+      - link "PO running number" [ref=f19e61] [cursor=pointer]:
+        - /url: /admin/po_number_lists.php
+      - link "YE China Purchase order" [ref=f19e62] [cursor=pointer]:
+        - /url: http://purchase.hotstrap.jp/login.php
+      - link "Coating Purchase Request" [ref=f19e63] [cursor=pointer]:
+        - /url: /admin/coating-purchase-request.php
+      - link "Coating Process" [ref=f19e64] [cursor=pointer]:
+        - /url: /admin/coating-process.php
+      - listitem [ref=f19e65]:
+        - link "Holiday Calendar" [ref=f19e66] [cursor=pointer]:
+          - /url: http://new-hotmobily.test/admin/holidays
+  - generic [ref=f19e67]:
+    - navigation [ref=f19e68]:
+      - button "Toggle Menu" [ref=f19e69] [cursor=pointer]
+      - list [ref=f19e71]:
+        - listitem [ref=f19e72]:
+          - button "Logout" [ref=f19e74] [cursor=pointer]
+    - generic [ref=f19e75]:
+      - generic [ref=f19e76]:
+        - generic [ref=f19e77]:
+          - link "← Product Layouts" [ref=f19e78] [cursor=pointer]:
+            - /url: http://new-hotmobily.test/admin/product-layouts
+          - heading "Price Matrix QA" [level=1] [ref=f19e79]
+          - text: Visual Product Layout Builder
+        - generic [ref=f19e80]:
+          - button "Save Draft" [ref=f19e81] [cursor=pointer]
+          - button "Publish" [ref=f19e82] [cursor=pointer]
+      - generic [ref=f19e83]:
+        - generic [ref=f19e85]:
+          - strong [ref=f19e87]: Components
+          - generic [ref=f19e88]:
+            - generic [ref=f19e89]: BASIC
+            - button "H Heading" [ref=f19e90] [cursor=pointer]:
+              - generic [ref=f19e91]: H
+              - text: Heading
+            - button "¶ Text" [ref=f19e92] [cursor=pointer]:
+              - generic [ref=f19e93]: ¶
+              - text: Text
+            - button "🖼 Image" [ref=f19e94] [cursor=pointer]:
+              - generic [ref=f19e95]: 🖼
+              - text: Image
+            - button "▶ YouTube" [ref=f19e96] [cursor=pointer]:
+              - generic [ref=f19e97]: ▶
+              - text: YouTube
+            - button "📰 Related Blogs" [ref=f19e98] [cursor=pointer]:
+              - generic [ref=f19e99]: 📰
+              - text: Related Blogs
+            - button "▣ Button" [ref=f19e100] [cursor=pointer]:
+              - generic [ref=f19e101]: ▣
+              - text: Button
+            - button "🔗 Text Link" [ref=f19e102] [cursor=pointer]:
+              - generic [ref=f19e103]: 🔗
+              - text: Text Link
+            - button "▦ Custom Table" [ref=f19e104] [cursor=pointer]:
+              - generic [ref=f19e105]: ▦
+              - text: Custom Table
+            - button "▤ Info Card" [ref=f19e106] [cursor=pointer]:
+              - generic [ref=f19e107]: ▤
+              - text: Info Card
+            - button "☰ Accordion" [ref=f19e108] [cursor=pointer]:
+              - generic [ref=f19e109]: ☰
+              - text: Accordion
+            - button "🗂 OptionCardGrid" [ref=f19e110] [cursor=pointer]:
+              - generic [ref=f19e111]: 🗂
+              - text: OptionCardGrid
+            - separator [ref=f19e112]
+            - generic [ref=f19e113]: PRODUCT
+            - button "Product Header" [ref=f19e114] [cursor=pointer]
+            - button "Product Gallery" [ref=f19e115] [cursor=pointer]
+            - button "Product Details" [ref=f19e116] [cursor=pointer]
+            - button "Product FAQ" [ref=f19e117] [cursor=pointer]
+            - button "Product Review" [ref=f19e118] [cursor=pointer]
+            - button "Template Button" [ref=f19e119] [cursor=pointer]
+            - button "Price Matrix" [ref=f19e120] [cursor=pointer]
+            - button "Price" [ref=f19e121] [cursor=pointer]
+            - button "Shipping Schedule" [ref=f19e122] [cursor=pointer]
+            - button "Production Schedule" [ref=f19e123] [cursor=pointer]
+            - separator [ref=f19e124]
+            - generic [ref=f19e125]: LAYOUT
+            - button "100%" [ref=f19e126] [cursor=pointer]
+            - button "50% / 50%" [ref=f19e128] [cursor=pointer]
+            - button "33% / 66%" [ref=f19e130] [cursor=pointer]
+            - button "66% / 33%" [ref=f19e132] [cursor=pointer]
+            - button "33% / 33% / 33%" [ref=f19e134] [cursor=pointer]
+            - separator [ref=f19e136]
+            - button "─ Divider" [ref=f19e137] [cursor=pointer]:
+              - generic [ref=f19e138]: ─
+              - text: Divider
+            - button "↕ Spacer" [ref=f19e139] [cursor=pointer]:
+              - generic [ref=f19e140]: ↕
+              - text: Spacer
+            - generic [ref=f19e141]:
+              - strong [ref=f19e142]: How to use
+              - text: 1. Add a Row 2. Click a Column 3. Add Components 4. Drag Components 5. Edit Block ID if needed
+        - generic [ref=f19e144]:
+          - generic [ref=f19e146]:
+            - generic [ref=f19e147]:
+              - strong [ref=f19e148]: Product Page Preview
+              - text: Row → Column → Component
+            - generic [ref=f19e149]:
+              - button "Desktop" [ref=f19e150] [cursor=pointer]
+              - button "Tablet" [ref=f19e151] [cursor=pointer]
+              - button "Mobile" [ref=f19e152] [cursor=pointer]
+          - generic [ref=f19e154]:
+            - generic [ref=f19e155]: hotmobily.jp/products/example-product
+            - generic [ref=f19e161]:
+              - generic [ref=f19e163]:
+                - generic [ref=f19e164]:
+                  - generic [ref=f19e165]: ☰ ROW
+                  - generic [ref=f19e166]:
+                    - generic [ref=f19e167]: Place
+                    - combobox "Place" [ref=f19e168]:
+                      - option "Before Order Form" [selected]
+                      - option "After Order Form"
+                  - generic [ref=f19e169]:
+                    - button "Copy Row" [ref=f19e170] [cursor=pointer]
+                    - button "Delete Row" [ref=f19e171] [cursor=pointer]
+                - generic [ref=f19e173]:
+                  - generic [ref=f19e174]: 100%
+                  - generic [ref=f19e177]:
+                    - generic [ref=f19e178]:
+                      - generic [ref=f19e179]:
+                        - text: ☰ Price Matrix
+                        - generic [ref=f19e180]: "#block_1792047643114_k6nyuig"
+                      - generic [ref=f19e181]:
+                        - button "Edit" [ref=f19e182] [cursor=pointer]
+                        - button "Copy" [ref=f19e183] [cursor=pointer]
+                        - button "Delete" [ref=f19e184] [cursor=pointer]
+                    - generic [ref=f19e187]:
+                      - strong [ref=f19e188]: 納期
+                      - paragraph [ref=f19e189]: ◉ 10営業日 ○ 6営業日
+                      - strong [ref=f19e190]: 印刷面
+                      - paragraph [ref=f19e191]: ◉ 片面印刷 ○ 両面印刷
+                      - strong [ref=f19e192]: 数量・サイズ別価格表
+                      - table [ref=f19e193]:
+                        - rowgroup [ref=f19e194]:
+                          - row [ref=f19e195]:
+                            - columnheader "数量" [ref=f19e196]
+                            - columnheader "50×50mm以内" [ref=f19e197]
+                            - columnheader "75×75mm以内" [ref=f19e198]
+                            - columnheader "100×100mm以内" [ref=f19e199]
+                          - row [ref=f19e200]:
+                            - cell "1" [ref=f19e201]
+                            - cell "990" [ref=f19e202]
+                            - cell "1089" [ref=f19e203]
+                            - cell "1188" [ref=f19e204]
+                          - row [ref=f19e205]:
+                            - cell "5" [ref=f19e206]
+                            - cell "411" [ref=f19e207]
+                            - cell "455" [ref=f19e208]
+                            - cell "569" [ref=f19e209]
+                      - text: Example only. Configure options and prices in Product Content.
+                  - generic: Click to select then add components
+              - generic [ref=f19e210]:
+                - generic [ref=f19e211]:
+                  - strong [ref=f19e212]: 🔒 ご注文・見積書作成
+                  - generic [ref=f19e213]: Order Form
+                - generic [ref=f19e214]: SYSTEM

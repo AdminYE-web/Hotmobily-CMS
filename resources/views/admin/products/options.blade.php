@@ -409,6 +409,10 @@ HTML;
         .summary-row { display: flex; align-items: center; gap: .7rem; margin-top: .45rem; padding: .65rem .75rem; border: 1px solid #dce1e9; border-radius: .45rem; background: #fff; cursor: grab; transition: opacity .16s ease; }
         .summary-row.is-dragging { opacity: .45; }
         .summary-row-handle { color: #728096; cursor: grab; }
+        .option-group-handle, .option-row-handle, .summary-row-handle { touch-action: none; }
+        body.option-order-dragging { user-select: none; cursor: grabbing; }
+        .option-order-drag-label { position: fixed; z-index: 11000; max-width: min(360px, 80vw); padding: 8px 12px; border: 1px solid #8aa6cf; border-radius: 6px; background: #fff; color: #263b55; box-shadow: 0 4px 12px #0002; pointer-events: none; font-size: 13px; }
+        .option-order-drop-target { outline: 2px solid #79a6e0; outline-offset: -2px; }
         .summary-row-name { flex: 1; }
         .summary-row-parent { display: block; margin-top: .15rem; color: #7a8797; font-size: .75rem; }
         .summary-label-editor { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem .55rem; margin-top: .35rem; color: #7a8797; font-size: .75rem; font-weight: 600; }
@@ -435,6 +439,8 @@ HTML;
 @endpush
 
 @push('scripts')
+    <script src="{{ asset('admin/js/option-group-presets.js') }}?v={{ filemtime(public_path('admin/js/option-group-presets.js')) }}"></script>
+    <script src="{{ asset('admin/js/option-order-drag.js') }}?v={{ filemtime(public_path('admin/js/option-order-drag.js')) }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const textarea = document.getElementById('complete_head_text');
@@ -889,6 +895,10 @@ HTML;
                 });
 
                 groups.forEach(function (group) {
+                    const minInput = document.querySelector(`input[name="quantity_limits[${group.id}][min]"]`);
+                    const maxInput = document.querySelector(`input[name="quantity_limits[${group.id}][max]"]`);
+                    if (minInput) group.quantity_min = minInput.value;
+                    if (maxInput) group.quantity_max = maxInput.value;
                     group.options.forEach(function (option) {
                         const selected = document.querySelector(`input[name="option_ids[${group.id}][]"][value="${option.id}"]`);
                         if (!selected) return;
@@ -905,7 +915,11 @@ HTML;
 
             const optionRows = function (group) {
                 if (group.display_type === 'quantity_input') {
-                    return '<div class="text-muted small py-2">This group renders a product-quantity field. Product Options are not required.</div>';
+                    return `<div class="text-muted small py-2">This group renders a product-quantity field. Product Options are not required.</div>
+                        <div class="form-row mt-2">
+                            <div class="form-group col-md-6"><label for="quantity-min-${group.id}">Minimum quantity</label><input id="quantity-min-${group.id}" type="number" min="1" max="2147483647" step="1" name="quantity_limits[${group.id}][min]" value="${escapeHtml(group.quantity_min ?? '')}" class="form-control form-control-sm" placeholder="1"></div>
+                            <div class="form-group col-md-6"><label for="quantity-max-${group.id}">Maximum quantity</label><input id="quantity-max-${group.id}" type="number" min="1" max="2147483647" step="1" name="quantity_limits[${group.id}][max]" value="${escapeHtml(group.quantity_max ?? '')}" class="form-control form-control-sm" placeholder="No maximum"></div>
+                        </div><small class="text-muted">Leave blank for a minimum of 1 and no maximum. Selected Product Option quantity rules also apply.</small>`;
                 }
                 if (!group.options.length) return '<div class="text-muted small py-2">No active Product Options in this Option Group.</div>';
 
@@ -1598,6 +1612,7 @@ HTML;
                     </header>
                     <div class="option-group-options">
                         ${group.display_type !== 'quantity_input' && group.options.length ? `<div class="mb-2"><button type="button" class="btn btn-sm btn-outline-primary btn-select-all-options" data-group-id="${group.id}">Select all</button></div>` : ''}
+                        ${window.OptionGroupPresets.panel(group)}
                         ${optionRows(group)}
                     </div>
                 </section>`;
@@ -1928,6 +1943,7 @@ HTML;
                 renderOptionSummaryList('pdf');
                 renderOptionSummaryList('confirm');
                 renderOptionSummaryList('complete');
+                window.OptionGroupPresets.bind({groups, capture: captureFormState, render});
             };
 
             document.getElementById('add-step').addEventListener('click', function () {

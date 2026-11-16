@@ -10,26 +10,7 @@
     $isKeyholder = $galleryPage->public_slug === 'rubberkeyholder' || $galleryType === 'rubber_keyholder';
     $isCoaster = $galleryPage->public_slug === 'rubbercoaster' || $galleryType === 'rubber_coaster';
     $isStrap = $galleryPage->public_slug === 'rubberstrap' || $galleryType === 'rubber_strap';
-    $legacyTagOptions = $isAcrylicLegacy
-        ? ['個人', '会社', '赤色', '青色', '黄色', '紫色', 'ピンク色', '緑色', '黒色', '1人', '複数人', '片面', '両面']
-        : (($isKeyholder || $isCoaster)
-            ? ['個人', '会社', '赤色', '青色', '黄色', '紫色', '緑色', '黒色', '白色', '1人', '複数人']
-            : []);
-    $availableTags = collect($galleries)
-        ->flatMap(static function ($gallery): array {
-            $rawTags = str_replace(['、', '，'], ',', (string) $gallery->arr_txt1);
-
-            return array_values(array_filter(array_map('trim', explode(',', $rawTags))));
-        })
-        ->all();
-    $tagOptions = $legacyTagOptions !== []
-        ? $legacyTagOptions
-        : collect($availableTags)
-            ->map(static fn ($tag): string => trim((string) $tag))
-            ->filter()
-            ->unique()
-            ->values()
-            ->all();
+    $tagOptions = app(\App\Services\GalleryItems::class)->tagOptions($galleryPage, $galleries);
     $hasTagFilter = (bool) ($galleryPage->show_tags ?? true) && $tagOptions !== [];
     $usesNewText = ! $isWappen;
     $storedHeading = trim((string) ($galleryPage->heading ?? ''));
@@ -323,5 +304,5 @@
     <script src="/products/acrylic/js/zoom-image.js"></script>
     <script src="/products/acrylic/ptw/photoswipe.min.js?v=1.08"></script>
     <script src="/products/acrylic/ptw/photoswipe-ui-default.min.js"></script>
-    <script src="/js/gallery-rubber-keyholder.js?v=1.02"></script>
+    <script src="{{ asset('js/gallery-rubber-keyholder.js') }}?v={{ filemtime(public_path('js/gallery-rubber-keyholder.js')) }}"></script>
 @endpush

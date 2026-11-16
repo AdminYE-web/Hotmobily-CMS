@@ -33,6 +33,20 @@
     @include('partials.legacy-head-products')
 
     <link rel="stylesheet" href="/reviews/css/reviews.css" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/shipping-summary.css') }}?v={{ filemtime(public_path('css/shipping-summary.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/price-matrix.css') }}?v={{ filemtime(public_path('css/price-matrix.css')) }}">
+    <link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}">
+<link rel="stylesheet" href="{{ asset('css/custom-table-business-days.css') }}?v={{ filemtime(public_path('css/custom-table-business-days.css')) }}">
+<script defer src="{{ asset('js/custom-table-business-days.js') }}?v={{ filemtime(public_path('js/custom-table-business-days.js')) }}"></script>
+<link rel="stylesheet" href="{{ asset('css/heading-editor.css') }}?v={{ filemtime(public_path('css/heading-editor.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/button-group.css') }}?v={{ filemtime(public_path('css/button-group.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/youtube-tags.css') }}?v={{ filemtime(public_path('css/youtube-tags.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/gallery-showcase.css') }}?v={{ filemtime(public_path('css/gallery-showcase.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/usage-examples.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/product-catalog.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom-faq.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/x-posts.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/product-details-price.css') }}">
 
 
     @if ($product->slug === 'rubberstrap')
@@ -258,7 +272,7 @@
             display: grid;
 
             grid-template-columns:
-                repeat(2,
+                repeat(var(--gallery-columns, 2),
                     minmax(0, 1fr));
 
             gap: 8px;
@@ -1539,8 +1553,8 @@
 
             margin: 0;
 
-            font-size: .95rem;
-            line-height: normal;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
 
@@ -1557,7 +1571,7 @@
 
             padding: 10px 12px;
 
-            border: 1px solid #ccc;
+            border: 1px solid #dadada;
 
             text-align: center;
             vertical-align: middle;
@@ -1981,7 +1995,7 @@
 
             .store-gallery-thumbnails {
                 grid-template-columns:
-                    repeat(2,
+                    repeat(var(--gallery-columns, 2),
                         minmax(0,
                             1fr));
             }
@@ -2240,7 +2254,7 @@
 
         @media (max-width: 768px) {
             .store-custom-table {
-                font-size: .85rem;
+                font-size: 13px;
             }
 
             .store-custom-table td {
@@ -2377,6 +2391,10 @@
 
 
 @push('scripts')
+    <script src="{{ asset('js/price-matrix.js') }}?v={{ filemtime(public_path('js/price-matrix.js')) }}"></script>
+    <script src="{{ asset('js/attachment-gallery.js') }}"></script>
+    <script src="{{ asset('js/product-catalog.js') }}"></script>
+    <script src="{{ asset('js/x-posts.js') }}"></script>
     @if ($product->slug === 'rubberstrap' && empty($orderSteps))
         <script type="text/javascript" src="/js/_setToInput_2026.js?v=1.01"></script>
         <script type="text/javascript" src="/js/validation_new.js?v=1.11"></script>
@@ -2779,6 +2797,8 @@
                 );
 
                 let imageModalIndex = 0;
+                let imageModalReturnFocus = null;
+                let imageModalPreviousOverflow = '';
 
                 const imageModalDescription = imageModal?.querySelector('[data-store-image-modal-description]');
 
@@ -2822,10 +2842,12 @@
                 }
 
                 function closeImageModal() {
+                    if (!imageModal?.classList.contains('is-open')) return;
                     imageModal?.classList.remove('is-open');
                     imageModal?.setAttribute('aria-hidden', 'true');
                     imageModalTriggers = allImageModalTriggers;
-                    document.body.style.overflow = '';
+                    document.body.style.overflow = imageModalPreviousOverflow;
+                    if (imageModalReturnFocus?.isConnected) imageModalReturnFocus.focus({preventScroll: true});
                 }
 
                 allImageModalTriggers.forEach(function(trigger) {
@@ -2845,9 +2867,12 @@
                         );
 
                         updateImageModal(index);
+                        imageModalReturnFocus = document.activeElement;
+                        imageModalPreviousOverflow = document.body.style.overflow;
                         imageModal?.classList.add('is-open');
                         imageModal?.setAttribute('aria-hidden', 'false');
                         document.body.style.overflow = 'hidden';
+                        imageModalClose?.focus({preventScroll: true});
                     });
                 });
 
@@ -2887,6 +2912,11 @@
 
                     if (event.key === 'Escape') {
                         closeImageModal();
+                    } else if (event.key === 'Tab') {
+                        const controls = Array.from(imageModal.querySelectorAll('button:not([disabled])')).filter(el => el.getClientRects().length);
+                        const first = controls[0], last = controls[controls.length - 1];
+                        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+                        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
                     } else if (event.key === 'ArrowLeft') {
                         updateImageModal(imageModalIndex - 1);
                     } else if (event.key === 'ArrowRight') {
