@@ -3,6 +3,11 @@
     $sourcePage = !empty($showcase['gallery_page_id']) ? \App\Models\GalleryPage::active()->find($showcase['gallery_page_id']) : null;
     $choices = $sourcePage ? collect(app(\App\Services\GalleryItems::class)->choices($sourcePage))->keyBy('key') : collect();
     $selected = collect($showcase['items'])->map(function ($selection) use ($choices) {
+        if (($selection['source'] ?? 'gallery') === 'upload') {
+            $image=(string) ($selection['image_url'] ?? '');
+            return $image !== '' ? ['image_url'=>$image,'images'=>[$image],'tags'=>[],
+                'title'=>(string) ($selection['title'] ?? ''),'customer'=>'','date'=>'','comment'=>''] : null;
+        }
         $source = $choices->get($selection['key'] ?? '');
         return $source ? array_merge($source, ['title' => (string) ($selection['title'] ?? '')]) : null;
     })->filter()->values();

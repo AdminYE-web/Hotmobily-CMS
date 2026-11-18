@@ -273,6 +273,7 @@
 
 
                     @unless ($isCmsBuilder)
+                    <button type="button" class="component-button add-block" data-type="product_anatomy">Product Anatomy</button>
                     <button type="button" class="component-button add-block" data-type="gallery_showcase">Gallery Showcase</button>
                     <button type="button" class="component-button add-block" data-type="usage_examples">Usage Examples</button>
                     <button type="button" class="component-button add-block" data-type="product_catalog">Product Catalog</button>
@@ -1331,6 +1332,21 @@
 
     font-size: 11px;
 
+    pointer-events: none;
+}
+
+.add-block[draggable="true"] {
+    cursor: grab;
+}
+
+.component-palette-drop-line {
+    position: fixed;
+    z-index: 1040;
+    height: 3px;
+    border-radius: 2px;
+    background: #0d6efd;
+    box-shadow: 0 0 0 2px #fff;
+    transform: translateY(-50%);
     pointer-events: none;
 }
 
@@ -2988,147 +3004,115 @@ document.addEventListener(
             );
 
 
-        function addBlock(
-            type
-        )
+        function addBlock(type, destination = null)
         {
-            if (
-                selectedAccordionId
-                &&
-                type === 'accordion'
-            ) {
-
-                alert(
-                    'Accordion cannot be placed inside another Accordion.'
-                );
-
-
+            const accordionId = destination ? destination.accordionId : selectedAccordionId;
+            if (accordionId && type === 'accordion') {
+                alert('Accordion cannot be placed inside another Accordion.');
+                return;
+            }
+            if (!rows.length) {
+                alert('Please add a Row first.');
                 return;
             }
 
-
-            if (
-                rows.length
-                === 0
-            ) {
-
-                alert(
-                    'Please add a Row first.'
-                );
-
-
-                return;
-            }
-
-
-            if (
-                !selectedColumnId
-            ) {
-
-                selectedColumnId =
-                    getFirstColumnId();
-
-            }
-
-
-            const column =
-                findColumn(
-                    selectedColumnId
-                );
-
-
+            const column = findColumn(destination?.columnId ?? selectedColumnId ?? getFirstColumnId());
             if (!column) {
-
-                alert(
-                    'Please select a Column.'
-                );
-
-
+                alert('Please select a Column.');
                 return;
             }
 
+            const accordion = accordionId ? findBlockLocation(accordionId) : null;
+            const useAccordion = accordion?.block.type === 'accordion' && accordion.column === column;
+            if (destination && accordionId && !useAccordion) return;
+            const blocks = useAccordion ? (accordion.block.children ??= []) : column.blocks;
+            const block = {id: generateBlockId(), type, settings: defaultSettings(type)};
+            if (type === 'accordion') block.children = [];
 
-            const block = {
+            blocks.splice(destination?.index ?? blocks.length, 0, block);
+            selectedColumnId = column.id;
+            selectedAccordionId = useAccordion ? accordionId : null;
+            render();
+            if (!destination) openEditor(block.id);
+        }
 
-                id:
-                    generateBlockId(),
+        function bindComponentPaletteDrag()
+        {
+            const line = document.createElement('div');
+            line.className = 'component-palette-drop-line';
+            line.hidden = true;
+            line.setAttribute('aria-hidden', 'true');
+            document.body.append(line);
+            let draggedType = null;
 
-                type:
-                    type,
-
-                settings:
-                    defaultSettings(
-                        type
-                    ),
-
+            const clearDrag = () => {
+                draggedType = null;
+                line.hidden = true;
+                stopDragAutoScroll();
             };
 
+            document.querySelectorAll('.builder-sidebar .add-block[data-type]').forEach(button => {
+                button.draggable = true;
+                button.addEventListener('dragstart', event => {
+                    if (!event.dataTransfer) return;
+                    draggedType = button.dataset.type;
+                    event.dataTransfer.effectAllowed = 'copy';
+                    event.dataTransfer.setData('application/x-layout-component', draggedType);
+                    startDragAutoScroll(event);
+                });
+                button.addEventListener('dragend', clearDrag);
+            });
 
-            if (
-                type
-                === 'accordion'
-            ) {
+            const dropPosition = event => {
+                const target = event.target;
+                if (!(target instanceof Element) || (!canvas.contains(target) && !afterOrderCanvas.contains(target))) return null;
 
-                block.children =
-                    [];
+                const shell = target.closest('.column-shell');
+                const list = target.closest('.column-block-list, .accordion-block-list')
+                    ?? shell?.querySelector(':scope > .column-block-list');
+                if (!shell || !list) return null;
 
-            }
+                const accordionId = list.dataset.accordionId ?? null;
+                if (accordionId && draggedType === 'accordion') return null;
 
+                const blocks = Array.from(list.children)
+                    .filter(child => child.classList.contains('builder-block'))
+                    .map(child => child.getBoundingClientRect());
+                const nextIndex = blocks.findIndex(rect => event.clientY < rect.top + rect.height / 2);
+                const index = nextIndex === -1 ? blocks.length : nextIndex;
+                const area = list.getBoundingClientRect();
+                const previous = blocks[index - 1];
+                const next = blocks[index];
+                const y = previous && next ? (previous.bottom + next.top) / 2
+                    : previous ? previous.bottom + 4
+                    : next ? next.top - 4
+                    : area.top + area.height / 2;
+                return {columnId: shell.dataset.columnId, accordionId, index, area, y};
+            };
 
-            if (
-                selectedAccordionId
-            ) {
+            document.addEventListener('dragover', event => {
+                if (!draggedType) return;
+                const position = dropPosition(event);
+                line.hidden = !position;
+                if (!position) return;
 
-                const accordionLocation =
-                    findBlockLocation(
-                        selectedAccordionId
-                    );
+                event.preventDefault();
+                event.dataTransfer.dropEffect = 'copy';
+                line.style.top = `${position.y}px`;
+                line.style.left = `${position.area.left}px`;
+                line.style.width = `${position.area.width}px`;
+            });
 
+            document.addEventListener('drop', event => {
+                if (!draggedType) return;
+                const type = draggedType;
+                const position = dropPosition(event);
+                clearDrag();
+                if (!position) return;
 
-                if (
-                    accordionLocation
-                    &&
-                    accordionLocation.block.type
-                    === 'accordion'
-                ) {
-
-                    accordionLocation
-                        .block
-                        .children
-                        ??=
-                        [];
-
-
-                    accordionLocation
-                        .block
-                        .children
-                        .push(
-                            block
-                        );
-
-                } else {
-
-                    column.blocks.push(
-                        block
-                    );
-
-                }
-
-            } else {
-
-                column.blocks.push(
-                    block
-                );
-
-            }
-
-
-            render();
-
-
-            openEditor(
-                block.id
-            );
+                event.preventDefault();
+                addBlock(type, position);
+            });
         }
 
 
@@ -3455,7 +3439,7 @@ document.addEventListener(
 
                                         <br>
 
-                                        then add components
+                                        then add components or drop one here
 
                                     </div>
 
@@ -4372,6 +4356,9 @@ document.addEventListener(
                         )
                     );
 
+
+                case 'product_anatomy':
+                    return contentWrapper(block, '<div style="display:grid;grid-template-columns:22.5% 27.5% 27.5% 22.5%;align-items:center;background:white;"><div><strong>Attachment</strong><p>Image callout</p><strong>Base layer</strong></div><img src="/images/product-anatomy-example/210-L.webp" style="width:100%" alt="Front"><img src="/images/product-anatomy-example/210-R.webp" style="width:100%" alt="Back"><div><strong>Back printing</strong><p>Image callout</p></div></div><small>Configure images and callouts in Content. Drag points in Live Preview.</small>');
 
                 case 'gallery_showcase':
                     return contentWrapper(block, `<h3>Gallery Showcase</h3><p>Selected gallery images with tag filters.</p><div style="display:flex;gap:8px;margin-bottom:12px">${['Individual','Company','Red','Blue'].map(t=>`<span style="background:#e49e00;color:#fff;padding:4px 12px;border-radius:20px">${t}</span>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(${Number(block.settings?.showcase?.columns)||3},minmax(0,1fr));gap:16px">${[1,2,3].map(n=>`<div><div style="background:#ff8000;color:white;text-align:center;border-radius:4px">Example ${n}</div><div style="aspect-ratio:1;background:#f5f5f5;border:1px solid #ddd;display:grid;place-items:center">Gallery image ${n}</div><small style="color:blue">Click to enlarge</small></div>`).join('')}</div>`);
@@ -6262,6 +6249,10 @@ document.addEventListener(
                     container.innerHTML = '<div class="alert alert-light border mb-0">Configure option groups, size columns and prices in <strong>Product Content Editor</strong>. Add and name groups such as Delivery, Print or Material. Each product has its own groups and prices.</div>';
                     break;
 
+                case 'product_anatomy':
+                    container.innerHTML = '<div class="alert alert-light border mb-0">Configure left/right images, callout text, links, point positions and optional lower detail images in <strong>Product Content</strong>. Live Preview supports Desktop/Mobile and draggable points.</div>';
+                    break;
+
                 case 'gallery_showcase':
                     container.innerHTML = `<div class="form-group"><label>Default title</label><input class="form-control block-setting" data-key="showcase.title" value="${escapeHtml(block.settings?.showcase?.title || '')}"></div>
                     <div class="form-group"><label>Default description</label><textarea class="form-control block-setting" data-key="showcase.description">${escapeHtml(block.settings?.showcase?.description || '')}</textarea></div>
@@ -7694,6 +7685,7 @@ document.addEventListener(
                 product_catalog: 'Product Catalog',
                 custom_faq: 'Custom FAQ',
                 x_posts: 'X Posts',
+                product_anatomy: 'Product Anatomy',
                 gallery_showcase: 'Gallery Showcase',
                 attachment_gallery: 'Attachment Gallery',
                 price_matrix: 'Price Matrix',
@@ -7867,6 +7859,8 @@ document.addEventListener(
         | Start
         |--------------------------------------------------------------------------
         */
+
+        bindComponentPaletteDrag();
 
         window.ComponentPalettePreview.init({
             render(type) {

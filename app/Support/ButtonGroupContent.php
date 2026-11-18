@@ -34,7 +34,13 @@ class ButtonGroupContent
             'quote' => ['Quotation', '<path d="M5 2h14v20H5V2Zm3 4h8M8 10h8M8 14h3M8 18h3m3-4h2m-2 4h2"/>'],
             'external' => ['External link', '<path d="M14 3h7v7M21 3 10 14M10 5H3v16h16v-7"/>'],
         ];
-        return array_map(fn ($icon) => ['label' => $icon[0], 'svg' => $icon[1] === '' ? '' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'.$icon[1].'</svg>'], $paths);
+        $icons = array_map(fn ($icon) => ['label' => $icon[0], 'svg' => $icon[1] === '' ? '' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'.$icon[1].'</svg>'], $paths);
+        $icons['steps']['svg'] = file_get_contents(public_path('images/custom-faq-icons/step-switch-icon.svg'));
+        $icons['cart']['svg'] = file_get_contents(public_path('images/custom-faq-icons/shopping-cart-icon.svg'));
+        $icons['book']['svg'] = file_get_contents(public_path('images/custom-faq-icons/book-info-icon.svg'));
+        $icons['gift']['svg'] = file_get_contents(public_path('images/custom-faq-icons/gift-box-icon.svg'));
+
+        return $icons;
     }
 
     public static function normalize(array $input): array

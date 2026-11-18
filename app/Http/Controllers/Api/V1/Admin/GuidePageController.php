@@ -323,6 +323,7 @@ class GuidePageController extends Controller
     private function sanitizeBlockContent(string $type, mixed $content): array
     {
         $content = is_array($content) ? $content : [];
+        if ($type === 'product_anatomy') return \App\Support\ProductAnatomyContent::normalize($content);
         if ($type === 'heading' && array_key_exists('heading_style', $content)) {
             return \App\Support\HeadingContent::normalize($content);
         }

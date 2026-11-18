@@ -8,7 +8,13 @@ class CustomTableBusinessDays
 {
     public static function defaults(): array
     {
-        return ['description' => '', 'enable_business_days_switch' => false, 'business_days_label' => '営業日数を表示', 'show_business_days' => true];
+        return [
+            'description' => '',
+            'enable_business_days_switch' => false,
+            'business_days_label' => '営業日数を表示',
+            'business_days_group' => '',
+            'show_business_days' => true,
+        ];
     }
 
     public static function settings(array $input): array
@@ -18,6 +24,7 @@ class CustomTableBusinessDays
             'description' => 'nullable|string|max:50000',
             'enable_business_days_switch' => 'required|boolean',
             'business_days_label' => 'nullable|string|max:255',
+            'business_days_group' => 'nullable|string|max:80',
             'show_business_days' => 'required|boolean',
         ])->validate();
 
@@ -25,6 +32,7 @@ class CustomTableBusinessDays
             'description' => (new RichTextSanitizer)->sanitize($data['description'] ?? '') ?? '',
             'enable_business_days_switch' => (bool) $data['enable_business_days_switch'],
             'business_days_label' => trim((string) $data['business_days_label']) ?: self::defaults()['business_days_label'],
+            'business_days_group' => trim((string) ($data['business_days_group'] ?? '')),
             'show_business_days' => (bool) $data['show_business_days'],
         ];
     }

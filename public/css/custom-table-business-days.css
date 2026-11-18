@@ -2,3 +2,7 @@
 
 .store-custom-table-intro{display:flex;justify-content:flex-end;gap:16px;margin:0 0 8px}.store-custom-table-intro.has-description{display:block}.store-custom-table-intro.has-description.has-switch{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start}.store-custom-table-intro .store-custom-table-days-controls{margin:0}.store-custom-table-description{min-width:0;font-size:16px;line-height:1.5;overflow-wrap:anywhere}.store-custom-table-description p{margin:0!important}.store-custom-table-description img{max-width:100%;height:auto}.store-custom-table-description table{max-width:100%}.store-custom-table-days-switch{white-space:nowrap}.store-custom-table-days-track{flex:none}.flex-table-editor .ck-editor__editable{min-height:110px}@media(max-width:575px){.store-custom-table-intro.has-description.has-switch{grid-template-columns:minmax(0,1fr);gap:8px}.store-custom-table-description{font-size:14px}}
 
+[data-custom-table-days] .store-custom-table-intro[hidden],
+[data-custom-table-days] .store-custom-table-days-controls[hidden] {
+    display: none;
+}

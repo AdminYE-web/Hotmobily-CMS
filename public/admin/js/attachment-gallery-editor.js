@@ -28,11 +28,16 @@
     }
     const textFields = {title:'Section title (optional)', more_label:'Show more label', less_label:'Show less label', zoom_label:'Zoom link text'};
     const itemFields = {title:'Attachment name', alt:'Image Alt Text', price:'Price text (blank = +0円)', image_url:'Card image URL', zoom_url:'Large image URL (optional)'};
+    function mergeData(defaults, content) {
+        const data = {...clone(defaults), ...clone(content)};
+        if (!Object.prototype.hasOwnProperty.call(content, 'display_mode')) data.display_mode = content.collapsible === false ? 'all' : 'height';
+        return data;
+    }
     function pull(root) {
         const state = states.get(root.dataset.blockId);
         state.presetName = root.querySelector('[data-ag-preset-name]')?.value || '';
         state.presetId = root.querySelector('[data-ag-preset-select]')?.value || '';
-        root.querySelectorAll('[data-ag-meta]').forEach(input => state.data[input.dataset.agMeta] = input.type === 'checkbox' ? input.checked : input.value);
+        root.querySelectorAll('[data-ag-meta]').forEach(input => state.data[input.dataset.agMeta] = input.type === 'checkbox' ? input.checked : input.type === 'number' ? Number(input.value) : input.value);
         state.data.items = [...root.querySelectorAll('[data-ag-item-id]')].map(row => {
             const item = {id:row.dataset.agItemId};
             row.querySelectorAll('[data-ag-field]').forEach(input => item[input.dataset.agField] = input.value);
@@ -66,7 +71,6 @@
     }
     function contents(id) {
         const data = states.get(id).data;
-        const select = (key,label,values) => `<div class="col-md-4 form-group"><label>${label}</label><select class="form-control" data-ag-meta="${key}">${values.map(v=>`<option value="${v}" ${Number(data[key])===v?'selected':''}>${v}</option>`).join('')}</select></div>`;
         return `<div class="ag-editor-error" role="alert" hidden></div>
             <div class="border rounded p-3 mb-3 ag-preset-panel">
                 <strong>Reusable presets</strong>
@@ -81,10 +85,14 @@
             </div>
             <div class="row">${Object.entries(textFields).map(([key,label])=>`<div class="col-md-6 form-group"><label for="ag-${esc(id)}-${key}">${label}</label><input id="ag-${esc(id)}-${key}" class="form-control" data-ag-meta="${key}" value="${esc(data[key])}" maxlength="${key.endsWith('_label')&&key!=='zoom_label'?100:255}"></div>`).join('')}</div>
             <div class="form-group ag-editor-description"><label for="ag-${esc(id)}-description">Description</label><textarea id="ag-${esc(id)}-description" class="form-control" data-ag-meta="description" rows="5" maxlength="50000">${esc(data.description)}</textarea></div>
-            <div class="row">${select('columns','Images per row (desktop)',[2,3,4])}${select('mobile_columns','Images per row (mobile)',[1,2])}
-                <div class="col-md-4 form-group"><label>Collapsed height (px)</label><input type="number" class="form-control" min="100" max="2000" step="1" data-ag-meta="collapsed_height" value="${esc(data.collapsed_height)}"></div>
+            <div class="row">
+                <div class="col-md-4 form-group"><label>Images per row (desktop)</label><input type="number" class="form-control" min="1" max="12" step="1" data-ag-meta="columns" value="${esc(data.columns)}"></div>
+                <div class="col-md-4 form-group"><label>Images per row (mobile)</label><input type="number" class="form-control" min="1" max="6" step="1" data-ag-meta="mobile_columns" value="${esc(data.mobile_columns)}"></div>
+                <div class="col-md-4 form-group"><label>Gallery display</label><select class="form-control" data-ag-meta="display_mode"><option value="height" ${data.display_mode==='height'?'selected':''}>Collapse by height</option><option value="items" ${data.display_mode==='items'?'selected':''}>Limit visible items</option><option value="all" ${data.display_mode==='all'?'selected':''}>Show all items</option></select></div>
+                <div class="col-md-4 form-group" data-ag-visible-items-wrap ${data.display_mode==='items'?'':'hidden'}><label>Items initially visible (rest hidden)</label><input type="number" class="form-control" min="1" max="100" step="1" data-ag-meta="visible_items" value="${esc(data.visible_items)}"></div>
+                <div class="col-md-4 form-group" data-ag-height-wrap ${data.display_mode==='height'?'':'hidden'}><label>Collapsed height (px)</label><input type="number" class="form-control" min="100" max="2000" step="1" data-ag-meta="collapsed_height" value="${esc(data.collapsed_height)}"></div>
             </div>
-            <label class="d-block"><input type="checkbox" data-ag-meta="collapsible" ${data.collapsible?'checked':''}> Collapse long galleries with a Show more button</label>
+                <label class="d-block" data-ag-show-button-wrap ${data.display_mode!=='all'?'':'hidden'}><input type="checkbox" data-ag-meta="show_all_button" ${data.show_all_button?'checked':''}> Show a button to reveal hidden items</label>
             <p class="small text-muted">Drag ☰ to reorder, or use the arrow buttons. Names and details appear in the image modal. Prices here are display text.</p>
             <div class="ag-editor-list">${data.items.map((item,index)=>itemHtml(item,index,data.items.length,id)).join('')}</div>
             <button type="button" class="btn btn-sm btn-outline-primary" data-ag-action="add">+ Add attachment</button>`;
@@ -167,7 +175,7 @@
                     } else if (action === 'load') {
                         if (content.items.length && !confirm('Replace this gallery with the selected preset? Unsaved gallery changes will be replaced.')) return;
                         const result = await presetRequest(presetApi + '/' + selectedId);
-                        state.data = clone(result.content_json);
+                        state.data = mergeData(state.defaults, result.content_json);
                         state.data.items.forEach(item => item.id = uid());
                         state.presetName = ''; refresh(root);
                         root.querySelector('[data-ag-preset-status]').textContent = 'Preset loaded. Save and publish the product to apply it.';
@@ -192,6 +200,11 @@
             });
             root.addEventListener('change',async event=>{
                 const input=event.target;
+                if (input.matches('[data-ag-meta="display_mode"]')) {
+                    root.querySelector('[data-ag-visible-items-wrap]').hidden=input.value!=='items';
+                    root.querySelector('[data-ag-height-wrap]').hidden=input.value!=='height';
+                    root.querySelector('[data-ag-show-button-wrap]').hidden=input.value==='all';
+                }
                 if (!input.matches('[data-ag-upload]') || !input.files.length) return;
                 const row=input.closest('[data-ag-item-id]'), id=row.dataset.agItemId, field=input.dataset.agUpload;
                 const status=row.querySelector('[data-ag-upload-status]');
@@ -240,7 +253,7 @@
             const old=states.get(id);
             old?.sortable?.destroy();
             old?.editor?.destroy();
-            states.set(id,{data:{...clone(defaults),...clone(content)},presetName:'',presetId:''});
+            states.set(id,{defaults:clone(defaults),data:mergeData(defaults,content),presetName:'',presetId:''});
             return `<div class="ag-editor" data-ag-editor data-block-id="${esc(id)}">${contents(id)}</div>`;
         },
         bind,

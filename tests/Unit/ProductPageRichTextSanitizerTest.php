@@ -3,11 +3,20 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\Api\V1\Admin\ProductPageController;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use ReflectionMethod;
 
 class ProductPageRichTextSanitizerTest extends TestCase
 {
+    public function test_text_alignment_survives_sanitizing_without_arbitrary_styles(): void
+    {
+        $sanitize = new ReflectionMethod(ProductPageController::class, 'sanitizeRichTextHtml');
+        $html = $sanitize->invoke(new ProductPageController(), '<p style="text-align:center;position:fixed">Center</p><div style="text-align:right">Right</div><p style="text-align:left">Left</p><p style="text-align:invalid">Invalid</p>');
+        foreach (['left', 'center', 'right'] as $alignment) $this->assertStringContainsString('style="text-align:'.$alignment.'"', $html);
+        $this->assertStringNotContainsString('position', $html);
+        $this->assertStringNotContainsString('text-align:invalid', $html);
+    }
+
     public function test_rich_text_html_keeps_formatting_and_removes_unsafe_markup(): void
     {
         $controller = new ProductPageController();

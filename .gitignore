@@ -49,3 +49,11 @@ node_modules/
 *.[pP][sS][dD]
 *.[aA][iI]
 *.[eE][pP][sS]
+
+# Bundled Product Anatomy example (required by the component's starter content).
+!/public/images/product-anatomy-example/210-L.webp
+!/public/images/product-anatomy-example/210-R.webp
+!/public/images/product-anatomy-example/285-L.webp
+!/public/images/product-anatomy-example/285-R.webp
+!/public/images/product-anatomy-example/base_3mm.webp
+!/public/images/product-anatomy-example/base_5mm.webp

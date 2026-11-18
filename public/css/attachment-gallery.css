@@ -6,8 +6,8 @@
 .ag-intro ol { list-style: decimal; }
 .ag-intro a { color: #06c; text-decoration: underline; }
 .ag-viewport { position: relative; }
-.attachment-gallery.is-collapsed .ag-viewport { max-height: var(--ag-height, 390px); overflow: hidden; }
-.attachment-gallery.is-collapsed .ag-viewport::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 75px; background: linear-gradient(transparent, #fff); pointer-events: none; }
+.attachment-gallery[data-ag-mode="height"].is-collapsed .ag-viewport { max-height: var(--ag-height, 390px); overflow: hidden; }
+.attachment-gallery.is-collapsed .ag-viewport::after, .attachment-gallery.is-items-collapsed .ag-viewport::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 75px; background: linear-gradient(transparent, #fff); pointer-events: none; }
 .ag-grid { display: grid; grid-template-columns: repeat(var(--ag-columns, 3), minmax(0, 1fr)); gap: 10px 22px; padding: 3px; }
 .ag-item { min-width: 0; margin: 0; text-align: center; }
 .ag-image-link { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1; background: #fff; border: 1px solid #d4d4d4; box-shadow: 0 2px 5px #0002; }
@@ -19,6 +19,7 @@
 .attachment-gallery [hidden] { display: none !important; }
 .ag-image-placeholder { padding: 20px; color: #777; }
 .ag-editor { padding: 15px; border: 1px solid #d8dde2; border-radius: 6px; background: #f8f9fa; }
+.ag-editor [hidden] { display: none !important; }
 .ag-editor-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 .ag-editor-item { margin: 12px 0; padding: 12px; border: 1px solid #ddd; border-radius: 5px; background: #fff; }
 .ag-editor-preview { width: 100%; max-width: 140px; height: 140px; object-fit: contain; background: #fafafa; border: 1px solid #ddd; margin-bottom: 8px; }

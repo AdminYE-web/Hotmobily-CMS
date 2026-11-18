@@ -134,4 +134,29 @@ class GalleryShowcaseTest extends TestCase
         $page->update(['is_active'=>false]);
         $this->assertStringNotContainsString('gs-card-title',$render());
     }
+    public function test_direct_uploads_save_publish_and_render_without_requiring_a_gallery(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');$this->actingAs(new Admin(['email'=>'qa@example.test']),'admin');
+        $schema=['version'=>2,'rows'=>[['id'=>'r1','columns'=>[['id'=>'c1','width'=>12,'blocks'=>[['id'=>'gs1','type'=>'gallery_showcase','settings'=>[]]]]]]]];
+        $layout=ProductLayout::create(['draft_layout_json'=>$schema,'published_layout_json'=>$schema]);$product=Product::create(['product_layout_id'=>$layout->id]);
+        $upload=$this->post('/api/v1/admin/products/'.$product->id.'/images',['image'=>\Illuminate\Http\UploadedFile::fake()->image('showcase.png',32,32)],['Accept'=>'application/json'])->assertCreated();
+        $data=array_replace(GalleryShowcaseContent::defaults(),['items'=>[['key'=>'upload-one','source'=>'upload','title'=>'Custom image','image_url'=>$upload->json('data.url')]]]);
+        $this->putJson('/api/v1/admin/products/'.$product->id.'/page',['blocks'=>['gs1'=>$data]])->assertOk();$this->postJson('/api/v1/admin/products/'.$product->id.'/page/publish')->assertOk();
+        $saved=$product->page()->first()->published_content_json['blocks']['gs1'];$this->assertNull($saved['gallery_page_id']);$this->assertEquals($data['items'],$saved['items']);
+        $html=view('products.partials.gallery-showcase',['content'=>$saved,'settings'=>[],'safeUrl'=>fn($url)=>$url])->render();$this->assertStringContainsString('Custom image',$html);$this->assertStringContainsString($upload->json('data.url'),$html);$this->assertStringNotContainsString('data-gs-tag=',$html);
+        foreach(['','javascript:alert(1)','//external.test/image.png','data:image/png,bad'] as $url){$bad=$data;$bad['items'][0]['image_url']=$url;$this->putJson('/api/v1/admin/products/'.$product->id.'/page',['blocks'=>['gs1'=>$bad]])->assertUnprocessable();}
+        $this->assertEquals($data['items'],$product->page()->first()->draft_content_json['blocks']['gs1']['items']);
+    }
+    public function test_mixed_sources_preserve_order_and_gallery_items_still_require_a_gallery(): void
+    {
+        [$page,$item]=$this->source();$reference=(new GalleryItems)->choices($page)[0];
+        $input=array_replace(GalleryShowcaseContent::defaults(),['gallery_page_id'=>$page->id,'items'=>[
+            ['key'=>'custom','source'=>'upload','title'=>'Uploaded first','image_url'=>'/custom.png'],
+            ['key'=>$reference['key'],'title'=>'Gallery second','image_url'=>'/forged.png'],
+        ]]);
+        $saved=GalleryShowcaseContent::normalize($input);$this->assertSame('upload',$saved['items'][0]['source']);$this->assertSame('/custom.png',$saved['items'][0]['image_url']);$this->assertArrayNotHasKey('image_url',$saved['items'][1]);
+        $html=view('products.partials.gallery-showcase',['content'=>$saved,'settings'=>[],'safeUrl'=>fn($url)=>$url])->render();$this->assertLessThan(strpos($html,'Gallery second'),strpos($html,'Uploaded first'));
+        $input['gallery_page_id']=null;$this->expectException(\Illuminate\Validation\ValidationException::class);GalleryShowcaseContent::normalize($input);
+    }
+
 }

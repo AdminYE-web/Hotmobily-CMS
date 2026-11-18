@@ -108,9 +108,21 @@
                 setStatus('Loading preview…');
                 collectSections(); renderSections();
                 try {
-                    const response = await fetch(config.previewUrl, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', 'Accept': 'text/html', 'X-CSRF-TOKEN': config.csrf}, body: JSON.stringify({blocks: config.collectContent()})});
-                    if (!response.ok) throw new Error('Preview failed (' + response.status + ')');
+                    const response = await fetch(config.previewUrl, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': config.csrf}, body: JSON.stringify({blocks: config.collectContent()})});
+                    if (response.redirected) throw new Error('Preview redirected. Reload the editor and sign in again if needed.');
+                    if (!response.ok) {
+                        let detail = '';
+                        if ((response.headers.get('content-type') || '').includes('application/json')) {
+                            const failure = await response.json();
+                            detail = Object.entries(failure.errors || {}).flatMap(([field, messages]) => (Array.isArray(messages) ? messages : [messages]).map(message => field + ': ' + message)).slice(0, 5).join(' ');
+                            detail ||= failure.message || '';
+                        }
+                        throw new Error('Preview failed (' + response.status + ')' + (detail ? ': ' + detail : ''));
+                    }
                     const html = await response.text();
+                    if (!new DOMParser().parseFromString(html, 'text/html').body.hasAttribute('data-visual-editor-preview')) {
+                        throw new Error('Preview did not return the product page. Reload the editor and try again.');
+                    }
                     if (!enabled) return;
                     frame.srcdoc = html;
                     setView(true);

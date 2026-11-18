@@ -7,6 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class RichTextSanitizerTest extends TestCase
 {
+    public function test_text_alignment_is_preserved_with_only_allowed_values(): void
+    {
+        $html = (new RichTextSanitizer())->sanitize('<p style="text-align:center;position:fixed">Center</p><div style="text-align:right">Right</div><p style="text-align:left">Left</p><p style="text-align:invalid">Invalid</p>');
+        foreach (['left', 'center', 'right'] as $alignment) $this->assertStringContainsString('style="text-align:'.$alignment.'"', $html);
+        $this->assertStringNotContainsString('position', $html);
+        $this->assertStringNotContainsString('text-align:invalid', $html);
+    }
+
     public function test_ckeditor_images_are_kept_and_unsafe_attributes_are_removed(): void
     {
         $html = '<figure class="image image_resized">'

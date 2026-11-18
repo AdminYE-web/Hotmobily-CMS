@@ -1032,6 +1032,8 @@
                             ''
                         );
 
+                    $imageLink = $safeUrl(is_string($content['image_link_url'] ?? null) ? $content['image_link_url'] : '');
+
                     $openImageInModal =
                         (bool) (
                             $content['open_in_modal']
@@ -1048,7 +1050,11 @@
 
                     <div class="store-image">
 
-                        @if($openImageInModal)
+                        @if($imageLink)
+                            <a href="{{ $imageLink }}" @if(trim($imageAlt) === '') aria-label="Open image link" @endif>
+                                <img src="{{ $imageUrl }}" alt="{{ $imageAlt }}" loading="lazy">
+                            </a>
+                        @elseif($openImageInModal)
                             <button
                                 type="button"
                                 class="store-image-modal-trigger"
@@ -2124,7 +2130,7 @@
                     )
                 )
 
-                    <div class="store-custom-table-block" data-custom-table-days>
+                    <div class="store-custom-table-block" data-custom-table-days data-custom-table-days-group="{{ trim((string) ($daysSettings['business_days_group'] ?? '')) }}">
                     <div class="store-table-scroll">
 
                         @if(
@@ -2450,7 +2456,7 @@
                                                     vertical-align:
                                                     {{ $verticalAlign }};
 
-                                                    padding:
+                                                    --custom-table-cell-padding:
                                                     {{ $padding }}px;
 
                                                     font-weight:
@@ -3797,6 +3803,8 @@
                 ></div>
 
 
+            @elseif($type === 'product_anatomy')
+                @include('products.partials.product-anatomy')
             @elseif($type === 'gallery_showcase')
                 @include('products.partials.gallery-showcase')
             @elseif($type === 'usage_examples')

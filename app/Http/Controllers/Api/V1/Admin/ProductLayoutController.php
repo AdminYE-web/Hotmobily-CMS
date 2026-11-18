@@ -254,6 +254,7 @@ class ProductLayoutController extends Controller
 
             'template_button',
 
+            'product_anatomy',
             'gallery_showcase',
             'attachment_gallery',
             'usage_examples',
@@ -322,6 +323,7 @@ class ProductLayoutController extends Controller
 
             'template_button',
 
+            'product_anatomy',
             'gallery_showcase',
             'attachment_gallery',
             'usage_examples',

@@ -17,6 +17,7 @@
         info_card: 'An image, heading, description and optional link.',
         accordion: 'A section visitors can expand or collapse.',
         usage_examples: 'Image cards showing how a product is used.',
+        product_anatomy: 'Product images with descriptive callouts, connector lines and editable points.',
         gallery_showcase: 'Selected Gallery images with titles, tag filters and image zoom.',
         product_catalog: 'Product cards filtered by category buttons.',
         custom_faq: 'Icon links to FAQ categories or other pages.',

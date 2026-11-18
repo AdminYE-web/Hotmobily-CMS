@@ -453,6 +453,11 @@ class RichTextSanitizer
             $value = trim((string) $value);
             $value = preg_replace('/\s*!important\s*$/i', '', $value) ?? $value;
 
+            if ($property === 'text-align' && in_array(strtolower($value), ['left', 'center', 'right'], true)) {
+                $normalized[] = 'text-align:'.strtolower($value);
+                continue;
+            }
+
             if ($property === 'color') {
                 $color = $this->normalizeColor($value);
 

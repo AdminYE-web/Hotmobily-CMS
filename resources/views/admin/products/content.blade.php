@@ -155,12 +155,14 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/shipping-summary.css') }}?v={{ filemtime(public_path('css/shipping-summary.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/price-matrix.css') }}?v={{ filemtime(public_path('css/price-matrix.css')) }}">
-<link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}">
+<link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}?v={{ filemtime(public_path('css/attachment-gallery.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/custom-table.css') }}?v={{ filemtime(public_path('css/custom-table.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/custom-table-business-days.css') }}?v={{ filemtime(public_path('css/custom-table-business-days.css')) }}">
 <script defer src="{{ asset('js/custom-table-business-days.js') }}?v={{ filemtime(public_path('js/custom-table-business-days.js')) }}"></script>
 <link rel="stylesheet" href="{{ asset('css/heading-editor.css') }}?v={{ filemtime(public_path('css/heading-editor.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/button-group.css') }}?v={{ filemtime(public_path('css/button-group.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/youtube-tags.css') }}?v={{ filemtime(public_path('css/youtube-tags.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/product-anatomy.css') }}?v={{ filemtime(public_path('css/product-anatomy.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/gallery-showcase.css') }}?v={{ filemtime(public_path('css/gallery-showcase.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/usage-examples.css') }}">
 <link rel="stylesheet" href="{{ asset('css/product-catalog.css') }}">
@@ -1097,6 +1099,20 @@
     gap: 6px;
 }
 
+.custom-table-preset-panel {
+    background: #f8fafc;
+}
+
+.custom-table-preset-panel .custom-table-preset-name,
+.custom-table-preset-panel .custom-table-preset-select {
+    flex: 1 1 280px;
+    min-width: 180px;
+}
+
+.custom-table-preset-panel [data-custom-table-preset-action] {
+    white-space: nowrap;
+}
+
 
 .flex-table-row-count-control {
     display: inline-flex;
@@ -1365,6 +1381,7 @@
 
 .flex-table-preview {
     margin-top: 20px;
+    scroll-margin-top: 16px;
 
     padding: 15px;
 
@@ -1376,58 +1393,273 @@
     border-radius: 6px;
 }
 
-
-.flex-table-preview-title {
-    margin-bottom: 10px;
-
-    font-size: 16px;
-    font-weight: 700;
+.flex-table-advanced.is-cell-focused .flex-table-row-editor:not(.is-edit-target),
+.flex-table-advanced.is-cell-focused .flex-table-cell-editor:not(.is-edit-target) {
+    display: none;
 }
 
+.flex-table-preview-structure {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 8px 16px;
+    margin-bottom: 12px;
+}
 
-.flex-table-grid {
-    display: grid;
+.flex-table-preview-structure label {
+    margin: 0;
+}
 
-    /*
-     * 200 Grid Units
-     *
-     * 1 unit = 0.5%
-     */
-    grid-template-columns:
-        repeat(
-            200,
-            minmax(0, 1fr)
-        );
-
-    grid-auto-rows: auto;
-
+.flex-table-preview-select-cell {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
     width: 100%;
-    min-width: 650px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
 
-    border-top: 1px solid #ccc;
-    border-left: 1px solid #ccc;
+.flex-table-preview.is-selecting .flex-table-preview-select-cell {
+    display: block;
+}
+
+.flex-table-preview.is-selecting .flex-table-preview-input,
+.flex-table-preview.is-selecting .flex-table-preview-actions,
+.flex-table-preview.is-selecting .flex-table-preview-resize,
+.flex-table-preview.is-selecting .flex-table-preview-resize-width {
+    visibility: hidden;
+}
+
+.flex-table-preview-select-cell[aria-pressed="true"] {
+    background: rgb(13 110 253 / 16%);
+    box-shadow: inset 0 0 0 2px #0d6efd;
 }
 
 
 .flex-table-preview-cell {
-    box-sizing: border-box;
+    position: relative;
+    cursor: text;
+}
 
+.flex-table-preview-cell:hover,
+.flex-table-preview-cell:focus-within {
+    outline: 2px solid #0d6efd;
+    outline-offset: -2px;
+}
+
+.flex-table-preview-width-label,
+.flex-table-preview-height-label {
+    position: absolute;
+    left: 3px;
+    z-index: 2;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #173b65;
+    color: #fff;
+    font: 600 11px/1.4 system-ui, sans-serif;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.flex-table-preview-width-label {
+    top: 3px;
+}
+
+.flex-table-preview-height-label {
+    bottom: calc(100% + 2px);
+}
+
+.flex-table-preview.is-resizing .flex-table-preview-resize:focus > .flex-table-preview-height-label {
+    opacity: 1;
+}
+
+.flex-table-preview-cell:hover > .flex-table-preview-width-label,
+.flex-table-preview-cell:has(:focus-visible) > .flex-table-preview-width-label,
+.flex-table-preview.is-resizing-width .flex-table-preview-cell:focus-within > .flex-table-preview-width-label {
+    opacity: 1;
+}
+
+.flex-table-preview-actions {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 1;
     display: flex;
+    gap: 3px;
+}
 
-    min-width: 0;
+.flex-table-preview-action {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid #b8c5d5;
+    border-radius: 4px;
+    background: #fff;
+    color: #24466a;
+    cursor: pointer;
+}
 
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+.flex-table-preview-actions,
+.flex-table-preview-resize,
+.flex-table-preview-resize-width {
+    opacity: 0;
+}
 
+.flex-table-preview-cell:hover > .flex-table-preview-actions,
+.flex-table-preview-cell:focus-within > .flex-table-preview-actions,
+.flex-table-preview-cell:hover > .flex-table-preview-resize,
+.flex-table-preview-cell:focus-within > .flex-table-preview-resize,
+.flex-table-preview-cell:hover > .flex-table-preview-resize-width,
+.flex-table-preview-cell:focus-within > .flex-table-preview-resize-width {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .flex-table-preview-actions,
+    .flex-table-preview-resize,
+    .flex-table-preview-resize-width {
+        opacity: 1;
+    }
+}
+
+.flex-table-preview-action:hover,
+.flex-table-preview-action:focus-visible {
+    background: #eaf3ff;
+    color: #0d6efd;
+}
+
+.flex-table-preview-days-dialog,
+.flex-table-preview-layout-dialog {
+    padding: 20px;
+    border: 1px solid #b8c5d5;
+    border-radius: 6px;
+    color: inherit;
+}
+
+.flex-table-preview-days-dialog {
+    width: min(320px, calc(100% - 32px));
+}
+
+.flex-table-preview-layout-dialog {
+    width: min(560px, calc(100% - 32px));
+    max-height: calc(100% - 32px);
+    overflow-y: auto;
+}
+
+.flex-table-preview-days-dialog::backdrop,
+.flex-table-preview-layout-dialog::backdrop {
+    background: rgb(0 0 0 / 35%);
+}
+
+.flex-table-layout-cell {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+    padding: 6px 0;
+}
+
+.flex-table-layout-cell strong {
+    grid-column: 1 / -1;
     overflow-wrap: anywhere;
-    white-space: pre-line;
 }
 
+.flex-table-preview-text {
+    position: relative;
+}
 
-.flex-table-preview-cell-inner {
+.flex-table-preview-text:focus-within .flex-table-preview-text-mirror {
+    visibility: hidden;
+    min-height: 1.5em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.flex-table-preview-text:focus-within .flex-table-preview-text-mirror::after {
+    content: '\200b';
+}
+
+.flex-table-preview-input {
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    resize: none;
+    opacity: 0;
 }
 
+.flex-table-preview-input:focus {
+    opacity: 1;
+    outline: none;
+}
+
+.flex-table-preview-resize {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 2;
+    display: grid;
+    place-items: end center;
+    width: 100%;
+    height: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: ns-resize;
+    touch-action: none;
+}
+
+.flex-table-preview-resize::after {
+    content: '';
+    width: min(32px, 100%);
+    height: 3px;
+    border-radius: 2px;
+    background: #0d6efd;
+}
+
+.flex-table-preview.is-resizing {
+    user-select: none;
+    cursor: ns-resize;
+}
+
+.flex-table-preview-resize-width {
+    position: absolute;
+    inset: 0 0 10px auto;
+    z-index: 2;
+    display: grid;
+    place-items: center end;
+    width: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: ew-resize;
+    touch-action: none;
+}
+
+.flex-table-preview-resize-width::after {
+    content: '';
+    width: 3px;
+    height: min(32px, 100%);
+    border-radius: 2px;
+    background: #0d6efd;
+}
+
+.flex-table-preview.is-resizing-width {
+    user-select: none;
+    cursor: ew-resize;
+}
 
 .flex-table-preview-error {
     margin-bottom: 10px;
@@ -1570,6 +1802,11 @@
 
     font-size: 18px;
     font-weight: 600;
+}
+
+.schedule-live-preview th,
+.schedule-live-preview td {
+    color: #000;
 }
 
 
@@ -1795,6 +2032,7 @@
 <script src="{{ asset('admin/js/youtube-tags-editor.js') }}?v={{ filemtime(public_path('admin/js/youtube-tags-editor.js')) }}"></script>
 <script src="{{ asset('admin/js/price-matrix-editor.js') }}?v={{ filemtime(public_path('admin/js/price-matrix-editor.js')) }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script src="{{ asset('admin/js/product-anatomy-editor.js') }}?v={{ filemtime(public_path('admin/js/product-anatomy-editor.js')) }}"></script>
 <script src="{{ asset('admin/js/gallery-showcase-editor.js') }}?v={{ filemtime(public_path('admin/js/gallery-showcase-editor.js')) }}"></script>
 <script src="{{ asset('admin/js/attachment-gallery-editor.js') }}?v={{ filemtime(public_path('admin/js/attachment-gallery-editor.js')) }}"></script>
 <script src="{{ asset('admin/js/related-blogs-presets.js') }}?v={{ filemtime(public_path('admin/js/related-blogs-presets.js')) }}"></script>
@@ -1806,7 +2044,7 @@
 <script src="{{ asset('admin/js/text-link-download-editor.js') }}?v={{ filemtime(public_path('admin/js/text-link-download-editor.js')) }}"></script>
 
 @if ($hasVisualEditor)
-    <script src="{{ asset('admin/js/product-content-visual-editor.js') }}"></script>
+    <script src="{{ asset('admin/js/product-content-visual-editor.js') }}?v={{ filemtime(public_path('admin/js/product-content-visual-editor.js')) }}"></script>
 @endif
 
 <script>
@@ -1879,6 +2117,11 @@ document.addEventListener(
 
         const collapsedContentBlockIds =
             new Set();
+
+        const customTablePresetStates = new Map();
+        let customTablePresets = [];
+        let customTablePresetsPromise = null;
+        const customTablePresetsUrl = '/api/v1/admin/custom-table-presets';
 
 
         let shippingHolidays =
@@ -2386,7 +2629,8 @@ document.addEventListener(
             window.ButtonGroupEditor.bind(`${contentApiBase}/${productId}`, csrf, uploadSingleImageFile);
             window.YoutubeTagsEditor.bind();
             window.PriceMatrixEditor.bind();
-            window.GalleryShowcaseEditor.bind();
+            window.ProductAnatomyEditor.bind(uploadSingleImageFile, sanitizeRichTextEditorHtml);
+            window.GalleryShowcaseEditor.bind(uploadSingleImageFile);
             window.AttachmentGalleryEditor.bind(uploadSingleImageFile, csrf);
             window.UsageExamplesEditor.bind(uploadSingleImageFile);
             window.ProductCatalogEditor.bind(uploadSingleImageFile, contentApiBase);
@@ -2878,6 +3122,12 @@ document.addEventListener(
                             ?? ''
                         )}
 
+                        ${linkUrlInput(
+                            block.id,
+                            'image_link_url',
+                            'Image Link URL (optional)',
+                            blockContent.image_link_url ?? ''
+                        )}
 
                         <div class="form-check mb-3">
 
@@ -2896,6 +3146,7 @@ document.addEventListener(
                             >
                                 Open image in modal gallery
                             </label>
+                            <small class="form-text text-muted">Applies when no image link is set.</small>
 
                         </div>
 
@@ -3339,6 +3590,10 @@ document.addEventListener(
 
                 case 'x_posts':
                     fields = window.XPostsEditor.render(block.id, blockContent, @json(\App\Support\XPostsContent::defaults()));
+                    break;
+
+                case 'product_anatomy':
+                    fields = window.ProductAnatomyEditor.render(block.id, blockContent, @json(\App\Support\ProductAnatomyContent::defaults()), @json(\App\Support\ProductAnatomyContent::example()));
                     break;
 
                 case 'gallery_showcase':
@@ -5029,6 +5284,9 @@ document.addEventListener(
             content
         )
         {
+            if (!customTablePresetStates.has(String(block.id))) {
+                customTablePresetStates.set(String(block.id), {id:'', name:'', status:'', error:''});
+            }
             const data =
                 normalizeFlexibleTableContent(
                     content
@@ -5053,6 +5311,36 @@ document.addEventListener(
         }
 
 
+        function renderCustomTablePresetPanel(blockId)
+        {
+            const state = customTablePresetStates.get(String(blockId)) || {id:'', name:'', status:'', error:''};
+            const options = customTablePresets.map(preset =>
+                `<option value="${preset.id}" ${String(preset.id)===String(state.id)?'selected':''}>${escapeHtml(preset.name)}</option>`
+            ).join('');
+
+            return `
+                <div class="custom-table-preset-panel border rounded p-3 mb-3" data-custom-table-preset-panel>
+                    <strong>Reusable table presets</strong>
+                    <div class="flex-table-topbar-actions mt-2">
+                        <input class="form-control custom-table-preset-name" maxlength="150" placeholder="Preset name" aria-label="Custom Table preset name" value="${escapeHtml(state.name)}">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-custom-table-preset-action="save">Save as preset</button>
+                    </div>
+                    <div class="flex-table-topbar-actions mt-2">
+                        <select class="form-control custom-table-preset-select" aria-label="Saved Custom Table presets">
+                            <option value="">Choose a saved preset...</option>${options}
+                        </select>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-custom-table-preset-action="load" ${state.id ? '' : 'disabled'}>Load</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-custom-table-preset-action="update" ${state.id ? '' : 'disabled'}>Update</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-custom-table-preset-action="delete" ${state.id ? '' : 'disabled'}>Delete</button>
+                    </div>
+                    <small class="text-muted d-block mt-2">Presets include the title, description, business days settings, and all rows, cells, formatting, and values. Loading creates an independent copy for this table.</small>
+                    <div class="small mt-1 text-success" data-custom-table-preset-status role="status" aria-live="polite">${escapeHtml(state.status)}</div>
+                    <div class="small text-danger" data-custom-table-preset-error role="alert">${escapeHtml(state.error)}</div>
+                </div>
+            `;
+        }
+
+
         /*
         |--------------------------------------------------------------------------
         | Normalize Table
@@ -5064,6 +5352,7 @@ document.addEventListener(
                 description: String(content.description ?? ''),
                 enable_business_days_switch: Boolean(content.enable_business_days_switch ?? false),
                 business_days_label: String(content.business_days_label ?? '営業日数を表示'),
+                business_days_group: String(content.business_days_group ?? '').trim(),
                 show_business_days: Boolean(content.show_business_days ?? true),
             };
         }
@@ -5480,6 +5769,12 @@ document.addEventListener(
 
             return `
 
+                <button type="button" class="btn btn-sm btn-outline-primary mb-3" data-flex-table-go-to-preview>
+                    Go to Preview
+                </button>
+
+                ${renderCustomTablePresetPanel(blockId)}
+
                 <div class="form-group">
 
                     <label>
@@ -5506,9 +5801,24 @@ document.addEventListener(
                     <legend class="h6 w-auto px-1">Business days display</legend>
                     <label class="d-block"><input type="checkbox" class="flex-table-days-enabled" ${data.enable_business_days_switch?'checked':''}> Enable business days switch on the storefront</label>
                     <div class="form-group"><label>Switch label</label><input class="form-control flex-table-days-label" maxlength="255" value="${escapeHtml(data.business_days_label)}"></div>
+                    <div class="form-group">
+                        <label>Shared switch group</label>
+                        <input class="form-control flex-table-days-group" maxlength="80" value="${escapeHtml(data.business_days_group)}" placeholder="e.g. shipping">
+                        <small class="text-muted">Use the same group name on each table. Enable the storefront switch on the table where it should appear. Leave blank for an independent switch.</small>
+                    </div>
                     <label class="d-block"><input type="checkbox" class="flex-table-days-default" ${data.show_business_days?'checked':''}> Show business days by default</label>
                     <small class="text-muted">Enter the date in Content and the number of business days in the separate Business days field for each delivery cell. The switch only hides the day count. Dates and prices stay visible.</small>
                 </fieldset>
+                <div
+                    class="flex-table-preview"
+                    data-flex-table-preview="${blockId}"
+                    tabindex="-1"
+                    role="region"
+                    aria-label="Custom Table preview"
+                ></div>
+
+                <details class="flex-table-advanced mt-3">
+                <summary class="mb-3">Advanced row and cell settings</summary>
                 <div class="flex-table-topbar">
 
                     <div>
@@ -5619,10 +5929,7 @@ document.addEventListener(
                 </div>
 
 
-                <div
-                    class="flex-table-preview"
-                    data-flex-table-preview="${blockId}"
-                ></div>
+                </details>
 
             `;
         }
@@ -5669,6 +5976,7 @@ document.addEventListener(
 
                 <div
                     class="flex-table-row-editor"
+                    data-row-index="${rowIndex}"
                     data-flex-row-id="${escapeHtml(
                         row.id
                     )}"
@@ -5959,7 +6267,7 @@ document.addEventListener(
         {
             return `
 
-                <div class="flex-table-cell-editor">
+                <div class="flex-table-cell-editor" data-cell-index="${cellIndex}">
 
                     <input
                         type="hidden"
@@ -6886,9 +7194,172 @@ document.addEventListener(
         |--------------------------------------------------------------------------
         */
 
+        async function customTablePresetRequest(url, method = 'GET', body = null)
+        {
+            const response = await fetch(url, {
+                method,
+                credentials: 'same-origin',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': csrf,
+                    ...(body ? {'Content-Type': 'application/json'} : {}),
+                },
+                ...(body ? {body: JSON.stringify(body)} : {}),
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                const messages = Object.values(result.errors || {}).flat();
+                throw new Error(messages.join(' ') || result.message || `Preset request failed (${response.status}).`);
+            }
+            return result.data;
+        }
+
+
+        function updateCustomTablePresetSelectors()
+        {
+            document.querySelectorAll('.flex-table-editor').forEach(editor => {
+                const blockId = String(editor.dataset.flexTableBlock);
+                const state = customTablePresetStates.get(blockId) || {id:'', name:'', status:'', error:''};
+                customTablePresetStates.set(blockId, state);
+                const select = editor.querySelector('.custom-table-preset-select');
+                if (!select) return;
+                select.innerHTML = '<option value="">Choose a saved preset...</option>' + customTablePresets.map(preset =>
+                    `<option value="${preset.id}">${escapeHtml(preset.name)}</option>`
+                ).join('');
+                if (!customTablePresets.some(preset => String(preset.id) === String(state.id))) state.id = '';
+                select.value = state.id || '';
+                editor.querySelectorAll('[data-custom-table-preset-action]').forEach(control => {
+                    control.disabled = control.dataset.customTablePresetAction !== 'save' && !state.id;
+                });
+            });
+        }
+
+
+        function loadCustomTablePresets(force = false)
+        {
+            if (force) customTablePresetsPromise = null;
+            if (!customTablePresetsPromise) {
+                customTablePresetsPromise = customTablePresetRequest(customTablePresetsUrl)
+                    .then(data => { customTablePresets = data || []; updateCustomTablePresetSelectors(); return customTablePresets; })
+                    .catch(reason => { customTablePresetsPromise = null; throw reason; });
+            }
+            return customTablePresetsPromise;
+        }
+
+
+        function setCustomTablePresetMessage(editor, status = '', error = '')
+        {
+            const state = customTablePresetStates.get(String(editor.dataset.flexTableBlock));
+            if (state) { state.status = status; state.error = error; }
+            const statusNode = editor.querySelector('[data-custom-table-preset-status]');
+            const errorNode = editor.querySelector('[data-custom-table-preset-error]');
+            if (statusNode) statusNode.textContent = status;
+            if (errorNode) errorNode.textContent = error;
+        }
+
+
+        function bindCustomTablePresetEditors()
+        {
+            document.querySelectorAll('.flex-table-editor').forEach(editor => {
+                const blockId = String(editor.dataset.flexTableBlock);
+                if (!customTablePresetStates.has(blockId)) customTablePresetStates.set(blockId, {id:'', name:'', status:'', error:''});
+                if (editor.dataset.customTablePresetBound) return;
+                editor.dataset.customTablePresetBound = '1';
+
+                editor.addEventListener('input', event => {
+                    if (event.target.matches('.custom-table-preset-name')) customTablePresetStates.get(blockId).name = event.target.value;
+                });
+                editor.addEventListener('change', event => {
+                    if (event.target.matches('.custom-table-preset-select')) {
+                        customTablePresetStates.get(blockId).id = event.target.value;
+                        editor.querySelectorAll('[data-custom-table-preset-action="load"], [data-custom-table-preset-action="update"], [data-custom-table-preset-action="delete"]').forEach(control => control.disabled = !event.target.value);
+                    }
+                });
+                editor.addEventListener('click', async event => {
+                    const button = event.target.closest('[data-custom-table-preset-action]');
+                    if (!button || button.disabled) return;
+                    const state = customTablePresetStates.get(blockId);
+                    const action = button.dataset.customTablePresetAction;
+                    state.id = editor.querySelector('.custom-table-preset-select')?.value || state.id;
+                    state.name = editor.querySelector('.custom-table-preset-name')?.value || '';
+                    const selected = customTablePresets.find(preset => String(preset.id) === String(state.id));
+                    if (action !== 'save' && !selected) { setCustomTablePresetMessage(editor, '', 'Choose a saved preset first.'); return; }
+
+                    const data = collectFlexibleTableData(blockId);
+                    if (action === 'save' || action === 'update') {
+                        if (action === 'save' && !state.name.trim()) { setCustomTablePresetMessage(editor, '', 'Enter a preset name.'); return; }
+                        if (!data.rows.length) { setCustomTablePresetMessage(editor, '', 'Add at least one row before saving a preset.'); return; }
+                        const invalidRow = buildFlexibleTableLayout(data).rowMeta.find(meta => !meta.valid);
+                        if (invalidRow) { setCustomTablePresetMessage(editor, '', `Row #${invalidRow.index + 1}: ${invalidRow.errors.join(' ')}`); return; }
+                        if (action === 'update' && !confirm(`Update preset "${selected.name}"? Existing tables will remain unchanged.`)) return;
+                    }
+                    if (action === 'load' && !confirm('Replace this table with the selected preset? Unsaved table changes will be replaced.')) return;
+                    if (action === 'delete' && !confirm(`Delete preset "${selected.name}"? Existing tables will remain unchanged.`)) return;
+
+                    editor.querySelectorAll('[data-custom-table-preset-action]').forEach(control => control.disabled = true);
+                    setCustomTablePresetMessage(editor, 'Working...', '');
+                    try {
+                        await loadCustomTablePresets();
+                        if (action === 'save' || action === 'update') {
+                            const result = await customTablePresetRequest(
+                                action === 'save' ? customTablePresetsUrl : `${customTablePresetsUrl}/${state.id}`,
+                                action === 'save' ? 'POST' : 'PUT',
+                                {name: state.name.trim() || selected.name, content: data}
+                            );
+                            state.id = String(result.id);
+                            state.name = '';
+                            const nameInput = editor.querySelector('.custom-table-preset-name');
+                            if (nameInput) nameInput.value = '';
+                            await loadCustomTablePresets(true);
+                            setCustomTablePresetMessage(editor, 'Preset saved and available in other tables.', '');
+                        } else if (action === 'load') {
+                            const result = await customTablePresetRequest(`${customTablePresetsUrl}/${state.id}`);
+                            const table = normalizeFlexibleTableContent(result.content_json || {});
+                            state.name = '';
+                            setCustomTablePresetMessage(editor, 'Preset loaded. Save the product content to apply it.', '');
+                            rerenderFlexibleTable(blockId, table);
+                            editor.dispatchEvent(new Event('change', {bubbles:true}));
+                        } else if (action === 'delete') {
+                            await customTablePresetRequest(`${customTablePresetsUrl}/${state.id}`, 'DELETE');
+                            state.id = '';
+                            await loadCustomTablePresets(true);
+                            setCustomTablePresetMessage(editor, 'Preset deleted. Existing tables were not changed.', '');
+                        }
+                    } catch (reason) {
+                        setCustomTablePresetMessage(editor, '', reason.message || 'Preset action failed.');
+                    } finally {
+                        editor.querySelectorAll('[data-custom-table-preset-action]').forEach(control => {
+                            control.disabled = control.dataset.customTablePresetAction !== 'save' && !state.id;
+                        });
+                    }
+                });
+
+                loadCustomTablePresets().catch(reason => setCustomTablePresetMessage(editor, '', `Could not load presets: ${reason.message}`));
+            });
+        }
+
         function bindFlexibleTableEditors()
         {
             window.CustomTableDescriptionEditor.bind();
+            bindCustomTablePresetEditors();
+            bindFlexibleTablePreviewEditing();
+
+            document.querySelectorAll('.flex-table-advanced').forEach(panel => {
+                panel.ontoggle = () => {
+                    if (!panel.open) panel.classList.remove('is-cell-focused');
+                };
+            });
+
+            document.querySelectorAll('[data-flex-table-go-to-preview]').forEach(button => {
+                button.onclick = () => {
+                    const preview = button.closest('.flex-table-editor')?.querySelector('[data-flex-table-preview]');
+                    if (!preview) return;
+
+                    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    preview.focus({preventScroll: true});
+                    preview.scrollIntoView({behavior: reduceMotion ? 'instant' : 'smooth', block: 'start'});
+                };
+            });
             /*
              * Set Row Count
              */
@@ -7506,7 +7977,7 @@ document.addEventListener(
              */
             document
                 .querySelectorAll(
-                    '.flex-table-editor input, .flex-table-editor textarea, .flex-table-editor select'
+                    '.flex-table-editor input:not([data-custom-table-days-toggle], [data-preview-business-days-input]), .flex-table-editor textarea:not(.flex-table-preview-input), .flex-table-editor select:not([data-preview-selection])'
                 )
                 .forEach(
                     function (field) {
@@ -8196,6 +8667,7 @@ document.addEventListener(
             result.description = editor.querySelector('.flex-table-description')?.value ?? '';
             result.enable_business_days_switch = editor.querySelector('.flex-table-days-enabled')?.checked ?? false;
             result.business_days_label = editor.querySelector('.flex-table-days-label')?.value ?? '営業日数を表示';
+            result.business_days_group = editor.querySelector('.flex-table-days-group')?.value.trim() ?? '';
             result.show_business_days = editor.querySelector('.flex-table-days-default')?.checked ?? true;
 
             result.title =
@@ -8674,19 +9146,8 @@ document.addEventListener(
             if (
                 !data.rows.length
             ) {
-
-                preview.innerHTML = `
-
-                    <div class="text-muted text-center">
-
-                        No rows.
-
-                    </div>
-
-                `;
-
+                preview.innerHTML = renderFlexibleTableStructureTools(preview, 0, 0);
                 return;
-
             }
 
 
@@ -8722,171 +9183,1007 @@ document.addEventListener(
                 );
 
 
+            const title = data.title.trim();
+            const description = data.description.trim();
+            const edges = flexibleTableColumnEdges(tableLayout);
+            const edgeIndexes = new Map(edges.map((edge, index) => [edge, index]));
+            const columns = new Map(tableLayout.placements.map(cell => [
+                `${cell.rowIndex}:${cell.cellIndex}`,
+                {
+                    start: edgeIndexes.get(cell.startUnit),
+                    right: errorMessages.length || cell.startUnit + cell.widthUnits === FLEX_TABLE_TOTAL_UNITS
+                        ? null
+                        : edgeIndexes.get(cell.startUnit + cell.widthUnits),
+                },
+            ]));
             preview.innerHTML = `
+                ${errorMessages.length ? `
+                    <div class="alert alert-warning flex-table-preview-error">
+                        ${errorMessages.map(error => `<div>${escapeHtml(error)}</div>`).join('')}
+                    </div>
+                ` : ''}
 
-                ${
-                    errorMessages.length
-
-                    ? `
-
-                        <div
-                            class="
-                                alert
-                                alert-warning
-                                flex-table-preview-error
-                            "
-                        >
-
-                            ${errorMessages
-                                .map(
-                                    error => `
-
-                                        <div>
-                                            ${escapeHtml(
-                                                error
-                                            )}
-                                        </div>
-
-                                    `
-                                )
-                                .join('')
-                            }
-
+                ${renderFlexibleTableStructureTools(preview, data.rows.length, edges.length - 1)}
+                <p class="small text-muted mb-2">Click to edit text. Drag the right edge to change column width or the bottom edge to change row height.</p>
+                <div class="store-table-scroll" data-custom-table-days data-custom-table-days-group="${escapeHtml(data.business_days_group)}">
+                    ${title ? `<h3 class="store-custom-table-title">${escapeHtml(title)}</h3>` : ''}
+                    ${description || data.enable_business_days_switch ? `
+                        <div class="store-custom-table-intro ${description ? 'has-description' : ''} ${data.enable_business_days_switch ? 'has-switch' : ''}">
+                            ${description ? '<div class="store-custom-table-description"></div>' : ''}
+                            ${data.enable_business_days_switch ? `
+                                <div class="store-custom-table-days-controls">
+                                    <label class="store-custom-table-days-switch">
+                                        <input type="checkbox" data-custom-table-days-toggle ${data.show_business_days ? 'checked' : ''}>
+                                        <span class="store-custom-table-days-track" aria-hidden="true"></span>
+                                        <span>${escapeHtml(data.business_days_label)}</span>
+                                    </label>
+                                </div>
+                            ` : ''}
                         </div>
+                    ` : ''}
+                    <table class="store-custom-table">
+                        <colgroup><col span="${FLEX_TABLE_TOTAL_UNITS}" style="width: 0.5%;"></colgroup>
+                        <tbody>
+                            ${data.rows.map((row, rowIndex) => `
+                                <tr data-preview-height-row="${rowIndex}" style="height: ${row.height > 0 ? row.height + 'px' : 'auto'};">
+                                    ${row.cells.map((cell, cellIndex) => renderFlexibleTablePreviewCell(row, cell, rowIndex, cellIndex, data, columns.get(`${rowIndex}:${cellIndex}`))).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <dialog class="flex-table-preview-days-dialog" aria-label="Edit business days">
+                    <form method="dialog">
+                        <label class="d-block">
+                            Business days
+                            <input class="form-control mt-1" type="number" min="0" max="3650" step="1" data-preview-business-days-input autofocus>
+                        </label>
+                        <small class="text-muted">Leave blank to remove the day count.</small>
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-sm btn-secondary mr-2" data-preview-business-days-cancel>Cancel</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                        </div>
+                    </form>
+                </dialog>
+                <dialog class="flex-table-preview-layout-dialog" aria-label="Row layout"></dialog>
+            `;
 
-                    `
+            if (description) {
+                renderFlexibleTablePreviewDescription(preview.querySelector('.store-custom-table-description'), description);
+            }
+            window.CustomTableBusinessDays?.refresh();
+        }
 
-                    : ''
+        function flexibleTableColumnEdges(layout)
+        {
+            const edges = new Set([0, FLEX_TABLE_TOTAL_UNITS]);
+            for (const cell of layout.placements) {
+                edges.add(cell.startUnit);
+                edges.add(cell.startUnit + cell.widthUnits);
+            }
+            return [...edges].sort((a, b) => a - b);
+        }
+
+        function renderFlexibleTableStructureTools(preview, rowCount, columnCount)
+        {
+            const editor = preview.closest('.flex-table-editor');
+            const select = (name, count) => {
+                const selected = Math.min(Number(editor.dataset[name] || 0), count - 1);
+                return `<select class="form-control form-control-sm d-inline-block w-auto" aria-label="${name === 'previewRow' ? 'Row' : 'Column'}" data-preview-selection="${name}" ${count ? '' : 'disabled'}>
+                    ${Array.from({length: count}, (_, index) => `<option value="${index}" ${index === selected ? 'selected' : ''}>${index + 1}</option>`).join('')}
+                </select>`;
+            };
+
+            return `
+                <div class="flex-table-preview-structure">
+                    <div class="flex-table-topbar-actions">
+                        <label>Row ${select('previewRow', rowCount)}</label>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-preview-row-layout ${rowCount ? '' : 'disabled'}>Row layout</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-preview-structure="add-cell" ${rowCount ? '' : 'disabled'}>Add cell to row</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-preview-structure="add-row" ${rowCount >= 100 ? 'disabled' : ''}>Add row</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-preview-structure="delete-row" ${rowCount <= 1 ? 'disabled' : ''}>Delete row</button>
+                    </div>
+                    <div class="flex-table-topbar-actions">
+                        <label>Column ${select('previewColumn', columnCount)}</label>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-preview-structure="add-column" ${!columnCount || columnCount >= FLEX_TABLE_TOTAL_UNITS ? 'disabled' : ''}>Add column</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-preview-structure="delete-column" ${columnCount <= 1 ? 'disabled' : ''}>Delete column</button>
+                    </div>
+                    <div class="flex-table-topbar-actions">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-preview-select-mode aria-pressed="false" ${rowCount ? '' : 'disabled'}>Select cells</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-preview-merge disabled>Merge cells</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-preview-delete-cells disabled>Delete cells</button>
+                    </div>
+                </div>
+                <div class="small text-danger" data-preview-structure-error role="status"></div>
+            `;
+        }
+
+        function editFlexibleTableStructure(preview, editor, action)
+        {
+            const error = preview.querySelector('[data-preview-structure-error]');
+            error.textContent = '';
+            const blockId = editor.dataset.flexTableBlock;
+            const data = collectFlexibleTableData(blockId);
+            const layout = buildFlexibleTableLayout(data);
+            if (layout.rowMeta.some(row => !row.valid)) {
+                error.textContent = 'Fix the row width or span errors before changing the table structure.';
+                return;
+            }
+
+            const rowIndex = Number(preview.querySelector('[data-preview-selection="previewRow"]').value);
+            const columnIndex = Number(preview.querySelector('[data-preview-selection="previewColumn"]').value);
+            const isRowAction = action.endsWith('-row');
+            const isAdd = action.startsWith('add-');
+            if (!isAdd && !window.confirm(`Delete ${isRowAction ? 'row ' + (rowIndex + 1) : 'column ' + (columnIndex + 1)}? Cells contained entirely in it will be removed.`)) {
+                return;
+            }
+
+            let result;
+            if (action === 'add-cell') {
+                result = addFlexibleTableCellToRow(data, layout, rowIndex, columnIndex);
+            } else if (action === 'add-column') {
+                result = addFlexibleTableColumn(data, layout, columnIndex);
+            } else if (isRowAction) {
+                result = changeFlexibleTableRows(data, layout, rowIndex, isAdd);
+            } else {
+                result = deleteFlexibleTableColumn(data, layout, columnIndex);
+            }
+            if (result) {
+                error.textContent = result;
+                return;
+            }
+            if (data.rows.some(row => row.cells.length > 30)) {
+                error.textContent = 'A row can contain up to 30 cells.';
+                return;
+            }
+            if (buildFlexibleTableLayout(data).rowMeta.some(row => !row.valid)) {
+                error.textContent = 'This change cannot preserve the current merged cells.';
+                return;
+            }
+
+            if (isAdd && isRowAction) editor.dataset.previewRow = Math.min(rowIndex + 1, data.rows.length - 1);
+            if (action === 'add-column') editor.dataset.previewColumn = columnIndex + 1;
+            rerenderFlexibleTableFromPreview(preview, editor, data, `[data-preview-structure="${action}"]:not(:disabled)`);
+        }
+
+        function rerenderFlexibleTableFromPreview(preview, editor, data, focusSelector)
+        {
+            const previewTop = preview.getBoundingClientRect().top;
+            rerenderFlexibleTable(editor.dataset.flexTableBlock, data);
+            const nextPreview = editor.querySelector('[data-flex-table-preview]');
+            if (!nextPreview) return;
+            window.scrollBy(0, nextPreview.getBoundingClientRect().top - previewTop);
+            const button = nextPreview.querySelector(focusSelector);
+            (button || nextPreview).focus({preventScroll: true});
+        }
+
+        function editFlexibleTableSelectedCells(preview, editor, action)
+        {
+            const data = collectFlexibleTableData(editor.dataset.flexTableBlock);
+            const selected = new Set(Array.from(
+                preview.querySelectorAll('[data-preview-select-cell][aria-pressed="true"]'),
+                button => button.dataset.previewSelectCell,
+            ));
+            const result = action === 'delete'
+                ? deleteFlexibleTableCells(data, selected)
+                : mergeFlexibleTableCells(data, selected);
+            if (result.error) {
+                preview.querySelector('[data-preview-structure-error]').textContent = result.error;
+                return;
+            }
+            if (action === 'delete' && !window.confirm(`Delete ${selected.size} selected ${selected.size === 1 ? 'cell' : 'cells'} and their contents?`)) return;
+
+            editor.dataset.previewRow = result.rowIndex;
+            editor.dataset.previewColumn = result.columnIndex;
+            rerenderFlexibleTableFromPreview(preview, editor, data, '[data-preview-select-mode]');
+        }
+
+        function mergeFlexibleTableCells(data, selected)
+        {
+            const layout = buildFlexibleTableLayout(data);
+            if (layout.rowMeta.some(row => !row.valid)) {
+                return {error: 'Fix the row width or span errors before merging cells.'};
+            }
+
+            const cells = layout.placements.filter(cell => selected.has(`${cell.rowIndex}:${cell.cellIndex}`));
+            if (cells.length < 2) return {error: 'Select at least two cells to merge.'};
+
+            const left = Math.min(...cells.map(cell => cell.startUnit));
+            const right = Math.max(...cells.map(cell => cell.startUnit + cell.widthUnits));
+            const top = Math.min(...cells.map(cell => cell.rowIndex));
+            const bottom = Math.max(...cells.map(cell => cell.rowIndex + cell.rowspan));
+            const rowspan = bottom - top;
+            const width = right - left;
+            const area = cells.reduce((sum, cell) => sum + cell.widthUnits * cell.rowspan, 0);
+            if (area !== width * rowspan) return {error: 'Select adjacent cells that form one rectangle.'};
+            if (rowspan > 20) return {error: 'A merged cell can cover up to 20 rows.'};
+
+            cells.sort((a, b) => a.rowIndex - b.rowIndex || a.startUnit - b.startUnit);
+            const days = new Set(cells.map(({cell}) => String(cell.business_days ?? '')).filter(value => value !== ''));
+            if (days.size > 1) return {error: 'The selected cells have different business day counts. Make the counts match before merging.'};
+            const content = cells.map(({cell}) => cell.content).filter(value => value.trim() !== '').join('\n');
+            if (content.length > 20000) return {error: 'The merged text would exceed 20,000 characters.'};
+
+            const first = cells[0];
+            const merged = {
+                ...first.cell,
+                width: unitsToPercent(width),
+                rowspan,
+                content,
+                business_days: days.values().next().value ?? '',
+            };
+            const merging = new Set(cells);
+            const rows = data.rows.map(() => []);
+            for (const placement of layout.placements) {
+                if (!merging.has(placement)) rows[placement.rowIndex].push(placement);
+            }
+            rows[top].push({...first, cell: merged});
+            rows.forEach((placements, index) => {
+                data.rows[index].cells = placements.sort((a, b) => a.startUnit - b.startUnit).map(placement => placement.cell);
+            });
+
+            const next = buildFlexibleTableLayout(data);
+            const expected = new Map(layout.placements.filter(cell => !merging.has(cell)).map(cell => [cell.cell, cell.startUnit]));
+            expected.set(merged, left);
+            if (next.rowMeta.some(row => !row.valid) || next.placements.some(placement => expected.get(placement.cell) !== placement.startUnit)) {
+                return {error: 'These cells cannot be merged without moving another cell.'};
+            }
+            return {rowIndex: top, columnIndex: flexibleTableColumnEdges(next).indexOf(left)};
+        }
+
+        function deleteFlexibleTableCells(data, selected)
+        {
+            const layout = buildFlexibleTableLayout(data);
+            if (layout.rowMeta.some(row => !row.valid)) {
+                return {error: 'Fix the row width or span errors before deleting cells.'};
+            }
+
+            const firstRemoved = layout.placements.find(cell => selected.has(`${cell.rowIndex}:${cell.cellIndex}`));
+            if (!firstRemoved) return {error: 'Select at least one cell to delete.'};
+
+            const grid = data.rows.map(() => Array(FLEX_TABLE_TOTAL_UNITS).fill(null));
+            const remaining = layout.placements
+                .filter(cell => !selected.has(`${cell.rowIndex}:${cell.cellIndex}`))
+                .map(cell => ({...cell, nextCell: {...cell.cell}}));
+            for (const cell of remaining) {
+                for (let row = cell.rowIndex; row < cell.rowIndex + cell.rowspan; row++) {
+                    grid[row].fill(cell, cell.startUnit, cell.startUnit + cell.widthUnits);
+                }
+            }
+
+            // A cell can grow sideways only into space free on every row it spans.
+            const extend = (cell, start, end, fromLeft) => {
+                if (!cell) return 0;
+                let left = fromLeft ? start : end;
+                let right = left;
+                const free = unit => {
+                    for (let row = cell.rowIndex; row < cell.rowIndex + cell.rowspan; row++) {
+                        if (grid[row][unit]) return false;
+                    }
+                    return true;
+                };
+                if (fromLeft) {
+                    while (right < end && free(right)) right++;
+                } else {
+                    while (left > start && free(left - 1)) left--;
+                }
+                if (left === right) return 0;
+
+                for (let row = cell.rowIndex; row < cell.rowIndex + cell.rowspan; row++) {
+                    grid[row].fill(cell, left, right);
+                }
+                cell.startUnit = Math.min(cell.startUnit, left);
+                cell.widthUnits += right - left;
+                return right - left;
+            };
+
+            let filled;
+            do {
+                filled = 0;
+                for (const row of grid) {
+                    let start = 0;
+                    while (start < row.length) {
+                        if (row[start]) {
+                            start++;
+                            continue;
+                        }
+                        let end = start + 1;
+                        while (end < row.length && !row[end]) end++;
+                        const added = extend(row[start - 1], start, end, true);
+                        filled += added + extend(row[end], start + added, end, false);
+                        start = end;
+                    }
+                }
+            } while (filled && grid.some(row => row.includes(null)));
+
+            if (grid.some(row => row.includes(null))) {
+                return {error: 'These cells cannot be removed without leaving a gap. Keep an adjacent cell, or use Delete row to remove a whole row.'};
+            }
+
+            const rows = data.rows.map(row => ({...row, cells: []}));
+            const expected = new Map();
+            remaining.sort((a, b) => a.rowIndex - b.rowIndex || a.startUnit - b.startUnit);
+            for (const cell of remaining) {
+                cell.nextCell.width = unitsToPercent(cell.widthUnits);
+                rows[cell.rowIndex].cells.push(cell.nextCell);
+                expected.set(cell.nextCell, cell.startUnit);
+            }
+
+            const next = buildFlexibleTableLayout({...data, rows});
+            if (next.rowMeta.some(row => !row.valid) || next.placements.some(cell => expected.get(cell.cell) !== cell.startUnit)) {
+                return {error: 'These cells cannot be removed without changing the merged layout. Adjust the row spans in Row layout first.'};
+            }
+
+            data.rows = rows;
+            const replacement = grid[firstRemoved.rowIndex][firstRemoved.startUnit];
+            return {rowIndex: firstRemoved.rowIndex, columnIndex: flexibleTableColumnEdges(next).indexOf(replacement.startUnit)};
+        }
+
+        function openFlexibleTablePreviewRowLayout(preview, editor)
+        {
+            const rowIndex = Number(preview.querySelector('[data-preview-selection="previewRow"]').value);
+            const data = collectFlexibleTableData(editor.dataset.flexTableBlock);
+            const row = data.rows[rowIndex];
+            const dialog = preview.querySelector('.flex-table-preview-layout-dialog');
+            if (!row || !dialog) return;
+
+            const inherited = buildFlexibleTableLayout(data).rowMeta[rowIndex].inheritedWidth;
+            const availableUnits = Math.round((100 - inherited) * 2);
+            const maxCells = Math.min(30, availableUnits);
+            const maxSpan = Math.min(20, data.rows.length - rowIndex);
+            const originalCells = row.cells;
+            const cells = originalCells.map(cell => ({...cell}));
+
+            dialog.innerHTML = `
+                <form>
+                    <h4 class="h6">Row ${rowIndex + 1} layout</h4>
+                    <p class="small text-muted mb-2">Set cell widths to a total of ${availableUnits / 2}% in this row. Row Span sets how many rows a cell covers, including this one.</p>
+                    <div class="flex-table-topbar-actions mb-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-layout-action="add">Add cell</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-layout-action="remove">Remove last cell</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-layout-action="balance">Distribute widths evenly</button>
+                    </div>
+                    <div data-layout-cells></div>
+                    <div class="flex-table-row-background">
+                        <label><input type="checkbox" name="useBackground" ${row.background_color ? 'checked' : ''}> Apply background to entire row</label>
+                        <input class="form-control" type="color" name="backgroundColor" aria-label="Row background color" value="${escapeHtml(row.background_color || '#ffffff')}">
+                    </div>
+                    <p class="small text-danger mt-2 mb-0" data-layout-error role="status"></p>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-sm btn-secondary mr-2" data-layout-action="cancel">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                    </div>
+                </form>
+            `;
+
+            const form = dialog.querySelector('form');
+            const list = form.querySelector('[data-layout-cells]');
+            const error = form.querySelector('[data-layout-error]');
+            const renderCells = () => {
+                list.innerHTML = cells.map((cell, index) => `
+                    <div class="flex-table-layout-cell">
+                        <strong>Cell ${index + 1}${cell.content ? ' · ' + escapeHtml(cell.content.slice(0, 60)) : ''}</strong>
+                        <label>Width (%) <input class="form-control form-control-sm" type="number" min="0.5" max="100" step="0.5" required data-layout-width value="${escapeHtml(cell.width)}"></label>
+                        <label>Row Span <input class="form-control form-control-sm" type="number" min="1" max="${maxSpan}" step="1" required data-layout-span value="${escapeHtml(cell.rowspan)}"></label>
+                    </div>
+                `).join('');
+                form.querySelector('[data-layout-action="add"]').disabled = cells.length >= maxCells;
+                form.querySelector('[data-layout-action="remove"]').disabled = !cells.length;
+                form.querySelector('[data-layout-action="balance"]').disabled = !cells.length || cells.length > maxCells;
+            };
+            const readCells = () => {
+                list.querySelectorAll('.flex-table-layout-cell').forEach((item, index) => {
+                    cells[index].width = item.querySelector('[data-layout-width]').valueAsNumber;
+                    cells[index].rowspan = item.querySelector('[data-layout-span]').valueAsNumber;
+                });
+            };
+
+            form.onclick = event => {
+                const button = event.target.closest('[data-layout-action]');
+                if (!button || button.disabled) return;
+                const action = button.dataset.layoutAction;
+                if (action === 'cancel') {
+                    dialog.close();
+                    return;
+                }
+                readCells();
+                if (action === 'add') {
+                    const existing = originalCells[cells.length];
+                    cells.push(existing ? {...existing} : defaultFlexibleCell(100));
+                }
+                if (action === 'remove') cells.pop();
+                if (cells.length && cells.length <= maxCells) {
+                    const widths = distributeWidthUnits(availableUnits, cells.length);
+                    cells.forEach((cell, index) => { cell.width = unitsToPercent(widths[index]); });
+                }
+                error.textContent = '';
+                renderCells();
+            };
+
+            form.onsubmit = event => {
+                event.preventDefault();
+                readCells();
+                row.cells = cells;
+                row.background_color = form.elements.useBackground.checked ? form.elements.backgroundColor.value : '';
+                const rowStatus = buildFlexibleTableLayout(data).rowMeta[rowIndex];
+                if (!rowStatus.valid) {
+                    error.textContent = rowStatus.errors.join(' ');
+                    return;
+                }
+                if (cells.length < originalCells.length && !window.confirm('Remove the extra cells from this row?')) return;
+
+                dialog.close();
+                rerenderFlexibleTableFromPreview(preview, editor, data, '[data-preview-row-layout]');
+            };
+
+            renderCells();
+            dialog.showModal();
+        }
+
+        function changeFlexibleTableRows(data, layout, rowIndex, isAdd)
+        {
+            const placements = layout.placements;
+            if (isAdd) {
+                if (data.rows.length >= 100) return 'A table can contain up to 100 rows.';
+
+                const insertAt = data.rows.length ? rowIndex + 1 : 0;
+                const reference = placements.filter(cell => cell.rowIndex <= rowIndex && cell.rowIndex + cell.rowspan > rowIndex);
+                if (reference.some(cell => cell.rowspan >= 20 && cell.rowIndex + cell.rowspan > insertAt)) {
+                    return 'Adding a row here would make a merged cell span more than 20 rows.';
                 }
 
+                const cells = [];
+                for (const placement of reference.sort((a, b) => a.startUnit - b.startUnit)) {
+                    if (placement.rowIndex + placement.rowspan > insertAt) {
+                        placement.cell.rowspan++;
+                    } else {
+                        cells.push(defaultFlexibleCell(unitsToPercent(placement.widthUnits)));
+                    }
+                }
+                if (!data.rows.length) cells.push(defaultFlexibleCell(100));
+                data.rows.splice(insertAt, 0, {id: generateFlexRowId(), height: 0, background_color: '', cells});
+                return;
+            }
 
-                ${
-                    data.title
+            if (data.rows.length <= 1) return 'Keep at least one row.';
+            const carried = [];
+            for (const placement of placements) {
+                if (placement.rowIndex < rowIndex && placement.rowIndex + placement.rowspan > rowIndex) {
+                    placement.cell.rowspan--;
+                }
+                if (placement.rowIndex === rowIndex && placement.rowspan > 1) {
+                    placement.cell.rowspan--;
+                    carried.push(placement);
+                }
+            }
+            if (carried.length) {
+                const next = placements.filter(cell => cell.rowIndex === rowIndex + 1);
+                data.rows[rowIndex + 1].cells = [...next, ...carried]
+                    .sort((a, b) => a.startUnit - b.startUnit).map(placement => placement.cell);
+            }
+            data.rows.splice(rowIndex, 1);
+        }
 
-                    ? `
+        function addFlexibleTableCellToRow(data, layout, rowIndex, columnIndex)
+        {
+            const row = data.rows[rowIndex];
+            if (row.cells.length >= 30) return 'A row can contain up to 30 cells.';
 
-                        <div class="flex-table-preview-title">
+            const start = flexibleTableColumnEdges(layout)[columnIndex];
+            const placements = layout.placements.filter(cell => cell.rowIndex === rowIndex)
+                .sort((a, b) => a.startUnit - b.startUnit);
+            const candidates = placements.filter(cell => cell.rowspan === 1 && cell.widthUnits >= 2);
+            const source = candidates.find(cell => cell.startUnit <= start && cell.startUnit + cell.widthUnits > start)
+                ?? candidates.find(cell => cell.startUnit > start)
+                ?? candidates.at(-1);
+            if (!source) return 'There is no cell in this row that can be split. Use Row layout to adjust its widths or row spans.';
 
-                            ${escapeHtml(
-                                data.title
-                            )}
+            const addedUnits = Math.floor(source.widthUnits / 2);
+            source.cell.width = unitsToPercent(source.widthUnits - addedUnits);
+            row.cells = placements.map(placement => placement.cell);
+            row.cells.splice(placements.indexOf(source) + 1, 0, defaultFlexibleCell(unitsToPercent(addedUnits)));
+        }
 
-                        </div>
+        function addFlexibleTableColumn(data, layout, columnIndex)
+        {
+            const edges = flexibleTableColumnEdges(layout);
+            const widths = edges.slice(1).map((edge, index) => edge - edges[index]);
+            if (widths.length >= FLEX_TABLE_TOTAL_UNITS) return 'The table has no room for another column.';
 
-                    `
+            const donor = widths[columnIndex] > 1 ? columnIndex : widths.indexOf(Math.max(...widths));
+            const addedWidth = Math.floor(widths[donor] / 2);
+            const boundary = edges[columnIndex + 1];
+            const donorStart = edges[donor];
+            const rows = data.rows.map(() => []);
+            const covered = new Set();
 
-                    : ''
+            for (const placement of layout.placements) {
+                const start = placement.startUnit;
+                const end = start + placement.widthUnits;
+                let width = placement.widthUnits;
+                if (start <= donorStart && end > donorStart) width -= addedWidth;
+                if (start < boundary && end > boundary) {
+                    // Keep cells that already span this boundary merged.
+                    width += addedWidth;
+                    for (let row = placement.rowIndex; row < placement.rowIndex + placement.rowspan; row++) {
+                        covered.add(row);
+                    }
+                }
+                placement.cell.width = unitsToPercent(width);
+                rows[placement.rowIndex].push(placement);
+            }
+
+            rows.forEach((placements, index) => {
+                if (!covered.has(index)) {
+                    placements.push({startUnit: boundary - 0.5, cell: defaultFlexibleCell(unitsToPercent(addedWidth))});
+                }
+                data.rows[index].cells = placements.sort((a, b) => a.startUnit - b.startUnit).map(placement => placement.cell);
+            });
+        }
+
+        function deleteFlexibleTableColumn(data, layout, columnIndex)
+        {
+            const edges = flexibleTableColumnEdges(layout);
+            const widths = edges.slice(1).map((edge, index) => edge - edges[index]);
+            if (widths.length <= 1) return 'Keep at least one column.';
+
+            const rows = data.rows.map(() => []);
+            const edgeIndexes = new Map(edges.map((edge, index) => [edge, index]));
+            const neighbor = columnIndex > 0 ? columnIndex - 1 : 1;
+            widths[neighbor] += widths[columnIndex];
+            widths[columnIndex] = 0;
+
+            for (const placement of layout.placements) {
+                const start = edgeIndexes.get(placement.startUnit);
+                const end = edgeIndexes.get(placement.startUnit + placement.widthUnits);
+                const width = widths.slice(start, end).reduce((total, units) => total + units, 0);
+                if (!width) continue;
+                placement.cell.width = unitsToPercent(width);
+                rows[placement.rowIndex].push(placement);
+            }
+
+            rows.forEach((placements, index) => {
+                data.rows[index].cells = placements.sort((a, b) => a.startUnit - b.startUnit).map(placement => placement.cell);
+            });
+        }
+
+        function renderFlexibleTablePreviewDescription(container, description)
+        {
+            const template = document.createElement('template');
+            template.innerHTML = description;
+            const tags = new Set(['P', 'DIV', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'A', 'UL', 'OL', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE', 'SPAN']);
+            // CKEditor supports formatted text here. Copy only its markup and safe link URLs.
+            for (const element of template.content.querySelectorAll('*')) {
+                if (element.namespaceURI !== 'http://www.w3.org/1999/xhtml' || !tags.has(element.tagName)) {
+                    element.remove();
+                    continue;
                 }
 
+                const href = element.tagName === 'A' ? element.getAttribute('href') : null;
+                for (const attribute of Array.from(element.attributes)) element.removeAttribute(attribute.name);
+                if (href && /^(https?:\/\/|mailto:|\/|#)/i.test(href)) {
+                    element.setAttribute('href', href);
+                    element.setAttribute('target', '_blank');
+                    element.setAttribute('rel', 'noopener noreferrer');
+                }
+            }
+            container.replaceChildren(template.content);
+        }
 
-                <div
-                    class="flex-table-grid"
-                    style="grid-template-rows: ${data.rows
-                        .map(
-                            row => {
+        function renderFlexibleTablePreviewCell(row, cell, rowIndex, cellIndex, data, columns)
+        {
+            const rowSpan = Math.min(cell.rowspan, data.rows.length - rowIndex);
+            const heightRowIndex = rowIndex + rowSpan - 1;
+            const showDayCount = !data.enable_business_days_switch || data.show_business_days;
+            const text = escapeHtml(cell.content);
+            const cellLabel = `row ${rowIndex + 1}, cell ${cellIndex + 1}`;
+            const hasDayCount = cell.business_days !== '' && cell.business_days != null;
 
-                                const height =
-                                    normalizeFlexRowHeight(
-                                        row.height
-                                        ?? 0
-                                    );
+            return `
+                <td class="flex-table-preview-cell"
+                    data-preview-row-index="${rowIndex}" data-preview-cell-index="${cellIndex}"
+                    data-preview-column-index="${columns?.start ?? 0}"
+                    colspan="${percentToGridUnits(cell.width)}" rowspan="${rowSpan}"
+                    style="background: ${escapeHtml(row.background_color || cell.background_color)};
+                           color: ${escapeHtml(cell.text_color)};
+                           text-align: ${escapeHtml(cell.align)};
+                           vertical-align: ${escapeHtml(cell.vertical_align)};
+                           --custom-table-cell-padding: ${normalizeFlexPadding(cell.padding)}px;
+                           font-weight: ${cell.bold ? '700' : '400'};">
+                    <span class="flex-table-preview-width-label" aria-hidden="true">${unitsToPercent(percentToGridUnits(cell.width))}%</span>
+                    <div class="flex-table-preview-text">
+                        <div class="flex-table-preview-text-mirror" aria-hidden="true">${formatMultiline(cell.content)}</div>
+                        <textarea class="flex-table-preview-input" rows="1" aria-label="Edit ${cellLabel}">${'\n' + text}</textarea>
+                    </div>
+                    <span class="store-custom-table-business-days" ${hasDayCount ? 'data-custom-table-day-count' : ''} ${hasDayCount && showDayCount ? '' : 'hidden'}>${hasDayCount ? escapeHtml(cell.business_days) + '日' : ''}</span>
+                    <div class="flex-table-preview-actions">
+                        <button type="button" class="flex-table-preview-action flex-table-preview-days-button" title="Edit business days" aria-label="Edit business days for ${cellLabel}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+                                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                                <path d="M3 10h18M8 3v4m8-4v4"/>
+                            </svg>
+                        </button>
+                        <button type="button" class="flex-table-preview-action flex-table-preview-edit-button" title="Go to cell settings" aria-label="Go to settings for ${cellLabel}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="m4 16-1 5 5-1L21 7l-4-4L4 16zm10-10 4 4"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="button" class="flex-table-preview-resize" data-height-row-index="${heightRowIndex}"
+                        title="Drag to resize row. Use arrow keys to adjust or Home for automatic height."
+                        aria-label="Resize row ${heightRowIndex + 1}">
+                        <span class="flex-table-preview-height-label" aria-hidden="true"></span>
+                    </button>
+                    ${columns?.right != null ? `
+                        <button type="button" class="flex-table-preview-resize-width" data-preview-width-boundary="${columns.right}"
+                            title="Drag left or right to resize columns"
+                            aria-label="Resize column boundary after ${cellLabel}"></button>
+                    ` : ''}
+                    <button type="button" class="flex-table-preview-select-cell" data-preview-select-cell="${rowIndex}:${cellIndex}"
+                        aria-label="Select ${cellLabel}" aria-pressed="false"></button>
+                </td>
+            `;
+        }
+
+        function getFlexibleTableCellField(previewCell, field)
+        {
+            const editor = previewCell.closest('.flex-table-editor');
+            const rowIndex = Number(previewCell.dataset.previewRowIndex);
+            const cellIndex = Number(previewCell.dataset.previewCellIndex);
+            const rowEditor = editor?.querySelector(`.flex-table-row-editor[data-row-index="${rowIndex}"]`);
+            const cellEditor = rowEditor?.querySelector(`.flex-table-cell-editor[data-cell-index="${cellIndex}"]`);
+
+            return cellEditor?.querySelector(`.flex-cell-field[data-field="${field}"]`);
+        }
+
+        function openFlexibleTableCellSettings(contentField)
+        {
+            const panel = contentField.closest('.flex-table-advanced');
+            panel.querySelectorAll('.is-edit-target').forEach(target => target.classList.remove('is-edit-target'));
+            contentField.closest('.flex-table-row-editor').classList.add('is-edit-target');
+            contentField.closest('.flex-table-cell-editor').classList.add('is-edit-target');
+            panel.classList.add('is-cell-focused');
+            panel.open = true;
+
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            contentField.scrollIntoView({behavior: reduceMotion ? 'instant' : 'smooth', block: 'center'});
+            contentField.focus({preventScroll: true});
+        }
+
+        function editFlexibleTablePreviewBusinessDays(preview, previewCell)
+        {
+            const field = getFlexibleTableCellField(previewCell, 'business_days');
+            const dialog = preview.querySelector('.flex-table-preview-days-dialog');
+            if (!field || !dialog) return;
+
+            const input = dialog.querySelector('[data-preview-business-days-input]');
+            input.value = field.value;
+            dialog.querySelector('[data-preview-business-days-cancel]').onclick = () => dialog.close();
+            dialog.querySelector('form').onsubmit = () => {
+                const value = input.value === '' ? '' : String(input.valueAsNumber);
+                field.value = value;
+
+                const dayCount = previewCell.querySelector('.store-custom-table-business-days');
+                const hasDayCount = value !== '';
+                const table = previewCell.closest('[data-custom-table-days]');
+                dayCount.textContent = hasDayCount ? `${value}日` : '';
+                dayCount.toggleAttribute('data-custom-table-day-count', hasDayCount);
+                dayCount.hidden = !hasDayCount || table.hasAttribute('data-custom-table-days-hidden');
+            };
+            dialog.showModal();
+        }
 
 
-                                return height > 0
-                                    ? `minmax(${height}px, auto)`
-                                    : 'auto';
+        function bindFlexibleTablePreviewEditing()
+        {
+            document.querySelectorAll('.flex-table-preview').forEach(preview => {
+                if (preview.dataset.previewEditingBound) return;
+                preview.dataset.previewEditingBound = '1';
+                const editor = preview.closest('.flex-table-editor');
+                bindFlexibleTablePreviewResize(preview);
+                bindFlexibleTablePreviewWidthResize(preview, editor);
 
-                            }
-                        )
-                        .join(' ')};"
-                >
+                preview.addEventListener('change', event => {
+                    const select = event.target.closest('[data-preview-selection]');
+                    if (select) editor.dataset[select.dataset.previewSelection] = select.value;
+                });
 
-                    ${tableLayout
-                        .placements
-                        .map(
-                            function (placement) {
-
-                                const cell =
-                                    placement.cell;
-
-
-                                return `
-
-                                    <div
-                                        class="flex-table-preview-cell"
-                                        style="
-                                            grid-column:
-                                                ${placement.startUnit + 1}
-                                                /
-                                                span
-                                                ${placement.widthUnits};
-
-                                            grid-row:
-                                                ${placement.rowIndex + 1}
-                                                /
-                                                span
-                                                ${placement.rowspan};
-
-                                            background:
-                                                ${escapeHtml(
-                                                    data.rows[
-                                                        placement.rowIndex
-                                                    ]?.background_color
-                                                    ||
-                                                    cell.background_color
-                                                )};
-
-                                            color:
-                                                ${escapeHtml(
-                                                    cell.text_color
-                                                )};
-
-                                            text-align:
-                                                ${escapeHtml(
-                                                    cell.align
-                                                )};
-
-                                            align-items:
-                                                ${flexVerticalCss(
-                                                    cell.vertical_align
-                                                )};
-
-                                            justify-content:
-                                                ${flexHorizontalCss(
-                                                    cell.align
-                                                )};
-
-                                            padding:
-                                                ${normalizeFlexPadding(
-                                                    cell.padding
-                                                )}px;
-
-                                            font-weight:
-                                                ${cell.bold ? '700' : '400'};
-                                        "
-                                    >
-
-                                        <div class="flex-table-preview-cell-inner">
-
-                                            ${formatMultiline(
-                                                cell.content
-                                            )}
-                                            ${cell.business_days !== '' && cell.business_days !== null && cell.business_days !== undefined && (!data.enable_business_days_switch || data.show_business_days) ? '<div>'+escapeHtml(cell.business_days)+'日</div>' : ''}
-
-                                        </div>
-
-                                    </div>
-
-                                `;
-
-                            }
-                        )
-                        .join('')
+                preview.addEventListener('click', event => {
+                    if (!(event.target instanceof Element)) return;
+                    const toggleSelection = event.target.closest('[data-preview-select-mode]');
+                    const selectCell = event.target.closest('[data-preview-select-cell]');
+                    if (toggleSelection || selectCell) {
+                        if (toggleSelection) {
+                            const active = preview.classList.toggle('is-selecting');
+                            toggleSelection.setAttribute('aria-pressed', String(active));
+                            toggleSelection.textContent = active ? 'Cancel selection' : 'Select cells';
+                            preview.querySelectorAll('[data-preview-select-cell][aria-pressed="true"]').forEach(button => {
+                                button.setAttribute('aria-pressed', 'false');
+                            });
+                        } else {
+                            selectCell.setAttribute('aria-pressed', String(selectCell.getAttribute('aria-pressed') !== 'true'));
+                        }
+                        const count = preview.querySelectorAll('[data-preview-select-cell][aria-pressed="true"]').length;
+                        const mergeButton = preview.querySelector('[data-preview-merge]');
+                        mergeButton.disabled = count < 2;
+                        mergeButton.textContent = count ? `Merge cells (${count})` : 'Merge cells';
+                        const deleteButton = preview.querySelector('[data-preview-delete-cells]');
+                        deleteButton.disabled = !count;
+                        deleteButton.textContent = count ? `Delete cells (${count})` : 'Delete cells';
+                        preview.querySelector('[data-preview-structure-error]').textContent = '';
+                        return;
+                    }
+                    if (event.target.closest('[data-preview-merge]')) {
+                        editFlexibleTableSelectedCells(preview, editor, 'merge');
+                        return;
+                    }
+                    if (event.target.closest('[data-preview-delete-cells]')) {
+                        editFlexibleTableSelectedCells(preview, editor, 'delete');
+                        return;
+                    }
+                    if (event.target.closest('[data-preview-row-layout]')) {
+                        openFlexibleTablePreviewRowLayout(preview, editor);
+                        return;
+                    }
+                    const structureButton = event.target.closest('[data-preview-structure]');
+                    if (structureButton) {
+                        editFlexibleTableStructure(preview, editor, structureButton.dataset.previewStructure);
+                        return;
                     }
 
-                </div>
+                    const previewCell = event.target.closest('.flex-table-preview-cell');
+                    if (!previewCell) return;
+                    if (event.target.closest('.flex-table-preview-resize, .flex-table-preview-resize-width')) return;
 
-            `;
+                    editor.dataset.previewRow = previewCell.dataset.previewRowIndex;
+                    editor.dataset.previewColumn = previewCell.dataset.previewColumnIndex;
+                    preview.querySelector('[data-preview-selection="previewRow"]').value = editor.dataset.previewRow;
+                    preview.querySelector('[data-preview-selection="previewColumn"]').value = editor.dataset.previewColumn;
+
+                    if (event.target.closest('.flex-table-preview-days-button')) {
+                        editFlexibleTablePreviewBusinessDays(preview, previewCell);
+                        return;
+                    }
+
+                    if (event.target.closest('.flex-table-preview-edit-button')) {
+                        const contentField = getFlexibleTableCellField(previewCell, 'content');
+                        if (!contentField) return;
+
+                        openFlexibleTableCellSettings(contentField);
+                        return;
+                    }
+
+                    if (!event.target.matches('.flex-table-preview-input')) {
+                        previewCell.querySelector('.flex-table-preview-input')?.focus({preventScroll: true});
+                    }
+                });
+
+                preview.addEventListener('input', event => {
+                    const input = event.target;
+                    if (!input.matches('.flex-table-preview-input')) return;
+
+                    const contentField = getFlexibleTableCellField(input.closest('.flex-table-preview-cell'), 'content');
+                    if (contentField) contentField.value = input.value;
+
+                    // Resize the preview without replacing the focused textarea.
+                    input.previousElementSibling.innerHTML = formatMultiline(input.value);
+                });
+            });
+        }
+
+        function bindFlexibleTablePreviewResize(preview)
+        {
+            let drag = null;
+
+            const getRow = handle => {
+                const index = handle.dataset.heightRowIndex;
+                const row = preview.querySelector(`[data-preview-height-row="${index}"]`);
+                const input = preview.closest('.flex-table-editor')
+                    ?.querySelector(`.flex-table-row-editor[data-row-index="${index}"] .flex-row-height-input`);
+
+                return row && input ? {row, input} : null;
+            };
+
+            const setHeight = ({row, input}, height) => {
+                const value = normalizeFlexRowHeight(height);
+                input.value = value;
+                row.style.height = value > 0 ? `${value}px` : 'auto';
+            };
+
+            const updateHeightLabel = ({label, row}) => {
+                label.textContent = `${Math.round(row.getBoundingClientRect().height)} px`;
+            };
+
+            preview.addEventListener('pointerdown', event => {
+                const handle = event.target.closest('.flex-table-preview-resize');
+                if (!handle || event.button !== 0 || drag) return;
+                const target = getRow(handle);
+                if (!target) return;
+
+                event.preventDefault();
+                handle.focus({preventScroll: true});
+                handle.setPointerCapture(event.pointerId);
+                drag = {
+                    ...target,
+                    label: handle.querySelector('.flex-table-preview-height-label'),
+                    pointerId: event.pointerId,
+                    startY: event.clientY,
+                    startHeight: target.row.getBoundingClientRect().height,
+                };
+                updateHeightLabel(drag);
+                preview.classList.add('is-resizing');
+            });
+
+            preview.addEventListener('pointermove', event => {
+                if (!drag || drag.pointerId !== event.pointerId) return;
+                const delta = event.clientY - drag.startY;
+                if (delta !== 0 || drag.moved) {
+                    drag.moved = true;
+                    setHeight(drag, Math.max(1, drag.startHeight + delta));
+                    updateHeightLabel(drag);
+                }
+            });
+
+            const finish = event => {
+                if (!drag || drag.pointerId !== event.pointerId) return;
+                drag = null;
+                preview.classList.remove('is-resizing');
+            };
+
+            preview.addEventListener('lostpointercapture', finish);
+
+            preview.addEventListener('keydown', event => {
+                const handle = event.target.closest('.flex-table-preview-resize');
+                if (!handle || !['ArrowUp', 'ArrowDown', 'Home'].includes(event.key)) return;
+                const target = getRow(handle);
+                if (!target) return;
+
+                event.preventDefault();
+                const step = event.shiftKey ? 10 : 1;
+                const height = target.row.getBoundingClientRect().height;
+                const delta = event.key === 'ArrowUp' ? -step : step;
+                setHeight(target, event.key === 'Home' ? 0 : Math.max(1, height + delta));
+            });
+        }
+
+        function bindFlexibleTablePreviewWidthResize(preview, editor)
+        {
+            let drag = null;
+            const blockId = editor.dataset.flexTableBlock;
+
+            const getBoundary = handle => {
+                const layout = buildFlexibleTableLayout(collectFlexibleTableData(blockId));
+                if (layout.rowMeta.some(row => !row.valid)) return null;
+
+                const edges = flexibleTableColumnEdges(layout);
+                const index = Number(handle.dataset.previewWidthBoundary);
+                if (index <= 0 || index >= edges.length - 1) return null;
+
+                const boundary = edges[index];
+                const changes = [];
+                for (const placement of layout.placements) {
+                    const direction = placement.startUnit + placement.widthUnits === boundary ? 1
+                        : placement.startUnit === boundary ? -1 : 0;
+                    if (!direction) continue;
+
+                    const cell = preview.querySelector(`[data-preview-row-index="${placement.rowIndex}"][data-preview-cell-index="${placement.cellIndex}"]`);
+                    const field = cell && getFlexibleTableCellField(cell, 'width');
+                    if (!field) return null;
+                    const label = cell.querySelector('.flex-table-preview-width-label');
+                    changes.push({cell, field, label, direction, units: placement.widthUnits});
+                }
+
+                const leftDelta = edges[index - 1] - boundary;
+                const rightDelta = edges[index + 1] - boundary;
+                const canAlign = delta => changes.every(({direction, units}) => units + direction * delta > 0);
+                const snapLeft = canAlign(leftDelta) ? leftDelta : null;
+                const snapRight = canAlign(rightDelta) ? rightDelta : null;
+                const cell = handle.closest('.flex-table-preview-cell');
+                return {
+                    boundary,
+                    edges,
+                    layout,
+                    changes,
+                    snapLeft,
+                    snapRight,
+                    min: snapLeft ?? leftDelta + 1,
+                    max: snapRight ?? rightDelta - 1,
+                    focusSelector: `[data-preview-row-index="${cell.dataset.previewRowIndex}"][data-preview-cell-index="${cell.dataset.previewCellIndex}"] [data-preview-width-boundary]`,
+                    delta: 0,
+                };
+            };
+
+            const setWidth = (target, requestedDelta, snapTolerance = 0) => {
+                if (requestedDelta < 0 && target.snapLeft !== null && requestedDelta <= target.snapLeft + snapTolerance) {
+                    requestedDelta = target.snapLeft;
+                } else if (requestedDelta > 0 && target.snapRight !== null && requestedDelta >= target.snapRight - snapTolerance) {
+                    requestedDelta = target.snapRight;
+                }
+                const delta = Math.max(target.min, Math.min(target.max, requestedDelta));
+                if (delta === target.delta) return;
+                target.delta = delta;
+                for (const {cell, field, label, direction, units} of target.changes) {
+                    const width = units + direction * delta;
+                    const percent = unitsToPercent(width);
+                    cell.colSpan = width;
+                    field.value = percent;
+                    label.textContent = `${percent}%`;
+                }
+            };
+
+            const confirmWidth = target => {
+                if (!target.delta) return;
+                const data = collectFlexibleTableData(blockId);
+                const next = buildFlexibleTableLayout(data);
+                const byPosition = new Map(next.placements.map(cell => [`${cell.rowIndex}:${cell.cellIndex}`, cell.startUnit]));
+                // Moving an edge must leave every other grid line in place, including inside merged rows.
+                const movedAnotherCell = target.layout.placements.some(cell => {
+                    const expected = cell.startUnit + (cell.startUnit === target.boundary ? target.delta : 0);
+                    return byPosition.get(`${cell.rowIndex}:${cell.cellIndex}`) !== expected;
+                });
+                if (movedAnotherCell || next.rowMeta.some(row => !row.valid)) {
+                    setWidth(target, 0);
+                    preview.querySelector('[data-preview-structure-error]').textContent =
+                        'This boundary cannot move without shifting another cell. Use Row layout to adjust the widths.';
+                    return;
+                }
+
+                if (target.delta === target.snapLeft || target.delta === target.snapRight) {
+                    const selected = preview.querySelector('[data-preview-selection="previewColumn"]').value;
+                    const previousEdge = target.edges[Number(selected)];
+                    const nextEdge = previousEdge === target.boundary ? previousEdge + target.delta : previousEdge;
+                    const nextIndex = flexibleTableColumnEdges(next).indexOf(nextEdge);
+                    if (nextIndex >= 0) editor.dataset.previewColumn = nextIndex;
+                    rerenderFlexibleTableFromPreview(preview, editor, data, target.focusSelector);
+                }
+            };
+
+            preview.addEventListener('pointerdown', event => {
+                const handle = event.target.closest('[data-preview-width-boundary]');
+                if (!handle || event.button !== 0 || drag) return;
+                const target = getBoundary(handle);
+                const width = handle.closest('table').getBoundingClientRect().width;
+                if (!target || !width) return;
+
+                event.preventDefault();
+                preview.querySelector('[data-preview-structure-error]').textContent = '';
+                handle.focus({preventScroll: true});
+                handle.setPointerCapture(event.pointerId);
+                drag = {...target, pointerId: event.pointerId, startX: event.clientX, width};
+                preview.classList.add('is-resizing-width');
+            });
+
+            preview.addEventListener('pointermove', event => {
+                if (!drag || event.pointerId !== drag.pointerId) return;
+                const unitsPerPixel = FLEX_TABLE_TOTAL_UNITS / drag.width;
+                const delta = (event.clientX - drag.startX) * unitsPerPixel;
+                setWidth(drag, Math.round(delta), Math.max(1, Math.round(8 * unitsPerPixel)));
+            });
+
+            preview.addEventListener('pointercancel', event => {
+                if (drag && event.pointerId === drag.pointerId) setWidth(drag, 0);
+            });
+
+            preview.addEventListener('lostpointercapture', event => {
+                if (!drag || event.pointerId !== drag.pointerId) return;
+                const target = drag;
+                drag = null;
+                preview.classList.remove('is-resizing-width');
+                confirmWidth(target);
+            });
+
+            preview.addEventListener('keydown', event => {
+                const handle = event.target.closest('[data-preview-width-boundary]');
+                if (!handle || drag || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+                const target = getBoundary(handle);
+                if (!target) return;
+
+                event.preventDefault();
+                preview.querySelector('[data-preview-structure-error]').textContent = '';
+                const step = event.shiftKey ? 10 : 1;
+                setWidth(target, event.key === 'ArrowLeft' ? -step : step);
+                confirmWidth(target);
+            });
         }
 
 
@@ -8898,6 +10195,10 @@ document.addEventListener(
 
         function validateFlexibleTables()
         {
+            const anatomyError = window.ProductAnatomyEditor.validate();
+            if (anatomyError) return anatomyError;
+            const showcaseError = window.GalleryShowcaseEditor.validate();
+            if (showcaseError) return showcaseError;
             const buttonError = window.ButtonGroupEditor.validate();
             if (buttonError) return buttonError;
             let error =
@@ -9330,58 +10631,6 @@ document.addEventListener(
             )
                 ? color
                 : '';
-        }
-
-
-        function flexVerticalCss(
-            value
-        )
-        {
-            if (
-                value === 'top'
-            ) {
-
-                return 'flex-start';
-
-            }
-
-
-            if (
-                value === 'bottom'
-            ) {
-
-                return 'flex-end';
-
-            }
-
-
-            return 'center';
-        }
-
-
-        function flexHorizontalCss(
-            value
-        )
-        {
-            if (
-                value === 'left'
-            ) {
-
-                return 'flex-start';
-
-            }
-
-
-            if (
-                value === 'right'
-            ) {
-
-                return 'flex-end';
-
-            }
-
-
-            return 'center';
         }
 
 
@@ -14414,6 +15663,8 @@ document.addEventListener(
                                 <u>U</u>
                             </button>
 
+                            ${[['justifyLeft','Align left','Left'],['justifyCenter','Align center','Center'],['justifyRight','Align right','Right']].map(([command,label,text]) => `<button type="button" class="btn btn-sm btn-light rich-text-command" data-command="${command}" title="${label}" aria-label="${label}">${text}</button>`).join('')}
+
 
                             <button
                                 type="button"
@@ -14745,6 +15996,11 @@ document.addEventListener(
                                 ''
                             )
                             .trim();
+
+                    if (property === 'text-align' && ['left','center','right'].includes(normalizedValue.toLowerCase())) {
+                        normalized.push(`text-align:${normalizedValue.toLowerCase()}`);
+                        return;
+                    }
 
 
                     if (
@@ -15137,6 +16393,28 @@ document.addEventListener(
         }
 
 
+        function normalizeRichTextParagraphAlignment(editor)
+        {
+            const paragraphSelector = 'div, p, ul, ol, li, h1, h2, h3, h4, h5, h6, blockquote, pre, table, td, th';
+
+            const visit = (parent, inlineAlignment = '') => {
+                for (const element of parent.children) {
+                    const alignment = element.style?.textAlign;
+                    if (element.matches(paragraphSelector)) {
+                        if (!alignment && inlineAlignment) element.style.textAlign = inlineAlignment;
+                        visit(element);
+                        continue;
+                    }
+
+                    // Justification reads paragraph alignment once inline alignment is removed.
+                    if (alignment) element.style.removeProperty('text-align');
+                    visit(element, alignment || inlineAlignment);
+                }
+            };
+
+            visit(editor);
+        }
+
         function bindRichTextEditors()
         {
             document
@@ -15245,9 +16523,9 @@ document.addEventListener(
                                     &&
                                     selection.rangeCount > 0
                                     &&
-                                    editor.contains(
-                                        selection.anchorNode
-                                    )
+                                    editor.contains(selection.anchorNode)
+                                    &&
+                                    editor.contains(selection.focusNode)
                                 ) {
 
                                     savedRange =
@@ -15265,6 +16543,8 @@ document.addEventListener(
 
                                 if (
                                     !savedRange
+                                    ||
+                                    !editor.contains(savedRange.commonAncestorContainer)
                                 ) {
 
                                     return;
@@ -15290,15 +16570,32 @@ document.addEventListener(
                                 commandValue = null
                             ) {
 
+                                const alignment = ['justifyLeft', 'justifyCenter', 'justifyRight'].includes(command);
+                                const range = savedRange && editor.contains(savedRange.commonAncestorContainer)
+                                    ? savedRange : null;
+                                editor.focus({preventScroll: true});
+                                if (alignment) normalizeRichTextParagraphAlignment(editor);
                                 restoreSelection();
-                                editor.focus();
 
+                                // With only a caret, the alignment buttons apply to the whole Text block.
+                                const alignAll = alignment && (!range || range.collapsed);
+                                if (alignAll) {
+                                    const selection = window.getSelection();
+                                    const fullRange = document.createRange();
+                                    fullRange.selectNodeContents(editor);
+                                    selection.removeAllRanges();
+                                    selection.addRange(fullRange);
+                                }
 
-                                document.execCommand(
-                                    command,
-                                    false,
-                                    commandValue
-                                );
+                                document.execCommand(command, false, commandValue);
+
+                                if (alignAll) {
+                                    if (range) {
+                                        restoreSelection();
+                                    } else {
+                                        window.getSelection().collapse(editor, editor.childNodes.length);
+                                    }
+                                }
 
 
                                 saveSelection();
@@ -15335,6 +16632,7 @@ document.addEventListener(
                                     button.addEventListener(
                                         'mousedown',
                                         function (event) {
+                                            saveSelection();
                                             event.preventDefault();
                                         }
                                     );
@@ -16268,6 +17566,9 @@ document.addEventListener(
             });
             document.querySelectorAll('[data-xp-editor]').forEach(function (editor) {
                 result[editor.dataset.blockId] = window.XPostsEditor.collect(editor);
+            });
+            document.querySelectorAll('[data-pa-editor]').forEach(function (editor) {
+                result[editor.dataset.blockId] = window.ProductAnatomyEditor.collect(editor);
             });
             document.querySelectorAll('[data-gs-editor]').forEach(function (editor) {
                 result[editor.dataset.blockId] = window.GalleryShowcaseEditor.collect(editor);
@@ -17644,6 +18945,7 @@ document.addEventListener(
                 product_catalog: 'Product Catalog',
                 custom_faq: 'Custom FAQ',
                 x_posts: 'X Posts',
+                product_anatomy: 'Product Anatomy',
                 gallery_showcase: 'Gallery Showcase',
                 attachment_gallery: 'Attachment Gallery',
                 price_matrix: 'Price Matrix',

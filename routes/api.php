@@ -265,6 +265,8 @@ Route::prefix('v1')->group(function () {
 
                     Route::apiResource('attachment-gallery-presets', \App\Http\Controllers\Api\V1\Admin\AttachmentGalleryPresetController::class)
                         ->parameters(['attachment-gallery-presets' => 'attachmentGalleryPreset']);
+                    Route::apiResource('custom-table-presets', \App\Http\Controllers\Api\V1\Admin\CustomTablePresetController::class)
+                        ->parameters(['custom-table-presets' => 'customTablePreset']);
                     Route::apiResource('heading-presets', \App\Http\Controllers\Api\V1\Admin\HeadingPresetController::class)
                         ->parameters(['heading-presets' => 'headingPreset']);
                     Route::apiResource('related-blogs-presets', \App\Http\Controllers\Api\V1\Admin\RelatedBlogsPresetController::class)

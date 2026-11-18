@@ -6,7 +6,7 @@
     @yield('head')
 </head>
 
-<body id="top">
+<body id="top" @if($visualEditorPreview ?? false) data-visual-editor-preview @endif>
     <!-- :: header start :: -->
     @include('partials.header')
     <!-- :: header end :: -->

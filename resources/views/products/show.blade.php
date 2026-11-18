@@ -35,12 +35,14 @@
     <link rel="stylesheet" href="/reviews/css/reviews.css" type="text/css">
     <link rel="stylesheet" href="{{ asset('css/shipping-summary.css') }}?v={{ filemtime(public_path('css/shipping-summary.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/price-matrix.css') }}?v={{ filemtime(public_path('css/price-matrix.css')) }}">
-    <link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}?v={{ filemtime(public_path('css/attachment-gallery.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/custom-table.css') }}?v={{ filemtime(public_path('css/custom-table.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/custom-table-business-days.css') }}?v={{ filemtime(public_path('css/custom-table-business-days.css')) }}">
 <script defer src="{{ asset('js/custom-table-business-days.js') }}?v={{ filemtime(public_path('js/custom-table-business-days.js')) }}"></script>
 <link rel="stylesheet" href="{{ asset('css/heading-editor.css') }}?v={{ filemtime(public_path('css/heading-editor.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/button-group.css') }}?v={{ filemtime(public_path('css/button-group.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/youtube-tags.css') }}?v={{ filemtime(public_path('css/youtube-tags.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/product-anatomy.css') }}?v={{ filemtime(public_path('css/product-anatomy.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/gallery-showcase.css') }}?v={{ filemtime(public_path('css/gallery-showcase.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/usage-examples.css') }}">
     <link rel="stylesheet" href="{{ asset('css/product-catalog.css') }}">
@@ -1531,63 +1533,6 @@
 
 
         /* ============================================================
-           Custom Table
-        ============================================================ */
-
-        .store-table-scroll {
-            width: 100%;
-
-            overflow-x: auto;
-
-            -webkit-overflow-scrolling: touch;
-        }
-
-
-        .store-custom-table {
-            width: 100%;
-            min-width: 500px;
-
-            border-collapse: collapse;
-
-            table-layout: auto;
-
-            margin: 0;
-
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-
-        .store-custom-table-title {
-            margin: 0 0 10px;
-
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-
-        .store-custom-table td {
-            min-width: 0;
-
-            padding: 10px 12px;
-
-            border: 1px solid #dadada;
-
-            text-align: center;
-            vertical-align: middle;
-
-            white-space: normal;
-            overflow-wrap: normal;
-            word-break: normal;
-        }
-
-
-        .store-custom-table tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-
-        /* ============================================================
            Shipping Schedule
         ============================================================ */
 
@@ -2253,14 +2198,6 @@
         }
 
         @media (max-width: 768px) {
-            .store-custom-table {
-                font-size: 13px;
-            }
-
-            .store-custom-table td {
-                padding: 8px;
-            }
-
             .mt-10-part-4 {
                 flex: 0 0 50%;
                 max-width: 50%;
@@ -2392,7 +2329,7 @@
 
 @push('scripts')
     <script src="{{ asset('js/price-matrix.js') }}?v={{ filemtime(public_path('js/price-matrix.js')) }}"></script>
-    <script src="{{ asset('js/attachment-gallery.js') }}"></script>
+    <script src="{{ asset('js/attachment-gallery.js') }}?v={{ filemtime(public_path('js/attachment-gallery.js')) }}"></script>
     <script src="{{ asset('js/product-catalog.js') }}"></script>
     <script src="{{ asset('js/x-posts.js') }}"></script>
     @if ($product->slug === 'rubberstrap' && empty($orderSteps))

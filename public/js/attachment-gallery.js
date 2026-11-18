@@ -9,17 +9,25 @@
             const viewport = root.querySelector('[data-ag-viewport]');
             let expanded = false;
             const update = () => {
-                const overflow = root.dataset.agCollapsible === '1' && grid.scrollHeight > Number(root.dataset.agHeight) + 1;
-                root.classList.toggle('is-collapsed', overflow && !expanded);
-                wrap.hidden = !overflow;
-                toggle.setAttribute('aria-expanded', String(!overflow || expanded));
+                const mode = root.dataset.agMode || (root.dataset.agCollapsible === '1' ? 'height' : 'all');
+                const items = [...grid.querySelectorAll('.ag-item')];
+                const limit = Math.max(1, Number(root.dataset.agVisibleItems) || 6);
+                const overflow = mode === 'items'
+                    ? items.length > limit
+                    : mode === 'height' && root.dataset.agCollapsible !== '0' && grid.scrollHeight > Number(root.dataset.agHeight) + 1;
+                const collapsed = overflow && !expanded;
+                root.classList.toggle('is-collapsed', collapsed && mode === 'height');
+                root.classList.toggle('is-items-collapsed', collapsed && mode === 'items');
+                wrap.hidden = !overflow || root.dataset.agShowToggle === '0';
+                toggle.setAttribute('aria-expanded', String(!collapsed));
                 toggle.textContent = expanded ? toggle.dataset.agLess : toggle.dataset.agMore;
-                // Clipped cards must not receive keyboard focus while collapsed.
-                const boundary = viewport.getBoundingClientRect().top + Number(root.dataset.agHeight);
-                grid.querySelectorAll('.ag-item').forEach(item => {
-                    const clipped = overflow && !expanded && item.getBoundingClientRect().bottom > boundary;
+                // Items beyond the selected count are removed from layout and keyboard navigation.
+                items.forEach((item, index) => {
+                    const hiddenByCount = mode === 'items' && collapsed && index >= limit;
+                    item.hidden = hiddenByCount;
+                    const clippedByHeight = mode === 'height' && collapsed && item.getBoundingClientRect().bottom > viewport.getBoundingClientRect().top + Number(root.dataset.agHeight);
                     item.querySelectorAll('a, button').forEach(control => {
-                        if (clipped) control.setAttribute('tabindex', '-1');
+                        if (hiddenByCount || clippedByHeight) control.setAttribute('tabindex', '-1');
                         else control.removeAttribute('tabindex');
                     });
                 });
@@ -36,7 +44,7 @@
                 img.addEventListener('error', failed);
                 if (img.complete && !img.naturalWidth) failed();
             });
-            if (window.ResizeObserver) new ResizeObserver(update).observe(grid);
+            if (window.ResizeObserver && (root.dataset.agMode === 'height' || !root.dataset.agMode)) new ResizeObserver(update).observe(grid);
             else window.addEventListener('resize', update);
             update();
         });

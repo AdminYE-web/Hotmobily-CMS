@@ -838,6 +838,8 @@ class ProductPageController extends Controller
                     500
                 ),
 
+                'image_link_url' => $this->stringValue($content['image_link_url'] ?? null, 2000),
+
                 'open_in_modal' => (bool) (
                     $content['open_in_modal']
                     ?? false
@@ -1157,6 +1159,7 @@ class ProductPageController extends Controller
             'product_catalog' => \App\Support\ProductCatalogContent::normalize($content),
             'custom_faq' => \App\Support\CustomFaqContent::normalize($content),
             'x_posts' => \App\Support\XPostsContent::normalize($content),
+            'product_anatomy' => \App\Support\ProductAnatomyContent::normalize($content),
             'gallery_showcase' => \App\Support\GalleryShowcaseContent::normalize($content),
             'attachment_gallery' => \App\Support\AttachmentGalleryContent::normalize($content),
             'price_matrix' => \App\Support\PriceMatrixContent::normalize($content),
@@ -2508,6 +2511,9 @@ class ProductPageController extends Controller
                     )
                     : null;
 
+            $alignment = preg_match('/(?:^|;)\s*text-align\s*:\s*(left|center|right)\s*(?:!important\s*)?(?:;|$)/i', $child->getAttribute('style'), $alignmentMatch)
+                ? strtolower($alignmentMatch[1]) : null;
+
             $size =
                 $tag === 'font'
                     ? $child->getAttribute(
@@ -2576,12 +2582,10 @@ class ProductPageController extends Controller
 
             }
 
-            if ($styleColor !== null) {
-                $child->setAttribute(
-                    'style',
-                    'color:'.$styleColor
-                );
-            }
+            $safeStyles = [];
+            if ($styleColor !== null) $safeStyles[] = 'color:'.$styleColor;
+            if ($alignment !== null) $safeStyles[] = 'text-align:'.$alignment;
+            if ($safeStyles !== []) $child->setAttribute('style', implode(';', $safeStyles));
 
             if (
                 preg_match(

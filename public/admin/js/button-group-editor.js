@@ -62,7 +62,7 @@
                 Object.assign(legacy,{text:content.text||'',url:content.url||'',icon:isCms?'none':'cart'});
                 for(const key of ['background_color','text_color'])if(/^#[0-9a-f]{6}$/i.test(content[key]||''))legacy[key]=content[key];
                 if(content.border_radius!==undefined)legacy.border_radius=Math.max(0,Math.min(999,Number(content.border_radius)||0));
-                state.data={...clone(defaults),columns:content.text||content.url?1:2,items:[legacy]};
+                state.data={...clone(defaults),columns:content.text||content.url?1:2,items:content.text||content.url?[legacy]:[]};
             }else state.data.items=content.items.map(button=>({...item(state,button.style==='card'?'card':'solid'),...clone(button)}));
             states.set(id,state);
             const options=(key,label,values)=>`<div class="col-md-4 form-group"><label>${label}</label><select class="form-control" data-bge-meta="${key}">${values.map(n=>`<option value="${n}" ${Number(state.data[key])===n?'selected':''}>${n}</option>`).join('')}</select></div>`;
