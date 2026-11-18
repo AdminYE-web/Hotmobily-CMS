@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="{{ asset('css/price-matrix.css') }}?v={{ filemtime(public_path('css/price-matrix.css')) }}">
     <link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}?v={{ filemtime(public_path('css/attachment-gallery.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/custom-table.css') }}?v={{ filemtime(public_path('css/custom-table.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/image-detail-pair.css') }}?v={{ filemtime(public_path('css/image-detail-pair.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/image-swatches.css') }}?v={{ filemtime(public_path('css/image-swatches.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/custom-table-business-days.css') }}?v={{ filemtime(public_path('css/custom-table-business-days.css')) }}">
 <script defer src="{{ asset('js/custom-table-business-days.js') }}?v={{ filemtime(public_path('js/custom-table-business-days.js')) }}"></script>
 <link rel="stylesheet" href="{{ asset('css/heading-editor.css') }}?v={{ filemtime(public_path('css/heading-editor.css')) }}">

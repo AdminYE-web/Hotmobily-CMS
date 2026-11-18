@@ -25,7 +25,7 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="container-fluid content-editor-page">
 
     <div class="content-editor-header mb-4">
 
@@ -48,18 +48,11 @@
 
         <div class="content-editor-actions">
 
-            <div class="content-editor-status">
-
-            <span
-                id="save-status"
-                class="text-muted mr-3"
-            ></span>
-
             @unless ($isCmsContent)
-                <span id="content-current-versions" class="text-muted small mr-3" aria-live="polite"></span>
+                <div class="content-editor-status">
+                    <span id="content-current-versions" class="text-muted small" aria-live="polite"></span>
+                </div>
             @endunless
-
-            </div>
 
             <div class="content-editor-buttons">
             @unless ($isCmsContent)
@@ -76,26 +69,16 @@
                 </button>
             @endif
 
-            <button
-                type="button"
-                class="btn btn-secondary mr-2"
-                id="save-draft"
-            >
-                Save Draft
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-success"
-                id="publish-product"
-            >
-                Publish
-            </button>
-
             </div>
 
         </div>
 
+    </div>
+
+    <div class="content-editor-save-actions" role="group" aria-label="Content publishing">
+        <span id="save-status" class="text-muted" role="status"></span>
+        <button type="button" class="btn btn-secondary" id="save-draft">Save Draft</button>
+        <button type="button" class="btn btn-success" id="publish-product">Publish</button>
     </div>
 
 
@@ -157,6 +140,8 @@
 <link rel="stylesheet" href="{{ asset('css/price-matrix.css') }}?v={{ filemtime(public_path('css/price-matrix.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/attachment-gallery.css') }}?v={{ filemtime(public_path('css/attachment-gallery.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/custom-table.css') }}?v={{ filemtime(public_path('css/custom-table.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/image-detail-pair.css') }}?v={{ filemtime(public_path('css/image-detail-pair.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/image-swatches.css') }}?v={{ filemtime(public_path('css/image-swatches.css')) }}">
 <link rel="stylesheet" href="{{ asset('css/custom-table-business-days.css') }}?v={{ filemtime(public_path('css/custom-table-business-days.css')) }}">
 <script defer src="{{ asset('js/custom-table-business-days.js') }}?v={{ filemtime(public_path('js/custom-table-business-days.js')) }}"></script>
 <link rel="stylesheet" href="{{ asset('css/heading-editor.css') }}?v={{ filemtime(public_path('css/heading-editor.css')) }}">
@@ -181,6 +166,35 @@
     align-items: flex-start;
     gap: 16px 24px;
     padding-top: 8px;
+}
+.content-editor-page {
+    padding-bottom: 112px;
+}
+.content-editor-save-actions {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 1030;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 32px);
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #d9e0e7;
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .15);
+}
+.content-editor-save-actions #save-status {
+    overflow-wrap: anywhere;
+}
+.content-editor-save-actions #save-status:empty {
+    display: none;
+}
+.content-editor-save-actions .btn {
+    white-space: nowrap;
 }
 .content-editor-heading {
     flex: 1 1 520px;
@@ -2323,6 +2337,8 @@ document.addEventListener(
             'text_format',
             'text_size',
             'open_in_modal',
+            'main_image_action',
+            'detail_image_action',
             'show_share',
             'target',
             'new_tab',
@@ -2658,6 +2674,8 @@ document.addEventListener(
             bindOptionCardGridEditors();
 
             bindSingleImageUploaders();
+            bindImageDetailPairEditors();
+            bindImageSwatchesEditors();
 
             bindRelatedBlogEditors();
 
@@ -3154,6 +3172,14 @@ document.addEventListener(
 
                     break;
 
+
+                case 'image_detail_pair':
+                    fields = imageDetailPairEditor(block, blockContent);
+                    break;
+
+                case 'image_swatches':
+                    fields = imageSwatchesEditor(block, blockContent);
+                    break;
 
                 case 'youtube':
 
@@ -15386,7 +15412,8 @@ document.addEventListener(
             blockId,
             field,
             label,
-            value
+            value,
+            saveAsBlockField = true
         )
         {
             const hasImg =
@@ -15410,7 +15437,7 @@ document.addEventListener(
                             type="text"
                             class="
                                 form-control
-                                product-field
+                                ${saveAsBlockField ? 'product-field' : ''}
                                 single-image-input-value
                             "
                             data-block-id="${blockId}"
@@ -15438,6 +15465,205 @@ document.addEventListener(
                     >
                 </div>
             `;
+        }
+
+        function imageSwatchEditorRow(blockId, item = {})
+        {
+            return `
+                <div class="border rounded bg-white p-3 mb-2" data-image-swatch-row>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="btn btn-sm btn-light" style="cursor:grab;touch-action:none" data-image-swatch-handle title="Drag to reorder" aria-hidden="true">☰</span>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-outline-secondary" data-image-swatch-action="up" aria-label="Move sample up">↑</button>
+                            <button type="button" class="btn btn-outline-secondary" data-image-swatch-action="down" aria-label="Move sample down">↓</button>
+                            <button type="button" class="btn btn-outline-danger" data-image-swatch-action="remove">Remove</button>
+                        </div>
+                    </div>
+                    ${imageUploaderInput(blockId, 'swatch_image_url', 'Sample image', item.image_url ?? '', false)}
+                    <div class="form-row">
+                        <label class="col-sm-6">Label
+                            <input class="form-control" maxlength="150" data-image-swatch-label value="${escapeHtml(item.label ?? '')}">
+                        </label>
+                        <label class="col-sm-6">Alt Text
+                            <input class="form-control" maxlength="500" data-image-swatch-alt value="${escapeHtml(item.alt ?? '')}">
+                        </label>
+                    </div>
+                </div>
+            `;
+        }
+
+        function imageSwatchesEditor(block, content)
+        {
+            const width = Math.max(48, Math.min(240, Number(block.settings?.swatch_width ?? 106))) || 106;
+            const gap = Math.max(0, Math.min(48, Number(block.settings?.swatch_gap ?? 10))) || 0;
+            const items = Array.isArray(content.swatches) ? content.swatches.slice(0, 50) : [];
+            return `
+                <div data-image-swatches-editor data-block-id="${escapeHtml(block.id)}">
+                    <div data-image-swatch-list>${items.map(item => imageSwatchEditorRow(block.id, item)).join('')}</div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-image-swatch-action="add">Add sample</button>
+                    <div class="small font-weight-bold mt-3 mb-2">Swatches preview</div>
+                    <div class="image-swatches" data-image-swatch-preview style="--image-swatch-width:${width}px;--image-swatch-gap:${gap}px"></div>
+                </div>
+            `;
+        }
+
+        function collectImageSwatches(editor)
+        {
+            return {swatches: [...editor.querySelectorAll('[data-image-swatch-row]')].map(row => ({
+                image_url: row.querySelector('.single-image-input-value').value.trim(),
+                label: row.querySelector('[data-image-swatch-label]').value.trim(),
+                alt: row.querySelector('[data-image-swatch-alt]').value.trim(),
+            })).filter(item => item.image_url !== '')};
+        }
+
+        const imageSwatchesSortables = [];
+
+        function bindImageSwatchesEditors()
+        {
+            imageSwatchesSortables.splice(0).forEach(sortable => sortable.destroy());
+            document.querySelectorAll('[data-image-swatches-editor]').forEach(editor => {
+                const list = editor.querySelector('[data-image-swatch-list]');
+                const preview = editor.querySelector('[data-image-swatch-preview]');
+                const add = editor.querySelector('[data-image-swatch-action="add"]');
+                const refresh = () => {
+                    const rows = [...list.children];
+                    rows.forEach((row, index) => {
+                        row.querySelector('[data-image-swatch-action="up"]').disabled = index === 0;
+                        row.querySelector('[data-image-swatch-action="down"]').disabled = index === rows.length - 1;
+                    });
+                    add.disabled = rows.length >= 50;
+                    const items = collectImageSwatches(editor).swatches.flatMap(item => {
+                        const src = normalizeRichTextImageUrl(item.image_url);
+                        if (!src) return [];
+                        return `
+                            <figure class="image-swatches__item">
+                                <img class="image-swatches__image" src="${escapeHtml(src)}" alt="${escapeHtml(item.alt || item.label)}">
+                                ${item.label ? `<figcaption class="image-swatches__label">${escapeHtml(item.label)}</figcaption>` : ''}
+                            </figure>
+                        `;
+                    });
+                    preview.innerHTML = items.length ? items.join('') : '<p class="small text-muted mb-0">Add sample images to preview them here.</p>';
+                };
+                editor.oninput = refresh;
+                editor.onclick = event => {
+                    const button = event.target.closest('[data-image-swatch-action]');
+                    if (!button || button.disabled) return;
+                    const row = button.closest('[data-image-swatch-row]');
+                    switch (button.dataset.imageSwatchAction) {
+                        case 'add':
+                            list.insertAdjacentHTML('beforeend', imageSwatchEditorRow(editor.dataset.blockId));
+                            bindSingleImageUploaders();
+                            list.lastElementChild.querySelector('.single-image-input-value').focus();
+                            break;
+                        case 'remove':
+                            row.remove();
+                            add.focus({preventScroll: true});
+                            break;
+                        case 'up':
+                            if (row.previousElementSibling) list.insertBefore(row, row.previousElementSibling);
+                            break;
+                        case 'down':
+                            if (row.nextElementSibling) list.insertBefore(row.nextElementSibling, row);
+                            break;
+                    }
+                    refresh();
+                };
+                if (window.Sortable) {
+                    imageSwatchesSortables.push(new Sortable(list, {
+                        animation: 150,
+                        handle: '[data-image-swatch-handle]',
+                        draggable: '[data-image-swatch-row]',
+                        onEnd: refresh,
+                    }));
+                }
+                refresh();
+            });
+        }
+
+        function imageDetailPairEditor(block, content)
+        {
+            const width = Number(block.settings?.main_image_width ?? 65);
+            const mainWidth = [50, 60, 65, 70, 75].includes(width) ? width : 65;
+            const slotEditor = (slot, label, fallbackAction) => {
+                const prefix = `${slot}_image_`;
+                const action = content[prefix + 'action'] ?? fallbackAction;
+                return `
+                    <fieldset class="col-md-6 mb-3" data-image-detail-slot="${slot}">
+                        ${imageUploaderInput(block.id, prefix + 'url', `${label} Image`, content[prefix + 'url'] ?? '')}
+                        ${textInput(block.id, prefix + 'alt', 'Alt Text', content[prefix + 'alt'] ?? '')}
+                        <label class="d-block">Label under image (optional)
+                            <input type="text" maxlength="150" class="form-control product-field"
+                                data-block-id="${escapeHtml(block.id)}" data-field="${prefix}label"
+                                value="${escapeHtml(content[prefix + 'label'] ?? '')}">
+                        </label>
+                        <label class="d-block">On click
+                            <select class="form-control product-field" data-block-id="${escapeHtml(block.id)}" data-field="${prefix}action">
+                                ${[['none', 'Display only'], ['zoom', 'Enlarge image'], ['link', 'Open link']].map(([value, title]) =>
+                                    `<option value="${value}" ${action === value ? 'selected' : ''}>${title}</option>`
+                                ).join('')}
+                            </select>
+                        </label>
+                        <div data-image-detail-link-settings>
+                            ${linkUrlInput(block.id, prefix + 'link', 'Image Link URL', content[prefix + 'link'] ?? '')}
+                        </div>
+                    </fieldset>
+                `;
+            };
+
+            return `
+                <div data-image-detail-pair-editor>
+                    <div class="row">${slotEditor('main', 'Main', 'zoom')}${slotEditor('detail', 'Detail', 'none')}</div>
+                    <div class="small font-weight-bold mb-2">Image pair preview</div>
+                    <div class="image-detail-pair image-detail-pair--with-labels" style="--image-detail-main:${mainWidth}fr;--image-detail-secondary:${100 - mainWidth}fr">
+                        ${[['main', 'Main image'], ['detail', 'Detail image']].map(([slot, label]) => `
+                            <figure class="image-detail-pair__figure" data-image-detail-preview="${slot}">
+                                <div class="image-detail-pair__panel">
+                                    <img alt="" hidden>
+                                    <span class="image-detail-pair__placeholder">${label}</span>
+                                    <span class="image-detail-pair__hint" hidden>📷 クリックすると拡大します</span>
+                                </div>
+                                <figcaption class="image-detail-pair__label" hidden></figcaption>
+                            </figure>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function bindImageDetailPairEditors()
+        {
+            document.querySelectorAll('[data-image-detail-pair-editor]').forEach(editor => {
+                editor.querySelectorAll('[data-image-detail-slot]').forEach(fields => {
+                    const slot = fields.dataset.imageDetailSlot;
+                    const url = fields.querySelector('.single-image-input-value');
+                    const alt = fields.querySelector(`[data-field="${slot}_image_alt"]`);
+                    const label = fields.querySelector(`[data-field="${slot}_image_label"]`);
+                    const action = fields.querySelector('select');
+                    const linkSettings = fields.querySelector('[data-image-detail-link-settings]');
+                    const preview = editor.querySelector(`[data-image-detail-preview="${slot}"]`);
+                    const image = preview.querySelector('img');
+                    const placeholder = preview.querySelector('.image-detail-pair__placeholder');
+                    const hint = preview.querySelector('.image-detail-pair__hint');
+                    const caption = preview.querySelector('figcaption');
+                    const update = () => {
+                        const source = normalizeRichTextImageUrl(url.value);
+                        if (source) image.setAttribute('src', source);
+                        else image.removeAttribute('src');
+                        image.alt = alt.value;
+                        image.hidden = !source;
+                        placeholder.hidden = Boolean(source);
+                        hint.hidden = !source || action.value !== 'zoom';
+                        caption.textContent = label.value.trim();
+                        caption.hidden = !source || !caption.textContent;
+                        linkSettings.hidden = action.value !== 'link';
+                    };
+                    url.addEventListener('input', update);
+                    alt.addEventListener('input', update);
+                    label.addEventListener('input', update);
+                    action.addEventListener('change', update);
+                    update();
+                });
+            });
         }
 
         function bindSingleImageUploaders()
@@ -17543,6 +17769,9 @@ document.addEventListener(
             document.querySelectorAll('[data-yt-tags-editor]').forEach(function (editor) {
                 result[editor.dataset.blockId] = window.YoutubeTagsEditor.collect(editor);
             });
+            document.querySelectorAll('[data-image-swatches-editor]').forEach(editor => {
+                result[editor.dataset.blockId] = collectImageSwatches(editor);
+            });
             document.querySelectorAll('[data-he-editor]').forEach(function (editor) {
                 result[editor.dataset.blockId] = window.HeadingEditor.collect(editor);
             });
@@ -18904,6 +19133,10 @@ document.addEventListener(
 
                 image:
                     'Image',
+                image_detail_pair:
+                    'Image Detail Pair',
+                image_swatches:
+                    'Image Swatches',
 
                 step_information:
                     'Step Information',

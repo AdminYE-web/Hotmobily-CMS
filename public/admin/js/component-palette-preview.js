@@ -6,6 +6,8 @@
         guide_main: 'Cards linking to your guide pages.',
         rich_text: 'Formatted text with paragraphs, lists and links.',
         image: 'An image with an optional caption.',
+        image_detail_pair: 'A main product image beside a close-up, with optional zoom and links.',
+        image_swatches: 'Small sample images with their names underneath.',
         step_information: 'An image and instructions for one step.',
         multi_photo: 'Multiple photos displayed together with a caption.',
         youtube: 'A video thumbnail that opens the YouTube player.',

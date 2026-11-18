@@ -1082,6 +1082,12 @@
                 @endif
 
 
+            @elseif($type === 'image_detail_pair')
+                @include('products.partials.image-detail-pair')
+
+            @elseif($type === 'image_swatches')
+                @include('products.partials.image-swatches')
+
             {{-- ============================================================
                 Guide Step Information
             ============================================================ --}}

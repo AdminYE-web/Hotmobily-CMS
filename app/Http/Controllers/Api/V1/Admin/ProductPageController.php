@@ -847,6 +847,9 @@ class ProductPageController extends Controller
 
             ],
 
+            'image_detail_pair' => $this->sanitizeImageDetailPair($content),
+            'image_swatches' => $this->sanitizeImageSwatches($content),
+
             /*
              * YouTube video and optional tags
              */
@@ -2690,6 +2693,46 @@ class ProductPageController extends Controller
         }
 
         return null;
+    }
+
+    private function sanitizeImageSwatches(array $content): array
+    {
+        $items = [];
+        $swatches = is_array($content['swatches'] ?? null) ? $content['swatches'] : [];
+
+        foreach (array_slice($swatches, 0, 50) as $swatch) {
+            if (! is_array($swatch)) {
+                continue;
+            }
+
+            $url = $this->stringValue($swatch['image_url'] ?? null, 2000);
+            if ($url === null || $url === '') {
+                continue;
+            }
+
+            $items[] = [
+                'image_url' => $url,
+                'label' => $this->stringValue($swatch['label'] ?? null, 150),
+                'alt' => $this->stringValue($swatch['alt'] ?? null, 500),
+            ];
+        }
+
+        return ['swatches' => $items];
+    }
+
+    private function sanitizeImageDetailPair(array $content): array
+    {
+        $clean = [];
+        foreach (['main' => 'zoom', 'detail' => 'none'] as $slot => $defaultAction) {
+            $prefix = $slot.'_image_';
+            $clean[$prefix.'url'] = $this->stringValue($content[$prefix.'url'] ?? null, 2000);
+            $clean[$prefix.'alt'] = $this->stringValue($content[$prefix.'alt'] ?? null, 500);
+            $clean[$prefix.'label'] = $this->stringValue($content[$prefix.'label'] ?? null, 150);
+            $clean[$prefix.'link'] = $this->stringValue($content[$prefix.'link'] ?? null, 2000);
+            $clean[$prefix.'action'] = $this->enumValue($content[$prefix.'action'] ?? null, ['none', 'zoom', 'link'], $defaultAction);
+        }
+
+        return $clean;
     }
 
     private function normalizeRichTextLinkHref(string $value): ?string

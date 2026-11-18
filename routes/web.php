@@ -685,14 +685,18 @@ Route::prefix('admin')
 
                         return view(
                             'admin.product-layouts.builder',
-                            compact(
-                                'productLayout'
-                            )
+                            [
+                                'productLayout' => $productLayout,
+                                'previewProducts' => $productLayout->products()->orderBy('name')->orderBy('id')->get(['id', 'name', 'slug']),
+                            ]
                         );
 
                     }
                 )
                     ->name('product-layouts.builder');
+
+                Route::post('/product-layouts/{productLayout}/preview/{product}', \App\Http\Controllers\Admin\ProductLayoutPreviewController::class)
+                    ->name('product-layouts.preview');
 
                 /*
                 |--------------------------------------------------------------------------

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductLayout;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -206,6 +207,22 @@ class ProductLayoutController extends Controller
         Request $request,
         ProductLayout $productLayout
     ) {
+        $layout = $this->validateLayoutSnapshot($request);
+        if ($layout instanceof JsonResponse) {
+            return $layout;
+        }
+
+        $productLayout->update(['draft_layout_json' => $layout]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layout draft saved.',
+            'data' => ['draft_layout_json' => $productLayout->fresh()->draft_layout_json],
+        ]);
+    }
+
+    public function validateLayoutSnapshot(Request $request): array|JsonResponse
+    {
         /*
         |--------------------------------------------------------------------------
         | Allowed top-level components
@@ -219,6 +236,8 @@ class ProductLayoutController extends Controller
             'rich_text',
 
             'image',
+            'image_detail_pair',
+            'image_swatches',
 
             'youtube',
 
@@ -290,6 +309,8 @@ class ProductLayoutController extends Controller
             'rich_text',
 
             'image',
+            'image_detail_pair',
+            'image_swatches',
 
             'youtube',
 
@@ -436,6 +457,9 @@ class ProductLayoutController extends Controller
                 'rows.*.columns.*.blocks.*.settings.x_columns' => ['sometimes', 'integer', 'in:1,2,3'],
                 'rows.*.columns.*.blocks.*.settings.x_theme' => ['sometimes', Rule::in(['light', 'dark'])],
                 'rows.*.columns.*.blocks.*.settings.x_conversation' => ['sometimes', Rule::in(['all', 'none'])],
+                'rows.*.columns.*.blocks.*.settings.main_image_width' => ['sometimes', Rule::in([50, 60, 65, 70, 75])],
+                'rows.*.columns.*.blocks.*.settings.swatch_width' => ['sometimes', 'integer', 'between:48,240'],
+                'rows.*.columns.*.blocks.*.settings.swatch_gap' => ['sometimes', 'integer', 'between:0,48'],
 
                 'rows.*.columns.*.blocks.*.settings.custom_id' => [
 
@@ -585,6 +609,10 @@ class ProductLayoutController extends Controller
                     'regex:/^[A-Za-z][A-Za-z0-9_-]*$/',
 
                 ],
+
+                'rows.*.columns.*.blocks.*.children.*.settings.main_image_width' => ['sometimes', Rule::in([50, 60, 65, 70, 75])],
+                'rows.*.columns.*.blocks.*.children.*.settings.swatch_width' => ['sometimes', 'integer', 'between:48,240'],
+                'rows.*.columns.*.blocks.*.children.*.settings.swatch_gap' => ['sometimes', 'integer', 'between:0,48'],
 
                 'rows.*.columns.*.blocks.*.children.*.settings.content_width' => [
 
@@ -873,11 +901,11 @@ class ProductLayoutController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Save JSON
+        | Validated layout
         |--------------------------------------------------------------------------
         */
 
-        $layoutJson = [
+        return [
 
             'version' => 2,
 
@@ -885,27 +913,6 @@ class ProductLayoutController extends Controller
 
         ];
 
-        $productLayout->update([
-
-            'draft_layout_json' => $layoutJson,
-
-        ]);
-
-        return response()->json([
-
-            'success' => true,
-
-            'message' => 'Layout draft saved.',
-
-            'data' => [
-
-                'draft_layout_json' => $productLayout
-                    ->fresh()
-                    ->draft_layout_json,
-
-            ],
-
-        ]);
     }
 
     /*

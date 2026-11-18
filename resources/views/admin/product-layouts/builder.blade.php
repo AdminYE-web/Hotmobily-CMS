@@ -23,7 +23,7 @@
 
 @section('content')
 
-<div class="container-fluid {{ $isCmsBuilder ? 'product-data-layout-builder' : '' }}">
+<div class="container-fluid layout-builder-page {{ $isCmsBuilder ? 'product-data-layout-builder' : '' }}">
 
     {{-- ============================================================
         HEADER
@@ -47,16 +47,17 @@
         </div>
 
 
-        <div class="d-flex align-items-center">
+        <div class="layout-builder-save-actions" role="group" aria-label="Layout publishing">
 
             <span
                 id="save-status"
-                class="text-muted mr-3"
+                class="text-muted"
+                role="status"
             ></span>
 
             <button
                 type="button"
-                class="btn btn-secondary mr-2"
+                class="btn btn-secondary"
                 id="save-layout-draft"
             >
                 Save Draft
@@ -160,6 +161,11 @@
                         <span>🖼</span>
                         Image
                     </button>
+
+                    @unless($isCmsBuilder)
+                        <button type="button" class="component-button add-block" data-type="image_detail_pair">Image Detail Pair</button>
+                        <button type="button" class="component-button add-block" data-type="image_swatches">Image Swatches</button>
+                    @endunless
 
 
                     @if ($isGuideBuilder)
@@ -534,6 +540,22 @@
                         </div>
 
 
+                        @unless($isCmsBuilder)
+                            <div class="d-flex align-items-center flex-wrap my-1">
+                                <label for="layout-preview-product" class="small mb-0 mr-2">Preview product</label>
+                                <select id="layout-preview-product" class="form-control form-control-sm w-auto" disabled>
+                                    <option value="">Layout editor</option>
+                                    @foreach($previewProducts ?? [] as $previewProduct)
+                                        <option value="{{ route('admin.product-layouts.preview', [$productLayout, $previewProduct]) }}"
+                                            data-address="{{ url('/products/'.$previewProduct->slug) }}">
+                                            {{ $previewProduct->slug }} · {{ $previewProduct->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="button" id="layout-preview-refresh" class="btn btn-sm btn-outline-secondary ml-2" hidden>Refresh preview</button>
+                            </div>
+                        @endunless
+
                         <div class="btn-group btn-group-sm">
 
                             <button
@@ -589,7 +611,11 @@
                         </div>
 
 
-                        <div class="preview-page">
+                        @unless($isCmsBuilder)
+                            <p id="layout-preview-status" class="small text-muted p-3 mb-0" role="status" hidden></p>
+                        @endunless
+
+                        <div id="layout-editor-preview" class="preview-page">
 
                             <div id="builder-canvas"></div>
 
@@ -888,6 +914,8 @@
 @push('styles')
 
 <link rel="stylesheet" href="{{ asset('admin/css/component-palette-preview.css') }}?v={{ filemtime(public_path('admin/css/component-palette-preview.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/image-detail-pair.css') }}?v={{ filemtime(public_path('css/image-detail-pair.css')) }}">
+<link rel="stylesheet" href="{{ asset('css/image-swatches.css') }}?v={{ filemtime(public_path('css/image-swatches.css')) }}">
 
 <style>
 
@@ -1070,6 +1098,40 @@
     width: 100%;
 }
 
+.layout-builder-page {
+    padding-bottom: 112px;
+}
+
+.layout-builder-save-actions {
+    position: fixed;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 1030;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 32px);
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #d9e0e7;
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .15);
+}
+
+.layout-builder-save-actions #save-status {
+    overflow-wrap: anywhere;
+}
+
+.layout-builder-save-actions #save-status:empty {
+    display: none;
+}
+
+.layout-builder-save-actions .btn {
+    white-space: nowrap;
+}
+
 
 .preview-tablet {
     width: 768px;
@@ -1082,6 +1144,18 @@
     max-width: 100%;
 }
 
+.builder-component-preview iframe {
+    display: block;
+    width: 100%;
+    height: 40px;
+    border: 0;
+    pointer-events: none;
+}
+
+.sim-accordion-header:has(> iframe) {
+    padding: 0;
+    background: transparent;
+}
 
 /* ============================================================
    Fake Browser
@@ -2738,6 +2812,9 @@ document.addEventListener(
 
                 render();
 
+                const previewProduct = document.getElementById('layout-preview-product');
+                if (previewProduct && previewProduct.options.length > 1) previewProduct.disabled = false;
+
             } catch (error) {
 
                 console.error(
@@ -2752,6 +2829,158 @@ document.addEventListener(
                 );
 
             }
+        }
+
+        let refreshProductLayoutPreview = () => {};
+
+        function bindProductLayoutPreview()
+        {
+            const product = document.getElementById('layout-preview-product');
+            if (!product) return;
+
+            const status = document.getElementById('layout-preview-status');
+            const refresh = document.getElementById('layout-preview-refresh');
+            const address = document.querySelector('#preview-frame .preview-url');
+            const defaultAddress = address.textContent.trim();
+            let pending = null;
+            let requested = null;
+            let fragments = new Map();
+            let head = '';
+            let version = 0;
+            const observers = new Map();
+
+            const showFragments = () => {
+                for (const [frame, observer] of observers) {
+                    if (!frame.isConnected) {
+                        observer.disconnect();
+                        observers.delete(frame);
+                    }
+                }
+                document.querySelectorAll('.builder-component-preview').forEach(slot => {
+                    const html = fragments.get(slot.dataset.previewBlockId);
+                    if (slot.dataset.previewVersion === String(version)) return;
+                    slot.dataset.previewVersion = version;
+                    const placeholder = slot.querySelector(':scope > .builder-component-placeholder');
+                    const current = slot.querySelector(':scope > iframe');
+                    if (current) {
+                        observers.get(current)?.disconnect();
+                        observers.delete(current);
+                        current.remove();
+                    }
+                    if (placeholder) placeholder.hidden = Boolean(html);
+                    if (!html) return;
+                    const frame = document.createElement('iframe');
+                    frame.title = 'Product component preview';
+                    frame.tabIndex = -1;
+                    frame.setAttribute('aria-hidden', 'true');
+                    frame.setAttribute('sandbox', 'allow-same-origin');
+                    frame.addEventListener('load', () => {
+                        const content = frame.contentDocument?.getElementById('builder-preview-content');
+                        if (!content || !frame.isConnected) return;
+                        const resize = () => {
+                            const height = Math.max(1, Math.ceil(content.getBoundingClientRect().height));
+                            if (frame.style.height !== `${height}px`) frame.style.height = `${height}px`;
+                        };
+                        observers.get(frame)?.disconnect();
+                        const observer = new ResizeObserver(resize);
+                        observers.set(frame, observer);
+                        observer.observe(content);
+                        resize();
+                    });
+                    frame.srcdoc = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">${head}
+                        <style>html,body{width:100%!important;min-width:0!important;margin:0!important;padding:0!important;overflow:hidden!important;background:transparent!important}
+                        #builder-preview-content{display:flow-root;width:100%}</style></head>
+                        <body id="top"><div id="builder-preview-content" class="product-cms-page">${html}</div></body></html>`;
+                    slot.append(frame);
+                });
+            };
+
+            const readFragments = (html, baseUrl) => {
+                const page = new DOMParser().parseFromString(html, 'text/html');
+                if (!page.body.hasAttribute('data-visual-editor-preview')) throw new Error('Could not load the product preview.');
+                const base = document.createElement('base');
+                base.href = baseUrl;
+                const styles = [...page.head.querySelectorAll('style, link[rel="stylesheet"], link[as="style"]')];
+                head = base.outerHTML + styles.map(style => {
+                    if (style.tagName === 'LINK') {
+                        style.rel = 'stylesheet';
+                        style.removeAttribute('onload');
+                    }
+                    return style.outerHTML;
+                }).join('');
+                fragments = new Map();
+                page.querySelectorAll('[data-editor-block-id]').forEach(block => {
+                    const id = block.dataset.editorBlockId;
+                    if (block.dataset.editorBlockType === 'accordion') {
+                        const summary = block.querySelector('.store-accordion-summary');
+                        if (summary) fragments.set(id, summary.outerHTML);
+                        return;
+                    }
+                    const inner = block.querySelector('.store-product-inner');
+                    if (!inner || (!inner.children.length && !inner.textContent.trim())) return;
+                    block.querySelectorAll('script').forEach(script => script.remove());
+                    fragments.set(id, block.outerHTML);
+                });
+                version++;
+            };
+
+            const load = async (force = false) => {
+                const endpoint = product.value;
+                const payload = JSON.stringify({rows});
+                const key = endpoint + payload;
+                showFragments();
+                if (!endpoint || (!force && requested === key)) return;
+
+                pending?.abort();
+                requested = key;
+                status.hidden = false;
+                status.classList.remove('text-danger');
+                status.textContent = 'Loading product preview…';
+                refresh.disabled = true;
+                const request = new AbortController();
+                pending = request;
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        signal: request.signal,
+                        headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf},
+                        body: payload,
+                    });
+                    if (!response.ok || response.redirected) {
+                        const error = await response.json().catch(() => ({}));
+                        throw new Error(error.message || 'Could not load the product preview.');
+                    }
+                    const html = await response.text();
+                    if (pending !== request) return;
+                    readFragments(html, product.selectedOptions[0].dataset.address);
+                    showFragments();
+                    status.hidden = true;
+                } catch (error) {
+                    if (pending !== request) return;
+                    status.classList.add('text-danger');
+                    status.textContent = error.message;
+                } finally {
+                    if (pending === request) {
+                        pending = null;
+                        refresh.disabled = false;
+                    }
+                }
+            };
+
+            refreshProductLayoutPreview = load;
+            product.addEventListener('change', () => {
+                pending?.abort();
+                pending = null;
+                requested = null;
+                fragments.clear();
+                const selected = product.value !== '';
+                refresh.hidden = !selected;
+                status.hidden = !selected;
+                address.textContent = product.selectedOptions[0]?.dataset.address || defaultAddress;
+                render();
+            });
+            refresh.addEventListener('click', () => load(true));
         }
 
 
@@ -3154,6 +3383,12 @@ document.addEventListener(
                     };
 
 
+                case 'image_detail_pair':
+                    return {...base, main_image_width: 65};
+
+                case 'image_swatches':
+                    return {...base, swatch_width: 106, swatch_gap: 10};
+
                 case 'image':
 
                     return {
@@ -3521,6 +3756,7 @@ document.addEventListener(
             bindBlockButtons();
 
             initializeSortables();
+            refreshProductLayoutPreview();
         }
 
 
@@ -3636,9 +3872,11 @@ document.addEventListener(
                         </div>
 
 
-                        ${previewBlock(
-                            block
-                        )}
+                        ${block.type === 'accordion' ? previewBlock(block) : `
+                            <div class="builder-component-preview" data-preview-block-id="${escapeHtml(block.id)}">
+                                <div class="builder-component-placeholder">${previewBlock(block)}</div>
+                            </div>
+                        `}
 
                     </div>
 
@@ -3918,6 +4156,32 @@ document.addEventListener(
                         `
                     );
 
+
+                case 'image_swatches': {
+                    const width = Math.max(48, Math.min(240, Number(block.settings?.swatch_width ?? 106))) || 106;
+                    const gap = Math.max(0, Math.min(48, Number(block.settings?.swatch_gap ?? 10))) || 0;
+                    return contentWrapper(block, `
+                        <div class="image-swatches" style="--image-swatch-width:${width}px;--image-swatch-gap:${gap}px">
+                            ${['First sample', 'Second sample'].map(label => `
+                                <figure class="image-swatches__item">
+                                    <span class="image-swatches__placeholder">Image</span>
+                                    <figcaption class="image-swatches__label">${label}</figcaption>
+                                </figure>
+                            `).join('')}
+                        </div>
+                    `);
+                }
+
+                case 'image_detail_pair': {
+                    const width = Number(block.settings?.main_image_width ?? 65);
+                    const mainWidth = [50, 60, 65, 70, 75].includes(width) ? width : 65;
+                    return contentWrapper(block, `
+                        <div class="image-detail-pair" style="--image-detail-main:${mainWidth}fr;--image-detail-secondary:${100 - mainWidth}fr">
+                            <div class="image-detail-pair__panel"><span class="image-detail-pair__placeholder">Main image</span></div>
+                            <div class="image-detail-pair__panel"><span class="image-detail-pair__placeholder">Detail image</span></div>
+                        </div>
+                    `);
+                }
 
                 case 'image':
 
@@ -4552,13 +4816,13 @@ document.addEventListener(
 
                 <div class="sim-accordion">
 
-                    <div class="sim-accordion-header">
+                    <div class="sim-accordion-header builder-component-preview" data-preview-block-id="${escapeHtml(block.id)}">
 
-                        ${escapeHtml(
+                        <div class="builder-component-placeholder">${escapeHtml(
                             block.settings
                                 ?.title
                             ?? 'Accordion Title'
-                        )}
+                        )}</div>
 
                     </div>
 
@@ -5993,6 +6257,34 @@ document.addEventListener(
 
                     break;
 
+
+                case 'image_swatches':
+                    container.innerHTML = `
+                        <div class="form-row">
+                            <label class="col-sm-6">Image width (px)
+                                <input type="number" min="48" max="240" class="form-control block-setting" data-key="swatch_width"
+                                    value="${escapeHtml(block.settings?.swatch_width ?? 106)}">
+                            </label>
+                            <label class="col-sm-6">Gap (px)
+                                <input type="number" min="0" max="48" class="form-control block-setting" data-key="swatch_gap"
+                                    value="${escapeHtml(block.settings?.swatch_gap ?? 10)}">
+                            </label>
+                        </div>
+                        <p class="small text-muted mb-0">Upload and arrange samples in the Product Content Editor.</p>
+                    `;
+                    break;
+
+                case 'image_detail_pair':
+                    container.innerHTML = `
+                        <div class="form-group">
+                            <label for="image-detail-pair-width">Main image / Detail image</label>
+                            <select id="image-detail-pair-width" class="form-control block-setting" data-key="main_image_width">
+                                ${[50, 60, 65, 70, 75].map(width => `<option value="${width}" ${Number(block.settings?.main_image_width ?? 65) === width ? 'selected' : ''}>${width} : ${100 - width}</option>`).join('')}
+                            </select>
+                        </div>
+                        <p class="small text-muted mb-0">Upload both images in the Product Content Editor.</p>
+                    `;
+                    break;
 
                 case 'multi_photo':
 
@@ -7623,6 +7915,10 @@ document.addEventListener(
 
                 image:
                     'Image',
+                image_detail_pair:
+                    'Image Detail Pair',
+                image_swatches:
+                    'Image Swatches',
 
                 step_information:
                     'Step Information',
@@ -7861,6 +8157,7 @@ document.addEventListener(
         */
 
         bindComponentPaletteDrag();
+        bindProductLayoutPreview();
 
         window.ComponentPalettePreview.init({
             render(type) {

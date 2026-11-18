@@ -1,0 +1,33 @@
+.image-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: var(--image-swatch-gap, 10px);
+}
+
+.image-swatches__item {
+    width: min(100%, var(--image-swatch-width, 106px));
+    margin: 0;
+    text-align: center;
+}
+
+.image-swatches__image,
+.image-swatches__placeholder {
+    display: block;
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    object-fit: contain;
+}
+
+.image-swatches__placeholder {
+    display: grid;
+    place-items: center;
+    background: #eef1f4;
+    color: #596575;
+}
+
+.image-swatches__label {
+    display: block;
+    margin-top: 4px;
+    overflow-wrap: anywhere;
+}
